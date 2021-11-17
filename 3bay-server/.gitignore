@@ -1,5 +1,8 @@
-node_modules/
 npm-debug.log
 src/config/config_private.ts
+node_modules/
 dist/
+# ignore local database configuration
 .env
+# ignore auto cropped images
+public/images/category/output/
