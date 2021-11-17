@@ -15,6 +15,8 @@ import AccountCircle from '@mui/icons-material/AccountCircle'
 import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
+import { AppName } from './AppName'
+// import { GREY, PRIMARY, SECONDARY } from '../theme/palette'
 
 const APPBAR_LARGE = 92
 const APPBAR_SMALL = 64
@@ -67,6 +69,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   },
 }))
 
+// TODO: separate smaller components into separated files
+// TODO: change the app bar color into white (or dark if dark mode is enabled)
+// TODO: resize the menu icon, the current one seems too small
 export default function SearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -168,7 +173,7 @@ export default function SearchAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" style={{ background: 'fff' }}>
         <StyledToolbar>
           <IconButton
             size="large"
@@ -179,14 +184,7 @@ export default function SearchAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            3Bay
-          </Typography>
+          <AppName/>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />

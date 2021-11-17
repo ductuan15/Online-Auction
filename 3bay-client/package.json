@@ -5,6 +5,8 @@
   "dependencies": {
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
+    "@fontsource/libre-baskerville": "^4.5.0",
+    "@fontsource/roboto-slab": "^4.5.1",
     "@mui/icons-material": "^5.1.1",
     "@mui/material": "^5.1.1",
     "@testing-library/jest-dom": "^5.15.0",

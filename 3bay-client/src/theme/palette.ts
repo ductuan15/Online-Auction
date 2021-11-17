@@ -5,7 +5,7 @@ function createGradient(color1: string, color2: string) {
 }
 
 // SETUP COLORS
-const GREY = {
+export const GREY = {
   0: '#FFFFFF',
   100: '#F9FAFB',
   200: '#F4F6F8',
@@ -26,7 +26,7 @@ const GREY = {
   500_80: alpha('#919EAB', 0.8),
 }
 
-const PRIMARY = {
+export const PRIMARY = {
   // lighter: '#C8FACD',
   // light: '#5BE584',
   // main: '#00AB55',
@@ -40,7 +40,7 @@ const PRIMARY = {
   darker: '#091A7A',
   contrastText: '#fff',
 }
-const SECONDARY = {
+export const SECONDARY = {
   // lighter: '#D6E4FF',
   // light: '#84A9FF',
   // main: '#3366FF',
