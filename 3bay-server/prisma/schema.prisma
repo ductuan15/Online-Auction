@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model categories {
+  id               Int          @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  title            String       @unique(map: "categories_title_uindex") @default("") @db.VarChar(28)
+  parent_id        Int?
+  created_at       DateTime?    @default(now()) @db.DateTime(0)
+  updated_at       DateTime?    @default(now()) @updatedAt @db.DateTime(0)
+  deleted_at       DateTime?    @db.DateTime(0)
+  categories       categories?  @relation("categoriesTocategories_parent_id", fields: [parent_id], references: [id], map: "categories_ibfk_1")
+  other_categories categories[] @relation("categoriesTocategories_parent_id")
+
+  @@index([parent_id], map: "fk_category_category_idx")
+}

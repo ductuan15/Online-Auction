@@ -1,5 +1,6 @@
 import config from './config/config.js'
 import app from './express.js'
+import prisma from './db/prisma.js'
 
 const PORT = process.env.PORT || config.port || 3030
 
@@ -16,4 +17,4 @@ main()
   .catch((e) => {
     console.log(e)
   })
-  // TODO: add DB config
+  .finally(await prisma.$disconnect())
