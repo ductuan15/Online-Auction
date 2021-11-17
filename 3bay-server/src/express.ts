@@ -11,6 +11,7 @@ import path, { dirname } from 'path'
 
 // routers
 import categoryRoute from './routes/category.routes.js'
+import imagesRoute from './routes/images.routes.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -42,6 +43,7 @@ function initializeMiddlewares() {
 function mountRoutes() {
   app.use('/', express.static(path.join(__dirname, '../public')))
   app.use('/', categoryRoute)
+  app.use('/', imagesRoute)
 }
 
 function catchErrors() {
