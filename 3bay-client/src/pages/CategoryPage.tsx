@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Category from '../data/category'
 import { Grid } from '@mui/material'
 import CategoryCard from '../components/CategoryCard'
+import config from '../config/config'
 
 type Props = {
   // categories: Array<Category>
@@ -12,7 +13,7 @@ export const CategoryPage = (props: Props) => {
   let [categories, setCategories] = useState(() => [])
 
   useEffect(() => {
-    fetch(`http://localhost:3030/api/category/`)
+    fetch(`${config.apiHostName}/api/category/`)
       .then((r) => {
         return r.json()
       })
