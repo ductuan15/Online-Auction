@@ -1,10 +1,9 @@
 import * as React from 'react'
 import { useState } from 'react'
 import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
-import { CardActionArea } from '@mui/material'
+import { Box, CardActionArea } from '@mui/material'
 import Category from '../data/category'
 
 interface Props {
@@ -12,29 +11,61 @@ interface Props {
 }
 
 export default function CategoryCard(prop: Props) {
-  const [elevation, setElevation] = useState(1)
+  const [elevation, setElevation] = useState(0)
 
-  const onMouseOver = () => setElevation(8)
-  const onMouseOut = () => setElevation(1)
+  const onMouseOver = () => setElevation(24)
+  const onMouseOut = () => setElevation(0)
 
   return (
     <Card
       elevation={elevation}
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
+      sx={{ borderRadius: 4 }}
     >
       <CardActionArea>
-        <CardMedia
-          height="240"
-          component="img"
-          image={prop.category.thumbnails.original}
-          alt={prop.category.title}
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h6" component="div">
-            {prop.category.title}
-          </Typography>
-        </CardContent>
+        {/*TODO extract jss styles*/}
+        <Box sx={{ position: 'relative' }}>
+          <CardMedia
+            height="240"
+            component="img"
+            image={prop.category.thumbnails.original}
+            alt={prop.category.title}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              height: '100%',
+              width: '100%',
+              bgcolor: 'rgba(0, 0, 0, 0.54)',
+              color: 'white',
+              marginTop: 'auto',
+              marginBottom: 'auto',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+          >
+            <Typography
+              style={{
+                position: 'absolute',
+                top: '50%',
+                width: '100%',
+                transform: 'translateY(-50%)',
+                marginTop: 'auto',
+                marginBottom: 'auto',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+              }}
+              textAlign={'center'}
+              variant="h6"
+              component="div"
+            >
+              {prop.category.title}
+            </Typography>
+          </Box>
+        </Box>
       </CardActionArea>
     </Card>
   )
