@@ -16,6 +16,9 @@ import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
 
+const APPBAR_LARGE = 92
+const APPBAR_SMALL = 64
+
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -53,6 +56,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
       width: '20ch',
     },
+  },
+}))
+
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+  minHeight: APPBAR_SMALL,
+  [theme.breakpoints.up('lg')]: {
+    minHeight: APPBAR_LARGE,
+    padding: theme.spacing(0, 5),
   },
 }))
 
@@ -158,7 +169,7 @@ export default function SearchAppBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar>
+        <StyledToolbar>
           <IconButton
             size="large"
             edge="start"
@@ -172,7 +183,6 @@ export default function SearchAppBar() {
             variant="h6"
             noWrap
             component="div"
-            fontFamily="Shrikland"
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
             3Bay
@@ -188,24 +198,6 @@ export default function SearchAppBar() {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
             <IconButton
               size="large"
               edge="end"
@@ -230,7 +222,7 @@ export default function SearchAppBar() {
               <MoreIcon />
             </IconButton>
           </Box>
-        </Toolbar>
+        </StyledToolbar>
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
