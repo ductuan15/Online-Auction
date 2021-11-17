@@ -9,11 +9,20 @@ import morgan from 'morgan'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
 
+// routers
+import categoryRoute from './routes/category.routes.js'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-// routers
-// TODO: add router imports
+declare global {
+  namespace Express {
+    interface Request {
+      category?: any | null
+      id?: string | number | null
+    }
+  }
+}
 
 const app = express()
 
@@ -32,7 +41,7 @@ function initializeMiddlewares() {
 
 function mountRoutes() {
   app.use('/', express.static(path.join(__dirname, '../public')))
-  // TODO add routers
+  app.use('/', categoryRoute)
 }
 
 function catchErrors() {
@@ -46,8 +55,7 @@ function catchErrors() {
     ) => {
       if (err.name === 'UnauthorizedError') {
         res.status(401).json({ error: err.name + ': ' + err.message })
-      }
-      else if (err) {
+      } else if (err) {
         res.status(500).json({ error: err.name + ': ' + err.message })
         console.log(err)
       }
