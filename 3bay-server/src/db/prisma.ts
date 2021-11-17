@@ -46,7 +46,7 @@ prisma.$use(async (params, next) => {
 
 prisma.$on('query', (e) => {
   const color = '\u001B[38;5;33m'
-  console.log(`${color}Query: ` + e.query + '\u001B[')
+  console.log(`${color}Query: ` + e.query + '\u001B[m')
   // console.log('Duration: ' + e.duration + 'ms')
 })
 export default prisma
