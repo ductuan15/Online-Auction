@@ -1,14 +1,15 @@
 import React from 'react'
 import Layout from './components/Layout'
 import { CategoryPage } from './pages/CategoryPage'
+import ThemeConfig from './theme'
 
 function App() {
   return (
-    <div className="App">
+    <ThemeConfig>
       <Layout>
         <CategoryPage />
       </Layout>
-    </div>
+    </ThemeConfig>
   )
 }
 
