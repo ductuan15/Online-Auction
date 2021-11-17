@@ -8,6 +8,7 @@ async function main() {
   app.listen(PORT, () => {
     const color = '\u001B[38;5;98m'
     console.log(`${color}App listening on the port ${PORT}`)
+    console.log(`hostname = ${config.hostname}`)
     console.log(`Hope you're having a great day :>`)
     console.log(`Happy coding!\u001B[m`)
   })
