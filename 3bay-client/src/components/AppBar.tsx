@@ -4,7 +4,6 @@ import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
 import InputBase from '@mui/material/InputBase'
 import Badge from '@mui/material/Badge'
 import MenuItem from '@mui/material/MenuItem'
@@ -69,7 +68,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   },
 }))
 
-// TODO: separate smaller components into separated files
+// TODO: break down smaller components into separated files
 // TODO: change the app bar color into white (or dark if dark mode is enabled)
 // TODO: resize the menu icon, the current one seems too small
 export default function SearchAppBar() {
@@ -184,7 +183,7 @@ export default function SearchAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <AppName/>
+          <AppName />
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
