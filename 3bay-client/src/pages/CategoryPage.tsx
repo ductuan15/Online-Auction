@@ -10,7 +10,7 @@ type Props = {
 }
 
 export const CategoryPage = (props: Props) => {
-  let [categories, setCategories] = useState(() => [])
+  const [categories, setCategories] = useState(() => [])
 
   useEffect(() => {
     fetch(`${config.apiHostName}/api/category/`)
@@ -20,7 +20,7 @@ export const CategoryPage = (props: Props) => {
       .then((data) => {
         console.log(data)
         if (data) {
-          const categories = data.map((obj: Object) => {
+          const categories = data.map((obj: any) => {
             return new Category(obj)
           })
           setCategories(categories)
