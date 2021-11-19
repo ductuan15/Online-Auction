@@ -1,10 +1,11 @@
 import { Container } from '@mui/material'
-import React, { ReactNode } from 'react'
+import React from 'react'
 
 import SearchAppBar from './AppBar'
+import Toolbar from '@mui/material/Toolbar'
 
 interface Props {
-  children: ReactNode
+  children: React.ReactElement
 }
 
 export default function Layout(props: Props) {
@@ -13,10 +14,10 @@ export default function Layout(props: Props) {
       {/* app bar */}
       <SearchAppBar />
 
+      <Toolbar />
+
       {/* main content */}
-      <Container>
-        {props.children}
-      </Container>
+      <Container>{props.children}</Container>
     </div>
   )
 }

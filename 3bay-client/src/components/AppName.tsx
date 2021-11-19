@@ -20,7 +20,7 @@ export function AppName() {
         variant="h5"
         noWrap
         component="div"
-        fontFamily="Roboto Slab"
+        fontFamily="Libre Baskerville"
         sx={{ display: { xs: 'none', sm: 'block' } }}
       >
         bay
