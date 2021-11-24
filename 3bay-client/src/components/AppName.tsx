@@ -3,28 +3,35 @@ import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import '@fontsource/libre-baskerville/400-italic.css'
 import '@fontsource/roboto-slab'
+import { styled } from '@mui/material/styles'
 
-export function AppName() {
+const StyledTypography = styled(Typography)(({ theme }) => ({
+  color: theme.palette.primary.dark,
+}))
+
+type AppNameProps = {
+  bigSize?: boolean
+}
+
+export function AppName({ bigSize }: AppNameProps) {
   return (
     <Box display="flex" alignItems="center">
-      <Typography
-        component="div"
+      <StyledTypography
         sx={{ display: { xs: 'none', sm: 'block' } }}
         fontFamily="Libre Baskerville"
-        variant="h4"
+        variant={bigSize ? 'h3' : 'h4'}
       >
         3
-      </Typography>
+      </StyledTypography>
 
-      <Typography
-        variant="h5"
+      <StyledTypography
+        variant={bigSize ? 'h4' : 'h5'}
         noWrap
-        component="div"
         fontFamily="Libre Baskerville"
         sx={{ display: { xs: 'none', sm: 'block' } }}
       >
         bay
-      </Typography>
+      </StyledTypography>
     </Box>
   )
 }
