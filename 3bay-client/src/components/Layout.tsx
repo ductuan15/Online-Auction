@@ -3,12 +3,13 @@ import React from 'react'
 
 import SearchAppBar from './AppBar'
 import Toolbar from '@mui/material/Toolbar'
+import AppFooter from './AppFooter'
 
 interface Props {
   children: React.ReactElement
 }
 
-export default function Layout(props: Props) {
+export default function Layout({ children }: Props) {
   return (
     <div>
       {/* app bar */}
@@ -17,7 +18,9 @@ export default function Layout(props: Props) {
       <Toolbar />
 
       {/* main content */}
-      <Container>{props.children}</Container>
+      <Container>{children}</Container>
+
+      <AppFooter />
     </div>
   )
 }

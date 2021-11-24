@@ -59,7 +59,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       },
     },
     [theme.breakpoints.up('sm')]: {
-      border: `1px solid ${theme.palette.grey[400]}`,
+      border: `1px solid ${theme.palette.grey[300]}`,
       borderRadius: '8px',
     },
   },
@@ -103,7 +103,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     color: theme.palette.primary,
     background: '#FFF',
     [theme.breakpoints.up('sm')]: {
-      border: `1px solid ${theme.palette.grey[400]}`,
+      border: `1px solid ${theme.palette.grey[300]}`,
       borderRadius: '8px',
     },
   },
