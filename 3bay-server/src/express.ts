@@ -12,6 +12,7 @@ import path, { dirname } from 'path'
 // routers
 import categoryRoute from './routes/category.routes.js'
 import imagesRoute from './routes/images.routes.js'
+import { errorHandler } from './error/error-handler.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -38,6 +39,8 @@ function initializeMiddlewares() {
   app.use(helmet())
   // enable CORS - Cross Origin Resource Sharing
   app.use(cors())
+  // handle errors
+  app.use(errorHandler)
 }
 
 function mountRoutes() {
@@ -46,27 +49,7 @@ function mountRoutes() {
   app.use('/', imagesRoute)
 }
 
-function catchErrors() {
-  // Catch unauthorised errors
-  app.use(
-    (
-      err: Error,
-      req: express.Request,
-      res: express.Response,
-      _: express.NextFunction,
-    ) => {
-      if (err.name === 'UnauthorizedError') {
-        res.status(401).json({ error: err.name + ': ' + err.message })
-      } else if (err) {
-        res.status(500).json({ error: err.name + ': ' + err.message })
-        console.log(err)
-      }
-    },
-  )
-}
-
 initializeMiddlewares()
 mountRoutes()
-catchErrors()
 
 export default app
