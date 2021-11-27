@@ -102,7 +102,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   '& .MuiIconButton-root': {
     /*borderRadius: theme.shape.borderRadius,*/
     color: theme.palette.primary,
-    background: '#FFF',
+    background: '#00000000',
     [theme.breakpoints.up('sm')]: {
       border: `1px solid ${theme.palette.grey[300]}`,
       borderRadius: '8px',
@@ -206,7 +206,8 @@ export default function SearchAppBar() {
             >
               <MenuIcon />
             </IconButton>
-            <AppName />
+            {/*Hide app name when the size is xs*/}
+            <AppName sx={{ display: { xs: 'none', sm: 'block' } }} />
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />

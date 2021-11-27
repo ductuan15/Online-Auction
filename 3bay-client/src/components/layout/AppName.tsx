@@ -4,6 +4,7 @@ import * as React from 'react'
 import '@fontsource/libre-baskerville/400-italic.css'
 import '@fontsource/roboto-slab'
 import { styled } from '@mui/material/styles'
+import { SxProps } from '@mui/system'
 
 const StyledTypography = styled(Typography)(({ theme }) => ({
   color: theme.palette.primary.dark,
@@ -11,13 +12,14 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 
 type AppNameProps = {
   bigSize?: boolean
+  sx?: SxProps
 }
 
-export function AppName({ bigSize }: AppNameProps) {
+export function AppName({ bigSize, sx }: AppNameProps) {
   return (
     <Box display="flex" alignItems="center">
       <StyledTypography
-        sx={{ display: { xs: 'none', sm: 'block' } }}
+        sx={sx}
         fontFamily="Libre Baskerville"
         variant={bigSize ? 'h3' : 'h4'}
       >
@@ -28,7 +30,7 @@ export function AppName({ bigSize }: AppNameProps) {
         variant={bigSize ? 'h4' : 'h5'}
         noWrap
         fontFamily="Libre Baskerville"
-        sx={{ display: { xs: 'none', sm: 'block' } }}
+        sx={sx}
       >
         bay
       </StyledTypography>

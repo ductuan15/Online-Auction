@@ -1,10 +1,10 @@
 import React from 'react'
 import { Box, Container, Divider, Stack, Typography } from '@mui/material'
-import { AppName } from './AppName'
 import EmailSubscriber from './EmailSubscriber'
 import IconButton from '@mui/material/IconButton'
 import RedditIcon from '@mui/icons-material/Reddit'
 import GitHubIcon from '@mui/icons-material/GitHub'
+import { AppName } from './AppName'
 
 const footerLinks = [
   {
@@ -48,7 +48,6 @@ function renderLinks() {
                 </Typography>
               )
             })}
-
           </Box>
         )
       })}
@@ -88,7 +87,6 @@ export default function AppFooter() {
       >
         <div>
           <AppName bigSize />
-
           <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 1.5 }}>
             Subscribe to our letters! Please UwU
           </Typography>
