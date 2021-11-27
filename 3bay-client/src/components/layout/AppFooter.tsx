@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Container, Divider, Stack, Typography } from '@mui/material'
+import { Box, Container, Divider, Link, Stack, Typography } from '@mui/material'
 import EmailSubscriber from './EmailSubscriber'
 import IconButton from '@mui/material/IconButton'
 import RedditIcon from '@mui/icons-material/Reddit'
@@ -38,14 +38,16 @@ function renderLinks() {
 
             {column.links.map((links) => {
               return (
-                <Typography
+                <Link
+                  underline="hover"
+                  href="https://youtu.be/dQw4w9WgXcQ"
                   variant="body2"
                   color="text.secondary"
-                  key={links}
                   sx={{ mt: 1.5 }}
+                  key={links}
                 >
                   {links}
-                </Typography>
+                </Link>
               )
             })}
           </Box>
@@ -117,7 +119,7 @@ export default function AppFooter() {
             <IconButton
               target="_blank"
               rel="noopener noreferrer"
-              href="https://github.com/"
+              href="https://github.com/ductuan15/Online-Auction"
               aria-label="github"
               title="GitHub"
               size="small"
