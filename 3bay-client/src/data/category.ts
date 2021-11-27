@@ -1,16 +1,16 @@
 class Category {
   id?: number
-  title: string = ""
+  title = ''
   thumbnails: {
     sm: string
     md: string
     lg: string
     original: string
   } = {
-    sm: "",
-    md: "",
-    lg: "",
-    original: ""
+    sm: '',
+    md: '',
+    lg: '',
+    original: '',
   }
 
   parentId?: number
