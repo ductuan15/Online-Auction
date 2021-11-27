@@ -13,6 +13,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import { AppName } from './AppName'
 import { Slide, useScrollTrigger } from '@mui/material'
+import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 // import { GREY, PRIMARY, SECONDARY } from '../theme/palette'
 
 const APPBAR_LARGE = 92
@@ -216,6 +217,18 @@ export default function SearchAppBar() {
               />
             </Search>
             <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 3 }}>
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                color="inherit"
+              >
+                <Brightness4OutlinedIcon />
+              </IconButton>
+            </Box>
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <IconButton
                 size="large"

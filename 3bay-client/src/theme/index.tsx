@@ -1,4 +1,5 @@
-import { ReactNode, useMemo } from 'react'
+import * as React from 'react'
+import { useMemo } from 'react'
 import {
   createTheme,
   StyledEngineProvider,
@@ -8,7 +9,7 @@ import palette from './palette'
 import { CssBaseline } from '@mui/material'
 
 interface Props {
-  children: ReactNode
+  children: React.ReactElement
 }
 
 export default function ThemeConfig(props: Props) {

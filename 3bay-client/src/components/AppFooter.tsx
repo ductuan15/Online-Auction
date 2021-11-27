@@ -1,9 +1,60 @@
+import React from 'react'
 import { Box, Container, Divider, Stack, Typography } from '@mui/material'
 import { AppName } from './AppName'
 import EmailSubscriber from './EmailSubscriber'
 import IconButton from '@mui/material/IconButton'
 import RedditIcon from '@mui/icons-material/Reddit'
 import GitHubIcon from '@mui/icons-material/GitHub'
+
+const footerLinks = [
+  {
+    title: 'Buy',
+    links: ['Registration', 'Stores', 'Bidding & bidding helps'],
+  },
+  { title: 'Sell', links: ['Start selling', 'Learn to sell', 'Affiliates'] },
+  { title: 'About 3bay', links: ['Our info', 'News', 'Careers', 'Policies'] },
+  { title: 'Help & Contact', links: ['Contact us'] },
+]
+
+function renderLinks() {
+  return (
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
+        gridAutoColumns: '1fr',
+        gap: 4,
+      }}
+    >
+      {footerLinks.map((column) => {
+        return (
+          <Box
+            sx={{ display: 'flex', flexDirection: 'column' }}
+            key={column.title}
+          >
+            <Typography fontWeight="bold" variant="body2">
+              {column.title}
+            </Typography>
+
+            {column.links.map((links) => {
+              return (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  key={links}
+                  sx={{ mt: 1.5 }}
+                >
+                  {links}
+                </Typography>
+              )
+            })}
+
+          </Box>
+        )
+      })}
+    </Box>
+  )
+}
 
 export default function AppFooter() {
   return (
@@ -35,7 +86,6 @@ export default function AppFooter() {
           },
         }}
       >
-
         <div>
           <AppName bigSize />
 
@@ -48,102 +98,7 @@ export default function AppFooter() {
           <EmailSubscriber />
         </div>
 
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
-            gridAutoColumns: '1fr',
-            gap: 4,
-          }}
-        >
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography fontWeight="bold" variant="body2">
-              Buy
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              Registration
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              Stores
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              Bidding & binding helps
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography fontWeight="bold" variant="body2">
-              Sell
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              Start selling
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              Learn to sell
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              Affiliates
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography fontWeight="bold" variant="body2">
-              About 3bay
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              Our info
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              News
-            </Typography>
-
-            <Box sx={{ display: 'flex', alignItems: 'end', mt: 1 }}>
-              <Typography variant="body2" color="text.secondary">
-                Careers{' '}
-              </Typography>
-              <Box
-                sx={{
-                  px: 0.5,
-                  py: 0.3,
-                  ml: 1,
-                  borderRadius: 0.5,
-                  fontSize: (theme) => theme.typography.pxToRem(9),
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  color: '#fff',
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === 'dark'
-                      ? theme.palette.error.dark
-                      : theme.palette.error.main,
-                }}
-              >
-                Hiring
-              </Box>
-            </Box>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              Policies
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography fontWeight="bold" variant="body2">
-              Help & Contact
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-              Contact us
-            </Typography>
-          </Box>
-        </Box>
+        {renderLinks()}
       </Box>
 
       <Divider />
