@@ -8,6 +8,7 @@
     "@fontsource/libre-baskerville": "^4.5.0",
     "@fontsource/roboto-slab": "^4.5.1",
     "@mui/icons-material": "^5.2.0",
+    "@mui/lab": "^5.0.0-alpha.57",
     "@mui/material": "^5.1.1",
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.7",
@@ -24,6 +25,7 @@
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.0.2",
     "react-scripts": "4.0.3",
+    "react-spring": "^9.3.2",
     "typescript": "^4.4.4",
     "web-vitals": "^1.1.2"
   },
