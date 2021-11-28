@@ -4,14 +4,19 @@ import React from 'react'
 import SearchAppBar from './AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import AppFooter from './AppFooter'
+import {styled} from "@mui/material/styles";
 
 interface Props {
   children: React.ReactElement
 }
 
+const StyledDiv = styled('div')(({theme}) => ({
+  background: theme.palette.background.paper
+}))
+
 export default function Layout({ children }: Props) {
   return (
-    <Container maxWidth="xl" sx={{ bgcolor: 'background.paper' }}>
+    <StyledDiv>
       {/* app bar */}
       <SearchAppBar />
 
@@ -21,6 +26,6 @@ export default function Layout({ children }: Props) {
       <Container sx={{ bgcolor: 'background.paper' }}>{children}</Container>
 
       <AppFooter />
-    </Container>
+    </StyledDiv>
   )
 }
