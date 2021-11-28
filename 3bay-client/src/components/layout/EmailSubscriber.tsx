@@ -38,7 +38,7 @@ export default function EmailSubscriber({ sx }: { sx?: SxProps<Theme> }) {
           sx={{
             bgcolor: (theme) =>
               theme.palette.mode === 'dark'
-                ? theme.palette.primary.dark
+                ? theme.palette.grey[800]
                 : theme.palette.grey[200],
             px: 1,
             py: 0.5,
@@ -48,8 +48,7 @@ export default function EmailSubscriber({ sx }: { sx?: SxProps<Theme> }) {
             '&:hover': {
               bgcolor: (theme) =>
                 theme.palette.mode === 'dark'
-                  ? theme.palette.primary.dark
-                  : theme.palette.grey[300],
+                  ? theme.palette.grey[900] : theme.palette.grey[300],
             },
           }}
         />
@@ -58,7 +57,7 @@ export default function EmailSubscriber({ sx }: { sx?: SxProps<Theme> }) {
           sx={{
             bgcolor: (theme) =>
               theme.palette.mode === 'dark'
-                ? theme.palette.primary.dark
+                ? theme.palette.secondary.main
                 : theme.palette.secondary.main,
             py: 1,
             px: 2,
@@ -67,7 +66,7 @@ export default function EmailSubscriber({ sx }: { sx?: SxProps<Theme> }) {
             '&:hover': {
               bgcolor: (theme) =>
                 theme.palette.mode === 'dark'
-                  ? theme.palette.primary.dark
+                  ? theme.palette.secondary.dark
                   : theme.palette.secondary.dark,
             },
           }}
