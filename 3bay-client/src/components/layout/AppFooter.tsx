@@ -29,7 +29,11 @@ function renderLinks() {
       {footerLinks.map((column) => {
         return (
           <Box
-            sx={{ display: 'flex', flexDirection: 'column' }}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              color: 'text.primary'
+            }}
             key={column.title}
           >
             <Typography fontWeight="bold" variant="body2">
@@ -39,7 +43,7 @@ function renderLinks() {
             {column.links.map((links) => {
               return (
                 <Link
-                  underline="hover"
+                  underline="none"
                   href="https://youtu.be/dQw4w9WgXcQ"
                   variant="body2"
                   color="text.secondary"
@@ -59,10 +63,13 @@ function renderLinks() {
 
 export default function AppFooter() {
   return (
-    <Container component="footer">
+    <Container
+      component="footer"
+      sx={{bgcolor: 'background.paper'}}
+    >
       <Divider />
       <Box
-        sx={{
+        sx={(theme) => ({
           py: 8,
           display: 'grid',
           gridAutoColumns: '1fr',
@@ -78,18 +85,22 @@ export default function AppFooter() {
           gridTemplateRows: 'auto',
           '& a:not(.MuiIconButton-root)': {
             mt: 1,
-            color: 'text.secondary',
+            color: theme.palette.text.secondary,
             typography: 'body2',
             '&:hover': {
-              color: 'primary.main',
-              textDecoration: 'underline',
+              color: theme.palette.text.primary,
             },
           },
-        }}
+        })}
       >
         <div>
           <AppName bigSize />
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ mt: 1.5 }}>
+          <Typography
+            variant="subtitle2"
+            color="text.primary"
+            fontWeight="bold"
+            sx={{ mt: 1.5 }}
+          >
             Subscribe to our letters! Please UwU
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>

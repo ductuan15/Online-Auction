@@ -1,33 +1,54 @@
 import * as React from 'react'
-import { useMemo } from 'react'
 import {
   createTheme,
   StyledEngineProvider,
   ThemeProvider,
 } from '@mui/material/styles'
 import palette from './palette'
-import { CssBaseline } from '@mui/material'
+import { CssBaseline, PaletteMode } from '@mui/material'
 
 interface Props {
   children: React.ReactElement
 }
 
+export const ColorModeContext = React.createContext({
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  toggleColorMode: () => {},
+})
+
+// TODO: save dark/light mode preference
 export default function ThemeConfig(props: Props) {
-  const themeOptions = useMemo(
+  const [mode, setMode] = React.useState<PaletteMode>('light')
+
+  const getDesignTokens = (mode: PaletteMode) => ({
+    palette: {
+      mode,
+      ...(mode === 'light' ? palette : {}),
+    },
+  })
+
+  const colorMode = React.useMemo(
     () => ({
-      palette,
+      // The dark mode switch would invoke this method
+      toggleColorMode: () => {
+        setMode((prevMode: PaletteMode) =>
+          prevMode === 'light' ? 'dark' : 'light',
+        )
+      },
     }),
     [],
   )
 
-  const theme = createTheme(themeOptions)
+  const theme = React.useMemo(() => createTheme(getDesignTokens(mode)), [mode])
 
   return (
     <StyledEngineProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {props.children}
-      </ThemeProvider>
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {props.children}
+        </ThemeProvider>
+      </ColorModeContext.Provider>
     </StyledEngineProvider>
   )
 }

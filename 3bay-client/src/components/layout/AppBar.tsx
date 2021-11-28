@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { alpha, styled } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -17,6 +17,7 @@ import Tooltip from '@mui/material/Tooltip'
 import Divider from '@mui/material/Divider'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Logout from '@mui/icons-material/Logout'
+import { ColorModeContext } from '../../theme'
 
 interface Props {
   children: React.ReactElement
@@ -28,9 +29,15 @@ const APPBAR_SMALL = 64
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  backgroundColor:
+    theme.palette.mode === 'light'
+      ? 'alpha(theme.palette.common.white, 0.15)'
+      : theme.palette.background.paper,
   '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor:
+      theme.palette.mode === 'light'
+        ? 'alpha(theme.palette.common.white, 0.25)'
+        : theme.palette.background.paper,
   },
   marginRight: theme.spacing(2),
   marginLeft: 0,
@@ -66,7 +73,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       },
     },
     [theme.breakpoints.up('sm')]: {
-      border: `1.5px solid ${theme.palette.grey[300]}`,
+      border:
+        theme.palette.mode === 'light'
+          ? `1.5px solid ${theme.palette.grey[300]}`
+          : '1.5px solid white',
       borderRadius: '8px',
     },
   },
@@ -96,14 +106,24 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   transition: theme.transitions.create('width'),
   boxShadow: 'none',
   borderStyle: 'solid',
-  borderColor: theme.palette.grey[300],
+  borderColor:
+    theme.palette.mode === 'light'
+      ? theme.palette.grey[300]
+      : theme.palette.grey[800],
   borderWidth: 0,
   borderBottomWidth: 'thin',
-  background: 'rgba(255,255,255,0.98)',
-  color: theme.palette.grey[800],
+  background:
+    theme.palette.mode === 'light'
+      ? 'rgba(255,255,255,0.98)'
+      : theme.palette.background.default,
+
+  color:theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.text.primary,
   '& .MuiIconButton-root': {
     /*borderRadius: theme.shape.borderRadius,*/
-    color: theme.palette.primary,
+    color:
+      theme.palette.mode === 'light'
+        ? theme.palette.primary
+        : theme.palette.primary.light,
     background: theme.palette.background.default,
     // [theme.breakpoints.up('sm')]: {
     //   border: `1px solid ${theme.palette.grey[300]}`,
@@ -143,6 +163,8 @@ const menuPaperProp = {
 // TODO: change the app bar color into white (or dark if dark mode is enabled)
 // TODO: resize the menu icon, the current one seems too small
 export default function SearchAppBar() {
+  const colorMode = React.useContext(ColorModeContext)
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null)
@@ -242,8 +264,10 @@ export default function SearchAppBar() {
             >
               <MenuIcon />
             </IconButton>
+
             {/*Hide app name when the size is xs*/}
             <AppName sx={{ display: { xs: 'none', sm: 'block' } }} />
+
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -253,17 +277,18 @@ export default function SearchAppBar() {
                 inputProps={{ 'aria-label': 'search' }}
               />
             </Search>
+
             <Box sx={{ flexGrow: 1 }} />
+
             <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 3 }}>
               <IconButton
                 size="large"
-                edge="end"
-                aria-label="change theme"
-                aria-controls={menuId}
-                aria-haspopup="true"
                 color="inherit"
+                onClick={colorMode.toggleColorMode}
               >
-                <Brightness4OutlinedIcon />
+                <Tooltip title="Change theme">
+                  <Brightness4OutlinedIcon />
+                </Tooltip>
               </IconButton>
             </Box>
 

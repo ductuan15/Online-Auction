@@ -11,16 +11,16 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   return (
-    <div>
+    <Container maxWidth="xl" sx={{ bgcolor: 'background.paper' }}>
       {/* app bar */}
       <SearchAppBar />
 
       <Toolbar />
 
       {/* main content */}
-      <Container>{children}</Container>
+      <Container sx={{ bgcolor: 'background.paper' }}>{children}</Container>
 
       <AppFooter />
-    </div>
+    </Container>
   )
 }
