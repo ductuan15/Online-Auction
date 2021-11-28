@@ -9,12 +9,18 @@ import MenuItem from '@mui/material/MenuItem'
 import Menu from '@mui/material/Menu'
 import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
-import AccountCircle from '@mui/icons-material/AccountCircle'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import { AppName } from './AppName'
-import { Slide, useScrollTrigger } from '@mui/material'
+import { Avatar, Slide, useScrollTrigger } from '@mui/material'
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
-// import { GREY, PRIMARY, SECONDARY } from '../theme/palette'
+import Tooltip from '@mui/material/Tooltip'
+import Divider from '@mui/material/Divider'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import Logout from '@mui/icons-material/Logout'
+
+interface Props {
+  children: React.ReactElement
+}
 
 const APPBAR_LARGE = 92
 const APPBAR_SMALL = 64
@@ -60,15 +66,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       },
     },
     [theme.breakpoints.up('sm')]: {
-      border: `1px solid ${theme.palette.grey[300]}`,
+      border: `1.5px solid ${theme.palette.grey[300]}`,
       borderRadius: '8px',
     },
   },
 }))
-
-interface Props {
-  children: React.ReactElement
-}
 
 function HideOnScroll({ children }: Props) {
   const trigger = useScrollTrigger({
@@ -97,18 +99,45 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   borderColor: theme.palette.grey[300],
   borderWidth: 0,
   borderBottomWidth: 'thin',
-  background: 'rgba(255,255,255,0.95)',
+  background: 'rgba(255,255,255,0.98)',
   color: theme.palette.grey[800],
   '& .MuiIconButton-root': {
     /*borderRadius: theme.shape.borderRadius,*/
     color: theme.palette.primary,
-    background: '#00000000',
-    [theme.breakpoints.up('sm')]: {
-      border: `1px solid ${theme.palette.grey[300]}`,
-      borderRadius: '8px',
-    },
+    background: theme.palette.background.default,
+    // [theme.breakpoints.up('sm')]: {
+    //   border: `1px solid ${theme.palette.grey[300]}`,
+    //   borderRadius: '8px',
+    // },
   },
 }))
+
+const menuPaperProp = {
+  elevation: 0,
+  sx: {
+    overflow: 'visible',
+    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+    mt: 1.5,
+    '& .MuiAvatar-root': {
+      width: 32,
+      height: 32,
+      ml: -0.5,
+      mr: 1,
+    },
+    '&:before': {
+      content: '""',
+      display: 'block',
+      position: 'absolute',
+      top: 0,
+      right: 14,
+      width: 10,
+      height: 10,
+      bgcolor: 'background.paper',
+      transform: 'translateY(-50%) rotate(45deg)',
+      zIndex: 0,
+    },
+  },
+}
 
 // TODO: break down smaller components into separated files
 // TODO: change the app bar color into white (or dark if dark mode is enabled)
@@ -142,21 +171,24 @@ export default function SearchAppBar() {
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
       open={isMenuOpen}
       onClose={handleMenuClose}
+      onClick={handleMenuClose}
+      PaperProps={menuPaperProp}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem>
+        <Avatar /> My account
+      </MenuItem>
+      <Divider />
+
+      <MenuItem>
+        <ListItemIcon>
+          <Logout fontSize="small" />
+        </ListItemIcon>
+        Logout
+      </MenuItem>
     </Menu>
   )
 
@@ -164,30 +196,34 @@ export default function SearchAppBar() {
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
       id={mobileMenuId}
       keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
+      PaperProps={menuPaperProp}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
+      <MenuItem>
+        <Avatar /> My account
+      </MenuItem>
+
+      <Divider />
+
+      <MenuItem>
+        <ListItemIcon>
+          <Brightness4OutlinedIcon />
+        </ListItemIcon>
+        Change theme
+      </MenuItem>
+
+      <Divider />
+
+      <MenuItem>
+        <ListItemIcon>
+          <Logout fontSize="small" />
+        </ListItemIcon>
+        Logout
       </MenuItem>
     </Menu>
   )
@@ -222,7 +258,7 @@ export default function SearchAppBar() {
               <IconButton
                 size="large"
                 edge="end"
-                aria-label="account of current user"
+                aria-label="change theme"
                 aria-controls={menuId}
                 aria-haspopup="true"
                 color="inherit"
@@ -230,19 +266,21 @@ export default function SearchAppBar() {
                 <Brightness4OutlinedIcon />
               </IconButton>
             </Box>
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
+
+            <Box
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+                alignItems: 'center',
+                textAlign: 'center',
+              }}
+            >
+              <Tooltip title="Account settings">
+                <IconButton onClick={handleProfileMenuOpen}>
+                  <Avatar>M</Avatar>
+                </IconButton>
+              </Tooltip>
             </Box>
+
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
               <IconButton
                 size="large"

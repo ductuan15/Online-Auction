@@ -131,7 +131,7 @@ export default function AppFooter() {
               rel="noopener noreferrer"
               href="https://www.reddit.com/r/cats/"
               aria-label="github"
-              title="GitHub"
+              title="Reddit"
               size="small"
             >
               <RedditIcon />
