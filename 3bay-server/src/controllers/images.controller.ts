@@ -34,13 +34,9 @@ async function createCategoryThumbnailIfNotExist(
 ) {
   if (!fs.existsSync(fileOutName)) {
     // create folder name if not exist
-    if (!fs.existsSync(CATEGORY_THUMBNAIL_PATH)) {
-      await fs.mkdir(
+    if (!fs.existsSync(CATEGORY_THUMBNAIL_OUTPUT_PATH)) {
+      fs.mkdirSync(
         CATEGORY_THUMBNAIL_OUTPUT_PATH,
-        { recursive: true },
-        (err) => {
-          if (err) throw err
-        },
       )
     }
 
