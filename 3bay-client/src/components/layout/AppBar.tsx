@@ -117,7 +117,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
       ? 'rgba(255,255,255,0.98)'
       : theme.palette.background.default,
 
-  color:theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.text.primary,
+  color:
+    theme.palette.mode === 'light'
+      ? theme.palette.grey[800]
+      : theme.palette.text.primary,
   '& .MuiIconButton-root': {
     /*borderRadius: theme.shape.borderRadius,*/
     color:
@@ -232,7 +235,7 @@ export default function SearchAppBar() {
 
       <Divider />
 
-      <MenuItem>
+      <MenuItem onClick={colorMode.toggleColorMode}>
         <ListItemIcon>
           <Brightness4OutlinedIcon />
         </ListItemIcon>
@@ -280,7 +283,7 @@ export default function SearchAppBar() {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 3 }}>
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
               <IconButton
                 size="large"
                 color="inherit"
@@ -300,7 +303,15 @@ export default function SearchAppBar() {
               }}
             >
               <Tooltip title="Account settings">
-                <IconButton onClick={handleProfileMenuOpen}>
+                <IconButton
+                  onClick={handleProfileMenuOpen}
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  color="inherit"
+                >
                   <Avatar>M</Avatar>
                 </IconButton>
               </Tooltip>
