@@ -68,6 +68,9 @@ const StyledTreeItemRoot = styled((props: TreeItemProps) => (
       fontWeight: theme.typography.fontWeightMedium,
     },
     [`& .${treeItemClasses.label}`]: {
+      [theme.breakpoints.down('sm')]: {
+        fontSize: theme.typography.body1.fontSize,
+      },
       fontSize: theme.typography.h5.fontSize,
       fontWeight: 'inherit',
       color: 'inherit',
@@ -101,7 +104,13 @@ function CategoryTreeItem(props: StyledTreeItemProps) {
           }}
         >
           <Box color="inherit" />
-          <Typography variant="h5" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
+          <Typography sx={(theme) => ({
+            fontWeight: 'inherit', flexGrow: 1,
+            [theme.breakpoints.down('sm')]: {
+              typography: 'body1'
+            },
+            typography: 'h5'
+          })}>
             {labelText}
           </Typography>
 
@@ -159,12 +168,20 @@ export default function CategoryTree({ categories }: CategoryTreeProps) {
       defaultExpanded={['1']}
       defaultCollapseIcon={<KeyboardArrowUpIcon />}
       defaultExpandIcon={<KeyboardArrowDownIcon />}
-      sx={{
-        maxWidth: 0.75,
+      sx={(theme) => ({
+        [theme.breakpoints.up('lg')]: {
+          maxWidth: 0.75,
+        },
+        [theme.breakpoints.only('md')]: {
+          maxWidth: 0.85,
+        },
+        [theme.breakpoints.down('sm')]: {
+          maxWidth: 1,
+        },
         flexGrow: 1,
         overflowY: 'auto',
-        color: 'text.primary',
-      }}
+        color: theme.palette.text.primary,
+      })}
     >
       <StyledTreeItemRoot nodeId="-1" label="All categories">
         {renderCategoryTree(categories)}

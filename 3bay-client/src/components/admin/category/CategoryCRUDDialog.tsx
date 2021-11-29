@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -11,7 +11,8 @@ import Category from '../../../data/category'
 import TextField from '@mui/material/TextField'
 import ParentCategoryChooser from './ParentCategoryChooser'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
-import { Alert, CardMedia, Grid } from '@mui/material'
+import { Alert, CardMedia, Grid, LinearProgress } from '@mui/material'
+import Box from '@mui/material/Box'
 
 const Input = styled('input')({
   display: 'none',
@@ -58,10 +59,21 @@ function BaseCategoryDialog(props: BaseCategoryDialogProps) {
   } = props
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
+  const progressRef = useRef<HTMLDivElement>(null)
 
   const onClose = () => {
     setImage(null)
+    if (progressRef.current && progressRef.current.style) {
+      progressRef.current.style.display = 'none'
+    }
+
     onCloseCallback()
+  }
+
+  const onSave = () => {
+    if (progressRef.current && progressRef.current.style) {
+      progressRef.current.style.display = 'block'
+    }
   }
   const [image, setImage] = useState<string | null>(null)
 
@@ -81,6 +93,10 @@ function BaseCategoryDialog(props: BaseCategoryDialogProps) {
       <DialogTitle id={dialogName}>{title}</DialogTitle>
 
       <DialogContent>
+        <Box ref={progressRef} sx={{ width: '100%', display: 'none' }}>
+          <LinearProgress />
+        </Box>
+
         <TextField
           autoFocus
           margin="dense"
@@ -149,7 +165,7 @@ function BaseCategoryDialog(props: BaseCategoryDialogProps) {
         <Button autoFocus onClick={onClose}>
           Cancel
         </Button>
-        <Button onClick={onClose} autoFocus>
+        <Button onClick={onSave} autoFocus>
           Save changes
         </Button>
       </DialogActions>

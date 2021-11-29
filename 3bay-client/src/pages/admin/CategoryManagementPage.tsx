@@ -82,13 +82,18 @@ export const CategoryManagementPage = () => {
     <div>
       <Grid
         container
-        marginTop={4}
+        marginTop={1}
         marginBottom={4}
         spacing={4}
         justifyContent="between"
       >
         <Grid display="flex" xs={12} item alignItems="center">
-          <Typography variant="h3" color="text.primary">
+          <Typography color="text.primary" sx={(theme) => ({
+            [theme.breakpoints.down('sm')]: {
+              typography: 'h5'
+            },
+            typography: 'h3'
+          })}>
             <CategoryRoundedIcon fontSize="large" sx={{ mr: 2 }} />
             Manage Categories
           </Typography>
