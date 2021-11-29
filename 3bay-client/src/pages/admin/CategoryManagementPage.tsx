@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useState } from 'react'
 import { Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded'
@@ -6,6 +7,7 @@ import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import Box from '@mui/material/Box'
 import CategoryTree from '../../components/admin/category/CategoryTree'
+import { CreateCategoryDialog } from '../../components/admin/category/CategoryCRUDDialog'
 
 const testData = [
   {
@@ -68,32 +70,54 @@ const testData = [
 ]
 
 export const CategoryManagementPage = () => {
+  const [open, setOpen] = useState(false)
+  const onDialogCloseCallback = () => {
+    setOpen(false)
+  }
+  const openDialog = () => {
+    setOpen(true)
+  }
+
   return (
-    <Grid
-      container
-      marginTop={4}
-      marginBottom={4}
-      spacing={4}
-      justifyContent="between"
-    >
-      <Grid display="flex" xs={12} item alignItems="center">
-        <Typography variant="h3" color="text.primary">
-          <CategoryRoundedIcon fontSize="large" sx={{ mr: 2 }} />
-          Manage Categories
-        </Typography>
+    <div>
+      <Grid
+        container
+        marginTop={4}
+        marginBottom={4}
+        spacing={4}
+        justifyContent="between"
+      >
+        <Grid display="flex" xs={12} item alignItems="center">
+          <Typography variant="h3" color="text.primary">
+            <CategoryRoundedIcon fontSize="large" sx={{ mr: 2 }} />
+            Manage Categories
+          </Typography>
 
-        <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ flexGrow: 1 }} />
 
-        <Grid justifyContent="flex-end" alignItems="center">
-          <Button startIcon={<AddRoundedIcon />} variant="contained">
-            Create
-          </Button>
+          <Grid justifyContent="flex-end" alignItems="center">
+            <Button
+              onClick={openDialog}
+              startIcon={<AddRoundedIcon />}
+              variant="contained"
+            >
+              Create
+            </Button>
+          </Grid>
+
+
+        </Grid>
+
+        <Grid mt={2} display="flex" item xs={12} justifyContent="center">
+          <CategoryTree categories={testData} />
         </Grid>
       </Grid>
 
-      <Grid mt={2} display="flex" item xs={12} justifyContent="center">
-        <CategoryTree categories={testData} />
-      </Grid>
-    </Grid>
+      <CreateCategoryDialog
+        open={open}
+        onCloseCallback={onDialogCloseCallback}
+        allCategories={testData}
+      />
+    </div>
   )
 }
