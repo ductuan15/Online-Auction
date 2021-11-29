@@ -5,7 +5,7 @@ import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded'
 import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import Box from '@mui/material/Box'
-import CustomizedTreeView from '../../components/admin/category/CategoryTree'
+import CategoryTree from '../../components/admin/category/CategoryTree'
 
 const testData = [
   {
@@ -18,7 +18,7 @@ const testData = [
       lg: 'http://192.168.1.12:3030/api/images/category/1?type=lg',
       original: 'http://192.168.1.12:3030/api/images/category/1',
     },
-    categories: [
+    otherCategories: [
       {
         id: 2,
         title: 'Laptops & PC',
@@ -92,7 +92,7 @@ export const CategoryManagementPage = () => {
       </Grid>
 
       <Grid mt={2} display="flex" item xs={12} justifyContent="center">
-        <CustomizedTreeView />
+        <CategoryTree categories={testData} />
       </Grid>
     </Grid>
   )

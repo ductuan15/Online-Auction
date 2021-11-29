@@ -1,43 +1,24 @@
 import * as React from 'react'
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import { alpha, styled } from '@mui/material/styles'
 import TreeView from '@mui/lab/TreeView'
 import TreeItem, { treeItemClasses, TreeItemProps } from '@mui/lab/TreeItem'
 import Collapse from '@mui/material/Collapse'
 import { animated, useSpring } from 'react-spring'
 import { TransitionProps } from '@mui/material/transitions'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import { SvgIconProps } from '@mui/material'
+import Category from "../../../data/category";
 
-function MinusSquare(props: SvgIconProps) {
-  return (
-    <SvgIcon fontSize="inherit" style={{ width: 14, height: 14 }} {...props}>
-      {/* tslint:disable-next-line: max-line-length */}
-      <path d="M22.047 22.074v0 0-20.147 0h-20.12v0 20.147 0h20.12zM22.047 24h-20.12q-.803 0-1.365-.562t-.562-1.365v-20.147q0-.776.562-1.351t1.365-.575h20.147q.776 0 1.351.575t.575 1.351v20.147q0 .803-.575 1.365t-1.378.562v0zM17.873 11.023h-11.826q-.375 0-.669.281t-.294.682v0q0 .401.294 .682t.669.281h11.826q.375 0 .669-.281t.294-.682v0q0-.401-.294-.682t-.669-.281z" />
-    </SvgIcon>
-  )
+declare module 'react' {
+  interface CSSProperties {
+    '--tree-view-color'?: string
+    '--tree-view-bg-color'?: string
+  }
 }
-
-function PlusSquare(props: SvgIconProps) {
-  return (
-    <SvgIcon fontSize="inherit" style={{ width: 14, height: 14 }} {...props}>
-      {/* tslint:disable-next-line: max-line-length */}
-      <path d="M22.047 22.074v0 0-20.147 0h-20.12v0 20.147 0h20.12zM22.047 24h-20.12q-.803 0-1.365-.562t-.562-1.365v-20.147q0-.776.562-1.351t1.365-.575h20.147q.776 0 1.351.575t.575 1.351v20.147q0 .803-.575 1.365t-1.378.562v0zM17.873 12.977h-4.923v4.896q0 .401-.281.682t-.682.281v0q-.375 0-.669-.281t-.294-.682v-4.896h-4.923q-.401 0-.682-.294t-.281-.669v0q0-.401.281-.682t.682-.281h4.923v-4.896q0-.401.294-.682t.669-.281v0q.401 0 .682.281t.281.682v4.896h4.923q.401 0 .682.281t.281.682v0q0 .375-.281.669t-.682.294z" />
-    </SvgIcon>
-  )
-}
-
-function CloseSquare(props: SvgIconProps) {
-  return (
-    <SvgIcon
-      className="close"
-      fontSize="inherit"
-      style={{ width: 14, height: 14 }}
-      {...props}
-    >
-      {/* tslint:disable-next-line: max-line-length */}
-      <path d="M17.485 17.512q-.281.281-.682.281t-.696-.268l-4.12-4.147-4.12 4.147q-.294.268-.696.268t-.682-.281-.281-.682.294-.669l4.12-4.147-4.12-4.147q-.294-.268-.294-.669t.281-.682.682-.281.696 .268l4.12 4.147 4.12-4.147q.294-.268.696-.268t.682.281 .281.669-.294.682l-4.12 4.147 4.12 4.147q.294.268 .294.669t-.281.682zM22.047 22.074v0 0-20.147 0h-20.12v0 20.147 0h20.12zM22.047 24h-20.12q-.803 0-1.365-.562t-.562-1.365v-20.147q0-.776.562-1.351t1.365-.575h20.147q.776 0 1.351.575t.575 1.351v20.147q0 .803-.575 1.365t-1.378.562v0z" />
-    </SvgIcon>
-  )
-}
+import EditIcon from '@mui/icons-material/Edit'
 
 function TransitionComponent(props: TransitionProps) {
   const style = useSpring({
@@ -58,7 +39,7 @@ function TransitionComponent(props: TransitionProps) {
   )
 }
 
-const StyledTreeItem = styled((props: TreeItemProps) => (
+const StyledTreeItemRoot = styled((props: TreeItemProps) => (
   <TreeItem {...props} TransitionComponent={TransitionComponent} />
 ))(({ theme }) => ({
   [`& .${treeItemClasses.iconContainer}`]: {
@@ -84,13 +65,6 @@ const StyledTreeItem = styled((props: TreeItemProps) => (
     '&.Mui-expanded': {
       fontWeight: theme.typography.fontWeightRegular,
     },
-    '&:hover': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
-      backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
-      color: 'var(--tree-view-color)',
-    },
     [`& .${treeItemClasses.label}`]: {
       fontSize: theme.typography.h5.fontSize,
       fontWeight: 'inherit',
@@ -99,14 +73,89 @@ const StyledTreeItem = styled((props: TreeItemProps) => (
   },
 }))
 
-export default function CustomizedTreeView() {
+function CategoryTreeItem(props: StyledTreeItemProps) {
+  const {
+    // bgColor,
+    // color,
+    labelIcon: LabelIcon,
+    labelInfo,
+    labelText,
+    ...other
+  } = props
+
+  return (
+    <StyledTreeItemRoot
+      label={
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            '#labelIcon': {
+              display: 'none',
+            },
+            ':hover #labelIcon': {
+              display: 'block',
+            },
+          }}
+        >
+          <Box color="inherit" />
+          <Typography variant="h5" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
+            {labelText}
+          </Typography>
+
+          <Typography variant="caption" color="inherit">
+            {labelInfo}
+          </Typography>
+
+          <Box id="labelIcon" component={LabelIcon} sx={{}} />
+        </Box>
+      }
+      // style={{
+      //   '--tree-view-color': color,
+      //   '--tree-view-bg-color': bgColor,
+      // }}
+      {...other}
+    />
+  )
+}
+
+type StyledTreeItemProps = TreeItemProps & {
+  bgColor?: string
+  color?: string
+  labelIcon?: React.ElementType<SvgIconProps>
+  labelInfo?: string
+  labelText: string
+}
+
+type CategoryTreeProps = {
+  categories?: Array<Category>
+}
+
+function renderCategoryTree(categories?: Array<Category>) {
+  return (
+    <div>
+      {categories?.map((category) => (
+        <CategoryTreeItem
+          nodeId={`${category.id}`}
+          labelText={category.title}
+          key={`${category.title}`}
+          labelIcon={EditIcon}
+        >
+          {/*recursion*/}
+          {category.otherCategories && renderCategoryTree(category.otherCategories)}
+        </CategoryTreeItem>
+      ))}
+    </div>
+  )
+}
+
+export default function CategoryTree({categories}: CategoryTreeProps) {
   return (
     <TreeView
       aria-label="customized"
       defaultExpanded={['1']}
-      defaultCollapseIcon={<MinusSquare />}
-      defaultExpandIcon={<PlusSquare />}
-      defaultEndIcon={<CloseSquare />}
+      defaultCollapseIcon={<KeyboardArrowUpIcon />}
+      defaultExpandIcon={<KeyboardArrowDownIcon />}
       sx={{
         maxWidth: 0.75,
         flexGrow: 1,
@@ -114,20 +163,9 @@ export default function CustomizedTreeView() {
         color: 'text.primary',
       }}
     >
-      <StyledTreeItem nodeId="1" label="All categories">
-        <StyledTreeItem nodeId="2" label="Hello" />
-        <StyledTreeItem nodeId="3" label="Subtree with children">
-          <StyledTreeItem nodeId="6" label="Hello" />
-          <StyledTreeItem nodeId="7" label="Sub-subtree with children">
-            <StyledTreeItem nodeId="9" label="Child 1" />
-            <StyledTreeItem nodeId="10" label="Child 2" />
-            <StyledTreeItem nodeId="11" label="Child 3" />
-          </StyledTreeItem>
-          <StyledTreeItem nodeId="8" label="Hello" />
-        </StyledTreeItem>
-        <StyledTreeItem nodeId="4" label="World" />
-        <StyledTreeItem nodeId="5" label="Something something" />
-      </StyledTreeItem>
+      <StyledTreeItemRoot nodeId="-1" label="All categories">
+        {renderCategoryTree(categories)}
+      </StyledTreeItemRoot>
     </TreeView>
   )
 }
