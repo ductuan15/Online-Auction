@@ -11,8 +11,7 @@ import Category from '../../../data/category'
 import TextField from '@mui/material/TextField'
 import ParentCategoryChooser from './ParentCategoryChooser'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
-import {Alert, CardMedia, Grid} from '@mui/material'
-import Typography from "@mui/material/Typography";
+import { Alert, CardMedia, Grid } from '@mui/material'
 
 const Input = styled('input')({
   display: 'none',
@@ -113,7 +112,7 @@ function BaseCategoryDialog(props: BaseCategoryDialogProps) {
               />
 
               <Button
-                sx={{width: 1}}
+                sx={{ width: 1 }}
                 startIcon={<ImageOutlinedIcon />}
                 variant="contained"
                 component="span"
@@ -123,22 +122,24 @@ function BaseCategoryDialog(props: BaseCategoryDialogProps) {
             </Label>
           </Grid>
 
-          <Grid item>
-            {image && (
+          {image && (
+            <Grid item>
               <CardMedia
                 component="img"
                 sx={{ width: 128 }}
                 image={image}
                 alt="Category thumbnail"
               />
-            )}
-          </Grid>
+            </Grid>
+          )}
 
-          <Grid item>
-            <Alert severity='info'>
-              The image will be resized to 1024x1024 pixels
-            </Alert>
-          </Grid>
+          {image && (
+            <Grid item>
+              <Alert severity="info">
+                The image will be resized to 1024x1024 pixels
+              </Alert>
+            </Grid>
+          )}
         </Grid>
 
         {extraComponent && extraComponent()}

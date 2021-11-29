@@ -10,7 +10,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { SvgIconProps } from '@mui/material'
-import Category from "../../../data/category";
+import Category from '../../../data/category'
+import EditIcon from '@mui/icons-material/Edit'
 
 declare module 'react' {
   interface CSSProperties {
@@ -18,7 +19,6 @@ declare module 'react' {
     '--tree-view-bg-color'?: string
   }
 }
-import EditIcon from '@mui/icons-material/Edit'
 
 function TransitionComponent(props: TransitionProps) {
   const style = useSpring({
@@ -61,9 +61,11 @@ const StyledTreeItemRoot = styled((props: TreeItemProps) => (
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
 
-    fontWeight: theme.typography.fontWeightMedium,
-    '&.Mui-expanded': {
-      fontWeight: theme.typography.fontWeightRegular,
+    fontWeight: theme.typography.fontWeightRegular,
+    '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
+      backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+      color: 'var(--tree-view-color)',
+      fontWeight: theme.typography.fontWeightMedium,
     },
     [`& .${treeItemClasses.label}`]: {
       fontSize: theme.typography.h5.fontSize,
@@ -142,14 +144,15 @@ function renderCategoryTree(categories?: Array<Category>) {
           labelIcon={EditIcon}
         >
           {/*recursion*/}
-          {category.otherCategories && renderCategoryTree(category.otherCategories)}
+          {category.otherCategories &&
+            renderCategoryTree(category.otherCategories)}
         </CategoryTreeItem>
       ))}
     </div>
   )
 }
 
-export default function CategoryTree({categories}: CategoryTreeProps) {
+export default function CategoryTree({ categories }: CategoryTreeProps) {
   return (
     <TreeView
       aria-label="customized"
