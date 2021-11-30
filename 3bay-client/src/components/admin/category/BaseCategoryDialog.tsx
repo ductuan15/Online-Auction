@@ -104,6 +104,14 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps) {
             </Label>
           </Grid>
 
+          {!image && category?.thumbnails && (
+            <Grid item>
+              <CardMedia component="img" sx={{ width: 128 }} image={
+                category.thumbnails.sm
+              } alt="Category thumbnail" />
+            </Grid>
+          )}
+
           {image && (
             <Grid item>
               <CardMedia component="img" sx={{ width: 128 }} image={image} alt="Category thumbnail" />
