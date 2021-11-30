@@ -9,19 +9,26 @@ import { FormHelperText } from '@mui/material'
 
 type ParentCategoryChooserProps = {
   allCategories?: Array<Category>
+  currentCategory?: Category
 }
 
 export default function ParentCategoryChooser({
   allCategories,
+  currentCategory,
 }: ParentCategoryChooserProps) {
-  const [cat, setCat] = React.useState('')
+  let initialValue = '-1'
+  if (currentCategory && currentCategory.parent_id) {
+    initialValue = `${currentCategory.parent_id}`
+  }
+  const [cat, setCat] = React.useState(initialValue)
+  // console.log(currentCategory)
 
   const handleChange = (event: SelectChangeEvent) => {
     setCat(event.target.value as string)
   }
 
   return (
-    <Box sx={{mb: 2}}>
+    <Box sx={{ mb: 2 }}>
       <FormControl fullWidth>
         <InputLabel id="parent-category-chooser">Sub-category of</InputLabel>
         <Select
@@ -29,14 +36,14 @@ export default function ParentCategoryChooser({
           labelId="parent-category-chooser"
           id="parent-category-select"
           value={cat}
-          label='Sub-category of'
+          label="Sub-category of"
           onChange={handleChange}
         >
-          <MenuItem key={-1} value={-1}>
+          <MenuItem key={-1} value={'-1'}>
             None
           </MenuItem>
           {allCategories?.map((category) => (
-            <MenuItem key={category.id} value={category.id}>
+            <MenuItem key={category.id} value={`${category.id}`}>
               {category.title}
             </MenuItem>
           ))}

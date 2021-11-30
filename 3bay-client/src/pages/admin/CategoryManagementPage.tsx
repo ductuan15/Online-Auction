@@ -7,13 +7,16 @@ import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import Box from '@mui/material/Box'
 import CategoryTree from '../../components/admin/category/CategoryTree'
-import { CreateCategoryDialog } from '../../components/admin/category/CategoryCRUDDialog'
+import { CreateCategoryDialog } from '../../components/admin/category/CreateCategoryDialog'
 import config from '../../config/config'
 import Category from '../../data/category'
+import { EditCategoryDialog } from '../../components/admin/category/EditCategoryDialog'
 
 export const CategoryManagementPage = () => {
-  const [open, setOpen] = useState(false)
+  const [openCreateDialog, setOpenCreateDialog] = useState(false)
+  const [openEditDialog, setOpenEditDialog] = useState(false)
   const [categories, setCategories] = useState<Array<Category>>(() => [])
+  const [currentEditingCategory, setCurrentEditingCategory] = useState<Category | undefined>(undefined)
 
   useEffect(() => {
     fetch(`${config.apiHostName}/api/category/`)
@@ -35,21 +38,23 @@ export const CategoryManagementPage = () => {
   }, [])
 
   const onDialogCloseCallback = () => {
-    setOpen(false)
+    setOpenCreateDialog(false)
+    setOpenEditDialog(false)
+    setCurrentEditingCategory(undefined)
   }
+
   const openDialog = () => {
-    setOpen(true)
+    setOpenCreateDialog(true)
+  }
+
+  const onCategorySelected = (category: Category) => {
+    setCurrentEditingCategory(category)
+    setOpenEditDialog(true)
   }
 
   return (
     <div>
-      <Grid
-        container
-        marginTop={1}
-        marginBottom={4}
-        spacing={4}
-        justifyContent="between"
-      >
+      <Grid container marginTop={1} marginBottom={4} spacing={4} justifyContent="between">
         <Grid display="flex" xs={12} item alignItems="center">
           <Typography
             color="text.primary"
@@ -67,23 +72,26 @@ export const CategoryManagementPage = () => {
           <Box sx={{ flexGrow: 1 }} />
 
           <Grid justifyContent="flex-end" alignItems="center">
-            <Button
-              onClick={openDialog}
-              startIcon={<AddRoundedIcon />}
-              variant="contained"
-            >
+            <Button onClick={openDialog} startIcon={<AddRoundedIcon />} variant="contained">
               Create
             </Button>
           </Grid>
         </Grid>
 
         <Grid mt={2} display="flex" item xs={12} justifyContent="center">
-          <CategoryTree categories={categories} />
+          <CategoryTree categories={categories} onCategorySelected={onCategorySelected} />
         </Grid>
       </Grid>
 
       <CreateCategoryDialog
-        open={open}
+        open={openCreateDialog}
+        onCloseCallback={onDialogCloseCallback}
+        allCategories={categories}
+      />
+
+      <EditCategoryDialog
+        category={currentEditingCategory}
+        open={openEditDialog}
         onCloseCallback={onDialogCloseCallback}
         allCategories={categories}
       />

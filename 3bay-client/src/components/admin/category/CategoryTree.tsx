@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { SyntheticEvent } from 'react'
 import { alpha, styled } from '@mui/material/styles'
 import TreeView from '@mui/lab/TreeView'
 import TreeItem, { treeItemClasses, TreeItemProps } from '@mui/lab/TreeItem'
@@ -9,9 +10,9 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { SvgIconProps } from '@mui/material'
 import Category from '../../../data/category'
 import EditIcon from '@mui/icons-material/Edit'
+import { SvgIconProps } from '@mui/material'
 
 declare module 'react' {
   interface CSSProperties {
@@ -78,15 +79,24 @@ const StyledTreeItemRoot = styled((props: TreeItemProps) => (
   },
 }))
 
-function CategoryTreeItem(props: StyledTreeItemProps) {
+function CategoryTreeItem(props: CategoryTreeItemProps) {
   const {
     // bgColor,
     // color,
     labelIcon: LabelIcon,
     labelInfo,
     labelText,
+    category,
+    onCategorySelected: onCategorySelectedCallback,
     ...other
   } = props
+
+  const onCategorySelected = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    if (category && onCategorySelectedCallback) {
+      onCategorySelectedCallback(category)
+    }
+  }
 
   return (
     <StyledTreeItemRoot
@@ -104,13 +114,16 @@ function CategoryTreeItem(props: StyledTreeItemProps) {
           }}
         >
           <Box color="inherit" />
-          <Typography sx={(theme) => ({
-            fontWeight: 'inherit', flexGrow: 1,
-            [theme.breakpoints.down('sm')]: {
-              typography: 'body1'
-            },
-            typography: 'h5'
-          })}>
+          <Typography
+            sx={(theme) => ({
+              fontWeight: 'inherit',
+              flexGrow: 1,
+              [theme.breakpoints.down('sm')]: {
+                typography: 'body1',
+              },
+              typography: 'h5',
+            })}
+          >
             {labelText}
           </Typography>
 
@@ -118,7 +131,7 @@ function CategoryTreeItem(props: StyledTreeItemProps) {
             {labelInfo}
           </Typography>
 
-          <Box id="labelIcon" component={LabelIcon} sx={{}} />
+          <Box id="labelIcon" component={LabelIcon} sx={{}} onClick={onCategorySelected} />
         </Box>
       }
       // style={{
@@ -130,38 +143,42 @@ function CategoryTreeItem(props: StyledTreeItemProps) {
   )
 }
 
-type StyledTreeItemProps = TreeItemProps & {
+type CategoryTreeItemProps = TreeItemProps & {
   bgColor?: string
   color?: string
   labelIcon?: React.ElementType<SvgIconProps>
   labelInfo?: string
   labelText: string
+  category?: Category
+  onCategorySelected?: (category: Category) => void
 }
 
 type CategoryTreeProps = {
   categories?: Array<Category>
+  onCategorySelected?: (category: Category) => void
 }
 
-function renderCategoryTree(categories?: Array<Category>) {
+function renderCategoryTree(categories?: Array<Category>, onCategorySelected?: (category: Category) => void) {
   return (
-    <div>
+    <>
       {categories?.map((category) => (
         <CategoryTreeItem
           nodeId={`${category.id}`}
           labelText={category.title}
           key={`${category.title}`}
           labelIcon={EditIcon}
+          category={category}
+          onCategorySelected={onCategorySelected}
         >
           {/*recursion*/}
-          {category.other_categories &&
-            renderCategoryTree(category.other_categories)}
+          {category.other_categories && renderCategoryTree(category.other_categories, onCategorySelected)}
         </CategoryTreeItem>
       ))}
-    </div>
+    </>
   )
 }
 
-export default function CategoryTree({ categories }: CategoryTreeProps) {
+export default function CategoryTree({ categories, onCategorySelected }: CategoryTreeProps) {
   return (
     <TreeView
       aria-label="customized"
@@ -184,7 +201,7 @@ export default function CategoryTree({ categories }: CategoryTreeProps) {
       })}
     >
       <StyledTreeItemRoot nodeId="-1" label="All categories">
-        {renderCategoryTree(categories)}
+        {renderCategoryTree(categories, onCategorySelected)}
       </StyledTreeItemRoot>
     </TreeView>
   )

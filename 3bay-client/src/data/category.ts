@@ -13,7 +13,7 @@ class Category {
     original: '',
   }
 
-  parentId?: number
+  parent_id?: number
   other_categories?: Array<Category>
 
   constructor(data: Partial<Category> = {}) {

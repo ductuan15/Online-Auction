@@ -1,18 +1,18 @@
+import { styled, useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import * as React from 'react'
 import { ChangeEvent, useRef, useState } from 'react'
-import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { styled, useTheme } from '@mui/material/styles'
-import Category from '../../../data/category'
+import DialogContent from '@mui/material/DialogContent'
+import Box from '@mui/material/Box'
+import { Alert, CardMedia, Grid, LinearProgress } from '@mui/material'
 import TextField from '@mui/material/TextField'
 import ParentCategoryChooser from './ParentCategoryChooser'
+import Button from '@mui/material/Button'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
-import { Alert, CardMedia, Grid, LinearProgress } from '@mui/material'
-import Box from '@mui/material/Box'
+import DialogActions from '@mui/material/DialogActions'
+import Category from '../../../data/category'
 
 const Input = styled('input')({
   display: 'none',
@@ -30,33 +30,8 @@ type BaseCategoryDialogProps = {
   extraComponent?: () => JSX.Element
 }
 
-type CreateCategoryDialogProps = {
-  allCategories?: Array<Category>
-  open: boolean
-  onCloseCallback: () => void
-}
-
-export function CreateCategoryDialog(props: CreateCategoryDialogProps) {
-  return (
-    <BaseCategoryDialog
-      open={props.open}
-      onCloseCallback={props.onCloseCallback}
-      title={'Create new category'}
-      dialogName={'category-create-dialog'}
-      allCategories={props.allCategories}
-    />
-  )
-}
-
-function BaseCategoryDialog(props: BaseCategoryDialogProps) {
-  const {
-    open,
-    onCloseCallback,
-    dialogName,
-    title,
-    allCategories,
-    extraComponent,
-  } = props
+export function BaseCategoryDialog(props: BaseCategoryDialogProps) {
+  const { open, onCloseCallback, dialogName, title, allCategories, extraComponent, category } = props
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
   const progressRef = useRef<HTMLDivElement>(null)
@@ -84,12 +59,7 @@ function BaseCategoryDialog(props: BaseCategoryDialogProps) {
   }
 
   return (
-    <Dialog
-      fullScreen={fullScreen}
-      open={open}
-      onClose={onClose}
-      aria-labelledby={dialogName}
-    >
+    <Dialog fullScreen={fullScreen} open={open} onClose={onClose} aria-labelledby={dialogName}>
       <DialogTitle id={dialogName}>{title}</DialogTitle>
 
       <DialogContent>
@@ -105,10 +75,11 @@ function BaseCategoryDialog(props: BaseCategoryDialogProps) {
           fullWidth
           variant="outlined"
           color="secondary"
+          value={category ? category.title : ''}
           sx={{ mt: 2, mb: 2 }}
         />
 
-        <ParentCategoryChooser allCategories={allCategories} />
+        <ParentCategoryChooser allCategories={allCategories} currentCategory={category} />
 
         <Grid
           container
@@ -120,12 +91,7 @@ function BaseCategoryDialog(props: BaseCategoryDialogProps) {
         >
           <Grid item width={1}>
             <Label htmlFor="contained-button-file">
-              <Input
-                accept="image/jpeg"
-                id="contained-button-file"
-                type="file"
-                onChange={onImageChange}
-              />
+              <Input accept="image/jpeg" id="contained-button-file" type="file" onChange={onImageChange} />
 
               <Button
                 sx={{ width: 1 }}
@@ -140,20 +106,13 @@ function BaseCategoryDialog(props: BaseCategoryDialogProps) {
 
           {image && (
             <Grid item>
-              <CardMedia
-                component="img"
-                sx={{ width: 128 }}
-                image={image}
-                alt="Category thumbnail"
-              />
+              <CardMedia component="img" sx={{ width: 128 }} image={image} alt="Category thumbnail" />
             </Grid>
           )}
 
           {image && (
             <Grid item>
-              <Alert severity="info">
-                The image will be resized to 1024x1024 pixels
-              </Alert>
+              <Alert severity="info">The image will be resized to 1024x1024 pixels</Alert>
             </Grid>
           )}
         </Grid>
