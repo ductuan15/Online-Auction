@@ -42,11 +42,17 @@ export default function ParentCategoryChooser({
           <MenuItem key={-1} value={'-1'}>
             None
           </MenuItem>
-          {allCategories?.map((category) => (
-            <MenuItem key={category.id} value={`${category.id}`}>
-              {category.title}
-            </MenuItem>
-          ))}
+          {allCategories?.map((category) => {
+            // should not render currentCategory option
+            if (currentCategory && currentCategory.id === category.id) {
+              return <></>
+            }
+            return (
+              <MenuItem key={category.id} value={`${category.id}`}>
+                {category.title}
+              </MenuItem>
+            )
+          })}
         </Select>
         {(!allCategories || allCategories.length == 0) && (
           <FormHelperText>There is no category to choose</FormHelperText>
