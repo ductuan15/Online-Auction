@@ -49,12 +49,28 @@ function errNotFound(res: express.Response) {
   })
 }
 
+interface CategoryRes {
+  id: number,
+  title: string,
+  parent_id: number | null,
+  other_categories: { id: number, title: string, parent_id: number | null }[]
+}
+
+function isCategoryRes(category: pkg.categories | CategoryRes): category is CategoryRes {
+  return (<CategoryRes>category).other_categories !== undefined
+}
+
 function categoryWithThumbnailLinks(
-  category:
-    | pkg.categories
-    | { id: number; title: string; parent_id: number | null },
+  category: CategoryRes,
 ) {
   const link = `${config.hostname}/api/images/category/${category.id}`
+
+  if (isCategoryRes(category)) {
+    // get thumbnail links for sub-categories
+    category.other_categories = category.other_categories.map((subCat) => {
+      return categoryWithThumbnailLinks(subCat as CategoryRes)
+    })
+  }
 
   return {
     ...category,
@@ -62,7 +78,7 @@ function categoryWithThumbnailLinks(
       sm: `${link}?type=sm`,
       md: `${link}?type=md`,
       lg: `${link}?type=lg`,
-      original: `${link}`
+      original: `${link}`,
     },
   }
 }
@@ -74,7 +90,14 @@ const findAll = (req: express.Request, res: express.Response) => {
         id: true,
         title: true,
         parent_id: true,
-        other_categories: true
+        // get subcategory
+        other_categories: {
+          select: {
+            id: true,
+            title: true,
+            parent_id: true,
+          },
+        },
       },
       where: {
         parent_id: null,
