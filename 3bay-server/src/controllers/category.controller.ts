@@ -74,8 +74,10 @@ const findAll = (req: express.Request, res: express.Response) => {
         id: true,
         title: true,
         parent_id: true,
+        other_categories: true
       },
       where: {
+        parent_id: null,
         deleted_at: null,
       },
     })
