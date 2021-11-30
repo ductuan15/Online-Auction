@@ -14,16 +14,10 @@ class Category {
   }
 
   parentId?: number
-  otherCategories?: Array<Category>
+  other_categories?: Array<Category>
 
-  constructor(object?: any) {
-    if (object && object.title && object.thumbnails) {
-      this.id = object.id
-      this.title = object.title
-      this.thumbnails = object.thumbnails
-      this.parentId = object.parentId
-      this.otherCategories = object.otherCategories
-    }
+  constructor(data: Partial<Category> = {}) {
+    Object.assign(this, data)
   }
 }
 

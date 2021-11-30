@@ -153,8 +153,8 @@ function renderCategoryTree(categories?: Array<Category>) {
           labelIcon={EditIcon}
         >
           {/*recursion*/}
-          {category.otherCategories &&
-            renderCategoryTree(category.otherCategories)}
+          {category.other_categories &&
+            renderCategoryTree(category.other_categories)}
         </CategoryTreeItem>
       ))}
     </div>
