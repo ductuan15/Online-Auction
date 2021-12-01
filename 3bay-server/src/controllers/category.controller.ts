@@ -2,6 +2,7 @@ import * as express from 'express'
 import prisma from '../db/prisma.js'
 import pkg from '@prisma/client'
 import config from '../config/config.js'
+import { saveCategoryThumbnail } from './images.controller.js'
 
 const Prisma = pkg.Prisma
 
@@ -133,9 +134,12 @@ const add = async (req: express.Request, res: express.Response) => {
         const category = await prisma.categories.create({
           data: {
             title: data.title as string,
-            parent_id: data.parentId || data.parent_id || null,
+            parent_id: JSON.parse(data.parent_id) || null,
           },
         })
+        if (req.file) {
+          await saveCategoryThumbnail(req.file, category)
+        }
         return res.status(201).json(category)
       } catch (err: any) {
         return handleCreateCategoryError(err, res)

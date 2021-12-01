@@ -1,11 +1,12 @@
 import * as express from 'express'
 import categoryController from '../controllers/category.controller.js'
+import { uploadCategoryThumbnail } from '../middlewares/upload-category.mdw.js'
 
 const router = express.Router()
 
 router.route('/api/category')
   .get(categoryController.findAll)
-  .post(categoryController.add)
+  .post(uploadCategoryThumbnail.single('thumbnail'), categoryController.add)
 
 router.route('/api/category/:categoryId')
   .get(categoryController.read)

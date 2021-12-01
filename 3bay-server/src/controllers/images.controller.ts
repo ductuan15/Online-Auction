@@ -1,8 +1,9 @@
 import express from 'express'
-import * as fs from 'fs'
+import fs from 'fs-extra'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
+import pkg from '@prisma/client'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -107,6 +108,17 @@ const findCategoryThumbnailById = (
   }
   next()
 }
+
+export async function saveCategoryThumbnail(file: Express.Multer.File, category: pkg.categories) {
+
+  const fileOutName = `${CATEGORY_THUMBNAIL_PATH}/${category.id}.jpeg`
+
+  // crop the original image & save
+  await sharp(file.buffer)
+    .resize(1024)
+    .toFile(fileOutName)
+}
+
 
 export default {
   findCategoryThumbnail,
