@@ -54,7 +54,7 @@ export const CategoryManagementPage = (): JSX.Element => {
 
   return (
     <div>
-      <Grid container marginTop={1} marginBottom={4} spacing={4} justifyContent="between">
+      <Grid container marginBottom={4} spacing={4} justifyContent="between">
         <Grid display="flex" xs={12} item alignItems="center">
           <Typography
             color="text.primary"

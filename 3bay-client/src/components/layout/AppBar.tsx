@@ -91,7 +91,7 @@ function HideOnScroll({ children }: Props) {
   )
 }
 
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+export const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   minHeight: APPBAR_SMALL,
   [theme.breakpoints.up('lg')]: {
     minHeight: APPBAR_LARGE,

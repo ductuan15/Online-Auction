@@ -1,8 +1,7 @@
 import { Container } from '@mui/material'
 import React from 'react'
 
-import SearchAppBar from './AppBar'
-import Toolbar from '@mui/material/Toolbar'
+import SearchAppBar, { StyledToolbar } from './AppBar'
 import AppFooter from './AppFooter'
 import { styled } from '@mui/material/styles'
 
@@ -20,7 +19,7 @@ export default function Layout({ children }: Props): JSX.Element {
       {/* app bar */}
       <SearchAppBar />
 
-      <Toolbar />
+      <StyledToolbar sx={(theme) => ({ marginBottom: theme.spacing(1) })} />
 
       {/* main content */}
       <Container sx={{ bgcolor: 'background.paper' }}>{children}</Container>
