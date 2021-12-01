@@ -40,6 +40,13 @@ async function createCategoryThumbnailIfNotExist(
       )
     }
 
+    // create folder name if not exist
+    if (!fs.existsSync(`${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`)) {
+      fs.mkdirSync(
+        `${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`,
+      )
+    }
+
     // crop the original image & save
     await sharp(`${CATEGORY_THUMBNAIL_PATH}/${id}.jpeg`)
       .resize(size)
@@ -70,7 +77,7 @@ const findCategoryThumbnail = async (
   }
 
   try {
-    const fileOutName = `${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}${type}.jpeg`
+    const fileOutName = `${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}/${id}${type}.jpeg`
     await createCategoryThumbnailIfNotExist(fileOutName, id, size)
 
     return res.sendFile(fileOutName)
