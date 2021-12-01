@@ -7,7 +7,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Category from '../../../data/category'
 import { FormHelperText } from '@mui/material'
 
-type ParentCategoryChooserProps = {
+export type ParentCategoryChooserProps = {
   allCategories?: Array<Category>
   currentCategory?: Category
 }
@@ -32,6 +32,7 @@ export default function ParentCategoryChooser({
       <FormControl fullWidth>
         <InputLabel id="parent-category-chooser">Sub-category of</InputLabel>
         <Select
+          name='parent_id'
           disabled={!allCategories || allCategories.length == 0}
           labelId="parent-category-chooser"
           id="parent-category-select"
@@ -39,14 +40,13 @@ export default function ParentCategoryChooser({
           label="Sub-category of"
           onChange={handleChange}
         >
-          <MenuItem key={-1} value={'-1'}>
+          <MenuItem key={'-1'} value={'-1'}>
             None
           </MenuItem>
-          {allCategories?.map((category) => {
+          {allCategories?.filter((category) => {
             // should not render currentCategory option
-            if (currentCategory && currentCategory.id === category.id) {
-              return <></>
-            }
+            return !currentCategory || (currentCategory && currentCategory.id !== category.id)
+          }).map((category) => {
             return (
               <MenuItem key={category.id} value={`${category.id}`}>
                 {category.title}
