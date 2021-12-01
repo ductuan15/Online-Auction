@@ -10,7 +10,7 @@ router.route('/api/category')
 
 router.route('/api/category/:categoryId')
   .get(categoryController.read)
-  .patch(categoryController.update)
+  .patch(uploadCategoryThumbnail.single('thumbnail'), categoryController.update)
 
 router.param('categoryId', categoryController.categoryById)
 

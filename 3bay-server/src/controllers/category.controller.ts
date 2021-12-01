@@ -164,8 +164,8 @@ const update = async (req: express.Request, res: express.Response) => {
     try {
       const count = await prisma.categories.updateMany({
         data: {
-          title: data.title || req.category,
-          parent_id: data.parent_id || data.parentId || req.category.parent_id,
+          title: data.title || req.category.title,
+          parent_id: JSON.parse(data.parent_id) || req.category.parent_id,
         },
         where: {
           // ignore soft delete fields
