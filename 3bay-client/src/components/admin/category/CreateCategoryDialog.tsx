@@ -8,7 +8,7 @@ type CreateCategoryDialogProps = {
   onCloseCallback: () => void
 }
 
-export function CreateCategoryDialog(props: CreateCategoryDialogProps) {
+export function CreateCategoryDialog(props: CreateCategoryDialogProps): JSX.Element {
   return (
     <BaseCategoryDialog
       open={props.open}

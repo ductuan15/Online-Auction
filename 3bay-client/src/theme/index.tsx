@@ -1,9 +1,5 @@
 import * as React from 'react'
-import {
-  createTheme,
-  StyledEngineProvider,
-  ThemeProvider,
-} from '@mui/material/styles'
+import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles'
 import palette from './palette'
 import { CssBaseline, PaletteMode } from '@mui/material'
 
@@ -17,7 +13,7 @@ export const ColorModeContext = React.createContext({
 })
 
 // TODO: save dark/light mode preference
-export default function ThemeConfig(props: Props) {
+export default function ThemeConfig(props: Props): JSX.Element {
   const [mode, setMode] = React.useState<PaletteMode>('light')
 
   const getDesignTokens = (mode: PaletteMode) => ({
@@ -31,9 +27,7 @@ export default function ThemeConfig(props: Props) {
     () => ({
       // The dark mode switch would invoke this method
       toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) =>
-          prevMode === 'light' ? 'dark' : 'light',
-        )
+        setMode((prevMode: PaletteMode) => (prevMode === 'light' ? 'dark' : 'light'))
       },
     }),
     [],

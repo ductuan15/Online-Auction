@@ -32,7 +32,7 @@ function renderLinks() {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              color: 'text.primary'
+              color: 'text.primary',
             }}
             key={column.title}
           >
@@ -61,12 +61,9 @@ function renderLinks() {
   )
 }
 
-export default function AppFooter() {
+export default function AppFooter(): JSX.Element {
   return (
-    <Container
-      component="footer"
-      sx={{bgcolor: 'background.paper'}}
-    >
+    <Container component="footer" sx={{ bgcolor: 'background.paper' }}>
       <Divider />
       <Box
         sx={(theme) => ({
@@ -95,12 +92,7 @@ export default function AppFooter() {
       >
         <div>
           <AppName bigSize />
-          <Typography
-            variant="subtitle2"
-            color="text.primary"
-            fontWeight="bold"
-            sx={{ mt: 1.5 }}
-          >
+          <Typography variant="subtitle2" color="text.primary" fontWeight="bold" sx={{ mt: 1.5 }}>
             Subscribe to our letters! Please UwU
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>

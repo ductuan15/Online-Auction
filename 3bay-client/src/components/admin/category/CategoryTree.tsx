@@ -21,7 +21,7 @@ declare module 'react' {
   }
 }
 
-function TransitionComponent(props: TransitionProps) {
+function TransitionComponent(props: TransitionProps): JSX.Element {
   const style = useSpring({
     from: {
       opacity: 0,
@@ -79,7 +79,7 @@ const StyledTreeItemRoot = styled((props: TreeItemProps) => (
   },
 }))
 
-function CategoryTreeItem(props: CategoryTreeItemProps) {
+function CategoryTreeItem(props: CategoryTreeItemProps): JSX.Element {
   const {
     // bgColor,
     // color,
@@ -158,7 +158,10 @@ type CategoryTreeProps = {
   onCategorySelected?: (category: Category) => void
 }
 
-function renderCategoryTree(categories?: Array<Category>, onCategorySelected?: (category: Category) => void) {
+function renderCategoryTree(
+  categories?: Array<Category>,
+  onCategorySelected?: (category: Category) => void,
+): JSX.Element {
   return (
     <>
       {categories?.map((category) => (
@@ -178,7 +181,7 @@ function renderCategoryTree(categories?: Array<Category>, onCategorySelected?: (
   )
 }
 
-export default function CategoryTree({ categories, onCategorySelected }: CategoryTreeProps) {
+export default function CategoryTree({ categories, onCategorySelected }: CategoryTreeProps): JSX.Element {
   return (
     <TreeView
       aria-label="customized"

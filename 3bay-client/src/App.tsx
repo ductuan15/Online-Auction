@@ -3,7 +3,7 @@ import Layout from './components/layout/Layout'
 import ThemeConfig from './theme'
 import { CategoryManagementPage } from './pages/admin/CategoryManagementPage'
 
-function App() {
+function App(): JSX.Element {
   return (
     <ThemeConfig>
       <Layout>

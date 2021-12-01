@@ -10,19 +10,14 @@ interface Props {
   category: Category
 }
 
-export default function CategoryCard(prop: Props) {
+export default function CategoryCard(prop: Props): JSX.Element {
   const [elevation, setElevation] = useState(0)
 
   const onMouseOver = () => setElevation(24)
   const onMouseOut = () => setElevation(0)
 
   return (
-    <Card
-      elevation={elevation}
-      onMouseOver={onMouseOver}
-      onMouseOut={onMouseOut}
-      sx={{ borderRadius: 4 }}
-    >
+    <Card elevation={elevation} onMouseOver={onMouseOver} onMouseOut={onMouseOut} sx={{ borderRadius: 4 }}>
       <CardActionArea>
         {/*TODO extract jss styles*/}
         <Box sx={{ position: 'relative' }}>

@@ -15,7 +15,7 @@ type ParentCategoryChooserProps = {
 export default function ParentCategoryChooser({
   allCategories,
   currentCategory,
-}: ParentCategoryChooserProps) {
+}: ParentCategoryChooserProps): JSX.Element {
   let initialValue = '-1'
   if (currentCategory && currentCategory.parent_id) {
     initialValue = `${currentCategory.parent_id}`

@@ -9,7 +9,7 @@ export type EditCategoryDialogProps = {
   category?: Category
 }
 
-export function EditCategoryDialog(props: EditCategoryDialogProps) {
+export function EditCategoryDialog(props: EditCategoryDialogProps): JSX.Element {
   return (
     <BaseCategoryDialog
       open={props.open}

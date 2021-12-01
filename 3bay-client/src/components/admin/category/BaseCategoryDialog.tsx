@@ -30,7 +30,7 @@ type BaseCategoryDialogProps = {
   extraComponent?: () => JSX.Element
 }
 
-export function BaseCategoryDialog(props: BaseCategoryDialogProps) {
+export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element {
   const { open, onCloseCallback, dialogName, title, allCategories, extraComponent, category } = props
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))

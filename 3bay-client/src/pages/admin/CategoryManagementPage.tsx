@@ -12,7 +12,7 @@ import config from '../../config/config'
 import Category from '../../data/category'
 import { EditCategoryDialog } from '../../components/admin/category/EditCategoryDialog'
 
-export const CategoryManagementPage = () => {
+export const CategoryManagementPage = (): JSX.Element => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false)
   const [openEditDialog, setOpenEditDialog] = useState(false)
   const [categories, setCategories] = useState<Array<Category>>(() => [])
