@@ -3,10 +3,10 @@ import fs from 'fs-extra'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
-import pkg from '@prisma/client'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+sharp.cache(false)
 
 const thumbnails = ['sm', 'md', 'lg', ''] as const
 type Thumbnail = typeof thumbnails[number]
@@ -36,16 +36,12 @@ async function createCategoryThumbnailIfNotExist(
   if (!fs.existsSync(fileOutName)) {
     // create folder name if not exist
     if (!fs.existsSync(CATEGORY_THUMBNAIL_OUTPUT_PATH)) {
-      fs.mkdirSync(
-        CATEGORY_THUMBNAIL_OUTPUT_PATH,
-      )
+      fs.mkdirSync(CATEGORY_THUMBNAIL_OUTPUT_PATH)
     }
 
     // create folder name if not exist
     if (!fs.existsSync(`${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`)) {
-      fs.mkdirSync(
-        `${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`,
-      )
+      fs.mkdirSync(`${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`)
     }
 
     // crop the original image & save
@@ -109,16 +105,20 @@ const findCategoryThumbnailById = (
   next()
 }
 
-export async function saveCategoryThumbnail(file: Express.Multer.File, category: pkg.categories) {
-
-  const fileOutName = `${CATEGORY_THUMBNAIL_PATH}/${category.id}.jpeg`
+export async function saveCategoryThumbnail(
+  file: Express.Multer.File,
+  categoryId: Number,
+) {
+  const fileOutName = `${CATEGORY_THUMBNAIL_PATH}/${categoryId}.jpeg`
 
   // crop the original image & save
-  await sharp(file.buffer)
-    .resize(1024)
-    .toFile(fileOutName)
+  await sharp(file.buffer).resize(1024).toFile(fileOutName)
 }
 
+export function removeCategoryThumbnailCache(categoryId: Number) {
+  const folder = `${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${categoryId}/`
+  fs.removeSync(folder)
+}
 
 export default {
   findCategoryThumbnail,

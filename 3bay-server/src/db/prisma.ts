@@ -29,15 +29,15 @@ prisma.$use(async (params, next) => {
       // Delete queries
       // Change action to an update
       params.action = 'update'
-      params.args['data'] = { deleted_at: new Date().toISOString() }
+      params.args['data'] = { deletedAt: new Date().toISOString() }
     }
     if (params.action == 'deleteMany') {
       // Delete many queries
       params.action = 'updateMany'
       if (params.args.data != undefined) {
-        params.args.data['deleted_at'] = new Date().toISOString()
+        params.args.data['deletedAt'] = new Date().toISOString()
       } else {
-        params.args['data'] = { deleted_at: new Date().toISOString() }
+        params.args['data'] = { deletedAt: new Date().toISOString() }
       }
     }
   }

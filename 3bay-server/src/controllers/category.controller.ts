@@ -2,7 +2,7 @@ import * as express from 'express'
 import prisma from '../db/prisma.js'
 import pkg from '@prisma/client'
 import config from '../config/config.js'
-import { saveCategoryThumbnail } from './images.controller.js'
+import { removeCategoryThumbnailCache, saveCategoryThumbnail } from './images.controller.js'
 
 const Prisma = pkg.Prisma
 
@@ -17,7 +17,7 @@ const categoryById = async (
     if (typeof value === 'number' || typeof value === 'string') {
       req.category = await prisma.categories.findFirst({
         where: {
-          AND: [{ id: Number(value) }, { deleted_at: null }],
+          AND: [{ id: Number(value) }, { deletedAt: null }],
         },
       })
     }
@@ -31,16 +31,13 @@ const categoryById = async (
 
 function handleCreateCategoryError(err: any, res: express.Response) {
   console.log(err)
-  if (
-    err instanceof Prisma.PrismaClientKnownRequestError &&
-    err.code === 'P2002'
-  ) {
+  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
     return res.status(400).json({
-      error: 'category name existed',
+      error: 'Category name existed',
     })
   }
   return res.status(418).json({
-    error: 'could not create/update category',
+    error: 'Could not create/update category',
   })
 }
 
@@ -51,25 +48,19 @@ function errNotFound(res: express.Response) {
 }
 
 interface CategoryRes {
-  id: number,
-  title: string,
-  parent_id: number | null,
-  other_categories: { id: number, title: string, parent_id: number | null }[]
+  id: number
+  title: string
+  parentId: number | null
+  otherCategories: Array<Partial<pkg.categories>>
 }
 
-function isCategoryRes(category: pkg.categories | CategoryRes): category is CategoryRes {
-  return (<CategoryRes>category).other_categories !== undefined
-}
-
-function categoryWithThumbnailLinks(
-  category: CategoryRes,
-) {
+function categoryWithThumbnailLinks(category: Partial<CategoryRes>) {
   const link = `${config.hostname}/api/images/category/${category.id}`
 
-  if (isCategoryRes(category)) {
+  if (category.otherCategories) {
     // get thumbnail links for sub-categories
-    category.other_categories = category.other_categories.map((subCat) => {
-      return categoryWithThumbnailLinks(subCat as CategoryRes)
+    category.otherCategories = category.otherCategories.map((subCat) => {
+      return categoryWithThumbnailLinks(subCat)
     })
   }
 
@@ -90,19 +81,19 @@ const findAll = (req: express.Request, res: express.Response) => {
       select: {
         id: true,
         title: true,
-        parent_id: true,
+        parentId: true,
         // get subcategory
-        other_categories: {
+        otherCategories: {
           select: {
             id: true,
             title: true,
-            parent_id: true,
+            parentId: true,
           },
         },
       },
       where: {
-        parent_id: null,
-        deleted_at: null,
+        parentId: null,
+        deletedAt: null,
       },
     })
     .then((categories) => {
@@ -134,11 +125,11 @@ const add = async (req: express.Request, res: express.Response) => {
         const category = await prisma.categories.create({
           data: {
             title: data.title as string,
-            parent_id: JSON.parse(data.parent_id) || null,
+            parentId: JSON.parse(data.parentId) || null,
           },
         })
         if (req.file) {
-          await saveCategoryThumbnail(req.file, category)
+          await saveCategoryThumbnail(req.file, category.id)
         }
         return res.status(201).json(category)
       } catch (err: any) {
@@ -147,14 +138,14 @@ const add = async (req: express.Request, res: express.Response) => {
     }
   }
   return res.status(400).json({
-    error: 'empty request',
+    error: 'Empty request',
   })
 }
 
 const update = async (req: express.Request, res: express.Response) => {
   if (!req.body) {
     return res.status(400).json({
-      error: 'empty request',
+      error: 'Empty request',
     })
   }
 
@@ -165,13 +156,17 @@ const update = async (req: express.Request, res: express.Response) => {
       const count = await prisma.categories.updateMany({
         data: {
           title: data.title || req.category.title,
-          parent_id: JSON.parse(data.parent_id) || req.category.parent_id,
+          parentId: JSON.parse(data.parentId) || req.category.parentId,
         },
         where: {
           // ignore soft delete fields
-          AND: [{ id: req.category.id }, { deleted_at: null }],
+          AND: [{ id: req.category.id }, { deletedAt: null }],
         },
       })
+      if (req.file) {
+        removeCategoryThumbnailCache(req.category.id)
+        await saveCategoryThumbnail(req.file, req.category.id)
+      }
       return res.json(count)
     } catch (err: any) {
       return handleCreateCategoryError(err, res)
