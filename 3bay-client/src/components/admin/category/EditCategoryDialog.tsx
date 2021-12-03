@@ -3,6 +3,9 @@ import Category from '../../../data/category'
 import { BaseCategoryDialog } from './BaseCategoryDialog'
 import axios from 'axios'
 import config from '../../../config/config'
+import Button from '@mui/material/Button'
+import { Grid } from '@mui/material'
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 
 export type EditCategoryDialogProps = {
   allCategories?: Array<Category>

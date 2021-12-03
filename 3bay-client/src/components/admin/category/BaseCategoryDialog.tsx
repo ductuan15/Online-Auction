@@ -13,7 +13,9 @@ import Button from '@mui/material/Button'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import DialogActions from '@mui/material/DialogActions'
 import Category from '../../../data/category'
-import axios, {AxiosPromise} from 'axios'
+import axios, { AxiosPromise } from 'axios'
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import config from '../../../config/config'
 
 const Input = styled('input')({
   display: 'none',
@@ -38,6 +40,7 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
   const progressRef = useRef<HTMLDivElement>(null)
+  const [image, setImage] = useState<string | null>(null)
 
   const onClose = () => {
     setImage(null)
@@ -84,7 +87,20 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
       console.log(e)
     }
   }
-  const [image, setImage] = useState<string | null>(null)
+
+  const onDeleteCategory = async () => {
+    if (progressRef.current && progressRef.current.style) {
+      progressRef.current.style.display = 'block'
+    }
+
+    if (!category) throw Error('Update category but the id is unknown')
+    try {
+      await axios.delete(`${config.apiHostName}/api/category/${category.id}`)
+      onClose()
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.files && event.target.files[0]) {
@@ -167,6 +183,21 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
               </Grid>
             )}
           </Grid>
+
+          {category && (
+            <Grid item width={1} mt={2}>
+              <Button
+                sx={{ width: 1 }}
+                startIcon={<DeleteOutlineOutlinedIcon />}
+                onClick={onDeleteCategory}
+                variant="outlined"
+                component="span"
+                color="error"
+              >
+                Delete category
+              </Button>
+            </Grid>
+          )}
 
           {extraComponent && extraComponent()}
         </form>
