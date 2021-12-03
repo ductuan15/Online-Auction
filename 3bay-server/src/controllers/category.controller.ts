@@ -2,7 +2,10 @@ import * as express from 'express'
 import prisma from '../db/prisma.js'
 import pkg from '@prisma/client'
 import config from '../config/config.js'
-import { removeCategoryThumbnailCache, saveCategoryThumbnail } from './images.controller.js'
+import {
+  removeCategoryThumbnailCache,
+  saveCategoryThumbnail,
+} from './images.controller.js'
 
 const Prisma = pkg.Prisma
 
@@ -15,9 +18,9 @@ const categoryById = async (
 ) => {
   try {
     if (typeof value === 'number' || typeof value === 'string') {
-      req.category = await prisma.categories.findFirst({
+      req.category = await prisma.categories.findUnique({
         where: {
-          AND: [{ id: Number(value) }, { deletedAt: null }],
+          id: Number(value),
         },
       })
     }
@@ -31,7 +34,10 @@ const categoryById = async (
 
 function handleCreateCategoryError(err: any, res: express.Response) {
   console.log(err)
-  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+  if (
+    err instanceof Prisma.PrismaClientKnownRequestError &&
+    err.code === 'P2002'
+  ) {
     return res.status(400).json({
       error: 'Category name existed',
     })
@@ -93,7 +99,6 @@ const findAll = (req: express.Request, res: express.Response) => {
       },
       where: {
         parentId: null,
-        deletedAt: null,
       },
     })
     .then((categories) => {
@@ -153,15 +158,12 @@ const update = async (req: express.Request, res: express.Response) => {
     const data = req.body
 
     try {
-      const count = await prisma.categories.updateMany({
+      const count = await prisma.categories.update({
         data: {
           title: data.title || req.category.title,
           parentId: JSON.parse(data.parentId) || req.category.parentId,
         },
-        where: {
-          // ignore soft delete fields
-          AND: [{ id: req.category.id }, { deletedAt: null }],
-        },
+        where: { id: data.id },
       })
       if (req.file) {
         removeCategoryThumbnailCache(req.category.id)

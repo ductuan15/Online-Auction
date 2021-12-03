@@ -8,14 +8,12 @@ datasource db {
 }
 
 model categories {
-  id               Int          @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  title            String       @unique(map: "categories_title_uindex") @default("") @db.VarChar(255)
-  parentId         Int?         @map("parent_id")
-  createdAt        DateTime?    @map("created_at") @default(now()) @db.DateTime(0)
-  updatedAt        DateTime?    @map("updated_at") @default(now()) @updatedAt @db.DateTime(0)
-  deletedAt        DateTime?    @map("deleted_at") @db.DateTime(0)
-  categories       categories?  @relation("categoriesTocategories_parent_id", fields: [parentId], references: [id], map: "categories_ibfk_1")
-  otherCategories  categories[] @relation("categoriesTocategories_parent_id")
+  id              Int          @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  title           String       @unique(map: "categories_title_uindex") @default("") @db.VarChar(255)
+  parentId        Int?         @map("parent_id")
+  createdAt       DateTime?    @default(now()) @map("created_at") @db.DateTime(0)
+  categories      categories?  @relation("categoriesTocategories_parent_id", fields: [parentId], references: [id], map: "categories_ibfk_1")
+  otherCategories categories[] @relation("categoriesTocategories_parent_id")
 
   @@index([parentId], map: "fk_category_category_idx")
 }
