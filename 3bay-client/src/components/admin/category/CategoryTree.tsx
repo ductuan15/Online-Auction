@@ -174,7 +174,7 @@ function renderCategoryTree(
           onCategorySelected={onCategorySelected}
         >
           {/*recursion*/}
-          {category.other_categories && renderCategoryTree(category.other_categories, onCategorySelected)}
+          {category.otherCategories && renderCategoryTree(category.otherCategories, onCategorySelected)}
         </CategoryTreeItem>
       ))}
     </>

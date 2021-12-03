@@ -17,8 +17,8 @@ export default function ParentCategoryChooser({
   currentCategory,
 }: ParentCategoryChooserProps): JSX.Element {
   let initialValue = '-1'
-  if (currentCategory && currentCategory.parent_id) {
-    initialValue = `${currentCategory.parent_id}`
+  if (currentCategory && currentCategory.parentId) {
+    initialValue = `${currentCategory.parentId}`
   }
   const [cat, setCat] = React.useState(initialValue)
   // console.log(currentCategory)
@@ -32,7 +32,7 @@ export default function ParentCategoryChooser({
       <FormControl fullWidth>
         <InputLabel id="parent-category-chooser">Sub-category of</InputLabel>
         <Select
-          name='parent_id'
+          name='parentId'
           disabled={!allCategories || allCategories.length == 0}
           labelId="parent-category-chooser"
           id="parent-category-select"

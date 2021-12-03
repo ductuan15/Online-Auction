@@ -13,8 +13,8 @@ class Category {
     original: '',
   }
 
-  parent_id?: number
-  other_categories?: Array<Category>
+  parentId?: number
+  otherCategories?: Array<Category>
 
   constructor(data: Partial<Category> = {}) {
     Object.assign(this, data)

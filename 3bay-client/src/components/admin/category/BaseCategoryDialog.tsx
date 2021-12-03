@@ -58,19 +58,19 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
     }
 
     const target = e.target as typeof e.target & {
-      category_title: { value: string }
-      parent_id: { value: string }
+      categoryTitle: { value: string }
+      parentId: { value: string }
     }
 
-    const title = target.category_title.value
-    let parent_id = 'null'
-    if (+target.parent_id.value > 0) {
-      parent_id = target.parent_id.value
+    const title = target.categoryTitle.value
+    let parentId = 'null'
+    if (+target.parentId.value > 0) {
+      parentId = target.parentId.value
     }
 
     const formData = new FormData()
     formData.append('title', title)
-    formData.append('parent_id', parent_id)
+    formData.append('parentId', parentId)
 
     try {
       if (image != null) {
@@ -111,7 +111,7 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
             margin="dense"
             id={`category-name-${dialogName}`}
             label="Category name"
-            name="category_title"
+            name="categoryTitle"
             fullWidth
             variant="outlined"
             color="secondary"
