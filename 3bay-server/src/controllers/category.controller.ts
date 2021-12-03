@@ -177,10 +177,32 @@ const update = async (req: express.Request, res: express.Response) => {
   return errNotFound(res)
 }
 
+const deleteCategory = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  if (req.category) {
+    try {
+      const deleteCategory = await prisma.categories.delete({
+        where: {
+          id: req.category.id,
+        },
+      })
+      console.log(deleteCategory)
+      return res.json(deleteCategory)
+    } catch (e) {
+      return next()
+    }
+  }
+  return errNotFound(res)
+}
+
 export default {
   findAll,
   categoryById,
   read,
   add,
   update,
+  deleteCategory,
 }

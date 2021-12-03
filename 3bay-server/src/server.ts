@@ -18,4 +18,6 @@ main()
   .catch((e) => {
     console.log(e)
   })
-  .finally(await prisma.$disconnect())
+  .finally(async () => {
+    await prisma.$disconnect()
+  })

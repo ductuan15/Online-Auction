@@ -11,6 +11,7 @@ router.route('/api/category')
 router.route('/api/category/:categoryId')
   .get(categoryController.read)
   .patch(uploadCategoryThumbnail.single('thumbnail'), categoryController.update)
+  .delete(categoryController.deleteCategory)
 
 router.param('categoryId', categoryController.categoryById)
 
