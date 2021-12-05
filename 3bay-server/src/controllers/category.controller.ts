@@ -19,8 +19,9 @@ const categoryById = async (
   try {
     if (typeof value === 'number' || typeof value === 'string') {
       req.category = await prisma.categories.findUnique({
+        select: categoryDefaultSelect,
         where: {
-          id: Number(value),
+          id: +value,
         },
       })
     }
@@ -60,6 +61,20 @@ interface CategoryRes {
   otherCategories: Array<Partial<pkg.categories>>
 }
 
+const categoryDefaultSelect = {
+  id: true,
+  title: true,
+  parentId: true,
+  // get subcategory
+  otherCategories: {
+    select: {
+      id: true,
+      title: true,
+      parentId: true,
+    },
+  },
+}
+
 function categoryWithThumbnailLinks(category: Partial<CategoryRes>) {
   const link = `${config.hostname}/api/images/category/${category.id}`
 
@@ -84,19 +99,7 @@ function categoryWithThumbnailLinks(category: Partial<CategoryRes>) {
 const findAll = (req: express.Request, res: express.Response) => {
   prisma.categories
     .findMany({
-      select: {
-        id: true,
-        title: true,
-        parentId: true,
-        // get subcategory
-        otherCategories: {
-          select: {
-            id: true,
-            title: true,
-            parentId: true,
-          },
-        },
-      },
+      select: categoryDefaultSelect,
       where: {
         parentId: null,
       },
@@ -183,13 +186,30 @@ const deleteCategory = async (
   next: express.NextFunction,
 ) => {
   if (req.category) {
+    if (req.category.parentId != null) {
+      const parentCategory = await prisma.categories.findUnique({
+        where: { id: req.category.parentId },
+      })
+
+      if (parentCategory) {
+        await prisma.categories.updateMany({
+          where: {
+            parentId: req.category.id,
+          },
+          data: {
+            parentId: parentCategory.parentId,
+          },
+        })
+      }
+    }
+
     try {
       const deleteCategory = await prisma.categories.delete({
         where: {
           id: req.category.id,
         },
       })
-      console.log(deleteCategory)
+      // console.log(deleteCategory)
       return res.json(deleteCategory)
     } catch (e) {
       return next()
