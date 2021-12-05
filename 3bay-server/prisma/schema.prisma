@@ -9,11 +9,123 @@ datasource db {
 
 model categories {
   id              Int          @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  title           String       @unique(map: "categories_title_uindex") @default("") @db.VarChar(255)
+  title           String       @unique(map: "categories_title_uindex") @default("") @db.VarChar(28)
   parentId        Int?         @map("parent_id")
   createdAt       DateTime?    @default(now()) @map("created_at") @db.DateTime(0)
-  categories      categories?  @relation("categoriesTocategories_parent_id", fields: [parentId], references: [id], map: "categories_ibfk_1")
+  categories      categories?  @relation("categoriesTocategories_parent_id", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_fk0")
   otherCategories categories[] @relation("categoriesTocategories_parent_id")
+  products        products[]
 
   @@index([parentId], map: "fk_category_category_idx")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model admins {
+  id       String @db.VarChar(255)
+  username String @db.VarChar(255)
+  name     String @db.VarChar(255)
+  email    String @db.VarChar(255)
+
+  @@ignore
+}
+
+model auctions {
+  id                                 Int       @id @default(autoincrement())
+  startTime                          DateTime  @db.DateTime(0)
+  closeTime                          DateTime? @db.DateTime(0)
+  openPrice                          Decimal   @db.Decimal(19, 4)
+  incrementPrice                     Decimal   @db.Decimal(19, 4)
+  buyoutPrice                        Decimal?  @db.Decimal(19, 4)
+  productId                          Int
+  winnerBidderId                     Int?
+  autoExtendAuctionTiming            Boolean
+  products                           products  @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auctions_fk0")
+  bids_auctions_winnerBidderIdTobids bids?     @relation("auctions_winnerBidderIdTobids", fields: [winnerBidderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auctions_fk1")
+  bids_auctionsTobids_auctionId      bids[]    @relation("auctionsTobids_auctionId")
+
+  @@index([productId], map: "auctions_fk0")
+  @@index([winnerBidderId], map: "auctions_fk1")
+}
+
+model bids {
+  id                                     Int        @id @default(autoincrement())
+  bidPrice                               Decimal    @default(0.0000) @db.Decimal(19, 4)
+  bidTime                                DateTime   @db.DateTime(0)
+  bidComment                             String?    @db.VarChar(255)
+  isAccepted                             Boolean    @default(true)
+  bidderId                               String     @db.VarChar(255)
+  auctionId                              Int
+  auctions_auctionsTobids_auctionId      auctions   @relation("auctionsTobids_auctionId", fields: [auctionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "bids_fk1")
+  users                                  users      @relation(fields: [bidderId], references: [uuid], onDelete: NoAction, onUpdate: NoAction, map: "bids_fk0")
+  auctions_auctions_winnerBidderIdTobids auctions[] @relation("auctions_winnerBidderIdTobids")
+
+  @@index([bidderId], map: "bids_fk0")
+  @@index([auctionId], map: "bids_fk1")
+}
+
+model product_des_history {
+  id          Int      @id @default(autoincrement())
+  description String   @db.VarChar(255)
+  productId   Int
+  createdAt   DateTime @db.DateTime(0)
+  products    products @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_des_history_fk0")
+
+  @@index([productId], map: "product_des_history_fk0")
+}
+
+model product_images {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  img       String   @db.Text
+  products  products @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_images_fk0")
+
+  @@index([productId], map: "product_images_fk0")
+}
+
+model products {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(255)
+  categoryId          Int
+  sellerId            Int
+  createdAt           DateTime              @db.DateTime(0)
+  deletedAt           DateTime?             @db.DateTime(0)
+  mainImg             DateTime              @db.DateTime(0)
+  currentPrice        Decimal               @db.Decimal(19, 4)
+  categories          categories            @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "products_fk0")
+  auctions            auctions[]
+  product_des_history product_des_history[]
+  product_images      product_images[]
+  user_watchlist      user_watchlist[]      @ignore
+
+  @@index([categoryId], map: "products_fk0")
+}
+
+model upgrade_to_bidder_requests {
+  userId String @id @db.VarChar(255)
+  users  users  @relation(fields: [userId], references: [uuid], onDelete: NoAction, onUpdate: NoAction, map: "upgrade_to_bidder_requests_fk0")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model user_watchlist {
+  id        Int
+  userId    String   @db.VarChar(255)
+  productId Int
+  products  products @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_watchlist_fk1")
+  users     users    @relation(fields: [userId], references: [uuid], onDelete: NoAction, onUpdate: NoAction, map: "user_watchlist_fk0")
+
+  @@index([userId], map: "user_watchlist_fk0")
+  @@index([productId], map: "user_watchlist_fk1")
+  @@ignore
+}
+
+model users {
+  uuid                       String                      @id @db.VarChar(255)
+  name                       String                      @db.VarChar(255)
+  email                      String                      @unique(map: "email") @db.VarChar(255)
+  isDisabled                 Boolean
+  type                       Int                         @default(0)
+  pwd                        String                      @db.VarChar(255)
+  bids                       bids[]
+  upgrade_to_bidder_requests upgrade_to_bidder_requests?
+  user_watchlist             user_watchlist[]            @ignore
 }
