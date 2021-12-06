@@ -19,7 +19,6 @@ model categories {
   @@index([parentId], map: "fk_category_category_idx")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model admins {
   id       String @id @db.VarChar(255)
   username String @unique(map: "username_UNIQUE") @db.VarChar(255)
@@ -103,7 +102,6 @@ model upgrade_to_bidder_requests {
   users  users  @relation(fields: [userId], references: [uuid], map: "upgrade_to_bidder_requests_fk0")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model user_watchlist {
   userId    String   @db.VarChar(255)
   productId Int
