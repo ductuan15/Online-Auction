@@ -33,7 +33,7 @@ const categoryById = async (
   }
 }
 
-function handleCreateCategoryError(err: any, res: express.Response) {
+const handleCreateCategoryError = (err: any, res: express.Response) => {
   console.log(err)
   if (
     err instanceof Prisma.PrismaClientKnownRequestError &&
@@ -48,11 +48,9 @@ function handleCreateCategoryError(err: any, res: express.Response) {
   })
 }
 
-function errNotFound(res: express.Response) {
-  return res.status(404).json({
-    error: 'Could not found category',
-  })
-}
+const errNotFound = (res: express.Response) => res.status(404).json({
+  error: 'Could not found category',
+})
 
 interface CategoryRes {
   id: number
@@ -75,7 +73,7 @@ const categoryDefaultSelect = {
   },
 }
 
-function categoryWithThumbnailLinks(category: Partial<CategoryRes>) {
+const categoryWithThumbnailLinks = (category: Partial<CategoryRes>) => {
   const link = `${config.hostname}/api/images/category/${category.id}`
 
   if (category.otherCategories) {
@@ -166,7 +164,7 @@ const update = async (req: express.Request, res: express.Response) => {
           title: data.title || req.category.title,
           parentId: JSON.parse(data.parentId) || req.category.parentId,
         },
-        where: { id: data.id },
+        where: { id: req.category.id },
       })
       if (req.file) {
         removeCategoryThumbnailCache(req.category.id)
