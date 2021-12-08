@@ -39,8 +39,6 @@ function initializeMiddlewares() {
   app.use(helmet())
   // enable CORS - Cross Origin Resource Sharing
   app.use(cors())
-  // handle errors
-  app.use(errorHandler)
 }
 
 function mountRoutes() {
@@ -49,7 +47,12 @@ function mountRoutes() {
   app.use('/', imagesRoute)
 }
 
+function initializeErrorHandler() {
+  app.use(errorHandler)
+}
+
 initializeMiddlewares()
 mountRoutes()
+initializeErrorHandler()
 
 export default app
