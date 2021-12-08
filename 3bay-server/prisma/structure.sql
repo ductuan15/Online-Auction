@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS `auctions`;
 CREATE TABLE `auctions`
 (
     `id`                      int(11)        NOT NULL AUTO_INCREMENT,
-    `startTime`               datetime       NOT NULL,
+    `startTime`               datetime       NOT NULL DEFAULT current_timestamp(),
     `closeTime`               datetime       DEFAULT NULL,
     `openPrice`               decimal(19, 4) NOT NULL,
     `incrementPrice`          decimal(19, 4) NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE `bids`
 (
     `id`         int(11)                                 NOT NULL,
     `bidPrice`   decimal(19, 4)                          NOT NULL DEFAULT 0.0000,
-    `bidTime`    datetime                                NOT NULL,
+    `bidTime`    datetime                                NOT NULL DEFAULT current_timestamp(),
     `bidComment` varchar(255) COLLATE utf8mb4_unicode_ci          DEFAULT NULL,
     `isAccepted` tinyint(1)                              NOT NULL DEFAULT 1,
     `bidderId`   varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -126,7 +126,7 @@ CREATE TABLE `product_des_history`
     `id`          int(11)                                 NOT NULL AUTO_INCREMENT,
     `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `productId`   int(11)                                 NOT NULL,
-    `createdAt`   datetime                                NOT NULL,
+    `createdAt`   datetime                                NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
     KEY `product_des_history_fk0` (`productId`),
     CONSTRAINT `product_des_history_fk0` FOREIGN KEY (`productId`) REFERENCES `products` (`id`)
@@ -168,9 +168,8 @@ CREATE TABLE `products`
     `name`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `categoryId`   int(11)                                 NOT NULL,
     `sellerId`     int(11)                                 NOT NULL,
-    `createdAt`    datetime                                NOT NULL,
+    `createdAt`    datetime                                NOT NULL DEFAULT current_timestamp(),
     `deletedAt`    datetime DEFAULT NULL,
-    `mainImg`      datetime                                NOT NULL,
     `currentPrice` decimal(19, 4)                          NOT NULL,
     PRIMARY KEY (`id`),
     KEY `products_fk0` (`categoryId`),
