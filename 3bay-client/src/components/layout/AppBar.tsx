@@ -20,7 +20,7 @@ import Logout from '@mui/icons-material/Logout'
 import { ColorModeContext } from '../../theme'
 
 interface Props {
-  children: React.ReactElement
+  children: React.ReactNode
 }
 
 const APPBAR_LARGE = 92

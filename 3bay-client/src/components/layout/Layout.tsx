@@ -6,7 +6,7 @@ import AppFooter from './AppFooter'
 import { styled } from '@mui/material/styles'
 
 interface Props {
-  children: React.ReactElement
+  children: React.ReactNode
 }
 
 const StyledDiv = styled('div')(({ theme }) => ({

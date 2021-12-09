@@ -8,7 +8,7 @@ import palette from './palette'
 import { CssBaseline, PaletteMode } from '@mui/material'
 
 interface Props {
-  children: React.ReactElement
+  children: React.ReactNode
 }
 
 export const ColorModeContext = React.createContext({
