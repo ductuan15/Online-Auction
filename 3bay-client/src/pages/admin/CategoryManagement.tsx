@@ -11,14 +11,29 @@ import { CreateCategoryDialog } from '../../components/admin/category/CreateCate
 import config from '../../config/config'
 import Category from '../../data/category'
 import { EditCategoryDialog } from '../../components/admin/category/EditCategoryDialog'
+import {
+  CategoryProvider,
+  useCategoryContext,
+} from '../../contexts/admin/CategoryContext'
 
 export const CategoryManagement: FC = () => {
+  return (
+    <CategoryProvider>
+      <CategoryManagementContent />
+    </CategoryProvider>
+  )
+}
+
+const CategoryManagementContent: FC = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false)
   const [openEditDialog, setOpenEditDialog] = useState(false)
-  const [categories, setCategories] = useState<Array<Category>>(() => [])
+  // const [categories, setCategories] = useState<Array<Category>>(() => [])
   const [currentEditingCategory, setCurrentEditingCategory] = useState<
     Category | undefined
   >(undefined)
+
+  const { state, addAllCategories } = useCategoryContext()
+  const { allCategories: categories } = state
 
   useEffect(() => {
     fetch(`${config.apiHostName}/api/category/`)
@@ -28,10 +43,7 @@ export const CategoryManagement: FC = () => {
       .then((data) => {
         console.log(data)
         if (data) {
-          const categories = data.map((obj: Category) => {
-            return new Category(obj)
-          })
-          setCategories(categories)
+          addAllCategories(data)
         }
       })
       .catch((err: Error) => {
@@ -55,7 +67,7 @@ export const CategoryManagement: FC = () => {
   }
 
   return (
-    <div>
+    <>
       <Grid container marginBottom={4} spacing={4} justifyContent='between'>
         <Grid display='flex' xs={12} item alignItems='center'>
           <Typography
@@ -104,6 +116,6 @@ export const CategoryManagement: FC = () => {
         onCloseCallback={onDialogCloseCallback}
         allCategories={categories}
       />
-    </div>
+    </>
   )
 }

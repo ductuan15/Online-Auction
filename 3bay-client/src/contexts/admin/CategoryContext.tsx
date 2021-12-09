@@ -40,12 +40,13 @@ const CategoryContext = createContext<CategoryContextType>({
   updateCategory(_category: Category) {},
 })
 
-export const useCategoryContext = useContext(CategoryContext)
+export const useCategoryContext = () => useContext(CategoryContext)
 
 export const CategoryProvider: FC<CategoryProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(categoryReducer, initialCategoryState)
 
   const addAllCategories = (categories: Array<Category>) => {
+    console.log(categories)
     dispatch({ type: 'ADD_ALL', payload: categories })
   }
   const addCategory = (category: Category) => {
