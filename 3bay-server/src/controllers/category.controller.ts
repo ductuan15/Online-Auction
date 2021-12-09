@@ -2,10 +2,7 @@ import * as express from 'express'
 import prisma from '../db/prisma.js'
 import pkg from '@prisma/client'
 import config from '../config/config.js'
-import {
-  removeCategoryThumbnailCache,
-  saveCategoryThumbnail,
-} from './images.controller.js'
+import {removeCategoryThumbnailCache, saveCategoryThumbnail,} from './images.controller.js'
 
 const Prisma = pkg.Prisma
 
@@ -162,9 +159,9 @@ const update = async (req: express.Request, res: express.Response) => {
       const count = await prisma.categories.update({
         data: {
           title: data.title || req.category.title,
-          parentId: JSON.parse(data.parentId) || req.category.parentId,
+          parentId: (data.parentId !== undefined && JSON.parse(data.parentId)) || req.category.parentId,
         },
-        where: { id: req.category.id },
+        where: {id: req.category.id},
       })
       if (req.file) {
         removeCategoryThumbnailCache(req.category.id)
@@ -186,7 +183,7 @@ const deleteCategory = async (
   if (req.category) {
     if (req.category.parentId != null) {
       const parentCategory = await prisma.categories.findUnique({
-        where: { id: req.category.parentId },
+        where: {id: req.category.parentId},
       })
 
       if (parentCategory) {
