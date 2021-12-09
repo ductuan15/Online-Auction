@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded'
@@ -25,15 +25,7 @@ export const CategoryManagement: FC = () => {
 }
 
 const CategoryManagementContent: FC = () => {
-  const [openCreateDialog, setOpenCreateDialog] = useState(false)
-  const [openEditDialog, setOpenEditDialog] = useState(false)
-  // const [categories, setCategories] = useState<Array<Category>>(() => [])
-  const [currentEditingCategory, setCurrentEditingCategory] = useState<
-    Category | undefined
-  >(undefined)
-
-  const { state, addAllCategories } = useCategoryContext()
-  const { allCategories: categories } = state
+  const { addAllCategories, dispatch } = useCategoryContext()
 
   useEffect(() => {
     fetch(`${config.apiHostName}/api/category/`)
@@ -51,19 +43,8 @@ const CategoryManagementContent: FC = () => {
       })
   }, [])
 
-  const onDialogCloseCallback = () => {
-    setOpenCreateDialog(false)
-    setOpenEditDialog(false)
-    setCurrentEditingCategory(undefined)
-  }
-
   const openDialog = () => {
-    setOpenCreateDialog(true)
-  }
-
-  const onCategorySelected = (category: Category) => {
-    setCurrentEditingCategory(category)
-    setOpenEditDialog(true)
+    dispatch({ type: 'OPEN_CREATE_DIALOG', payload: true })
   }
 
   return (
@@ -97,25 +78,13 @@ const CategoryManagementContent: FC = () => {
         </Grid>
 
         <Grid mt={2} display='flex' item xs={12} justifyContent='center'>
-          <CategoryTree
-            categories={categories}
-            onCategorySelected={onCategorySelected}
-          />
+          <CategoryTree />
         </Grid>
       </Grid>
 
-      <CreateCategoryDialog
-        open={openCreateDialog}
-        onCloseCallback={onDialogCloseCallback}
-        allCategories={categories}
-      />
+      <CreateCategoryDialog />
 
-      <EditCategoryDialog
-        category={currentEditingCategory}
-        open={openEditDialog}
-        onCloseCallback={onDialogCloseCallback}
-        allCategories={categories}
-      />
+      <EditCategoryDialog />
     </>
   )
 }

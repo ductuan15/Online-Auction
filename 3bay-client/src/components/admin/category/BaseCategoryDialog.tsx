@@ -16,6 +16,7 @@ import Category from '../../../data/category'
 import axios, { AxiosPromise } from 'axios'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import config from '../../../config/config'
+import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 
 const Input = styled('input')({
   display: 'none',
@@ -24,12 +25,9 @@ const Input = styled('input')({
 const Label = styled('label')({})
 
 type BaseCategoryDialogProps = {
-  allCategories?: Array<Category>
-  category?: Category
   open: boolean
   title: string
   dialogName: string
-  onCloseCallback: () => void
   submitData: (
     formData: FormData,
     category: Category | undefined,
@@ -40,16 +38,10 @@ type BaseCategoryDialogProps = {
 export function BaseCategoryDialog(
   props: BaseCategoryDialogProps,
 ): JSX.Element {
-  const {
-    open,
-    onCloseCallback,
-    dialogName,
-    title,
-    allCategories,
-    extraComponent,
-    category,
-    submitData,
-  } = props
+  const { state, dispatch, removeCategory } = useCategoryContext()
+  const { currentCategory: category } = state
+
+  const { open, dialogName, title, extraComponent, submitData } = props
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
   const progressRef = useRef<HTMLDivElement>(null)
@@ -62,7 +54,7 @@ export function BaseCategoryDialog(
       progressRef.current.style.display = 'none'
     }
 
-    onCloseCallback()
+    dispatch({ type: 'CLOSE_ALL_DIALOGS' })
   }
 
   // TODO: refactor me -.-
@@ -109,6 +101,7 @@ export function BaseCategoryDialog(
     if (!category) throw Error('Update category but the id is unknown')
     try {
       await axios.delete(`${config.apiHostName}/api/category/${category.id}`)
+      removeCategory(category)
       onClose()
     } catch (e) {
       console.log(e)
@@ -153,10 +146,7 @@ export function BaseCategoryDialog(
             sx={{ mt: 2, mb: 2 }}
           />
 
-          <ParentCategoryChooser
-            allCategories={allCategories}
-            currentCategory={category}
-          />
+          <ParentCategoryChooser />
 
           <Grid
             container

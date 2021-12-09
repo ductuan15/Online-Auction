@@ -5,16 +5,11 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import Category from '../../../data/category'
 import EditIcon from '@mui/icons-material/Edit'
 import { CategoryTreeItem, StyledTreeItemRoot } from './CategoryTreeItem'
+import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 
-type CategoryTreeProps = {
-  categories?: Array<Category>
-  onCategorySelected?: (category: Category) => void
-}
+// type CategoryTreeProps = {}
 
-function renderCategoryTree(
-  categories?: Array<Category>,
-  onCategorySelected?: (category: Category) => void,
-): JSX.Element {
+function renderCategoryTree(categories?: Array<Category>): JSX.Element {
   return (
     <>
       {categories?.map((category) => (
@@ -24,21 +19,20 @@ function renderCategoryTree(
           key={`${category.title}`}
           labelIcon={EditIcon}
           category={category}
-          onCategorySelected={onCategorySelected}
         >
           {/*recursion*/}
           {category.otherCategories &&
-            renderCategoryTree(category.otherCategories, onCategorySelected)}
+            renderCategoryTree(category.otherCategories)}
         </CategoryTreeItem>
       ))}
     </>
   )
 }
 
-export default function CategoryTree({
-  categories,
-  onCategorySelected,
-}: CategoryTreeProps): JSX.Element {
+export default function CategoryTree(): JSX.Element {
+  const { state } = useCategoryContext()
+  const { allCategories } = state
+
   return (
     <TreeView
       aria-label='customized'
@@ -61,7 +55,7 @@ export default function CategoryTree({
       })}
     >
       <StyledTreeItemRoot nodeId='-1' label='All categories'>
-        {renderCategoryTree(categories, onCategorySelected)}
+        {renderCategoryTree(allCategories)}
       </StyledTreeItemRoot>
     </TreeView>
   )

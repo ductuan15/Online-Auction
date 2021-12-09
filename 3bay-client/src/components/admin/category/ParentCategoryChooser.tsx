@@ -4,18 +4,15 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-import Category from '../../../data/category'
 import { FormHelperText } from '@mui/material'
+import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 
-export type ParentCategoryChooserProps = {
-  allCategories?: Array<Category>
-  currentCategory?: Category
-}
+// export type ParentCategoryChooserProps = {}
 
-export default function ParentCategoryChooser({
-  allCategories,
-  currentCategory,
-}: ParentCategoryChooserProps): JSX.Element {
+export default function ParentCategoryChooser(): JSX.Element {
+  const { state } = useCategoryContext()
+  const { allCategories, currentCategory } = state
+
   let initialValue = '-1'
   if (currentCategory && currentCategory.parentId) {
     initialValue = `${currentCategory.parentId}`
@@ -33,7 +30,7 @@ export default function ParentCategoryChooser({
         <InputLabel id='parent-category-chooser'>Sub-category of</InputLabel>
         <Select
           name='parentId'
-          disabled={!allCategories || allCategories.length == 0}
+          disabled={allCategories.length == 0}
           labelId='parent-category-chooser'
           id='parent-category-select'
           value={cat}
@@ -44,7 +41,7 @@ export default function ParentCategoryChooser({
             None
           </MenuItem>
           {allCategories
-            ?.filter((category) => {
+            .filter((category) => {
               // should not render currentCategory option
               return (
                 !currentCategory ||
@@ -59,7 +56,7 @@ export default function ParentCategoryChooser({
               )
             })}
         </Select>
-        {(!allCategories || allCategories.length == 0) && (
+        {allCategories.length == 0 && (
           <FormHelperText>There is no category to choose</FormHelperText>
         )}
       </FormControl>

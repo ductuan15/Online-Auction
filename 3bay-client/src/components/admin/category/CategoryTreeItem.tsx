@@ -9,8 +9,10 @@ import { animated, useSpring } from 'react-spring'
 import Collapse from '@mui/material/Collapse'
 import { SvgIconProps } from '@mui/material'
 import Category from '../../../data/category'
+import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 
 declare module 'react' {
+  // noinspection JSUnusedGlobalSymbols
   interface CSSProperties {
     '--tree-view-color'?: string
     '--tree-view-bg-color'?: string
@@ -43,7 +45,6 @@ type CategoryTreeItemProps = TreeItemProps & {
   labelInfo?: string
   labelText: string
   category?: Category
-  onCategorySelected?: (category: Category) => void
 }
 
 export const StyledTreeItemRoot = styled((props: TreeItemProps) => (
@@ -93,14 +94,16 @@ export function CategoryTreeItem(props: CategoryTreeItemProps): JSX.Element {
     labelInfo,
     labelText,
     category,
-    onCategorySelected: onCategorySelectedCallback,
     ...other
   } = props
 
+  const { dispatch } = useCategoryContext()
+
   const onCategorySelected = (e: SyntheticEvent) => {
     e.stopPropagation()
-    if (category && onCategorySelectedCallback) {
-      onCategorySelectedCallback(category)
+    if (category) {
+      dispatch({ type: 'CURRENT_CATEGORY', payload: category })
+      dispatch({ type: 'OPEN_EDIT_DIALOG', payload: true })
     }
   }
 

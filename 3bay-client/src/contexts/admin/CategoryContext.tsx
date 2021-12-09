@@ -40,7 +40,9 @@ const CategoryContext = createContext<CategoryContextType>({
   updateCategory(_category: Category) {},
 })
 
-export const useCategoryContext = () => useContext(CategoryContext)
+export const useCategoryContext: () => CategoryContextType = () => {
+  return useContext(CategoryContext)
+}
 
 export const CategoryProvider: FC<CategoryProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(categoryReducer, initialCategoryState)
