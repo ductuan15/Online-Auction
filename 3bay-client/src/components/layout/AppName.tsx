@@ -17,12 +17,21 @@ type AppNameProps = {
 
 export function AppName({ bigSize, sx }: AppNameProps): JSX.Element {
   return (
-    <Box display="flex" alignItems="center">
-      <StyledTypography sx={sx} fontFamily="Libre Baskerville" variant={bigSize ? 'h3' : 'h4'}>
+    <Box display='flex' alignItems='center'>
+      <StyledTypography
+        sx={sx}
+        fontFamily='Libre Baskerville'
+        variant={bigSize ? 'h3' : 'h4'}
+      >
         3
       </StyledTypography>
 
-      <StyledTypography variant={bigSize ? 'h4' : 'h5'} noWrap fontFamily="Libre Baskerville" sx={sx}>
+      <StyledTypography
+        variant={bigSize ? 'h4' : 'h5'}
+        noWrap
+        fontFamily='Libre Baskerville'
+        sx={sx}
+      >
         bay
       </StyledTypography>
     </Box>

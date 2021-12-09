@@ -28,7 +28,13 @@ export const CategoryPage = (): JSX.Element => {
   }, [])
 
   return (
-    <Grid container marginTop={2} marginBottom={4} spacing={4} justifyContent="between">
+    <Grid
+      container
+      marginTop={2}
+      marginBottom={4}
+      spacing={4}
+      justifyContent='between'
+    >
       {categories.map((category) => (
         <Grid item xs={6} md={4} lg={3} key={category.title}>
           <CategoryCard category={category} />

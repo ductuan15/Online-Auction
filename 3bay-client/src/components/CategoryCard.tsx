@@ -17,13 +17,18 @@ export default function CategoryCard(prop: Props): JSX.Element {
   const onMouseOut = () => setElevation(0)
 
   return (
-    <Card elevation={elevation} onMouseOver={onMouseOver} onMouseOut={onMouseOut} sx={{ borderRadius: 4 }}>
+    <Card
+      elevation={elevation}
+      onMouseOver={onMouseOver}
+      onMouseOut={onMouseOut}
+      sx={{ borderRadius: 4 }}
+    >
       <CardActionArea>
         {/*TODO extract jss styles*/}
         <Box sx={{ position: 'relative' }}>
           <CardMedia
-            height="240"
-            component="img"
+            height='240'
+            component='img'
             image={prop.category.thumbnails.original}
             alt={prop.category.title}
           />
@@ -54,8 +59,8 @@ export default function CategoryCard(prop: Props): JSX.Element {
                 marginRight: 'auto',
               }}
               textAlign={'center'}
-              variant="h6"
-              component="div"
+              variant='h6'
+              component='div'
             >
               {prop.category.title}
             </Typography>

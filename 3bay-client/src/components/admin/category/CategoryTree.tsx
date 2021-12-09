@@ -113,7 +113,7 @@ function CategoryTreeItem(props: CategoryTreeItemProps): JSX.Element {
             },
           }}
         >
-          <Box color="inherit" />
+          <Box color='inherit' />
           <Typography
             sx={(theme) => ({
               fontWeight: 'inherit',
@@ -127,11 +127,16 @@ function CategoryTreeItem(props: CategoryTreeItemProps): JSX.Element {
             {labelText}
           </Typography>
 
-          <Typography variant="caption" color="inherit">
+          <Typography variant='caption' color='inherit'>
             {labelInfo}
           </Typography>
 
-          <Box id="labelIcon" component={LabelIcon} sx={{}} onClick={onCategorySelected} />
+          <Box
+            id='labelIcon'
+            component={LabelIcon}
+            sx={{}}
+            onClick={onCategorySelected}
+          />
         </Box>
       }
       // style={{
@@ -174,17 +179,21 @@ function renderCategoryTree(
           onCategorySelected={onCategorySelected}
         >
           {/*recursion*/}
-          {category.otherCategories && renderCategoryTree(category.otherCategories, onCategorySelected)}
+          {category.otherCategories &&
+            renderCategoryTree(category.otherCategories, onCategorySelected)}
         </CategoryTreeItem>
       ))}
     </>
   )
 }
 
-export default function CategoryTree({ categories, onCategorySelected }: CategoryTreeProps): JSX.Element {
+export default function CategoryTree({
+  categories,
+  onCategorySelected,
+}: CategoryTreeProps): JSX.Element {
   return (
     <TreeView
-      aria-label="customized"
+      aria-label='customized'
       defaultExpanded={['1']}
       defaultCollapseIcon={<KeyboardArrowUpIcon />}
       defaultExpandIcon={<KeyboardArrowDownIcon />}
@@ -203,7 +212,7 @@ export default function CategoryTree({ categories, onCategorySelected }: Categor
         color: theme.palette.text.primary,
       })}
     >
-      <StyledTreeItemRoot nodeId="-1" label="All categories">
+      <StyledTreeItemRoot nodeId='-1' label='All categories'>
         {renderCategoryTree(categories, onCategorySelected)}
       </StyledTreeItemRoot>
     </TreeView>

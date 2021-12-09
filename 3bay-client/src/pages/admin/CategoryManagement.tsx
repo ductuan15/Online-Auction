@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded'
@@ -12,11 +12,13 @@ import config from '../../config/config'
 import Category from '../../data/category'
 import { EditCategoryDialog } from '../../components/admin/category/EditCategoryDialog'
 
-export const CategoryManagementPage = (): JSX.Element => {
+export const CategoryManagement: FC = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false)
   const [openEditDialog, setOpenEditDialog] = useState(false)
   const [categories, setCategories] = useState<Array<Category>>(() => [])
-  const [currentEditingCategory, setCurrentEditingCategory] = useState<Category | undefined>(undefined)
+  const [currentEditingCategory, setCurrentEditingCategory] = useState<
+    Category | undefined
+  >(undefined)
 
   useEffect(() => {
     fetch(`${config.apiHostName}/api/category/`)
@@ -54,10 +56,10 @@ export const CategoryManagementPage = (): JSX.Element => {
 
   return (
     <div>
-      <Grid container marginBottom={4} spacing={4} justifyContent="between">
-        <Grid display="flex" xs={12} item alignItems="center">
+      <Grid container marginBottom={4} spacing={4} justifyContent='between'>
+        <Grid display='flex' xs={12} item alignItems='center'>
           <Typography
-            color="text.primary"
+            color='text.primary'
             sx={(theme) => ({
               [theme.breakpoints.down('sm')]: {
                 typography: 'h5',
@@ -65,21 +67,28 @@ export const CategoryManagementPage = (): JSX.Element => {
               typography: 'h3',
             })}
           >
-            <CategoryRoundedIcon fontSize="large" sx={{ mr: 2 }} />
+            <CategoryRoundedIcon fontSize='large' sx={{ mr: 2 }} />
             Manage Categories
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Grid justifyContent="flex-end" alignItems="center">
-            <Button onClick={openDialog} startIcon={<AddRoundedIcon />} variant="contained">
+          <Grid justifyContent='flex-end' alignItems='center'>
+            <Button
+              onClick={openDialog}
+              startIcon={<AddRoundedIcon />}
+              variant='contained'
+            >
               Create
             </Button>
           </Grid>
         </Grid>
 
-        <Grid mt={2} display="flex" item xs={12} justifyContent="center">
-          <CategoryTree categories={categories} onCategorySelected={onCategorySelected} />
+        <Grid mt={2} display='flex' item xs={12} justifyContent='center'>
+          <CategoryTree
+            categories={categories}
+            onCategorySelected={onCategorySelected}
+          />
         </Grid>
       </Grid>
 

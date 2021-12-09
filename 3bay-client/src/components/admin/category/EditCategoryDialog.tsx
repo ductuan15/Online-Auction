@@ -3,9 +3,6 @@ import Category from '../../../data/category'
 import { BaseCategoryDialog } from './BaseCategoryDialog'
 import axios from 'axios'
 import config from '../../../config/config'
-import Button from '@mui/material/Button'
-import { Grid } from '@mui/material'
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 
 export type EditCategoryDialogProps = {
   allCategories?: Array<Category>
@@ -14,7 +11,9 @@ export type EditCategoryDialogProps = {
   category?: Category
 }
 
-export function EditCategoryDialog(props: EditCategoryDialogProps): JSX.Element {
+export function EditCategoryDialog(
+  props: EditCategoryDialogProps,
+): JSX.Element {
   return (
     <BaseCategoryDialog
       open={props.open}
@@ -29,7 +28,11 @@ export function EditCategoryDialog(props: EditCategoryDialogProps): JSX.Element 
           headers: { 'content-type': 'multipart/form-data' },
         }
 
-        return await axios.patch(`${config.apiHostName}/api/category/${category.id}`, formData, headerConfig)
+        return await axios.patch(
+          `${config.apiHostName}/api/category/${category.id}`,
+          formData,
+          headerConfig,
+        )
         // console.log(response)
       }}
     />

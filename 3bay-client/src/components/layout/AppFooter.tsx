@@ -36,17 +36,17 @@ function renderLinks() {
             }}
             key={column.title}
           >
-            <Typography fontWeight="bold" variant="body2">
+            <Typography fontWeight='bold' variant='body2'>
               {column.title}
             </Typography>
 
             {column.links.map((links) => {
               return (
                 <Link
-                  underline="none"
-                  href="https://youtu.be/dQw4w9WgXcQ"
-                  variant="body2"
-                  color="text.secondary"
+                  underline='none'
+                  href='https://youtu.be/dQw4w9WgXcQ'
+                  variant='body2'
+                  color='text.secondary'
                   sx={{ mt: 1.5 }}
                   key={links}
                 >
@@ -63,7 +63,7 @@ function renderLinks() {
 
 export default function AppFooter(): JSX.Element {
   return (
-    <Container component="footer" sx={{ bgcolor: 'background.paper' }}>
+    <Container component='footer' sx={{ bgcolor: 'background.paper' }}>
       <Divider />
       <Box
         sx={(theme) => ({
@@ -92,10 +92,15 @@ export default function AppFooter(): JSX.Element {
       >
         <div>
           <AppName bigSize />
-          <Typography variant="subtitle2" color="text.primary" fontWeight="bold" sx={{ mt: 1.5 }}>
+          <Typography
+            variant='subtitle2'
+            color='text.primary'
+            fontWeight='bold'
+            sx={{ mt: 1.5 }}
+          >
             Subscribe to our letters! Please UwU
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
             No spam, only cats.
           </Typography>
           <EmailSubscriber />
@@ -114,28 +119,28 @@ export default function AppFooter(): JSX.Element {
           justifyContent: { sm: 'space-between' },
         }}
       >
-        <Typography color="text.secondary" variant="body2">
+        <Typography color='text.secondary' variant='body2'>
           Copyright © {new Date().getFullYear()} HCMUS.
         </Typography>
         <Box sx={{ py: { xs: 2, sm: 0 } }}>
-          <Stack spacing={2} direction="row">
+          <Stack spacing={2} direction='row'>
             <IconButton
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://github.com/ductuan15/Online-Auction"
-              aria-label="github"
-              title="GitHub"
-              size="small"
+              target='_blank'
+              rel='noopener noreferrer'
+              href='https://github.com/ductuan15/Online-Auction'
+              aria-label='github'
+              title='GitHub'
+              size='small'
             >
               <GitHubIcon />
             </IconButton>
             <IconButton
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://www.reddit.com/r/cats/"
-              aria-label="github"
-              title="Reddit"
-              size="small"
+              target='_blank'
+              rel='noopener noreferrer'
+              href='https://www.reddit.com/r/cats/'
+              aria-label='github'
+              title='Reddit'
+              size='small'
             >
               <RedditIcon />
             </IconButton>

@@ -30,13 +30,26 @@ type BaseCategoryDialogProps = {
   title: string
   dialogName: string
   onCloseCallback: () => void
-  submitData: (formData: FormData, category: Category | undefined) => AxiosPromise
+  submitData: (
+    formData: FormData,
+    category: Category | undefined,
+  ) => AxiosPromise
   extraComponent?: () => JSX.Element
 }
 
-export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element {
-  const { open, onCloseCallback, dialogName, title, allCategories, extraComponent, category, submitData } =
-    props
+export function BaseCategoryDialog(
+  props: BaseCategoryDialogProps,
+): JSX.Element {
+  const {
+    open,
+    onCloseCallback,
+    dialogName,
+    title,
+    allCategories,
+    extraComponent,
+    category,
+    submitData,
+  } = props
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
   const progressRef = useRef<HTMLDivElement>(null)
@@ -109,14 +122,19 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
   }
 
   return (
-    <Dialog fullScreen={fullScreen} open={open} onClose={onClose} aria-labelledby={dialogName}>
+    <Dialog
+      fullScreen={fullScreen}
+      open={open}
+      onClose={onClose}
+      aria-labelledby={dialogName}
+    >
       <DialogTitle id={dialogName}>{title}</DialogTitle>
       <DialogContent>
         <form
           id={`category-form-${dialogName}`}
           onSubmit={onSubmit}
-          encType="multipart/form-data"
-          method="post"
+          encType='multipart/form-data'
+          method='post'
         >
           <Box ref={progressRef} sx={{ width: '100%', display: 'none' }}>
             <LinearProgress />
@@ -124,36 +142,44 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
 
           <TextField
             autoFocus
-            margin="dense"
+            margin='dense'
             id={`category-name-${dialogName}`}
-            label="Category name"
-            name="categoryTitle"
+            label='Category name'
+            name='categoryTitle'
             fullWidth
-            variant="outlined"
-            color="secondary"
+            variant='outlined'
+            color='secondary'
             defaultValue={category ? category.title : ''}
             sx={{ mt: 2, mb: 2 }}
           />
 
-          <ParentCategoryChooser allCategories={allCategories} currentCategory={category} />
+          <ParentCategoryChooser
+            allCategories={allCategories}
+            currentCategory={category}
+          />
 
           <Grid
             container
-            display="flex"
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
+            display='flex'
+            direction='column'
+            justifyContent='center'
+            alignItems='center'
             spacing={2}
           >
             <Grid item width={1}>
-              <Label htmlFor="contained-button-file">
-                <Input accept="image/jpeg" id="contained-button-file" type="file" onChange={onImageChange} />
+              <Label htmlFor='contained-button-file'>
+                <Input
+                  accept='image/jpeg'
+                  id='contained-button-file'
+                  type='file'
+                  onChange={onImageChange}
+                />
 
                 <Button
                   sx={{ width: 1 }}
                   startIcon={<ImageOutlinedIcon />}
-                  variant="contained"
-                  component="span"
+                  variant='contained'
+                  component='span'
                 >
                   Choose thumbnail
                 </Button>
@@ -163,23 +189,30 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
             {!image && category?.thumbnails && (
               <Grid item>
                 <CardMedia
-                  component="img"
+                  component='img'
                   sx={{ width: 128 }}
                   image={category.thumbnails.sm}
-                  alt="Category thumbnail"
+                  alt='Category thumbnail'
                 />
               </Grid>
             )}
 
             {image && (
               <Grid item>
-                <CardMedia component="img" sx={{ width: 128 }} image={image} alt="Category thumbnail" />
+                <CardMedia
+                  component='img'
+                  sx={{ width: 128 }}
+                  image={image}
+                  alt='Category thumbnail'
+                />
               </Grid>
             )}
 
             {image && (
               <Grid item>
-                <Alert severity="info">The image will be resized to 1024x1024 pixels</Alert>
+                <Alert severity='info'>
+                  The image will be resized to 1024x1024 pixels
+                </Alert>
               </Grid>
             )}
           </Grid>
@@ -190,9 +223,9 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
                 sx={{ width: 1 }}
                 startIcon={<DeleteOutlineOutlinedIcon />}
                 onClick={onDeleteCategory}
-                variant="outlined"
-                component="span"
-                color="error"
+                variant='outlined'
+                component='span'
+                color='error'
               >
                 Delete category
               </Button>
@@ -207,7 +240,7 @@ export function BaseCategoryDialog(props: BaseCategoryDialogProps): JSX.Element 
         <Button autoFocus onClick={onClose}>
           Cancel
         </Button>
-        <Button autoFocus type="submit" form={`category-form-${dialogName}`}>
+        <Button autoFocus type='submit' form={`category-form-${dialogName}`}>
           Save changes
         </Button>
       </DialogActions>

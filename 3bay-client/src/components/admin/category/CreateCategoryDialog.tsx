@@ -10,7 +10,9 @@ type CreateCategoryDialogProps = {
   onCloseCallback: () => void
 }
 
-export function CreateCategoryDialog(props: CreateCategoryDialogProps): JSX.Element {
+export function CreateCategoryDialog(
+  props: CreateCategoryDialogProps,
+): JSX.Element {
   return (
     <BaseCategoryDialog
       open={props.open}
@@ -23,7 +25,11 @@ export function CreateCategoryDialog(props: CreateCategoryDialogProps): JSX.Elem
           headers: { 'content-type': 'multipart/form-data' },
         }
 
-        return await axios.post(`${config.apiHostName}/api/category/`, formData, headerConfig)
+        return await axios.post(
+          `${config.apiHostName}/api/category/`,
+          formData,
+          headerConfig,
+        )
         // console.log(response)
       }}
     />

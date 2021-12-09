@@ -6,11 +6,15 @@ import Button from '@mui/material/Button'
 
 const Form = styled('form')({})
 
-export default function EmailSubscriber({ sx }: { sx?: SxProps<Theme> }): JSX.Element {
+export default function EmailSubscriber({
+  sx,
+}: {
+  sx?: SxProps<Theme>
+}): JSX.Element {
   return (
     <Form sx={sx}>
       <FormLabel
-        htmlFor="email-subscribe"
+        htmlFor='email-subscribe'
         sx={{
           typography: 'caption',
           mb: 0.5,
@@ -30,14 +34,16 @@ export default function EmailSubscriber({ sx }: { sx?: SxProps<Theme> }): JSX.El
         }}
       >
         <InputBase
-          id="email-subscribe"
-          name="email"
-          type="email"
-          placeholder="example@email.com"
+          id='email-subscribe'
+          name='email'
+          type='email'
+          placeholder='example@email.com'
           inputProps={{ required: true }}
           sx={{
             bgcolor: (theme) =>
-              theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200],
+              theme.palette.mode === 'dark'
+                ? theme.palette.grey[800]
+                : theme.palette.grey[200],
             px: 1,
             py: 0.5,
             typography: 'body2',
@@ -45,22 +51,28 @@ export default function EmailSubscriber({ sx }: { sx?: SxProps<Theme> }): JSX.El
             minWidth: 200,
             '&:hover': {
               bgcolor: (theme) =>
-                theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[300],
+                theme.palette.mode === 'dark'
+                  ? theme.palette.grey[900]
+                  : theme.palette.grey[300],
             },
           }}
         />
         <Button
-          type="submit"
+          type='submit'
           sx={{
             bgcolor: (theme) =>
-              theme.palette.mode === 'dark' ? theme.palette.secondary.main : theme.palette.secondary.main,
+              theme.palette.mode === 'dark'
+                ? theme.palette.secondary.main
+                : theme.palette.secondary.main,
             py: 1,
             px: 2,
             color: 'secondary.contrastText',
             borderRadius: '0px',
             '&:hover': {
               bgcolor: (theme) =>
-                theme.palette.mode === 'dark' ? theme.palette.secondary.dark : theme.palette.secondary.dark,
+                theme.palette.mode === 'dark'
+                  ? theme.palette.secondary.dark
+                  : theme.palette.secondary.dark,
             },
           }}
         >

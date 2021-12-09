@@ -30,29 +30,34 @@ export default function ParentCategoryChooser({
   return (
     <Box sx={{ mb: 2 }}>
       <FormControl fullWidth>
-        <InputLabel id="parent-category-chooser">Sub-category of</InputLabel>
+        <InputLabel id='parent-category-chooser'>Sub-category of</InputLabel>
         <Select
           name='parentId'
           disabled={!allCategories || allCategories.length == 0}
-          labelId="parent-category-chooser"
-          id="parent-category-select"
+          labelId='parent-category-chooser'
+          id='parent-category-select'
           value={cat}
-          label="Sub-category of"
+          label='Sub-category of'
           onChange={handleChange}
         >
           <MenuItem key={'-1'} value={'-1'}>
             None
           </MenuItem>
-          {allCategories?.filter((category) => {
-            // should not render currentCategory option
-            return !currentCategory || (currentCategory && currentCategory.id !== category.id)
-          }).map((category) => {
-            return (
-              <MenuItem key={category.id} value={`${category.id}`}>
-                {category.title}
-              </MenuItem>
-            )
-          })}
+          {allCategories
+            ?.filter((category) => {
+              // should not render currentCategory option
+              return (
+                !currentCategory ||
+                (currentCategory && currentCategory.id !== category.id)
+              )
+            })
+            .map((category) => {
+              return (
+                <MenuItem key={category.id} value={`${category.id}`}>
+                  {category.title}
+                </MenuItem>
+              )
+            })}
         </Select>
         {(!allCategories || allCategories.length == 0) && (
           <FormHelperText>There is no category to choose</FormHelperText>

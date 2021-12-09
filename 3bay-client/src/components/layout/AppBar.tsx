@@ -73,7 +73,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       },
     },
     [theme.breakpoints.up('sm')]: {
-      border: theme.palette.mode === 'light' ? `1.5px solid ${theme.palette.grey[300]}` : '1.5px solid white',
+      border:
+        theme.palette.mode === 'light'
+          ? `1.5px solid ${theme.palette.grey[300]}`
+          : '1.5px solid white',
       borderRadius: '8px',
     },
   },
@@ -85,7 +88,7 @@ function HideOnScroll({ children }: Props) {
   })
 
   return (
-    <Slide appear={false} direction="down" in={!trigger}>
+    <Slide appear={false} direction='down' in={!trigger}>
       {children}
     </Slide>
   )
@@ -103,15 +106,27 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   transition: theme.transitions.create('width'),
   boxShadow: 'none',
   borderStyle: 'solid',
-  borderColor: theme.palette.mode === 'light' ? theme.palette.grey[300] : theme.palette.grey[800],
+  borderColor:
+    theme.palette.mode === 'light'
+      ? theme.palette.grey[300]
+      : theme.palette.grey[800],
   borderWidth: 0,
   borderBottomWidth: 'thin',
-  background: theme.palette.mode === 'light' ? 'rgba(255,255,255,0.98)' : theme.palette.background.default,
+  background:
+    theme.palette.mode === 'light'
+      ? 'rgba(255,255,255,0.98)'
+      : theme.palette.background.default,
 
-  color: theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.text.primary,
+  color:
+    theme.palette.mode === 'light'
+      ? theme.palette.grey[800]
+      : theme.palette.text.primary,
   '& .MuiIconButton-root': {
     /*borderRadius: theme.shape.borderRadius,*/
-    color: theme.palette.mode === 'light' ? theme.palette.primary : theme.palette.primary.light,
+    color:
+      theme.palette.mode === 'light'
+        ? theme.palette.primary
+        : theme.palette.primary.light,
     background: theme.palette.background.default,
     // [theme.breakpoints.up('sm')]: {
     //   border: `1px solid ${theme.palette.grey[300]}`,
@@ -154,7 +169,8 @@ export default function SearchAppBar(): JSX.Element {
   const colorMode = React.useContext(ColorModeContext)
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
+    React.useState<null | HTMLElement>(null)
 
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
@@ -194,7 +210,7 @@ export default function SearchAppBar(): JSX.Element {
 
       <MenuItem>
         <ListItemIcon>
-          <Logout fontSize="small" />
+          <Logout fontSize='small' />
         </ListItemIcon>
         Logout
       </MenuItem>
@@ -230,7 +246,7 @@ export default function SearchAppBar(): JSX.Element {
 
       <MenuItem>
         <ListItemIcon>
-          <Logout fontSize="small" />
+          <Logout fontSize='small' />
         </ListItemIcon>
         Logout
       </MenuItem>
@@ -242,7 +258,13 @@ export default function SearchAppBar(): JSX.Element {
       <HideOnScroll>
         <StyledAppBar>
           <StyledToolbar>
-            <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='open drawer'
+              sx={{ mr: 2 }}
+            >
               <MenuIcon />
             </IconButton>
 
@@ -253,14 +275,21 @@ export default function SearchAppBar(): JSX.Element {
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
-              <StyledInputBase placeholder="Search…" inputProps={{ 'aria-label': 'search' }} />
+              <StyledInputBase
+                placeholder='Search…'
+                inputProps={{ 'aria-label': 'search' }}
+              />
             </Search>
 
             <Box sx={{ flexGrow: 1 }} />
 
             <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
-              <IconButton size="large" color="inherit" onClick={colorMode.toggleColorMode}>
-                <Tooltip title="Change theme">
+              <IconButton
+                size='large'
+                color='inherit'
+                onClick={colorMode.toggleColorMode}
+              >
+                <Tooltip title='Change theme'>
                   <Brightness4OutlinedIcon />
                 </Tooltip>
               </IconButton>
@@ -273,15 +302,15 @@ export default function SearchAppBar(): JSX.Element {
                 textAlign: 'center',
               }}
             >
-              <Tooltip title="Account settings">
+              <Tooltip title='Account settings'>
                 <IconButton
                   onClick={handleProfileMenuOpen}
-                  size="large"
-                  edge="end"
-                  aria-label="account of current user"
+                  size='large'
+                  edge='end'
+                  aria-label='account of current user'
                   aria-controls={menuId}
-                  aria-haspopup="true"
-                  color="inherit"
+                  aria-haspopup='true'
+                  color='inherit'
                 >
                   <Avatar>M</Avatar>
                 </IconButton>
@@ -290,12 +319,12 @@ export default function SearchAppBar(): JSX.Element {
 
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
               <IconButton
-                size="large"
-                aria-label="show more"
+                size='large'
+                aria-label='show more'
                 aria-controls={mobileMenuId}
-                aria-haspopup="true"
+                aria-haspopup='true'
                 onClick={handleMobileMenuOpen}
-                color="inherit"
+                color='inherit'
               >
                 <MoreIcon />
               </IconButton>

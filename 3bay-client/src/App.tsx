@@ -1,13 +1,13 @@
 import React from 'react'
 import Layout from './components/layout/Layout'
 import ThemeConfig from './theme'
-import { CategoryManagementPage } from './pages/admin/CategoryManagementPage'
+import { CategoryManagement } from './pages/admin/CategoryManagement'
 
 function App(): JSX.Element {
   return (
     <ThemeConfig>
       <Layout>
-        <CategoryManagementPage />
+        <CategoryManagement />
       </Layout>
     </ThemeConfig>
   )
