@@ -1,15 +1,24 @@
-import { ErrorCode } from './error-code.js'
+import { CategoryErrorCode, ErrorCode } from './error-code.js'
+
+type ErrorParams = {
+  code: string
+  message?: string
+  metaData?: any
+}
 
 export class ErrorException extends Error {
   public status: number = 500
   public metaData: any = null
+  public message: string = ''
 
-  constructor(code: string = ErrorCode.UnknownError, metaData: any = null) {
+  constructor({ code, message, metaData }: ErrorParams) {
     super(code)
     Object.setPrototypeOf(this, new.target.prototype)
     this.name = code
     this.status = 500
-    this.metaData = metaData
+    this.message = message || ''
+    this.metaData = metaData || null
+
     switch (code) {
       case ErrorCode.Unauthenticated:
         this.status = 401
@@ -22,6 +31,41 @@ export class ErrorException extends Error {
         break
       case ErrorCode.NotFound:
         this.status = 404
+        break
+      default:
+        this.status = 500
+        break
+    }
+  }
+}
+
+export class CategoryErrorException extends ErrorException {
+  constructor({ code, message, metaData }: ErrorParams) {
+    super({ code, metaData, message })
+    switch (code) {
+      case CategoryErrorCode.EmptyRequest:
+        this.status = 400
+        this.message = 'Empty request'
+        break
+      case CategoryErrorCode.UnknownCreateError:
+        this.status = 500
+        this.message = 'Cannot create category'
+        break
+      case CategoryErrorCode.UnknownUpdateError:
+        this.status = 500
+        this.message = 'Cannot update category'
+        break
+      case CategoryErrorCode.NameExisted:
+        this.status = 400
+        this.message = 'Category name existed'
+        break
+      case CategoryErrorCode.NotFound:
+        this.status = 404
+        this.message = 'Category not found'
+        break
+      case CategoryErrorCode.UnknownError:
+        this.status = 418 // i'm a teapot!
+        this.message = 'Cannot perform the request'
         break
       default:
         this.status = 500
