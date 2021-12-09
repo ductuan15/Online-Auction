@@ -18,10 +18,10 @@ export const prismaErrorHandler = (
   } else if (err instanceof Prisma.PrismaClientValidationError) {
     console.error(err.message)
     res.status(400).send({
-      code: 'Incorrect field type provided or missing feild',
+      code: 'Incorrect field type provided or missing field',
       status: 400,
     } as ErrorModel)
   } else {
-    next(err);
+    next(err)
   }
 }
