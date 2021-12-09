@@ -5,6 +5,8 @@ import _ from 'lodash'
 export const initialCategoryState: CategoryState = {
   allCategories: [],
   currentCategory: undefined,
+  openCreateDialog: false,
+  openEditDialog: false,
 }
 
 export const categoryReducer = (
@@ -32,6 +34,28 @@ export const categoryReducer = (
       return {
         ...state,
         allCategories: removeCategory(state.allCategories, action.payload),
+      }
+    case 'OPEN_CREATE_DIALOG':
+      return {
+        ...state,
+        openCreateDialog: action.payload,
+      }
+    case 'OPEN_EDIT_DIALOG':
+      return {
+        ...state,
+        openEditDialog: action.payload,
+      }
+    case 'CLOSE_ALL_DIALOGS':
+      return {
+        ...state,
+        openCreateDialog: false,
+        openEditDialog: false,
+        currentCategory: undefined,
+      }
+    case 'CURRENT_CATEGORY':
+      return {
+        ...state,
+        currentCategory: action.payload,
       }
     default:
       return state
