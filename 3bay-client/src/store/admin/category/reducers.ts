@@ -12,7 +12,7 @@ export const initialCategoryState: CategoryState = {
 export const categoryReducer = (
   state: CategoryState,
   action: CategoryAction,
-) => {
+): CategoryState => {
   switch (action.type) {
     case 'ADD_ALL':
       return {
@@ -87,8 +87,11 @@ function updateCategory(
   const categories = _.cloneDeep(allCategories)
 
   if (!updatedCategory.parentId) {
+    // console.log(`before update ${JSON.stringify(categories)}`)
+    // console.log(`updated category ${JSON.stringify(updatedCategory)}`)
     const index = _.findIndex(allCategories, { id: updatedCategory.id })
     categories.splice(index, 1, updatedCategory)
+    // console.log(`after update ${JSON.stringify(categories)}`)
   } else {
     for (const category of categories) {
       traverseCategoryTree(
@@ -112,10 +115,13 @@ function removeCategory(
   allCategories: Array<Category>,
   categoryToRemoved: Category,
 ) {
-  const categories = _.cloneDeep(allCategories)
+  let categories = _.cloneDeep(allCategories)
 
   if (!categoryToRemoved.parentId) {
-    categories.filter((category) => category.id != categoryToRemoved.id)
+    categories = categories.filter((category) => category.id != categoryToRemoved.id)
+    if (categoryToRemoved.otherCategories) {
+      categories.push(...categoryToRemoved.otherCategories)
+    }
   } else {
     for (const category of categories) {
       traverseCategoryTree(
