@@ -2,7 +2,10 @@ import * as express from 'express'
 import prisma from '../db/prisma.js'
 import pkg from '@prisma/client'
 import config from '../config/config.js'
-import {removeCategoryThumbnailCache, saveCategoryThumbnail,} from './images.controller.js'
+import {
+  removeCategoryThumbnailCache,
+  saveCategoryThumbnail,
+} from './images.controller.js'
 
 const Prisma = pkg.Prisma
 
@@ -45,9 +48,10 @@ const handleCreateCategoryError = (err: any, res: express.Response) => {
   })
 }
 
-const errNotFound = (res: express.Response) => res.status(404).json({
-  error: 'Could not found category',
-})
+const errNotFound = (res: express.Response) =>
+  res.status(404).json({
+    error: 'Could not found category',
+  })
 
 interface CategoryRes {
   id: number
@@ -134,7 +138,7 @@ const add = async (req: express.Request, res: express.Response) => {
         if (req.file) {
           await saveCategoryThumbnail(req.file, category.id)
         }
-        return res.status(201).json(category)
+        return res.status(201).json(categoryWithThumbnailLinks(category))
       } catch (err: any) {
         return handleCreateCategoryError(err, res)
       }
@@ -156,18 +160,20 @@ const update = async (req: express.Request, res: express.Response) => {
     const data = req.body
 
     try {
-      const count = await prisma.categories.update({
+      const result = await prisma.categories.update({
         data: {
           title: data.title || req.category.title,
-          parentId: (data.parentId !== undefined && JSON.parse(data.parentId)) || req.category.parentId,
+          parentId:
+            (data.parentId !== undefined && JSON.parse(data.parentId)) ||
+            req.category.parentId,
         },
-        where: {id: req.category.id},
+        where: { id: req.category.id },
       })
       if (req.file) {
         removeCategoryThumbnailCache(req.category.id)
         await saveCategoryThumbnail(req.file, req.category.id)
       }
-      return res.json(count)
+      return res.json(categoryWithThumbnailLinks(result))
     } catch (err: any) {
       return handleCreateCategoryError(err, res)
     }
@@ -183,7 +189,7 @@ const deleteCategory = async (
   if (req.category) {
     if (req.category.parentId != null) {
       const parentCategory = await prisma.categories.findUnique({
-        where: {id: req.category.parentId},
+        where: { id: req.category.parentId },
       })
 
       if (parentCategory) {
@@ -199,13 +205,13 @@ const deleteCategory = async (
     }
 
     try {
-      const deleteCategory = await prisma.categories.delete({
+      const deletedCategory = await prisma.categories.delete({
         where: {
           id: req.category.id,
         },
       })
       // console.log(deleteCategory)
-      return res.json(deleteCategory)
+      return res.json(categoryWithThumbnailLinks(deletedCategory))
     } catch (e) {
       return next()
     }
