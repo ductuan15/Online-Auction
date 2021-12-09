@@ -1,4 +1,4 @@
-import * as express from 'express'
+import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
 import pkg from '@prisma/client'
 import config from '../config/config.js'
@@ -6,13 +6,15 @@ import {
   removeCategoryThumbnailCache,
   saveCategoryThumbnail,
 } from './images.controller.js'
+import { CategoryErrorException } from '../error/error-exception.js'
+import { CategoryErrorCode } from '../error/error-code.js'
 
 const Prisma = pkg.Prisma
 
 const categoryById = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
   value: any,
   _: string,
 ) => {
@@ -27,31 +29,36 @@ const categoryById = async (
     }
     next()
   } catch (error: any) {
-    return res.status(400).json({
-      error: 'Could not retrieve category',
-    })
+    return errorNotFound(next)
   }
 }
 
-const handleCreateCategoryError = (err: any, res: express.Response) => {
-  console.log(err)
-  if (
-    err instanceof Prisma.PrismaClientKnownRequestError &&
-    err.code === 'P2002'
-  ) {
-    return res.status(400).json({
-      error: 'Category name existed',
-    })
+const handlePrismaCategoryError = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  // console.log(err)
+  let metaData = null
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    metaData = { prisma: err.message }
+    if (err.code === 'P2002')
+      return next(
+        new CategoryErrorException({ code: CategoryErrorCode.NameExisted }),
+      )
   }
-  return res.status(418).json({
-    error: 'Could not create/update category',
-  })
+  // console.log(c.bgMagenta(err))
+  return next(
+    new CategoryErrorException({
+      code:
+        req.method === 'POST'
+          ? CategoryErrorCode.UnknownCreateError
+          : CategoryErrorCode.UnknownUpdateError,
+      metaData: metaData,
+    }),
+  )
 }
-
-const errNotFound = (res: express.Response) =>
-  res.status(404).json({
-    error: 'Could not found category',
-  })
 
 interface CategoryRes {
   id: number
@@ -95,7 +102,7 @@ const categoryWithThumbnailLinks = (category: Partial<CategoryRes>) => {
   }
 }
 
-const findAll = (req: express.Request, res: express.Response) => {
+const findAll = (req: Request, res: Response, next: NextFunction) => {
   prisma.categories
     .findMany({
       select: categoryDefaultSelect,
@@ -111,20 +118,27 @@ const findAll = (req: express.Request, res: express.Response) => {
       )
     })
     .catch((reason) => {
-      return res.status(500).json({
-        error: reason,
-      })
+      next(
+        new CategoryErrorException({
+          code: CategoryErrorCode.UnknownError,
+          metaData: { prisma: reason },
+        }),
+      )
     })
 }
 
-const read = (req: express.Request, res: express.Response) => {
+function errorNotFound(next: NextFunction) {
+  next(new CategoryErrorException({ code: CategoryErrorCode.NotFound }))
+}
+
+const read = (req: Request, res: Response, next: NextFunction) => {
   if (req.category) {
     return res.json(categoryWithThumbnailLinks(req.category))
   }
-  return errNotFound(res)
+  errorNotFound(next)
 }
 
-const add = async (req: express.Request, res: express.Response) => {
+const add = async (req: Request, res: Response, next: NextFunction) => {
   if (req.body) {
     const data = req.body
     if (data && data.title) {
@@ -140,20 +154,20 @@ const add = async (req: express.Request, res: express.Response) => {
         }
         return res.status(201).json(categoryWithThumbnailLinks(category))
       } catch (err: any) {
-        return handleCreateCategoryError(err, res)
+        return handlePrismaCategoryError(err, req, res, next)
       }
     }
   }
-  return res.status(400).json({
-    error: 'Empty request',
-  })
+  return next(
+    new CategoryErrorException({ code: CategoryErrorCode.EmptyRequest }),
+  )
 }
 
-const update = async (req: express.Request, res: express.Response) => {
+const update = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.body) {
-    return res.status(400).json({
-      error: 'Empty request',
-    })
+    return next(
+      new CategoryErrorException({ code: CategoryErrorCode.EmptyRequest }),
+    )
   }
 
   if (req.category) {
@@ -175,16 +189,16 @@ const update = async (req: express.Request, res: express.Response) => {
       }
       return res.json(categoryWithThumbnailLinks(result))
     } catch (err: any) {
-      return handleCreateCategoryError(err, res)
+      return handlePrismaCategoryError(err, req, res, next)
     }
   }
-  return errNotFound(res)
+  return errorNotFound(next)
 }
 
 const deleteCategory = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   if (req.category) {
     if (req.category.parentId != null) {
@@ -216,7 +230,7 @@ const deleteCategory = async (
       return next()
     }
   }
-  return errNotFound(res)
+  return errorNotFound(next)
 }
 
 export default {
