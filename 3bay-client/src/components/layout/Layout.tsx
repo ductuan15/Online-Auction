@@ -1,7 +1,7 @@
 import { Container } from '@mui/material'
 import React from 'react'
 
-import SearchAppBar, { StyledToolbar } from './AppBar'
+import SearchAppBar, { StyledToolbar } from './appbar/AppBar'
 import AppFooter from './AppFooter'
 import { styled } from '@mui/material/styles'
 

@@ -5,20 +5,16 @@ import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
 import InputBase from '@mui/material/InputBase'
-import MenuItem from '@mui/material/MenuItem'
-import Menu from '@mui/material/Menu'
 import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
 import MoreIcon from '@mui/icons-material/MoreVert'
-import { AppName } from './AppName'
+import { AppName } from '../AppName'
 import { Avatar, Slide, useScrollTrigger, useTheme } from '@mui/material'
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import Tooltip from '@mui/material/Tooltip'
-import Divider from '@mui/material/Divider'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import Logout from '@mui/icons-material/Logout'
-import { ColorModeContext } from '../../theme'
+import { ColorModeContext } from '../../../theme'
 import Brightness2OutlinedIcon from '@mui/icons-material/Brightness2Outlined'
+import { AppBarMenu, MobileMenu } from './Menu'
 
 interface Props {
   children: React.ReactElement
@@ -136,36 +132,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }))
 
-const menuPaperProp = {
-  elevation: 0,
-  sx: {
-    overflow: 'visible',
-    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-    mt: 1.5,
-    '& .MuiAvatar-root': {
-      width: 32,
-      height: 32,
-      ml: -0.5,
-      mr: 1,
-    },
-    '&:before': {
-      content: '""',
-      display: 'block',
-      position: 'absolute',
-      top: 0,
-      right: 14,
-      width: 10,
-      height: 10,
-      bgcolor: 'background.paper',
-      transform: 'translateY(-50%) rotate(45deg)',
-      zIndex: 0,
-    },
-  },
-}
-
 // TODO: break down smaller components into separated files
-// TODO: change the app bar color into white (or dark if dark mode is enabled)
-// TODO: resize the menu icon, the current one seems too small
 export default function SearchAppBar(): JSX.Element {
   const colorMode = React.useContext(ColorModeContext)
   const theme = useTheme()
@@ -195,71 +162,14 @@ export default function SearchAppBar(): JSX.Element {
   }
 
   const menuId = 'primary-search-account-menu'
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-      onClick={handleMenuClose}
-      PaperProps={menuPaperProp}
-      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-    >
-      <MenuItem>
-        <Avatar /> My account
-      </MenuItem>
-      <Divider />
-
-      <MenuItem>
-        <ListItemIcon>
-          <Logout fontSize='small' />
-        </ListItemIcon>
-        Logout
-      </MenuItem>
-    </Menu>
-  )
-
   const mobileMenuId = 'primary-search-account-menu-mobile'
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      id={mobileMenuId}
-      keepMounted
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-      PaperProps={menuPaperProp}
-      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-    >
-      <MenuItem>
-        <Avatar /> My account
-      </MenuItem>
-
-      <Divider />
-
-      <MenuItem onClick={colorMode.toggleColorMode}>
-        <ListItemIcon>
-          <Brightness4OutlinedIcon />
-        </ListItemIcon>
-        Change theme
-      </MenuItem>
-
-      <Divider />
-
-      <MenuItem>
-        <ListItemIcon>
-          <Logout fontSize='small' />
-        </ListItemIcon>
-        Logout
-      </MenuItem>
-    </Menu>
-  )
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <HideOnScroll>
         <StyledAppBar>
           <StyledToolbar>
+            {/* Menu drawer icon */}
             <IconButton
               size='large'
               edge='start'
@@ -273,6 +183,7 @@ export default function SearchAppBar(): JSX.Element {
             {/*Hide app name when the size is xs*/}
             <AppName sx={{ display: { xs: 'none', sm: 'block' } }} />
 
+            {/*Search bar*/}
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -285,6 +196,7 @@ export default function SearchAppBar(): JSX.Element {
 
             <Box sx={{ flexGrow: 1 }} />
 
+            {/*Theme button*/}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
               <IconButton
                 size='large'
@@ -301,6 +213,7 @@ export default function SearchAppBar(): JSX.Element {
               </IconButton>
             </Box>
 
+            {/* Profile */}
             <Box
               sx={{
                 display: { xs: 'none', md: 'flex' },
@@ -338,8 +251,20 @@ export default function SearchAppBar(): JSX.Element {
           </StyledToolbar>
         </StyledAppBar>
       </HideOnScroll>
-      {renderMobileMenu}
-      {renderMenu}
+
+      <MobileMenu
+        mobileMoreAnchorEl={mobileMoreAnchorEl}
+        mobileMenuId={mobileMenuId}
+        isMobileMenuOpen={isMobileMenuOpen}
+        handleMobileMenuClose={handleMobileMenuClose}
+        colorMode={colorMode}
+      />
+
+      <AppBarMenu
+        isMenuOpen={isMenuOpen}
+        anchorEl={anchorEl}
+        handleMenuClose={handleMenuClose}
+      />
     </Box>
   )
 }

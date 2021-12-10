@@ -30,14 +30,18 @@ type CategoryContextType = {
 const CategoryContext = createContext<CategoryContextType>({
   state: initialCategoryState,
   dispatch: () => null,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-  addAllCategories(_categories: Array<Category>) {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
-  addCategory(_category: Category) {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-  removeCategory(_category: Category) {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-  updateCategory(_current: Category, _updated: Category) {},
+  addAllCategories(): never {
+    throw new Error('Forgot to use wrap component in `CategoryProvider`')
+  },
+  addCategory(): never {
+    throw new Error('Forgot to use wrap component in `CategoryProvider`')
+  },
+  removeCategory(): never {
+    throw new Error('Forgot to use wrap component in `CategoryProvider`')
+  },
+  updateCategory(): never {
+    throw new Error('Forgot to use wrap component in `CategoryProvider`')
+  },
 })
 
 export const useCategoryContext = (): CategoryContextType => {

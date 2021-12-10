@@ -15,12 +15,15 @@ import {
   CategoryProvider,
   useCategoryContext,
 } from '../../contexts/admin/CategoryContext'
+import Layout from '../../components/layout/Layout'
 
 export const CategoryManagement: FC = () => {
   return (
-    <CategoryProvider>
-      <CategoryManagementContent />
-    </CategoryProvider>
+    <Layout>
+      <CategoryProvider>
+        <CategoryManagementContent />
+      </CategoryProvider>
+    </Layout>
   )
 }
 
