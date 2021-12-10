@@ -174,12 +174,15 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body
 
     try {
+      let parentId = req.category.parentId
+      if (data.parentId !== undefined) {
+        parentId = JSON.parse(data.parentId)
+      }
+
       const result = await prisma.categories.update({
         data: {
           title: data.title || req.category.title,
-          parentId:
-            (data.parentId !== undefined && JSON.parse(data.parentId)) ||
-            req.category.parentId,
+          parentId: parentId,
         },
         where: { id: req.category.id },
       })
