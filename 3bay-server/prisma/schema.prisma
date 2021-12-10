@@ -119,6 +119,8 @@ model users {
   isDisabled                 Boolean                     @default(false)
   type                       Int                         @default(0)
   pwd                        String                      @db.VarChar(255)
+  verified                   Boolean                     @default(false)
+  profile                    String?                     @db.VarChar(255)
   bids                       bids[]
   upgrade_to_bidder_requests upgrade_to_bidder_requests?
   user_watchlist             user_watchlist[]

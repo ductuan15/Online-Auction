@@ -7,7 +7,7 @@
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE = @@TIME_ZONE */;
 /*!40103 SET TIME_ZONE = '+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0 */;
@@ -46,12 +46,12 @@ CREATE TABLE `auctions`
 (
     `id`                      int(11)        NOT NULL AUTO_INCREMENT,
     `startTime`               datetime       NOT NULL DEFAULT current_timestamp(),
-    `closeTime`               datetime       DEFAULT NULL,
+    `closeTime`               datetime                DEFAULT NULL,
     `openPrice`               decimal(19, 4) NOT NULL,
     `incrementPrice`          decimal(19, 4) NOT NULL,
-    `buyoutPrice`             decimal(19, 4) DEFAULT NULL,
+    `buyoutPrice`             decimal(19, 4)          DEFAULT NULL,
     `productId`               int(11)        NOT NULL,
-    `winnerBidderId`          int(11)        DEFAULT NULL,
+    `winnerBidderId`          int(11)                 DEFAULT NULL,
     `autoExtendAuctionTiming` tinyint(1)     NOT NULL,
     PRIMARY KEY (`id`),
     KEY `auctions_fk0` (`productId`),
@@ -109,7 +109,7 @@ CREATE TABLE `categories`
     CONSTRAINT `categories_fk0` FOREIGN KEY (`parent_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 15
+  AUTO_INCREMENT = 38
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -169,7 +169,7 @@ CREATE TABLE `products`
     `categoryId`   int(11)                                 NOT NULL,
     `sellerId`     int(11)                                 NOT NULL,
     `createdAt`    datetime                                NOT NULL DEFAULT current_timestamp(),
-    `deletedAt`    datetime DEFAULT NULL,
+    `deletedAt`    datetime                                         DEFAULT NULL,
     `currentPrice` decimal(19, 4)                          NOT NULL,
     PRIMARY KEY (`id`),
     KEY `products_fk0` (`categoryId`),
@@ -232,6 +232,8 @@ CREATE TABLE `users`
     `isDisabled` tinyint(1)                              NOT NULL DEFAULT 0,
     `type`       int(11)                                 NOT NULL DEFAULT 0,
     `pwd`        varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `verified`   tinyint(1)                              NOT NULL DEFAULT 0,
+    `profile`    varchar(255) CHARACTER SET utf8mb3               DEFAULT NULL,
     PRIMARY KEY (`uuid`),
     UNIQUE KEY `email` (`email`)
 ) ENGINE = InnoDB
@@ -248,4 +250,4 @@ CREATE TABLE `users`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-06 22:42:30
+-- Dump completed on 2021-12-10 21:37:39
