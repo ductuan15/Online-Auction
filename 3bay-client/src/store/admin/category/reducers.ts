@@ -27,7 +27,11 @@ export const categoryReducer = (
     case 'UPDATE': {
       return {
         ...state,
-        allCategories: updateCategory(state.allCategories, action.payload),
+        allCategories: updateCategory(
+          state.allCategories,
+          action.payload.current,
+          action.payload.updated,
+        ),
       }
     }
     case 'REMOVE':
@@ -82,29 +86,31 @@ function addNewCategory(
 
 function updateCategory(
   allCategories: Array<Category>,
-  updatedCategory: Category,
+  current: Category,
+  updated: Category,
 ) {
+  if (current.parentId !== updated.parentId) {
+    const cats = removeCategory(allCategories, current)
+    return addNewCategory(cats, updated)
+  }
+
   const categories = _.cloneDeep(allCategories)
 
-  if (!updatedCategory.parentId) {
+  if (!updated.parentId) {
     // console.log(`before update ${JSON.stringify(categories)}`)
-    // console.log(`updated category ${JSON.stringify(updatedCategory)}`)
-    const index = _.findIndex(allCategories, { id: updatedCategory.id })
-    categories.splice(index, 1, updatedCategory)
+    // console.log(`updated category ${JSON.stringify(updated)}`)
+    const index = _.findIndex(allCategories, { id: updated.id })
+    categories.splice(index, 1, updated)
     // console.log(`after update ${JSON.stringify(categories)}`)
   } else {
     for (const category of categories) {
-      traverseCategoryTree(
-        category,
-        updatedCategory.parentId,
-        (parentCategory) => {
-          if (!parentCategory.otherCategories) return
-          const index = _.findIndex(parentCategory.otherCategories, {
-            id: updatedCategory.id,
-          })
-          parentCategory.otherCategories.splice(index, 1, updatedCategory)
-        },
-      )
+      traverseCategoryTree(category, updated.parentId, (parentCategory) => {
+        if (!parentCategory.otherCategories) return
+        const index = _.findIndex(parentCategory.otherCategories, {
+          id: updated.id,
+        })
+        parentCategory.otherCategories.splice(index, 1, updated)
+      })
     }
   }
 
@@ -118,7 +124,9 @@ function removeCategory(
   let categories = _.cloneDeep(allCategories)
 
   if (!categoryToRemoved.parentId) {
-    categories = categories.filter((category) => category.id != categoryToRemoved.id)
+    categories = categories.filter(
+      (category) => category.id != categoryToRemoved.id,
+    )
     if (categoryToRemoved.otherCategories) {
       categories.push(...categoryToRemoved.otherCategories)
     }

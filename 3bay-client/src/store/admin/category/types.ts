@@ -10,7 +10,7 @@ export type CategoryState = {
 export type CategoryAction =
   | { type: 'ADD_ALL'; payload: Array<Category> }
   | { type: 'ADD'; payload: Category }
-  | { type: 'UPDATE'; payload: Category }
+  | { type: 'UPDATE'; payload: { current: Category; updated: Category } }
   | { type: 'REMOVE'; payload: Category }
   | { type: 'OPEN_CREATE_DIALOG'; payload: boolean }
   | { type: 'OPEN_EDIT_DIALOG'; payload: boolean }
