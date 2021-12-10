@@ -1,6 +1,22 @@
-import { CategoryAction, CategoryState } from './types'
-import Category from '../../../data/category'
+import Category from '../../data/category'
 import _ from 'lodash'
+
+export type CategoryState = {
+  allCategories: Array<Category>
+  currentCategory?: Category
+  openCreateDialog: boolean
+  openEditDialog: boolean
+}
+
+export type CategoryAction =
+  | { type: 'ADD_ALL'; payload: Array<Category> }
+  | { type: 'ADD'; payload: Category }
+  | { type: 'UPDATE'; payload: { current: Category; updated: Category } }
+  | { type: 'REMOVE'; payload: Category }
+  | { type: 'OPEN_CREATE_DIALOG'; payload: boolean }
+  | { type: 'OPEN_EDIT_DIALOG'; payload: boolean }
+  | { type: 'CLOSE_ALL_DIALOGS' }
+  | { type: 'CURRENT_CATEGORY'; payload: Category | undefined }
 
 export const initialCategoryState: CategoryState = {
   allCategories: [],

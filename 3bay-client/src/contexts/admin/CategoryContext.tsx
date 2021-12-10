@@ -8,10 +8,11 @@ import {
   useReducer,
 } from 'react'
 import {
+  CategoryAction,
   categoryReducer,
+  CategoryState,
   initialCategoryState,
-} from '../../store/admin/category/reducers'
-import { CategoryAction, CategoryState } from '../../store/admin/category/types'
+} from '../../store/admin/category'
 import Category from '../../data/category'
 
 type CategoryProviderProps = {
