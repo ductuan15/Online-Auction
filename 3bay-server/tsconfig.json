@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ESNext",
     "lib": [
-      "dom",
-      "dom.iterable",
       "esnext"
     ],
     "allowJs": true,
@@ -15,12 +13,12 @@
     "module": "esnext",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
-    "resolveJsonModule": true,
     "outDir": "./dist",
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
-    "sourceMap": true
+    "sourceMap": true,
   },
   "include": [
     "src/**/*"

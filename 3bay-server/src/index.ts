@@ -1,16 +1,16 @@
 import config from './config/config.js'
 import app from './express.js'
 import prisma from './db/prisma.js'
+import c from 'ansi-colors'
 
 const PORT = process.env.PORT || config.port || 3030
 
 async function main() {
   app.listen(PORT, () => {
-    const color = '\u001B[38;5;98m'
-    console.log(`${color}App listening on the port ${PORT}`)
-    console.log(`hostname = ${config.hostname}`)
-    console.log(`Hope you're having a great day :>`)
-    console.log(`Happy coding!\u001B[m`)
+    console.log(c.magenta(`App listening on the port`), c.bgMagenta(`${PORT}`))
+    console.log(c.magenta(`hostname`), c.bgMagenta(`${config.hostname}`))
+    console.log(c.magenta(`Hope you're having a great day :>`))
+    console.log(c.magenta(`Happy coding!`))
   })
 }
 
