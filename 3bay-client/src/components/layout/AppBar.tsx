@@ -11,13 +11,14 @@ import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import { AppName } from './AppName'
-import { Avatar, Slide, useScrollTrigger } from '@mui/material'
+import { Avatar, Slide, useScrollTrigger, useTheme } from '@mui/material'
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import Tooltip from '@mui/material/Tooltip'
 import Divider from '@mui/material/Divider'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Logout from '@mui/icons-material/Logout'
 import { ColorModeContext } from '../../theme'
+import Brightness2OutlinedIcon from '@mui/icons-material/Brightness2Outlined'
 
 interface Props {
   children: React.ReactElement
@@ -167,6 +168,7 @@ const menuPaperProp = {
 // TODO: resize the menu icon, the current one seems too small
 export default function SearchAppBar(): JSX.Element {
   const colorMode = React.useContext(ColorModeContext)
+  const theme = useTheme()
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -290,7 +292,11 @@ export default function SearchAppBar(): JSX.Element {
                 onClick={colorMode.toggleColorMode}
               >
                 <Tooltip title='Change theme'>
-                  <Brightness4OutlinedIcon />
+                  {theme.palette.mode === 'light' ? (
+                    <Brightness2OutlinedIcon />
+                  ) : (
+                    <Brightness4OutlinedIcon />
+                  )}
                 </Tooltip>
               </IconButton>
             </Box>
