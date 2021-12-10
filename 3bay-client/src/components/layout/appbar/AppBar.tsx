@@ -7,18 +7,12 @@ import IconButton from '@mui/material/IconButton'
 import InputBase from '@mui/material/InputBase'
 import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
-import MoreIcon from '@mui/icons-material/MoreVert'
 import { AppName } from '../AppName'
-import { Avatar, Slide, useScrollTrigger, useTheme } from '@mui/material'
-import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
-import Tooltip from '@mui/material/Tooltip'
-import { ColorModeContext } from '../../../theme'
-import Brightness2OutlinedIcon from '@mui/icons-material/Brightness2Outlined'
 import { AppBarMenu, MobileMenu } from './Menu'
-
-interface Props {
-  children: React.ReactElement
-}
+import { AppBarCtxProvider } from '../../../contexts/layout/AppBarContext'
+import { AppBarProfileMenu } from './AppBarProfileMenu'
+import { ThemeChangeButton } from './ThemeChangeButton'
+import { HideOnScroll } from './HideOnScroll'
 
 const APPBAR_LARGE = 92
 const APPBAR_SMALL = 64
@@ -79,18 +73,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }))
 
-function HideOnScroll({ children }: Props) {
-  const trigger = useScrollTrigger({
-    target: window,
-  })
-
-  return (
-    <Slide appear={false} direction='down' in={!trigger}>
-      {children}
-    </Slide>
-  )
-}
-
 export const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   minHeight: APPBAR_SMALL,
   [theme.breakpoints.up('lg')]: {
@@ -132,139 +114,52 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }))
 
-// TODO: break down smaller components into separated files
 export default function SearchAppBar(): JSX.Element {
-  const colorMode = React.useContext(ColorModeContext)
-  const theme = useTheme()
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-    React.useState<null | HTMLElement>(null)
-
-  const isMenuOpen = Boolean(anchorEl)
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
-
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null)
-  }
-
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-    handleMobileMenuClose()
-  }
-
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget)
-  }
-
-  const menuId = 'primary-search-account-menu'
-  const mobileMenuId = 'primary-search-account-menu-mobile'
-
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <HideOnScroll>
-        <StyledAppBar>
-          <StyledToolbar>
-            {/* Menu drawer icon */}
-            <IconButton
-              size='large'
-              edge='start'
-              color='inherit'
-              aria-label='open drawer'
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
-
-            {/*Hide app name when the size is xs*/}
-            <AppName sx={{ display: { xs: 'none', sm: 'block' } }} />
-
-            {/*Search bar*/}
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder='Search…'
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search>
-
-            <Box sx={{ flexGrow: 1 }} />
-
-            {/*Theme button*/}
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
+    <AppBarCtxProvider>
+      <Box sx={{ flexGrow: 1 }}>
+        <HideOnScroll>
+          <StyledAppBar>
+            <StyledToolbar>
+              {/* Menu drawer icon */}
               <IconButton
                 size='large'
+                edge='start'
                 color='inherit'
-                onClick={colorMode.toggleColorMode}
+                aria-label='open drawer'
+                sx={{ mr: 2 }}
               >
-                <Tooltip title='Change theme'>
-                  {theme.palette.mode === 'light' ? (
-                    <Brightness2OutlinedIcon />
-                  ) : (
-                    <Brightness4OutlinedIcon />
-                  )}
-                </Tooltip>
+                <MenuIcon />
               </IconButton>
-            </Box>
 
-            {/* Profile */}
-            <Box
-              sx={{
-                display: { xs: 'none', md: 'flex' },
-                alignItems: 'center',
-                textAlign: 'center',
-              }}
-            >
-              <Tooltip title='Account settings'>
-                <IconButton
-                  onClick={handleProfileMenuOpen}
-                  size='large'
-                  edge='end'
-                  aria-label='account of current user'
-                  aria-controls={menuId}
-                  aria-haspopup='true'
-                  color='inherit'
-                >
-                  <Avatar>M</Avatar>
-                </IconButton>
-              </Tooltip>
-            </Box>
+              {/*Hide app name when the size is xs*/}
+              <AppName sx={{ display: { xs: 'none', sm: 'block' } }} />
 
-            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-              <IconButton
-                size='large'
-                aria-label='show more'
-                aria-controls={mobileMenuId}
-                aria-haspopup='true'
-                onClick={handleMobileMenuOpen}
-                color='inherit'
-              >
-                <MoreIcon />
-              </IconButton>
-            </Box>
-          </StyledToolbar>
-        </StyledAppBar>
-      </HideOnScroll>
+              {/*Search bar*/}
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder='Search…'
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </Search>
 
-      <MobileMenu
-        mobileMoreAnchorEl={mobileMoreAnchorEl}
-        mobileMenuId={mobileMenuId}
-        isMobileMenuOpen={isMobileMenuOpen}
-        handleMobileMenuClose={handleMobileMenuClose}
-        colorMode={colorMode}
-      />
+              <Box sx={{ flexGrow: 1 }} />
 
-      <AppBarMenu
-        isMenuOpen={isMenuOpen}
-        anchorEl={anchorEl}
-        handleMenuClose={handleMenuClose}
-      />
-    </Box>
+              {/*Theme button*/}
+              <ThemeChangeButton />
+
+              {/* Profile */}
+              <AppBarProfileMenu />
+            </StyledToolbar>
+          </StyledAppBar>
+        </HideOnScroll>
+
+        <MobileMenu />
+        <AppBarMenu />
+      </Box>
+    </AppBarCtxProvider>
   )
 }

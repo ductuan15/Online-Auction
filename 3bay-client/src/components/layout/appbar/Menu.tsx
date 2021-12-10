@@ -7,6 +7,8 @@ import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import Logout from '@mui/icons-material/Logout'
 import * as React from 'react'
 import { FC } from 'react'
+import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
+import { ColorModeContext } from '../../../theme'
 
 const menuPaperProp = {
   elevation: 0,
@@ -35,33 +37,21 @@ const menuPaperProp = {
   },
 }
 
-type MobileMenuProps = {
-  mobileMoreAnchorEl: HTMLElement | null
-  mobileMenuId: string
-  isMobileMenuOpen: boolean
-  handleMobileMenuClose: () => void
-  colorMode: { toggleColorMode: () => void }
-}
+export const MobileMenu: FC = () => {
+  const colorMode = React.useContext(ColorModeContext)
+  const {
+    mobileMoreAnchorEl,
+    mobileMenuId,
+    isMobileMenuOpened,
+    handleMobileMenuClose,
+  } = useAppBarContext()
 
-type MenuProps = {
-  anchorEl: HTMLElement | null
-  isMenuOpen: boolean
-  handleMenuClose: () => void
-}
-
-export const MobileMenu: FC<MobileMenuProps> = ({
-  mobileMoreAnchorEl,
-  mobileMenuId,
-  isMobileMenuOpen,
-  handleMobileMenuClose,
-  colorMode,
-}: MobileMenuProps) => {
   return (
     <Menu
       anchorEl={mobileMoreAnchorEl}
       id={mobileMenuId}
       keepMounted
-      open={isMobileMenuOpen}
+      open={isMobileMenuOpened}
       onClose={handleMobileMenuClose}
       PaperProps={menuPaperProp}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
@@ -92,15 +82,13 @@ export const MobileMenu: FC<MobileMenuProps> = ({
   )
 }
 
-export const AppBarMenu: FC<MenuProps> = ({
-  anchorEl,
-  isMenuOpen,
-  handleMenuClose,
-}: MenuProps) => {
+export const AppBarMenu: FC = () => {
+  const { anchorEl, isMenuOpened, handleMenuClose } = useAppBarContext()
+
   return (
     <Menu
       anchorEl={anchorEl}
-      open={isMenuOpen}
+      open={isMenuOpened}
       onClose={handleMenuClose}
       onClick={handleMenuClose}
       PaperProps={menuPaperProp}
