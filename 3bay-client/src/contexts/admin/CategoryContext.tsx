@@ -24,7 +24,7 @@ type CategoryContextType = {
   addAllCategories: (categories: Array<Category>) => void
   addCategory: (category: Category) => void
   removeCategory: (category: Category) => void
-  updateCategory: (category: Category) => void
+  updateCategory: (current: Category, updated: Category) => void
 }
 
 const CategoryContext = createContext<CategoryContextType>({
@@ -37,10 +37,10 @@ const CategoryContext = createContext<CategoryContextType>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
   removeCategory(_category: Category) {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-  updateCategory(_category: Category) {},
+  updateCategory(_current: Category, _updated: Category) {},
 })
 
-export const useCategoryContext: () => CategoryContextType = () => {
+export const useCategoryContext = (): CategoryContextType => {
   return useContext(CategoryContext)
 }
 
@@ -57,8 +57,8 @@ export const CategoryProvider: FC<CategoryProviderProps> = ({ children }) => {
   const removeCategory = (category: Category) => {
     dispatch({ type: 'REMOVE', payload: category })
   }
-  const updateCategory = (category: Category) => {
-    dispatch({ type: 'UPDATE', payload: category })
+  const updateCategory = (current: Category, updated: Category) => {
+    dispatch({ type: 'UPDATE', payload: { current, updated } })
   }
 
   const contextValue = useMemo(

@@ -36,7 +36,7 @@ export const EditCategoryDialog: FC = () => {
         }
         console.log(editedCategory)
 
-        updateCategory(editedCategory)
+        updateCategory(category, editedCategory)
 
         return response
       }}

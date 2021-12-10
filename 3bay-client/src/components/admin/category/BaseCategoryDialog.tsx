@@ -13,7 +13,7 @@ import Button from '@mui/material/Button'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import DialogActions from '@mui/material/DialogActions'
 import Category from '../../../data/category'
-import axios, { AxiosPromise } from 'axios'
+import axios, { AxiosError, AxiosPromise } from 'axios'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import config from '../../../config/config'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
@@ -46,9 +46,11 @@ export function BaseCategoryDialog(
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
   const progressRef = useRef<HTMLDivElement>(null)
   const [image, setImage] = useState<string | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const onClose = () => {
     setImage(null)
+    setErrorMsg(null)
 
     if (progressRef.current && progressRef.current.style) {
       progressRef.current.style.display = 'none'
@@ -89,7 +91,7 @@ export function BaseCategoryDialog(
       await submitData(formData, category)
       onClose()
     } catch (e) {
-      console.log(e)
+      onError(e)
     }
   }
 
@@ -103,14 +105,44 @@ export function BaseCategoryDialog(
       await axios.delete(`${config.apiHostName}/api/category/${category.id}`)
       removeCategory(category)
       onClose()
-    } catch (e) {
-      console.log(e)
+    } catch (e: unknown) {
+      onError(e)
     }
   }
 
   const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.files && event.target.files[0]) {
       setImage(URL.createObjectURL(event.target.files[0]))
+    }
+  }
+
+  // TODO: refactor me
+  const onError = (error: unknown) => {
+    console.log(error)
+    if (progressRef.current && progressRef.current.style) {
+      progressRef.current.style.display = 'none'
+    }
+    if (axios.isAxiosError(error) && (error as AxiosError)) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data)
+        console.log(error.response.status)
+        console.log(error.response.headers)
+        setErrorMsg(error.response.data.message)
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        console.log(error.request)
+        setErrorMsg(error.request.data.message)
+      }
+    } else if (error instanceof Error) {
+      setErrorMsg(error.message)
+    } else if (typeof error === 'string') {
+      setErrorMsg(error)
+    } else {
+      setErrorMsg('Error occurred')
     }
   }
 
@@ -132,6 +164,8 @@ export function BaseCategoryDialog(
           <Box ref={progressRef} sx={{ width: '100%', display: 'none' }}>
             <LinearProgress />
           </Box>
+
+          {errorMsg && <Alert severity='error'>{errorMsg}</Alert>}
 
           <TextField
             autoFocus
