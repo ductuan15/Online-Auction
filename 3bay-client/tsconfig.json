@@ -22,6 +22,6 @@
     "sourceMap": true
   },
   "include": [
-    "src"
+    "src", "./webpack.config.ts"
   ]
 }
