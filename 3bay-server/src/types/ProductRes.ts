@@ -2,11 +2,11 @@ import pkg from '@prisma/client'
 
 
 export interface ProductRes extends pkg.products{
-  mainImg?: {
+  thumbnails?: {
     sm: string
     md: string
     lg: string
     original: string
   }
-  subImg?: string[];
+  detail?: string[];
 }
