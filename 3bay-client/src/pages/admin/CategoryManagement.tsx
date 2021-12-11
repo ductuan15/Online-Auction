@@ -52,7 +52,13 @@ const CategoryManagementContent: FC = () => {
 
   return (
     <>
-      <Grid container marginBottom={4} spacing={4} justifyContent='between'>
+      <Grid
+        container
+        marginTop={1}
+        marginBottom={4}
+        spacing={4}
+        justifyContent='between'
+      >
         <Grid display='flex' xs={12} item alignItems='center'>
           <Typography
             color='text.primary'
@@ -80,7 +86,7 @@ const CategoryManagementContent: FC = () => {
           </Grid>
         </Grid>
 
-        <Grid mt={2} display='flex' item xs={12} justifyContent='center'>
+        <Grid display='flex' item xs={12} justifyContent='center'>
           <CategoryTree />
         </Grid>
       </Grid>

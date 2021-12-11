@@ -10,7 +10,7 @@ import { FC } from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { ColorModeContext } from '../../../theme'
 
-const menuPaperProp = {
+const profileMenu = {
   elevation: 0,
   sx: {
     overflow: 'visible',
@@ -53,7 +53,7 @@ export const MobileMenu: FC = () => {
       keepMounted
       open={isMobileMenuOpened}
       onClose={handleMobileMenuClose}
-      PaperProps={menuPaperProp}
+      PaperProps={profileMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
@@ -91,7 +91,7 @@ export const AppBarMenu: FC = () => {
       open={isMenuOpened}
       onClose={handleMenuClose}
       onClick={handleMenuClose}
-      PaperProps={menuPaperProp}
+      PaperProps={profileMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >

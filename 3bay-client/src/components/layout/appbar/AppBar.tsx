@@ -13,9 +13,11 @@ import { AppBarCtxProvider } from '../../../contexts/layout/AppBarContext'
 import { AppBarProfileMenu } from './AppBarProfileMenu'
 import { ThemeChangeButton } from './ThemeChangeButton'
 import { HideOnScroll } from './HideOnScroll'
+import NotifyMenuButton from './NotifyMenuButton'
+import {NotifyMenu} from './NotifyMenu'
 
 const APPBAR_LARGE = 92
-const APPBAR_SMALL = 64
+const APPBAR_SMALL = 80
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -75,7 +77,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   minHeight: APPBAR_SMALL,
-  [theme.breakpoints.up('lg')]: {
+  [theme.breakpoints.up('md')]: {
     minHeight: APPBAR_LARGE,
     padding: theme.spacing(0, 5),
   },
@@ -148,8 +150,11 @@ export default function SearchAppBar(): JSX.Element {
 
               <Box sx={{ flexGrow: 1 }} />
 
+              {/*Notifications*/}
+              <NotifyMenuButton/>
+
               {/*Theme button*/}
-              <ThemeChangeButton />
+              <ThemeChangeButton sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, ml: 2 }} />
 
               {/* Profile */}
               <AppBarProfileMenu />
@@ -159,6 +164,7 @@ export default function SearchAppBar(): JSX.Element {
 
         <MobileMenu />
         <AppBarMenu />
+        <NotifyMenu />
       </Box>
     </AppBarCtxProvider>
   )
