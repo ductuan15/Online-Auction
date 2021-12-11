@@ -1,19 +1,21 @@
 import * as React from 'react'
-import {FC} from 'react'
-import {useAppBarContext} from '../../../contexts/layout/AppBarContext'
+import { FC } from 'react'
+import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
+import { Badge } from '@mui/material'
 
 const NotifyMenuButton: FC = () => {
-  const {handleNotifyMenuOpen, notifyMenuId} = useAppBarContext()
+  const { handleNotifyMenuOpen, notifyMenuId, notifyBadgeContent } =
+    useAppBarContext()
 
   return (
     <>
       <Box
         sx={{
-          display: {xs: 'none', md: 'flex'},
+          display: { xs: 'none', md: 'flex' },
           alignItems: 'center',
           textAlign: 'center',
         }}
@@ -28,7 +30,13 @@ const NotifyMenuButton: FC = () => {
             aria-haspopup='true'
             color='inherit'
           >
-            <NotificationsNoneOutlinedIcon/>
+            <Badge
+              badgeContent={notifyBadgeContent}
+              color='secondary'
+              variant='dot'
+            >
+              <NotificationsNoneOutlinedIcon />
+            </Badge>
           </IconButton>
         </Tooltip>
       </Box>

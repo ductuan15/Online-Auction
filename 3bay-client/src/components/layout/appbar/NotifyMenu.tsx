@@ -2,6 +2,13 @@ import Menu from '@mui/material/Menu'
 import * as React from 'react'
 import { FC } from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
+import MenuItem from '@mui/material/MenuItem'
+import DeadlineCountDown from './DeadlineCountDown'
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import { Divider, Grid, Link } from '@mui/material'
+import GitHubIcon from '@mui/icons-material/GitHub'
 
 const notifyMenu = {
   elevation: 0,
@@ -30,6 +37,8 @@ export const NotifyMenu: FC = () => {
   const { notifyAnchorEl, isNotifyMenuOpened, handleNotifyMenuClose } =
     useAppBarContext()
 
+  const dl = '12/30/2021 08:00 AM'
+
   return (
     <Menu
       anchorEl={notifyAnchorEl}
@@ -39,6 +48,60 @@ export const NotifyMenu: FC = () => {
       PaperProps={notifyMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-    />
+    >
+      <MenuItem sx={{ m: 1.5 }}>
+        <Grid container spacing={1} display='flex' flexDirection='column' p={1}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              px: 0.5,
+              py: 1,
+            }}
+          >
+            <CalendarTodayOutlinedIcon sx={{ mr: 1 }} />
+            <Typography>{dl}</Typography>
+          </Box>
+
+          <DeadlineCountDown
+            date={dl}
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              px: 0.5,
+              pt: 1,
+              pb: 0,
+            }}
+          />
+        </Grid>
+      </MenuItem>
+
+      <Divider variant='middle' />
+
+      <MenuItem sx={{ m: 1.5 }}>
+        <Grid
+          container
+          spacing={1}
+          display='flex'
+          flexDirection='row'
+          alignItems='center'
+          py={1.5}
+          px={1}
+        >
+          <GitHubIcon sx={{ mr: 1 }} />
+          <Link
+            target='_blank'
+            rel='noopener'
+            href='https://github.com/ductuan15/Online-Auction'
+            color='inherit'
+            underline='none'
+          >
+            Online Auction
+          </Link>
+        </Grid>
+      </MenuItem>
+    </Menu>
   )
 }

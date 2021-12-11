@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { createContext, FC, ReactNode, useContext } from 'react'
+import { createContext, FC, ReactNode, useContext, useState } from 'react'
 
 type AppBarContextProps = {
   children: ReactNode
@@ -21,6 +21,7 @@ type AppBarContextType = {
   menuId: string
   mobileMenuId: string
   notifyMenuId: string
+  notifyBadgeContent: number
 }
 
 const appBarInitialValue: AppBarContextType = {
@@ -51,6 +52,7 @@ const appBarInitialValue: AppBarContextType = {
   menuId: '',
   mobileMenuId: '',
   notifyMenuId: '',
+  notifyBadgeContent: 0,
 }
 
 export const AppBarContext =
@@ -66,6 +68,7 @@ export const AppBarCtxProvider: FC<AppBarContextProps> = ({ children }) => {
     React.useState<null | HTMLElement>(null)
   const [notifyAnchorEl, setNotifyAnchorEl] =
     React.useState<null | HTMLElement>(null)
+  const [notifyBadgeContent, setNotifyBadgeContent] = useState(2)
 
   const isMenuOpened = Boolean(profileAnchorEl)
   const isMobileMenuOpened = Boolean(mobileMoreAnchorEl)
@@ -90,6 +93,7 @@ export const AppBarCtxProvider: FC<AppBarContextProps> = ({ children }) => {
 
   const handleNotifyMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setNotifyAnchorEl(event.currentTarget)
+    setNotifyBadgeContent(0)
   }
 
   const handleNotifyMenuClose = () => {
@@ -118,6 +122,7 @@ export const AppBarCtxProvider: FC<AppBarContextProps> = ({ children }) => {
         menuId,
         mobileMenuId,
         notifyMenuId,
+        notifyBadgeContent,
       }}
     >
       {children}
