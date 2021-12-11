@@ -6,7 +6,7 @@ import {
 } from '@mui/material/styles'
 import palette from './palette'
 import { CssBaseline, PaletteMode } from '@mui/material'
-import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect'
+// import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect'
 
 interface Props {
   children: React.ReactNode
@@ -49,15 +49,15 @@ export default function ThemeConfig(props: Props): JSX.Element {
 
   const theme = React.useMemo(() => createTheme(getDesignTokens(mode)), [mode])
 
-  useEnhancedEffect(() => {
-    if (theme.palette.mode === 'dark') {
-      document.body.classList.remove('mode-light')
-      document.body.classList.add('mode-dark')
-    } else {
-      document.body.classList.remove('mode-dark')
-      document.body.classList.add('mode-light')
-    }
-  }, [theme.palette.mode])
+  // useEnhancedEffect(() => {
+  //   if (theme.palette.mode === 'dark') {
+  //     document.body.classList.remove('mode-light')
+  //     document.body.classList.add('mode-dark')
+  //   } else {
+  //     document.body.classList.remove('mode-dark')
+  //     document.body.classList.add('mode-light')
+  //   }
+  // }, [theme.palette.mode])
 
   return (
     <StyledEngineProvider>

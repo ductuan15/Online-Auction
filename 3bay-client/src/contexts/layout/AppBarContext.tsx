@@ -24,16 +24,16 @@ const appBarInitialValue: AppBarContextType = {
   isMenuOpened: false,
   isMobileMenuOpened: false,
   handleProfileMenuOpen: () => {
-    throw new Error('Forgot to use wrap component in `AppBarCtxProvider`')
+    throw new Error('Forgot to wrap component in `AppBarCtxProvider`')
   },
   handleMobileMenuOpen: () => {
-    throw new Error('Forgot to use wrap component in `AppBarCtxProvider`')
+    throw new Error('Forgot to wrap component in `AppBarCtxProvider`')
   },
   handleMobileMenuClose: () => {
-    throw new Error('Forgot to use wrap component in `AppBarCtxProvider`')
+    throw new Error('Forgot to wrap component in `AppBarCtxProvider`')
   },
   handleMenuClose: () => {
-    throw new Error('Forgot to use wrap component in `AppBarCtxProvider`')
+    throw new Error('Forgot to wrap component in `AppBarCtxProvider`')
   },
   menuId: '',
   mobileMenuId: ''

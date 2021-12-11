@@ -32,16 +32,16 @@ const CategoryContext = createContext<CategoryContextType>({
   state: initialCategoryState,
   dispatch: () => null,
   addAllCategories(): never {
-    throw new Error('Forgot to use wrap component in `CategoryProvider`')
+    throw new Error('Forgot to wrap component in `CategoryProvider`')
   },
   addCategory(): never {
-    throw new Error('Forgot to use wrap component in `CategoryProvider`')
+    throw new Error('Forgot to wrap component in `CategoryProvider`')
   },
   removeCategory(): never {
-    throw new Error('Forgot to use wrap component in `CategoryProvider`')
+    throw new Error('Forgot to wrap component in `CategoryProvider`')
   },
   updateCategory(): never {
-    throw new Error('Forgot to use wrap component in `CategoryProvider`')
+    throw new Error('Forgot to wrap component in `CategoryProvider`')
   },
 })
 

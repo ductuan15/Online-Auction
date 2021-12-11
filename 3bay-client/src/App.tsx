@@ -1,11 +1,11 @@
 import React from 'react'
 import ThemeConfig from './theme'
-import { CategoryManagement } from './pages/admin/CategoryManagement'
+import SignIn from './pages/common/SignIn'
 
 function App(): JSX.Element {
   return (
     <ThemeConfig>
-      <CategoryManagement />
+      <SignIn />
     </ThemeConfig>
   )
 }
