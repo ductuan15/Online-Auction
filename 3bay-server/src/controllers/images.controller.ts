@@ -35,13 +35,10 @@ async function createCategoryThumbnailIfNotExist(
 ) {
   if (!fs.existsSync(fileOutName)) {
     // create folder name if not exist
-    if (!fs.existsSync(CATEGORY_THUMBNAIL_OUTPUT_PATH)) {
-      fs.mkdirSync(CATEGORY_THUMBNAIL_OUTPUT_PATH)
-    }
-
-    // create folder name if not exist
     if (!fs.existsSync(`${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`)) {
-      fs.mkdirSync(`${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`)
+      fs.mkdirSync(`${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`, {
+        recursive: true
+      })
     }
 
     // crop the original image & save
