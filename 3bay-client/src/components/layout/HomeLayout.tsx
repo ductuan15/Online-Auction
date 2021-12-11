@@ -3,17 +3,13 @@ import React from 'react'
 
 import SearchAppBar, { StyledToolbar } from './appbar/AppBar'
 import AppFooter from './AppFooter'
-import { styled } from '@mui/material/styles'
+import StyledDiv from '../common/StyledDiv'
 
 interface Props {
   children: React.ReactNode
 }
 
-const StyledDiv = styled('div')(({ theme }) => ({
-  background: theme.palette.background.paper,
-}))
-
-export default function Layout({ children }: Props): JSX.Element {
+export default function HomeLayout({ children }: Props): JSX.Element {
   return (
     <StyledDiv>
       {/* app bar */}

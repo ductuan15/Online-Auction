@@ -15,15 +15,15 @@ import {
   CategoryProvider,
   useCategoryContext,
 } from '../../contexts/admin/CategoryContext'
-import Layout from '../../components/layout/Layout'
+import HomeLayout from '../../components/layout/HomeLayout'
 
 export const CategoryManagement: FC = () => {
   return (
-    <Layout>
+    <HomeLayout>
       <CategoryProvider>
         <CategoryManagementContent />
       </CategoryProvider>
-    </Layout>
+    </HomeLayout>
   )
 }
 
