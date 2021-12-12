@@ -16,11 +16,14 @@ import { InputAdornment, InputLabel, OutlinedInput } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import FormControl from '@mui/material/FormControl'
+import DateAdapter from '@mui/lab/AdapterMoment'
+import { LocalizationProvider, MobileDatePicker } from '@mui/lab'
 
 // TODO add recaptcha
 const SignUp: FC = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showPassword2, setShowPassword2] = useState(false)
+  const [date, setDate] = React.useState<null | Date>(null)
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -44,8 +47,13 @@ const SignUp: FC = () => {
     event.preventDefault()
   }
 
+  const handleDateChange = (newValue: Date | null) => {
+    setDate(newValue)
+    console.log(newValue)
+  }
+
   return (
-    <SignInLayout>
+    <SignInLayout maxWidth='sm'>
       <Box
         sx={{
           marginTop: 8,
@@ -74,6 +82,7 @@ const SignUp: FC = () => {
 
         <Box component='form' noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
+            {/*name*/}
             <Grid item xs={12}>
               <TextField
                 autoComplete='given-name'
@@ -87,7 +96,8 @@ const SignUp: FC = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            {/*email*/}
+            <Grid item sm={6} xs={12}>
               <TextField
                 required
                 fullWidth
@@ -99,6 +109,20 @@ const SignUp: FC = () => {
               />
             </Grid>
 
+            {/*dob*/}
+            <Grid item sm={6} xs={12}>
+              <LocalizationProvider dateAdapter={DateAdapter}>
+                <MobileDatePicker
+                  label='Date of birth'
+                  inputFormat='L'
+                  value={date}
+                  onChange={handleDateChange}
+                  renderInput={(params) => <TextField fullWidth {...params} />}
+                />
+              </LocalizationProvider>
+            </Grid>
+
+            {/*address*/}
             <Grid item xs={12}>
               <TextField
                 required
@@ -110,6 +134,7 @@ const SignUp: FC = () => {
               />
             </Grid>
 
+            {/*pwd*/}
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel htmlFor='password'>Password</InputLabel>
@@ -137,6 +162,7 @@ const SignUp: FC = () => {
               </FormControl>
             </Grid>
 
+            {/*re-enter pwd*/}
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel htmlFor='password2'>Confirm password</InputLabel>
@@ -164,6 +190,7 @@ const SignUp: FC = () => {
               </FormControl>
             </Grid>
 
+            {/*email subscription*/}
             <Grid item xs={12}>
               <FormControlLabel
                 control={<Checkbox value='allowExtraEmails' color='primary' />}

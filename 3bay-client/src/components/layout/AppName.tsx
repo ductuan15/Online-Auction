@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Link } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import '@fontsource/libre-baskerville/400-italic.css'
@@ -17,23 +17,25 @@ type AppNameProps = {
 
 export function AppName({ bigSize, sx }: AppNameProps): JSX.Element {
   return (
-    <Box display='flex' alignItems='center'>
-      <StyledTypography
-        sx={sx}
-        fontFamily='Libre Baskerville'
-        variant={bigSize ? 'h3' : 'h4'}
-      >
-        3
-      </StyledTypography>
+    <Link underline='none' href='/'>
+      <Box display='flex' alignItems='center'>
+        <StyledTypography
+          sx={sx}
+          fontFamily='Libre Baskerville'
+          variant={bigSize ? 'h3' : 'h4'}
+        >
+          3
+        </StyledTypography>
 
-      <StyledTypography
-        variant={bigSize ? 'h4' : 'h5'}
-        noWrap
-        fontFamily='Libre Baskerville'
-        sx={sx}
-      >
-        bay
-      </StyledTypography>
-    </Box>
+        <StyledTypography
+          variant={bigSize ? 'h4' : 'h5'}
+          noWrap
+          fontFamily='Libre Baskerville'
+          sx={sx}
+        >
+          bay
+        </StyledTypography>
+      </Box>
+    </Link>
   )
 }

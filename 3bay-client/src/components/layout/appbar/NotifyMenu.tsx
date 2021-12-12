@@ -81,26 +81,28 @@ export const NotifyMenu: FC = () => {
       <Divider variant='middle' />
 
       <MenuItem sx={{ m: 1.5 }}>
-        <Grid
-          container
-          spacing={1}
-          display='flex'
-          flexDirection='row'
-          alignItems='center'
-          py={1.5}
-          px={1}
+        <Link
+          target='_blank'
+          rel='noopener'
+          href='https://github.com/ductuan15/Online-Auction'
+          color='inherit'
+          underline='none'
         >
-          <GitHubIcon sx={{ mr: 1 }} />
-          <Link
-            target='_blank'
-            rel='noopener'
-            href='https://github.com/ductuan15/Online-Auction'
-            color='inherit'
-            underline='none'
+          <Grid
+            container
+            spacing={1}
+            display='flex'
+            flexDirection='row'
+            alignItems='center'
+            py={1.5}
+            px={1}
           >
-            Online Auction
-          </Link>
-        </Grid>
+            <GitHubIcon sx={{ mr: 1 }} />
+            <Typography variant='body1' color='text.primary'>
+              Online Auction
+            </Typography>
+          </Grid>
+        </Link>
       </MenuItem>
     </Menu>
   )

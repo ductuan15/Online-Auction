@@ -78,7 +78,7 @@ const SignIn: FC = () => {
             autoComplete='current-password'
             inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
           />
-          <FormControlLabel
+          <FormControlLabel sx={{display: 'none'}}
             control={<Checkbox value='remember' color='primary' />}
             label={
               <Typography variant='body1' color='text.primary'>
@@ -114,26 +114,34 @@ const SignIn: FC = () => {
         <Typography color='text.primary'>or</Typography>
       </Divider>
 
-      <Button
-        type='button'
-        fullWidth
-        variant='outlined'
-        color='secondary'
-        sx={{ mt: 2, mb: 1 }}
-        startIcon={<SvgIcon component={GoogleIcon} />}
+      <Box
+        sx={{
+          mt: 1,
+          mb: 2,
+          display: 'flex',
+          flexDirection: 'row',
+        }}
       >
-        Continue with Google
-      </Button>
+        <Button
+          type='button'
+          variant='outlined'
+          color='secondary'
+          sx={{ mx: 0.5, flexBasis: '100%' }}
+          startIcon={<SvgIcon component={GoogleIcon} />}
+        >
+          Google
+        </Button>
 
-      <Button
-        type='button'
-        fullWidth
-        variant='outlined'
-        sx={{ mt: 1, mb: 2 }}
-        startIcon={<SvgIcon component={FBIcon} />}
-      >
-        Continue with Facebook
-      </Button>
+        <Button
+          type='button'
+          fullWidth
+          variant='outlined'
+          sx={{ mx: 0.5, flexBasis: '100%' }}
+          startIcon={<SvgIcon component={FBIcon} />}
+        >
+          Facebook
+        </Button>
+      </Box>
     </SignInLayout>
   )
 }
