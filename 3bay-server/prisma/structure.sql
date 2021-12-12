@@ -24,12 +24,12 @@ DROP TABLE IF EXISTS `admins`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `admins`
 (
-    `id`       varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `name`     varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `email`    varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `username_UNIQUE` (`username`)
+    `id`           varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `name`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `email`        varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `dob`          datetime                                DEFAULT NULL,
+    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -226,14 +226,16 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users`
 (
-    `uuid`       varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT uuid(),
-    `name`       varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `email`      varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `isDisabled` tinyint(1)                              NOT NULL DEFAULT 0,
-    `type`       int(11)                                 NOT NULL DEFAULT 0,
-    `pwd`        varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `verified`   tinyint(1)                              NOT NULL DEFAULT 0,
-    `profile`    varchar(255) CHARACTER SET utf8mb3               DEFAULT NULL,
+    `uuid`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT uuid(),
+    `name`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `email`        varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `isDisabled`   tinyint(1)                              NOT NULL DEFAULT 0,
+    `type`         int(11)                                 NOT NULL DEFAULT 0,
+    `pwd`          varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `dob`          datetime                                         DEFAULT NULL,
+    `verified`     tinyint(1)                              NOT NULL DEFAULT 0,
+    `profile`      varchar(255) CHARACTER SET utf8mb3               DEFAULT NULL,
+    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci          DEFAULT NULL,
     PRIMARY KEY (`uuid`),
     UNIQUE KEY `email` (`email`)
 ) ENGINE = InnoDB
@@ -250,4 +252,4 @@ CREATE TABLE `users`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-10 21:37:39
+-- Dump completed on 2021-12-12 19:27:39
