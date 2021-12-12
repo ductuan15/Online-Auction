@@ -4,34 +4,23 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { SxProps } from '@mui/system'
+import moment from 'moment'
 
 type Props = {
   date: string
   sx?: SxProps
 }
 
-// leading zeros
-const zeroPad = (num: number, places: number) => {
-  return String(num).padStart(places, '0')
-}
-
-const zp2 = (num: number) => zeroPad(num, 2)
-
 const DeadlineCountDown: FC<Props> = ({ date, sx }) => {
   const [countDownText, setCountDownText] = useState('')
 
-  const endDate = new Date(date)
-
-  const _second = 1000
-  const _minute = _second * 60
-  const _hour = _minute * 60
-  const _day = _hour * 24
+  const endDate = moment(date)
 
   let timer: NodeJS.Timeout
 
   const showRemaining = () => {
-    const now = new Date()
-    const distance = endDate.getTime() - now.getTime()
+    const now = moment()
+    const distance = endDate.date() - now.date()
 
     if (distance < 0) {
       if (timer) {
@@ -40,14 +29,8 @@ const DeadlineCountDown: FC<Props> = ({ date, sx }) => {
       setCountDownText('NOW')
       return
     }
-    const days = Math.floor(distance / _day)
-    const hours = Math.floor((distance % _day) / _hour)
-    const minutes = Math.floor((distance % _hour) / _minute)
-    const seconds = Math.floor((distance % _minute) / _second)
 
-    setCountDownText(
-      `${zp2(days)}d:${zp2(hours)}h:${zp2(minutes)}m:${zp2(seconds)}s`,
-    )
+    setCountDownText(now.to(endDate))
   }
 
   useEffect(() => {
