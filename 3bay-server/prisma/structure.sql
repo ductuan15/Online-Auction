@@ -27,8 +27,8 @@ CREATE TABLE `admins`
     `id`           varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `name`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `email`        varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `dob`          datetime                                DEFAULT NULL,
-    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `dob`          datetime                                         DEFAULT NULL,
+    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT uuid(),
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -235,7 +235,7 @@ CREATE TABLE `users`
     `dob`          datetime                                         DEFAULT NULL,
     `verified`     tinyint(1)                              NOT NULL DEFAULT 0,
     `profile`      varchar(255) CHARACTER SET utf8mb3               DEFAULT NULL,
-    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci          DEFAULT NULL,
+    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT uuid(),
     PRIMARY KEY (`uuid`),
     UNIQUE KEY `email` (`email`)
 ) ENGINE = InnoDB
@@ -252,4 +252,4 @@ CREATE TABLE `users`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-12 19:27:39
+-- Dump completed on 2021-12-13  1:15:19

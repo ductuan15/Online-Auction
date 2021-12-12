@@ -24,7 +24,7 @@ model admins {
   name         String    @db.VarChar(255)
   email        String    @db.VarChar(255)
   dob          DateTime? @db.DateTime(0)
-  refreshToken String?   @db.VarChar(255)
+  refreshToken String    @default(dbgenerated("(uuid())")) @db.VarChar(255)
 }
 
 model auctions {
@@ -123,7 +123,7 @@ model users {
   dob                        DateTime?                   @db.DateTime(0)
   verified                   Boolean                     @default(false)
   profile                    String?                     @db.VarChar(255)
-  refreshToken               String?                     @db.VarChar(255)
+  refreshToken               String                      @default(dbgenerated("(uuid())")) @db.VarChar(255)
   bids                       bids[]
   upgrade_to_bidder_requests upgrade_to_bidder_requests?
   user_watchlist             user_watchlist[]
