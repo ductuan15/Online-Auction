@@ -20,11 +20,12 @@ model categories {
 }
 
 model admins {
-  id           String    @id @db.VarChar(255)
+  uuid         String    @id @default(uuid()) @db.VarChar(255)
   name         String    @db.VarChar(255)
-  email        String    @db.VarChar(255)
+  email        String    @unique(map: "admins_email_uindex") @db.VarChar(255)
   dob          DateTime? @db.DateTime(0)
-  refreshToken String    @default(dbgenerated("(uuid())")) @db.VarChar(255)
+  refreshToken String    @default(uuid()) @db.VarChar(255)
+  address      String?   @db.VarChar(255)
 }
 
 model auctions {
@@ -117,7 +118,7 @@ model user_watchlist {
 }
 
 model users {
-  uuid                       String                      @id @default(dbgenerated("(uuid())")) @db.VarChar(255)
+  uuid                       String                      @id @default(uuid()) @db.VarChar(255)
   name                       String                      @db.VarChar(255)
   email                      String                      @unique(map: "email") @db.VarChar(255)
   isDisabled                 Boolean                     @default(false)
@@ -126,7 +127,8 @@ model users {
   dob                        DateTime?                   @db.DateTime(0)
   verified                   Boolean                     @default(false)
   profile                    String?                     @db.VarChar(255)
-  refreshToken               String                      @default(dbgenerated("(uuid())")) @db.VarChar(255)
+  refreshToken               String                      @default(uuid()) @db.VarChar(255)
+  address                    String?                     @db.VarChar(255)
   bids                       bids[]
   products                   products[]
   upgrade_to_bidder_requests upgrade_to_bidder_requests?
