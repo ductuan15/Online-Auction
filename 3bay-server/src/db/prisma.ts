@@ -44,20 +44,20 @@ const prisma = new pkg.PrismaClient({
 //   return next(params)
 // })
 
-prisma.$use(async (params, next) => {
-  // check incoming query terms`
-  if (params.model === 'users' || params.model === 'admins') {
-    const result = await next(params)
-    if (result) {
-      delete result['isDisabled']
-      delete result['pwd']
-      delete result['verified']
-      delete result['refreshToken']
-    }
-    return result
-  }
-  return next(params)
-})
+// prisma.$use(async (params, next) => {
+//   // check incoming query terms`
+//   if (params.model === 'users' || params.model === 'admins') {
+//     const result = await next(params)
+//     if (result) {
+//       delete result['isDisabled']
+//       delete result['pwd']
+//       delete result['verified']
+//       delete result['refreshToken']
+//     }
+//     return result
+//   }
+//   return next(params)
+// })
 
 prisma.$on('query', (e) => {
   const color = '\u001B[38;5;33m'
