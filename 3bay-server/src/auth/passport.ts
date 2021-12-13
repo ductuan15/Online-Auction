@@ -10,9 +10,7 @@ import prisma from '../db/prisma.js'
 import Prisma from '@prisma/client'
 import bcrypt from 'bcrypt'
 
-async function findUser(
-  email: string,
-): Promise<Prisma.users | undefined> {
+async function findUser(email: string): Promise<Prisma.users | undefined> {
   const user = await prisma.users.findUnique({
     where: { email: email },
   })
@@ -41,7 +39,12 @@ passport.use(
       } catch (e) {
         return done(e)
       }
-      if (!user) return done(null, false)
+      if (!user)
+        return done(
+          null,
+          false,
+          /*new AuthError({ code: AuthErrorCode.WrongEmailOrPassword }),*/
+        )
       if (await verifyPassword(user, password)) return done(null, user)
       return done(null, false)
     },

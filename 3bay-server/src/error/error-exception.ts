@@ -92,6 +92,7 @@ export class AuthError extends ErrorException {
         break
       case AuthErrorCode.WrongEmailOrPassword:
         this.status = 401
+        this.message = 'Invalid Email or password'
         break
       case AuthErrorCode.AccountDisabled:
         this.status = 401

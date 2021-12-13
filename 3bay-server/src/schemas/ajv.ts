@@ -1,7 +1,9 @@
 import Ajv from 'ajv'
-import userSchema from './sign-up.js'
 import addFormats from 'ajv-formats'
 import ajvErrors from 'ajv-errors'
+
+import userSchema from './sign-up.js'
+import signInSchema from './sign-in.js'
 
 const ajv = new Ajv({ removeAdditional: true, allErrors: true })
 addFormats(ajv)
@@ -17,5 +19,6 @@ ajv.addFormat('custom-date-time', function (dateTimeString) {
 
 ajv.compile(userSchema)
 
-export type SchemaTypes = typeof userSchema
+export type SchemaTypes = typeof userSchema | typeof signInSchema
+
 export default ajv
