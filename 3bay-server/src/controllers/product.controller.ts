@@ -7,6 +7,11 @@ import {
   getThumbnailLinks,
   getDetailImageLinks,
 } from './images-product.controller.js'
+
+import pkg from '@prisma/client'
+import { nextTick } from 'process'
+import config from '../config/config.js'
+
 export const productById = async (
   req: Request,
   res: Response,
@@ -36,7 +41,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     const product = await prisma.products.create({
       data: {
         name: data.name,
-        sellerId: +data.sellerId,
+        sellerId: data.sellerId,
         categoryId: +data.categoryId,
         currentPrice: 0,
       },
@@ -95,4 +100,32 @@ export const read = async (req: Request, res: Response) => {
     req.product.detail = await getDetailImageLinks(req.product.id)
   }
   return res.json(req.product)
+}
+
+export const getProductByCategoryId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const categoryId = +req.params.categoryId    
+    const pageNumber = +(req.query?.page ?? 1)
+    console.log(pageNumber);
+  
+    console.log(categoryId)
+    const products = await prisma.products.findMany({
+      where: {
+        categoryId: categoryId,
+      },
+      skip: (pageNumber - 1) * config.PAGE_LIMIT,
+      take: config.PAGE_LIMIT
+    })
+
+    res.status(201).json(products)
+  } catch (err) {
+    console.error(err)
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
 }

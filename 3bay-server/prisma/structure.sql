@@ -167,13 +167,15 @@ CREATE TABLE `products`
     `id`           int(11)                                 NOT NULL AUTO_INCREMENT,
     `name`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `categoryId`   int(11)                                 NOT NULL,
-    `sellerId`     int(11)                                 NOT NULL,
+    `sellerId`     varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `createdAt`    datetime                                NOT NULL DEFAULT current_timestamp(),
     `deletedAt`    datetime                                         DEFAULT NULL,
     `currentPrice` decimal(19, 4)                          NOT NULL,
     PRIMARY KEY (`id`),
     KEY `products_fk0` (`categoryId`),
     CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE
+    CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE
+
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;

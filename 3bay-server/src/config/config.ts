@@ -8,6 +8,7 @@ const config = {
     process.env.HOST_NAME || `http://localhost:${process.env.PORT || 3030}`,
   jwtSecret: process.env.JWT_SECRET || '',
   database: process.env.DATABASE || '3bay',
+  PAGE_LIMIT: 20
 }
 
 export default config

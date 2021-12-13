@@ -84,17 +84,19 @@ model products {
   id                  Int                   @id @default(autoincrement())
   name                String                @db.VarChar(255)
   categoryId          Int
-  sellerId            Int
+  sellerId            String                @db.VarChar(255)
   createdAt           DateTime              @default(now()) @db.DateTime(0)
   deletedAt           DateTime?             @db.DateTime(0)
   currentPrice        Decimal               @db.Decimal(19, 4)
   categories          categories            @relation(fields: [categoryId], references: [id], map: "products_fk0")
+  users               users                 @relation(fields: [sellerId], references: [uuid], map: "products_fk1")
   auctions            auctions[]
   product_des_history product_des_history[]
   product_images      product_images[]
   user_watchlist      user_watchlist[]
 
   @@index([categoryId], map: "products_fk0")
+  @@index([sellerId], map: "products_fk1")
 }
 
 model upgrade_to_bidder_requests {
@@ -125,6 +127,7 @@ model users {
   profile                    String?                     @db.VarChar(255)
   refreshToken               String                      @default(dbgenerated("(uuid())")) @db.VarChar(255)
   bids                       bids[]
+  products                   products[]
   upgrade_to_bidder_requests upgrade_to_bidder_requests?
   user_watchlist             user_watchlist[]
 }
