@@ -4,6 +4,7 @@ export class ErrorCode {
   public static readonly MaximumAllowedGrade = 'MaximumAllowedGrade'
   public static readonly AsyncError = 'AsyncError'
   public static readonly UnknownError = 'UnknownError'
+  public static readonly BadRequest = 'BadRequest'
 }
 
 export class CategoryErrorCode {

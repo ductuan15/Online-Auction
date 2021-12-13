@@ -32,6 +32,9 @@ export class ErrorException extends Error {
       case ErrorCode.NotFound:
         this.status = 404
         break
+      case ErrorCode.BadRequest:
+        this.status = 400
+        break
       default:
         this.status = 500
         break
