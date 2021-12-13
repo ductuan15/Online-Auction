@@ -1,4 +1,4 @@
-import { CategoryErrorCode, ErrorCode } from './error-code.js'
+import { AuthErrorCode, CategoryErrorCode, ErrorCode } from './error-code.js'
 
 type ErrorParams = {
   code: string
@@ -69,6 +69,29 @@ export class CategoryErrorException extends ErrorException {
       case CategoryErrorCode.UnknownError:
         this.status = 418 // i'm a teapot!
         this.message = 'Cannot perform the request'
+        break
+      default:
+        this.status = 500
+        break
+    }
+  }
+}
+
+export class AuthError extends ErrorException {
+  constructor({ code, message, metaData }: ErrorParams) {
+    super({ code, metaData, message })
+    switch (code) {
+      case AuthErrorCode.EmailNotConfirmed:
+        this.status = 401
+        break
+      case AuthErrorCode.EmailAlreadyUsed:
+        this.status = 400
+        break
+      case AuthErrorCode.TokenExpired:
+        this.status = 498
+        break
+      case AuthErrorCode.WrongEmailOrPassword:
+        this.status = 401
         break
       default:
         this.status = 500

@@ -15,3 +15,10 @@ export class CategoryErrorCode {
   public static readonly UnknownError = 'CategoryUnknownError'
   public static readonly EmptyRequest = 'CategoryEmptyRequest'
 }
+
+export class AuthErrorCode {
+  public static readonly EmailAlreadyUsed = 'AuthEmailAlreadyUsed'
+  public static readonly WrongEmailOrPassword = 'AuthWrongEmailOrPassword'
+  public static readonly EmailNotConfirmed = 'AuthEmailNotConfirmed'
+  public static readonly TokenExpired = 'AuthTokenExpired'
+}

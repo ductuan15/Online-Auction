@@ -1,6 +1,7 @@
 import pkg from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import { ErrorModel } from './error-model'
+
 const { Prisma } = pkg
 
 export const prismaErrorHandler = (
