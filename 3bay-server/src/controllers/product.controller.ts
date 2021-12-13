@@ -8,8 +8,7 @@ import {
   getDetailImageLinks,
 } from './images-product.controller.js'
 
-import pkg from '@prisma/client'
-import { nextTick } from 'process'
+import { products } from '@prisma/client'
 import config from '../config/config.js'
 
 export const productById = async (
@@ -27,10 +26,9 @@ export const productById = async (
       rejectOnNotFound: true,
     })
     next()
-  } catch (error) {
-    console.error(error)
-    if (error instanceof Error) {
-      next(error)
+  } catch (erroror) {
+    if (erroror instanceof Error) {
+      next(erroror)
     }
   }
 }
@@ -53,10 +51,9 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
       await saveProductDetailImage(files['detail'], product.id)
     }
     return res.status(201).json(product)
-  } catch (err) {
-    console.error(err)
-    if (err instanceof Error) {
-      next(err)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
     }
   }
 }
@@ -87,19 +84,25 @@ export const update = async (
       }
     }
     return res.json(count)
-  } catch (err) {
-    if (err instanceof Error) {
-      next(err)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
     }
   }
 }
 
-export const read = async (req: Request, res: Response) => {
-  if (req.product) {
-    req.product.thumbnails = getThumbnailLinks(req.product.id)
-    req.product.detail = await getDetailImageLinks(req.product.id)
+export const read = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (req.product) {
+      req.product.thumbnails = getThumbnailLinks(req.product.id)
+      req.product.detail = await getDetailImageLinks(req.product.id)
+    }
+    return res.json(req.product)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
   }
-  return res.json(req.product)
 }
 
 export const getProductByCategoryId = async (
@@ -108,24 +111,48 @@ export const getProductByCategoryId = async (
   next: NextFunction,
 ) => {
   try {
-    const categoryId = +req.params.categoryId    
-    const pageNumber = +(req.query?.page ?? 1)
-    console.log(pageNumber);
-  
-    console.log(categoryId)
-    const products = await prisma.products.findMany({
-      where: {
-        categoryId: categoryId,
-      },
-      skip: (pageNumber - 1) * config.PAGE_LIMIT,
-      take: config.PAGE_LIMIT
-    })
-
+    const categoryId = +req.params.categoryId
+    const page = +(req.query?.page || '/')
+    let products: products[] = []
+    if (page) {
+      products = await prisma.products.findMany({
+        where: {
+          categoryId: categoryId,
+        },
+        skip: (page - 1) * config.PAGE_LIMIT,
+        take: config.PAGE_LIMIT,
+      })
+    }
     res.status(201).json(products)
-  } catch (err) {
-    console.error(err)
-    if (err instanceof Error) {
-      next(err)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
+  }
+}
+
+export const search = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // https://www.prisma.io/docs/concepts/components/prisma-client/full-text-search
+    // Prisma does not support MySQL FTS?  :<<
+    const key = req.query
+    const page = +(req.query?.page || '/')
+    let products: products[] = []
+    if (page) {
+      products = await prisma.$queryRaw<
+        products[]
+      >`SELECT * FROM products WHERE MATCH (name) AGAINST (${key}) LIMIT ${
+        config.PAGE_LIMIT * (+(page || 1) - 1)
+      },${config.PAGE_LIMIT * +(page || 1)};`
+    }
+    res.status(201).json(products)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
     }
   }
 }

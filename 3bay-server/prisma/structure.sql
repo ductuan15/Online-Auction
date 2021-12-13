@@ -241,6 +241,8 @@ CREATE TABLE `users`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
+
+ALTER table products ADD FULLTEXT (name);
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE = @OLD_TIME_ZONE */;
 

@@ -1,5 +1,4 @@
 import { Router } from 'express'
-import categoryController from '../controllers/category.controller.js'
 import * as productController from '../controllers/product.controller.js'
 import { uploadProductImages } from '../middlewares/upload-product.mdw.js'
 
@@ -21,6 +20,8 @@ router
     uploadProductImages.fields(uploadProductImagesFields),
     productController.add,
   )
+
+router.route('/search').get(productController.search)
 
 router.route('/byCategory/:categoryId')
 .get(productController.getProductByCategoryId);
