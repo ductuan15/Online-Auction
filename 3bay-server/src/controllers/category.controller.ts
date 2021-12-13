@@ -82,7 +82,7 @@ const categoryDefaultSelect = {
 }
 
 const categoryWithThumbnailLinks = (category: Partial<CategoryRes>) => {
-  const link = `${config.hostname}/api/images/category/${category.id}`
+  const link = `${config.HOST_NAME}/api/images/category/${category.id}`
 
   if (category.otherCategories) {
     // get thumbnail links for sub-categories

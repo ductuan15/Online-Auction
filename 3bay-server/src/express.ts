@@ -13,6 +13,7 @@ import path, { dirname } from 'path'
 import categoryRoute from './routes/category.routes.js'
 import imagesRoute from './routes/images.routes.js'
 import productRoute from './routes/product.routes.js'
+import authRoute from './routes/auth.routes.js'
 import { errorHandler } from './error/error-handler.js'
 import { ProductRes } from './types/ProductRes.js'
 import { prismaErrorHandler } from './error/error-prisma.js'
@@ -50,6 +51,7 @@ function mountRoutes() {
   app.use('/api/product', productRoute)
   app.use('/', categoryRoute)
   app.use('/', imagesRoute)
+  app.use('/', authRoute)
 }
 
 function initializeErrorHandler() {

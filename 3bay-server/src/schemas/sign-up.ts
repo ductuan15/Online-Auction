@@ -39,7 +39,7 @@ const schema = {
       dob: 'Invalid date of birth format',
       address: 'Empty address is not allowed',
     },
-    // _: 'Bad request',
+    _: 'Bad request',
   },
 }
 
