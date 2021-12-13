@@ -19,6 +19,7 @@ export class CategoryErrorCode {
 export class AuthErrorCode {
   public static readonly EmailAlreadyUsed = 'AuthEmailAlreadyUsed'
   public static readonly WrongEmailOrPassword = 'AuthWrongEmailOrPassword'
-  public static readonly EmailNotConfirmed = 'AuthEmailNotConfirmed'
+  public static readonly NotVerified = 'AuthEmailNotConfirmed'
   public static readonly TokenExpired = 'AuthTokenExpired'
+  public static readonly AccountDisabled = 'AuthAccountDisabled'
 }

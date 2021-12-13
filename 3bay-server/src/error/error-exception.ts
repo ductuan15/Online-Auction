@@ -81,7 +81,7 @@ export class AuthError extends ErrorException {
   constructor({ code, message, metaData }: ErrorParams) {
     super({ code, metaData, message })
     switch (code) {
-      case AuthErrorCode.EmailNotConfirmed:
+      case AuthErrorCode.NotVerified:
         this.status = 401
         break
       case AuthErrorCode.EmailAlreadyUsed:
@@ -91,6 +91,9 @@ export class AuthError extends ErrorException {
         this.status = 498
         break
       case AuthErrorCode.WrongEmailOrPassword:
+        this.status = 401
+        break
+      case AuthErrorCode.AccountDisabled:
         this.status = 401
         break
       default:

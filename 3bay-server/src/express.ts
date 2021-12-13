@@ -5,7 +5,7 @@ import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
-
+import passport from './auth/passport.js'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
 
@@ -44,6 +44,8 @@ function initializeMiddlewares() {
   app.use(helmet())
   // enable CORS - Cross Origin Resource Sharing
   app.use(cors())
+  // passportを初期化
+  app.use(passport.initialize())
 }
 
 function mountRoutes() {
