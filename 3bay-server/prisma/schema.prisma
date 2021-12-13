@@ -120,7 +120,7 @@ model users {
   name                       String                      @db.VarChar(255)
   email                      String                      @unique(map: "email") @db.VarChar(255)
   isDisabled                 Boolean                     @default(false)
-  type                       Int                         @default(0)
+  type                       Role                        @default(BIDDER)
   pwd                        String                      @db.VarChar(255)
   dob                        DateTime?                   @db.DateTime(0)
   verified                   Boolean                     @default(false)
@@ -130,4 +130,9 @@ model users {
   products                   products[]
   upgrade_to_bidder_requests upgrade_to_bidder_requests?
   user_watchlist             user_watchlist[]
+}
+
+enum Role {
+  BIDDER
+  SELLER
 }
