@@ -173,7 +173,7 @@ CREATE TABLE `products`
     `currentPrice` decimal(19, 4)                          NOT NULL,
     PRIMARY KEY (`id`),
     KEY `products_fk0` (`categoryId`),
-    CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE
+    CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
     CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE
 
 ) ENGINE = InnoDB
