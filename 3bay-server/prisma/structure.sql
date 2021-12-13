@@ -20,22 +20,6 @@
 --
 
 DROP TABLE IF EXISTS `admins`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `admins`
-(
-    `uuid`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `name`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `email`        varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `dob`          datetime                                DEFAULT NULL,
-    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `address`      varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-    PRIMARY KEY (`uuid`),
-    UNIQUE KEY `admins_email_uindex` (`email`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `auctions`
@@ -172,9 +156,9 @@ CREATE TABLE `products`
     `deletedAt`    datetime                                         DEFAULT NULL,
     `currentPrice` decimal(19, 4)                          NOT NULL,
     PRIMARY KEY (`id`),
+    KEY `name` (`name`),
     KEY `products_fk0` (`categoryId`),
     KEY `products_fk1` (`sellerId`),
-    FULLTEXT KEY `name` (`name`),
     CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
     CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE
 ) ENGINE = InnoDB
@@ -229,17 +213,17 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users`
 (
-    `uuid`         varchar(255) COLLATE utf8mb4_unicode_ci             NOT NULL,
-    `name`         varchar(255) COLLATE utf8mb4_unicode_ci             NOT NULL,
-    `email`        varchar(255) COLLATE utf8mb4_unicode_ci             NOT NULL,
-    `isDisabled`   tinyint(1)                                          NOT NULL DEFAULT 0,
-    `type`         enum ('BIDDER','SELLER') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'BIDDER',
-    `pwd`          varchar(255) COLLATE utf8mb4_unicode_ci             NOT NULL,
-    `dob`          datetime                                                     DEFAULT NULL,
-    `verified`     tinyint(1)                                          NOT NULL DEFAULT 0,
-    `profile`      varchar(255) COLLATE utf8mb4_unicode_ci                      DEFAULT NULL,
-    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci             NOT NULL,
-    `address`      varchar(255) COLLATE utf8mb4_unicode_ci                      DEFAULT NULL,
+    `uuid`         varchar(255) COLLATE utf8mb4_unicode_ci                             NOT NULL,
+    `name`         varchar(255) COLLATE utf8mb4_unicode_ci                             NOT NULL,
+    `email`        varchar(255) COLLATE utf8mb4_unicode_ci                             NOT NULL,
+    `isDisabled`   tinyint(1)                                                          NOT NULL DEFAULT 0,
+    `type`         enum ('BIDDER','SELLER','ADMINISTRATOR') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'BIDDER',
+    `pwd`          varchar(255) COLLATE utf8mb4_unicode_ci                             NOT NULL,
+    `dob`          datetime                                                                     DEFAULT NULL,
+    `verified`     tinyint(1)                                                          NOT NULL DEFAULT 0,
+    `profile`      varchar(255) COLLATE utf8mb4_unicode_ci                                      DEFAULT NULL,
+    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci                             NOT NULL,
+    `address`      varchar(255) COLLATE utf8mb4_unicode_ci                                      DEFAULT NULL,
     PRIMARY KEY (`uuid`),
     UNIQUE KEY `email` (`email`)
 ) ENGINE = InnoDB
@@ -303,4 +287,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-13 23:21:57
+-- Dump completed on 2021-12-14  2:23:20

@@ -19,15 +19,6 @@ model categories {
   @@index([parentId], map: "fk_category_category_idx")
 }
 
-model admins {
-  uuid         String    @id @default(uuid()) @db.VarChar(255)
-  name         String    @db.VarChar(255)
-  email        String    @unique(map: "admins_email_uindex") @db.VarChar(255)
-  dob          DateTime? @db.DateTime(0)
-  refreshToken String    @default(uuid()) @db.VarChar(255)
-  address      String?   @db.VarChar(255)
-}
-
 model auctions {
   id                                 Int       @id @default(autoincrement())
   startTime                          DateTime  @default(now()) @db.DateTime(0)
@@ -138,4 +129,5 @@ model users {
 enum Role {
   BIDDER
   SELLER
+  ADMINISTRATOR
 }
