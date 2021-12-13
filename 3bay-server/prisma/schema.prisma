@@ -95,6 +95,7 @@ model products {
   product_images      product_images[]
   user_watchlist      user_watchlist[]
 
+  @@index([name], map: "name")
   @@index([categoryId], map: "products_fk0")
   @@index([sellerId], map: "products_fk1")
 }
