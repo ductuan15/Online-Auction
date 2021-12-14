@@ -156,7 +156,7 @@ CREATE TABLE `products`
     `deletedAt`    datetime                                         DEFAULT NULL,
     `currentPrice` decimal(19, 4)                          NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `name` (`name`),
+    FULLTEXT KEY `name` (`name`),
     KEY `products_fk0` (`categoryId`),
     KEY `products_fk1` (`sellerId`),
     CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
