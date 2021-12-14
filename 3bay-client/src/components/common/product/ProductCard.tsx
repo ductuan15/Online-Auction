@@ -13,7 +13,7 @@ type ProductCardProps = {
   }
 }
 
-const ProductCard = ({ sx, product }: ProductCardProps) => {
+const ProductCard = ({ sx, product }: ProductCardProps): JSX.Element => {
   return (
     <Card sx={sx}>
       <CardActionArea>

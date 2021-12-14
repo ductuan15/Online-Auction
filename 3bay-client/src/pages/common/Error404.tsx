@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { FC } from 'react'
 import HomeLayout from '../../components/layout/HomeLayout'
 import { CardMedia, Grid } from '@mui/material'
 

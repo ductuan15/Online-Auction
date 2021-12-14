@@ -13,7 +13,7 @@ interface BannerProps {
   title: string
 }
 
-const MainBanner = (props: BannerProps) => {
+const MainBanner = (props: BannerProps): JSX.Element => {
   return (
     <Paper
       sx={{
