@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import Category from '../data/category'
-import { Grid } from '@mui/material'
-import CategoryCard from '../components/CategoryCard'
+import { Grid, Typography } from '@mui/material'
 import config from '../config/config'
+import HomeLayout from '../components/layout/HomeLayout'
+import CategoryCard from '../components/CategoryCard'
 
 export const CategoryPage = (): JSX.Element => {
   const [categories, setCategories] = useState<Array<Category>>(() => [])
@@ -28,18 +29,30 @@ export const CategoryPage = (): JSX.Element => {
   }, [])
 
   return (
-    <Grid
-      container
-      marginTop={2}
-      marginBottom={4}
-      spacing={4}
-      justifyContent='between'
-    >
-      {categories.map((category) => (
-        <Grid item xs={6} md={4} lg={3} key={category.title}>
-          <CategoryCard category={category} />
-        </Grid>
-      ))}
-    </Grid>
+    <HomeLayout>
+      <Grid
+        container
+        marginTop={2}
+        marginBottom={4}
+        spacing={4}
+        justifyContent='between'
+      >
+        {categories.map((category) => (
+          <>
+            <Grid item xs={12}>
+              <Typography variant='h5' color='text.primary' key={category.id}>
+                {category.title}
+              </Typography>
+            </Grid>
+
+            {category.otherCategories?.map((subCat) => (
+              <Grid item xs={6} md={4} lg={3} key={subCat.title}>
+                <CategoryCard category={subCat} />
+              </Grid>
+            ))}
+          </>
+        ))}
+      </Grid>
+    </HomeLayout>
   )
 }

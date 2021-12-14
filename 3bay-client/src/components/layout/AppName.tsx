@@ -5,6 +5,7 @@ import '@fontsource/libre-baskerville/400-italic.css'
 import '@fontsource/roboto-slab'
 import { styled } from '@mui/material/styles'
 import { SxProps } from '@mui/system'
+import { Link as RouterLink } from 'react-router-dom'
 
 const StyledTypography = styled(Typography)(({ theme }) => ({
   color: theme.palette.primary.dark,
@@ -17,7 +18,7 @@ type AppNameProps = {
 
 export function AppName({ bigSize, sx }: AppNameProps): JSX.Element {
   return (
-    <Link underline='none' href='/'>
+    <Link underline='none' component={RouterLink} to='/'>
       <Box display='flex' alignItems='center'>
         <StyledTypography
           sx={sx}
