@@ -8,8 +8,9 @@ import {
   getDetailImageLinks,
 } from './images-product.controller.js'
 
-import { products } from '@prisma/client'
 import config from '../config/config.js'
+import { ProductRes } from '../types/ProductRes.js'
+import pkg from '@prisma/client'
 
 export const productById = async (
   req: Request,
@@ -23,12 +24,15 @@ export const productById = async (
       where: {
         id: +value,
       },
+      include: {
+        auctions: true,
+      },
       rejectOnNotFound: true,
     })
     next()
-  } catch (erroror) {
-    if (erroror instanceof Error) {
-      next(erroror)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
     }
   }
 }
@@ -36,7 +40,7 @@ export const productById = async (
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.body
-    const product = await prisma.products.create({
+    const product: ProductRes = await prisma.products.create({
       data: {
         name: data.name,
         sellerId: data.sellerId,
@@ -113,7 +117,7 @@ export const getProductByCategoryId = async (
   try {
     const categoryId = +req.params.categoryId
     const page = +(req.query?.page || '/')
-    let products: products[] = []
+    let products: ProductRes[] = []
     if (page) {
       products = await prisma.products.findMany({
         where: {
@@ -123,6 +127,10 @@ export const getProductByCategoryId = async (
         take: config.PAGE_LIMIT,
       })
     }
+    products.forEach(async (product) => {
+      product.thumbnails = await getThumbnailLinks(product.id)
+      product.detail = await getDetailImageLinks(product.id)
+    })
     res.status(201).json(products)
   } catch (error) {
     if (error instanceof Error) {
@@ -131,6 +139,7 @@ export const getProductByCategoryId = async (
   }
 }
 
+//http://localhost:3030/api/product/search/?key=iphone&page=1&timeOrder=desc&priceOrder=acs&categoryId=5
 export const search = async (
   req: Request,
   res: Response,
@@ -139,15 +148,31 @@ export const search = async (
   try {
     // https://www.prisma.io/docs/concepts/components/prisma-client/full-text-search
     // Prisma does not support MySQL FTS?  :<<
-    const key = req.query
+    const { key, timeOrder, priceOrder } = req.query
     const page = +(req.query?.page || '/')
-    let products: products[] = []
+    const categoryId = +(req.query?.categoryId || '')
+    console.log(categoryId)
+    let products: ProductRes[] = []
     if (page) {
-      products = await prisma.$queryRaw<
-        products[]
-      >`SELECT * FROM products WHERE MATCH (name) AGAINST (${key}) LIMIT ${
-        config.PAGE_LIMIT * (+(page || 1) - 1)
-      },${config.PAGE_LIMIT * +(page || 1)};`
+      // WTF is this :<
+      products = await prisma.$queryRaw<ProductRes[]>(
+        pkg.Prisma
+          .sql`SELECT * FROM products JOIN auctions on auctions.productId = products.id 
+          WHERE MATCH (name) AGAINST (${key}) and 
+            auctions.closeTime > CURRENT_TIMESTAMP and
+            ${
+              categoryId !== 0
+                ? pkg.Prisma.sql`products.categoryId = ${categoryId}`
+                : pkg.Prisma.empty
+            }
+        Order by auctions.closeTime ${
+          timeOrder === 'desc' ? pkg.Prisma.sql`desc` : pkg.Prisma.empty
+        }, products.currentPrice ${
+          priceOrder === 'desc' ? pkg.Prisma.sql`desc` : pkg.Prisma.empty
+        } LIMIT ${config.PAGE_LIMIT * (+(page || 1) - 1)},${
+          config.PAGE_LIMIT * +(page || 1)
+        };`,
+      )
     }
     res.status(201).json(products)
   } catch (error) {
