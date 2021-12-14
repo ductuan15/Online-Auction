@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton'
 import { Avatar } from '@mui/material'
 import MoreIcon from '@mui/icons-material/MoreVert'
 
-export const AppBarProfileMenu: FC = () => {
+export const AppBarProfileMenu = (): JSX.Element => {
   const { handleProfileMenuOpen, menuId, mobileMenuId, handleMobileMenuOpen } =
     useAppBarContext()
 

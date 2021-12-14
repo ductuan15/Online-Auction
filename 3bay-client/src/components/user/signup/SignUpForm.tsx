@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { FC, SyntheticEvent, useRef, useState } from 'react'
+import { SyntheticEvent, useRef, useState } from 'react'
 import Grid from '@mui/material/Grid'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -19,7 +19,7 @@ type SignUpFormProps = {
   onSubmit: SubmitHandler<SignUpFormInputs>
 }
 
-const SignUpForm: FC<SignUpFormProps> = ({ onSubmit }: SignUpFormProps) => {
+const SignUpForm = ({ onSubmit }: SignUpFormProps): JSX.Element => {
   const {
     control,
     handleSubmit,

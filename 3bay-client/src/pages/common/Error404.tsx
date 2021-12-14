@@ -3,7 +3,7 @@ import { FC } from 'react'
 import HomeLayout from '../../components/layout/HomeLayout'
 import { CardMedia, Grid } from '@mui/material'
 
-const Error404: FC = () => {
+const Error404 = (): JSX.Element => {
   return (
     <HomeLayout>
       <Grid container display='flex' alignItems='center' flexDirection='column'>

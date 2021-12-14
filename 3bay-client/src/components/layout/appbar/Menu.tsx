@@ -6,7 +6,6 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import Logout from '@mui/icons-material/Logout'
 import * as React from 'react'
-import { FC } from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { ColorModeContext } from '../../../theme'
 
@@ -37,7 +36,7 @@ const profileMenu = {
   },
 }
 
-export const MobileMenu: FC = () => {
+export const MobileMenu = () => {
   const colorMode = React.useContext(ColorModeContext)
   const {
     mobileMoreAnchorEl,
@@ -82,7 +81,7 @@ export const MobileMenu: FC = () => {
   )
 }
 
-export const AppBarMenu: FC = () => {
+export const AppBarMenu = (): JSX.Element => {
   const { anchorEl, isMenuOpened, handleMenuClose } = useAppBarContext()
 
   return (

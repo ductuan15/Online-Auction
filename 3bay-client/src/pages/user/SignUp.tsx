@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { FC } from 'react'
 import Avatar from '@mui/material/Avatar'
 import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
@@ -7,13 +6,13 @@ import Box from '@mui/material/Box'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import SignInLayout from '../../components/layout/SignInLayout'
-import { AppName } from '../../components/layout/AppName'
-import { SubmitHandler } from 'react-hook-form'
-import { SignUpFormInputs } from '../../store/admin/sign-up'
+import {AppName} from '../../components/layout/AppName'
+import {SubmitHandler} from 'react-hook-form'
+import {SignUpFormInputs} from '../../store/admin/sign-up'
 import SignUpForm from '../../components/user/signup/SignUpForm'
 
 // TODO add recaptcha
-const SignUp: FC = () => {
+const SignUp: () => JSX.Element = () => {
   // console.log(watch())
 
   const onSubmit: SubmitHandler<SignUpFormInputs> = (data) => {

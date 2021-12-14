@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { FC } from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
@@ -7,7 +6,7 @@ import IconButton from '@mui/material/IconButton'
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
 import { Badge } from '@mui/material'
 
-const NotifyMenuButton: FC = () => {
+const NotifyMenuButton = (): JSX.Element => {
   const { handleNotifyMenuOpen, notifyMenuId, notifyBadgeContent } =
     useAppBarContext()
 

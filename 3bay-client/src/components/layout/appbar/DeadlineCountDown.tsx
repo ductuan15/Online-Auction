@@ -11,7 +11,12 @@ type Props = {
   sx?: SxProps
 }
 
-const DeadlineCountDown: FC<Props> = ({ date, sx }) => {
+const DeadlineCountDown = (
+  {
+    date,
+    sx
+  }: Props
+): JSX.Element => {
   const [countDownText, setCountDownText] = useState('')
 
   const endDate = moment(date)

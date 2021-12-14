@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { FC } from 'react'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -16,7 +15,7 @@ import { ReactComponent as GoogleIcon } from '../../assets/Google__G__Logo.svg'
 import { ReactComponent as FBIcon } from '../../assets/Facebook_f_logo.svg'
 import SignInLayout from '../../components/layout/SignInLayout'
 
-const SignIn: FC = () => {
+const SignIn: () => JSX.Element = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
@@ -78,7 +77,8 @@ const SignIn: FC = () => {
             autoComplete='current-password'
             inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
           />
-          <FormControlLabel sx={{display: 'none'}}
+          <FormControlLabel
+            sx={{ display: 'none' }}
             control={<Checkbox value='remember' color='primary' />}
             label={
               <Typography variant='body1' color='text.primary'>

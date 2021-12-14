@@ -1,7 +1,6 @@
 import {
   createContext,
   Dispatch,
-  FC,
   ReactNode,
   useContext,
   useMemo,
@@ -49,7 +48,9 @@ export const useCategoryContext = (): CategoryContextType => {
   return useContext(CategoryContext)
 }
 
-export const CategoryProvider: FC<CategoryProviderProps> = ({ children }) => {
+export const CategoryProvider = ({
+  children,
+}: CategoryProviderProps): JSX.Element => {
   const [state, dispatch] = useReducer(categoryReducer, initialCategoryState)
 
   const addAllCategories = (categories: Array<Category>) => {
