@@ -1,7 +1,7 @@
 export interface SignUpFormInputs {
   name: string
   email: string
-  dob: Date | null
+  dob: string | null
   address: string
   pwd: string
   pwd2: string
