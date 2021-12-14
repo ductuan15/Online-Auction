@@ -11,7 +11,7 @@ import {
   categoryReducer,
   CategoryState,
   initialCategoryState,
-} from '../../store/admin/category'
+} from '../../stores/admin/category.store'
 import Category from '../../data/category'
 
 type CategoryProviderProps = {

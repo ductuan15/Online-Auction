@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { FC } from 'react'
 import { BaseCategoryDialog } from './BaseCategoryDialog'
 import axios from 'axios'
 import config from '../../../config/config'

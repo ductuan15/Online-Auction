@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
@@ -11,12 +11,7 @@ type Props = {
   sx?: SxProps
 }
 
-const DeadlineCountDown = (
-  {
-    date,
-    sx
-  }: Props
-): JSX.Element => {
+const DeadlineCountDown = ({ date, sx }: Props): JSX.Element => {
   const [countDownText, setCountDownText] = useState('')
 
   const endDate = moment(date)

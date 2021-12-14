@@ -1,4 +1,4 @@
-import {Slide, useScrollTrigger} from '@mui/material'
+import { Slide, useScrollTrigger } from '@mui/material'
 import * as React from 'react'
 
 interface Props {

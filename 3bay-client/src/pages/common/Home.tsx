@@ -21,8 +21,21 @@ const Home = (): JSX.Element => {
     <HomeLayout>
       <MainBanner {...banner} />
       <Grid container display='flex' alignItems='center' flexDirection='column'>
-        <Typography component='h2' variant='h4' gutterBottom>
+        <Typography
+          component='h2'
+          variant='h4'
+          gutterBottom
+          color='primary.main'
+        >
           💎 Top sale gì gì đó
+        </Typography>
+        <Typography
+          component='h2'
+          variant='h4'
+          gutterBottom
+          color='primary.main'
+        >
+          👁️👄👁️
         </Typography>
 
         <Grid

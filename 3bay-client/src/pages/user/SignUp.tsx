@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography'
 import SignInLayout from '../../components/layout/SignInLayout'
 import {AppName} from '../../components/layout/AppName'
 import {SubmitHandler} from 'react-hook-form'
-import {SignUpFormInputs} from '../../store/admin/sign-up'
+import {SignUpFormInputs} from '../../data/sign-up'
 import SignUpForm from '../../components/user/signup/SignUpForm'
 
 // TODO add recaptcha

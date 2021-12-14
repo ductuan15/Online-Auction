@@ -14,7 +14,7 @@ import { AppBarProfileMenu } from './AppBarProfileMenu'
 import { ThemeChangeButton } from './ThemeChangeButton'
 import { HideOnScroll } from './HideOnScroll'
 import NotifyMenuButton from './NotifyMenuButton'
-import {NotifyMenu} from './NotifyMenu'
+import { NotifyMenu } from './NotifyMenu'
 
 const APPBAR_LARGE = 92
 const APPBAR_SMALL = 80
@@ -151,10 +151,12 @@ export default function SearchAppBar(): JSX.Element {
               <Box sx={{ flexGrow: 1 }} />
 
               {/*Notifications*/}
-              <NotifyMenuButton/>
+              <NotifyMenuButton />
 
               {/*Theme button*/}
-              <ThemeChangeButton sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, ml: 2 }} />
+              <ThemeChangeButton
+                sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, ml: 2 }}
+              />
 
               {/* Profile */}
               <AppBarProfileMenu />

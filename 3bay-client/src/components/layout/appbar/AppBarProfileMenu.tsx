@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { FC } from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
