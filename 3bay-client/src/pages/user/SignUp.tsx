@@ -25,8 +25,8 @@ const SignUp: () => JSX.Element = () => {
     // console.log(data)
 
     try {
-      const id = await AuthService.register(data)
-      navigate(`/verify/${id}`, { replace: true })
+      const response = await AuthService.register(data)
+      navigate(`/verify/${response.uuid}`, { replace: true })
     } catch (e) {
       if (axios.isAxiosError(error) && (error as AxiosError)) {
         setError(error.response?.data.message || '')

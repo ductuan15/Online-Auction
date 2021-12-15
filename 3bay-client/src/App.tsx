@@ -7,10 +7,11 @@ import Error404 from './pages/common/Error404'
 import Home from './pages/common/Home'
 import { AuthProvider } from './contexts/user/AuthContext'
 import RequireAuth from './components/user/auth/RequireAuth'
-import { CategoryManagement } from './pages/admin/CategoryManagement'
+import CategoryManagement from './pages/admin/CategoryManagement'
 import HomeLayout from './components/layout/HomeLayout'
 import SignInLayout from './components/layout/SignInLayout'
 import ForgotPassword from './pages/user/ForgotPassword'
+import VerifyAccount from './pages/user/VerifyAccount'
 
 function App(): JSX.Element {
   return (
@@ -34,6 +35,7 @@ function App(): JSX.Element {
             <Route element={<SignInLayout />}>
               <Route path='/signin' element={<SignIn />} />
               <Route path='/forgot' element={<ForgotPassword />} />
+              <Route path='/verify/:id' element={<VerifyAccount />} />
             </Route>
 
             <Route element={<SignInLayout maxWidth='sm' />}>

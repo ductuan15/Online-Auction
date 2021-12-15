@@ -16,13 +16,14 @@ import {
   useCategoryContext,
 } from '../../contexts/admin/CategoryContext'
 
-export const CategoryManagement = (): JSX.Element => {
+const CategoryManagement = (): JSX.Element => {
   return (
     <CategoryProvider>
       <CategoryManagementContent />
     </CategoryProvider>
   )
 }
+export default CategoryManagement
 
 const CategoryManagementContent = () => {
   const { addAllCategories, dispatch } = useCategoryContext()

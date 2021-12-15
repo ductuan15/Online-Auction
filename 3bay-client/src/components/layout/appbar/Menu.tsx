@@ -54,6 +54,15 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
   const navigate = useNavigate()
   const { isAuth, signOut } = useAuth()
 
+  function onSignOutButtonClicked() {
+    signOut(() => {
+      dispatch({
+        type: 'CLOSE_PROFILE_MENU',
+      })
+      navigate('/')
+    })
+  }
+
   return (
     <Menu
       anchorEl={mobileMoreAnchorEl}
@@ -94,13 +103,7 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
       <Divider />
 
       {isAuth && (
-        <MenuItem
-          onClick={() =>
-            signOut(() => {
-              navigate('/')
-            })
-          }
-        >
+        <MenuItem onClick={() => onSignOutButtonClicked()}>
           <ListItemIcon>
             <Logout fontSize='small' />
           </ListItemIcon>
@@ -123,6 +126,15 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
 
   const navigate = useNavigate()
   const { isAuth, signOut } = useAuth()
+
+  function onSignOutButtonClicked() {
+    signOut(() => {
+      dispatch({
+        type: 'CLOSE_PROFILE_MENU',
+      })
+      navigate('/')
+    })
+  }
 
   return (
     <Menu
@@ -160,13 +172,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       <Divider />
 
       {isAuth && (
-        <MenuItem
-          onClick={() =>
-            signOut(() => {
-              navigate('/')
-            })
-          }
-        >
+        <MenuItem onClick={() => onSignOutButtonClicked()}>
           <ListItemIcon>
             <Logout fontSize='small' />
           </ListItemIcon>
