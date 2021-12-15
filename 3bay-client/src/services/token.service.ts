@@ -1,5 +1,15 @@
 import { AuthData } from './auth.service'
 
+// A wrapper for "JSON.parse()"" to support "undefined" value
+function parseJSON<T>(value: string | null): T | undefined {
+  try {
+    return value === 'undefined' ? undefined : JSON.parse(value ?? '')
+  } catch (error) {
+    console.log('parsing error on', { value })
+    return undefined
+  }
+}
+
 function saveAuthData(data: AuthData) {
   localStorage.setItem('auth', JSON.stringify(data))
 }
@@ -7,7 +17,7 @@ function saveAuthData(data: AuthData) {
 function getAuthData(): AuthData | null {
   const data = localStorage.getItem('auth')
   if (!data) return null
-  return JSON.parse(data) as AuthData
+  return parseJSON(data) as AuthData
 }
 
 function revokeAuthData() {

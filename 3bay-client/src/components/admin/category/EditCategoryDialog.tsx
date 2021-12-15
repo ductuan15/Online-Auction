@@ -7,7 +7,7 @@ import Category from '../../../data/category'
 
 // export type EditCategoryDialogProps = {}
 
-export const EditCategoryDialog = () => {
+export const EditCategoryDialog = (): JSX.Element => {
   const { state, updateCategory } = useCategoryContext()
   const { openEditDialog } = state
 

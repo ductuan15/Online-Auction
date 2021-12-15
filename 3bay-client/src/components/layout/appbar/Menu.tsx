@@ -10,6 +10,7 @@ import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
 import { useDarkMode } from 'usehooks-ts'
+import { useNavigate } from 'react-router-dom'
 
 const profileMenu = {
   elevation: 0,
@@ -49,7 +50,9 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
     state: { mobileMoreAnchorEl },
     dispatch,
   } = useAppBarContext()
-  const { isAuth } = useAuth()
+
+  const navigate = useNavigate()
+  const { isAuth, signOut } = useAuth()
 
   return (
     <Menu
@@ -91,11 +94,17 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
       <Divider />
 
       {isAuth && (
-        <MenuItem>
+        <MenuItem
+          onClick={() =>
+            signOut(() => {
+              navigate('/')
+            })
+          }
+        >
           <ListItemIcon>
             <Logout fontSize='small' />
           </ListItemIcon>
-          Logout
+          Sign out
         </MenuItem>
       )}
     </Menu>
@@ -112,7 +121,9 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
     dispatch,
   } = useAppBarContext()
 
-  const { isAuth } = useAuth()
+  const navigate = useNavigate()
+  const { isAuth, signOut } = useAuth()
+
   return (
     <Menu
       id={id}
@@ -149,11 +160,17 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       <Divider />
 
       {isAuth && (
-        <MenuItem>
+        <MenuItem
+          onClick={() =>
+            signOut(() => {
+              navigate('/')
+            })
+          }
+        >
           <ListItemIcon>
             <Logout fontSize='small' />
           </ListItemIcon>
-          Logout
+          Sign out
         </MenuItem>
       )}
     </Menu>

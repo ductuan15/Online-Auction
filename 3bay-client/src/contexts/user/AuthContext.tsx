@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   const signIn = async (email: string, pwd: string, cb: VoidFunction) => {
     const user = await AuthService.signIn(email, pwd)
+    console.log(user)
     setUser(user)
     cb()
   }

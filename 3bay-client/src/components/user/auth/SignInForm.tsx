@@ -18,7 +18,8 @@ const SignInForm = ({ handleSubmit }: SignInFormProps): JSX.Element => {
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    event.currentTarget.reset()
+    // event.currentTarget.reset()
+
     // console.log({
     //   email: data.get('email'),
     //   pwd: data.get('password'),

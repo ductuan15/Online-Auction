@@ -1,10 +1,6 @@
 import * as React from 'react'
+import { useState } from 'react'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import Link from '@mui/material/Link'
-import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { AppName } from '../../components/layout/AppName'
@@ -15,13 +11,35 @@ import { ReactComponent as GoogleIcon } from '../../assets/Google__G__Logo.svg'
 import { ReactComponent as FBIcon } from '../../assets/Facebook_f_logo.svg'
 import SignInLayout from '../../components/layout/SignInLayout'
 import SignInForm from '../../components/user/auth/SignInForm'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../contexts/user/AuthContext'
 
 const SignIn: () => JSX.Element = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || '/'
+
+  const { signIn } = useAuth()
+  const [isError, setError] = useState(false)
 
   const handleSubmit = async (data: { email: string; pwd: string }) => {
-    // const { email, pwd } = data
+    const { email, pwd } = data
     setError(false)
     console.log(data)
+    try {
+      await signIn(email, pwd, () => {
+        // Send them back to the page they tried to visit when they were
+        // redirected to the login page. Use { replace: true } so we don't create
+        // another entry in the history stack for the login page.  This means that
+        // when they get to the protected page and click the back button, they
+        // won't end up back on the login page, which is also really nice for the
+        // user experience.
+        navigate(from, { replace: true })
+      })
+    } catch (e) {
+      console.log(e)
+      setError(true)
+    }
   }
 
   return (
