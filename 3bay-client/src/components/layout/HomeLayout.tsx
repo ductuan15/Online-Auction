@@ -2,7 +2,7 @@ import { Container } from '@mui/material'
 import React from 'react'
 
 import SearchAppBar, { StyledToolbar } from './appbar/AppBar'
-import AppFooter from './AppFooter'
+import AppFooter from './footer/AppFooter'
 import StyledDiv from '../common/StyledDiv'
 import { AppBarCtxProvider } from '../../contexts/layout/AppBarContext'
 import AppDrawer from './AppDrawer'

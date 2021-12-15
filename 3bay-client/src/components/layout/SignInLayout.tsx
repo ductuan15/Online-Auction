@@ -1,7 +1,7 @@
 import React from 'react'
 import StyledDiv from '../common/StyledDiv'
 import { Container } from '@mui/material'
-import { Copyright } from '../Copyright'
+import { Copyright } from '../common/Copyright'
 
 interface Props {
   children: React.ReactNode

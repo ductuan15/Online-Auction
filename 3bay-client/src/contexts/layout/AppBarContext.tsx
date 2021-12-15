@@ -2,7 +2,8 @@ import * as React from 'react'
 import {
   createContext,
   Dispatch,
-  ReactNode, SyntheticEvent,
+  ReactNode,
+  SyntheticEvent,
   useContext,
   useMemo,
   useReducer,
@@ -20,7 +21,9 @@ type AppBarContextProps = {
 type AppBarContextType = {
   state: AppbarState
   dispatch: Dispatch<AppBarActionType>
-  toggleDrawer: (open: boolean) => (event: KeyboardEvent | MouseEvent | SyntheticEvent) => void
+  toggleDrawer: (
+    open: boolean,
+  ) => (event: KeyboardEvent | MouseEvent | SyntheticEvent) => void
 }
 
 const appBarInitialValue: AppBarContextType = {

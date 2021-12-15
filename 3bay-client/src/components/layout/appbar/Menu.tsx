@@ -7,9 +7,9 @@ import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import Logout from '@mui/icons-material/Logout'
 import * as React from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
-import { ColorModeContext } from '../../../theme'
 import { useAuthContext } from '../../../contexts/user/AuthContext'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
+import { useDarkMode } from 'usehooks-ts'
 
 const profileMenu = {
   elevation: 0,
@@ -43,7 +43,8 @@ type MobileMenuProps = {
 }
 
 export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
-  const colorMode = React.useContext(ColorModeContext)
+  // const colorMode = React.useContext(ColorModeContext)
+  const { toggle } = useDarkMode()
   const {
     state: { mobileMoreAnchorEl },
     dispatch,
@@ -82,7 +83,7 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
 
       <Divider />
 
-      <MenuItem onClick={colorMode.toggleColorMode}>
+      <MenuItem onClick={toggle}>
         <ListItemIcon>
           <Brightness4OutlinedIcon />
         </ListItemIcon>
