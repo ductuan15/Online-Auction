@@ -9,12 +9,12 @@ import MenuIcon from '@mui/icons-material/Menu'
 import SearchIcon from '@mui/icons-material/Search'
 import { AppName } from '../AppName'
 import { AppBarMenu, MobileMenu } from './Menu'
-import { AppBarCtxProvider } from '../../../contexts/layout/AppBarContext'
 import { AppBarProfileMenu } from './AppBarProfileMenu'
 import { ThemeChangeButton } from './ThemeChangeButton'
 import { HideOnScroll } from './HideOnScroll'
 import NotifyMenuButton from './NotifyMenuButton'
 import { NotifyMenu } from './NotifyMenu'
+import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 
 const APPBAR_LARGE = 92
 const APPBAR_SMALL = 80
@@ -121,57 +121,58 @@ export default function SearchAppBar(): JSX.Element {
   const mobileMenuId = 'primary-search-account-menu-mobile'
   const notifyMenuId = 'primary-search-account-menu-Notify'
 
+  const { toggleDrawer } = useAppBarContext()
+
   return (
-    <AppBarCtxProvider>
-      <Box sx={{ flexGrow: 1 }}>
-        <HideOnScroll>
-          <StyledAppBar>
-            <StyledToolbar>
-              {/* Menu drawer icon */}
-              <IconButton
-                size='large'
-                edge='start'
-                color='inherit'
-                aria-label='open drawer'
-                sx={{ mr: 2 }}
-              >
-                <MenuIcon />
-              </IconButton>
+    <Box sx={{ flexGrow: 1 }}>
+      <HideOnScroll>
+        <StyledAppBar>
+          <StyledToolbar>
+            {/* Menu drawer icon */}
+            <IconButton
+              size='large'
+              edge='start'
+              color='inherit'
+              aria-label='open drawer'
+              sx={{ mr: 2 }}
+              onClick={toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
 
-              {/*Hide app name when the size is xs*/}
-              <AppName sx={{ display: { xs: 'none', sm: 'block' } }} />
+            {/*Hide app name when the size is xs*/}
+            <AppName sx={{ display: { xs: 'none', sm: 'block' } }} />
 
-              {/*Search bar*/}
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder='Search…'
-                  inputProps={{ 'aria-label': 'search' }}
-                />
-              </Search>
-
-              <Box sx={{ flexGrow: 1 }} />
-
-              {/*Notifications*/}
-              <NotifyMenuButton notifyMenuId={notifyMenuId} />
-
-              {/*Theme button*/}
-              <ThemeChangeButton
-                sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, ml: 2 }}
+            {/*Search bar*/}
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder='Search…'
+                inputProps={{ 'aria-label': 'search' }}
               />
+            </Search>
 
-              {/* Profile */}
-              <AppBarProfileMenu menuId={menuId} mobileMenuId={mobileMenuId} />
-            </StyledToolbar>
-          </StyledAppBar>
-        </HideOnScroll>
+            <Box sx={{ flexGrow: 1 }} />
 
-        <MobileMenu mobileMenuId={mobileMenuId} />
-        <AppBarMenu id={menuId} />
-        <NotifyMenu />
-      </Box>
-    </AppBarCtxProvider>
+            {/*Notifications*/}
+            <NotifyMenuButton notifyMenuId={notifyMenuId} />
+
+            {/*Theme button*/}
+            <ThemeChangeButton
+              sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, ml: 2 }}
+            />
+
+            {/* Profile */}
+            <AppBarProfileMenu menuId={menuId} mobileMenuId={mobileMenuId} />
+          </StyledToolbar>
+        </StyledAppBar>
+      </HideOnScroll>
+
+      <MobileMenu mobileMenuId={mobileMenuId} />
+      <AppBarMenu id={menuId} />
+      <NotifyMenu />
+    </Box>
   )
 }

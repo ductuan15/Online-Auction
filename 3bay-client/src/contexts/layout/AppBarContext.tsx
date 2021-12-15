@@ -2,7 +2,7 @@ import * as React from 'react'
 import {
   createContext,
   Dispatch,
-  ReactNode,
+  ReactNode, SyntheticEvent,
   useContext,
   useMemo,
   useReducer,
@@ -20,7 +20,7 @@ type AppBarContextProps = {
 type AppBarContextType = {
   state: AppbarState
   dispatch: Dispatch<AppBarActionType>
-  toggleDrawer: (open: boolean) => (event: KeyboardEvent | MouseEvent) => void
+  toggleDrawer: (open: boolean) => (event: KeyboardEvent | MouseEvent | SyntheticEvent) => void
 }
 
 const appBarInitialValue: AppBarContextType = {
@@ -43,12 +43,14 @@ export const AppBarCtxProvider = ({
 }: AppBarContextProps): JSX.Element => {
   const [state, dispatch] = useReducer(AppbarReducer, initialAppBarState)
   const toggleDrawer =
-    (open: boolean) => (event: KeyboardEvent | MouseEvent) => {
+    (open: boolean) => (event: KeyboardEvent | MouseEvent | SyntheticEvent) => {
+      console.log(event)
       if (
         event.type === 'keydown' &&
         ((event as KeyboardEvent).key === 'Tab' ||
           (event as KeyboardEvent).key === 'Shift')
       ) {
+        console.log('return called')
         return
       }
       dispatch({ type: 'TOGGLE_DRAWER', payload: open })
