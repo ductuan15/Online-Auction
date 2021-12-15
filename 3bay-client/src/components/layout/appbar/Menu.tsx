@@ -7,7 +7,7 @@ import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import Logout from '@mui/icons-material/Logout'
 import * as React from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
-import { useAuthContext } from '../../../contexts/user/AuthContext'
+import { useAuth } from '../../../contexts/user/AuthContext'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
 import { useDarkMode } from 'usehooks-ts'
 
@@ -49,9 +49,7 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
     state: { mobileMoreAnchorEl },
     dispatch,
   } = useAppBarContext()
-  const {
-    state: { isAuth },
-  } = useAuthContext()
+  const { isAuth } = useAuth()
 
   return (
     <Menu
@@ -114,9 +112,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
     dispatch,
   } = useAppBarContext()
 
-  const {
-    state: { isAuth },
-  } = useAuthContext()
+  const { isAuth } = useAuth()
   return (
     <Menu
       id={id}

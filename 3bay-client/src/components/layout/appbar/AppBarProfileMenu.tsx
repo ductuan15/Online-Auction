@@ -5,7 +5,7 @@ import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import { Avatar, Button, Link } from '@mui/material'
 import MoreIcon from '@mui/icons-material/MoreVert'
-import { useAuthContext } from '../../../contexts/user/AuthContext'
+import { useAuth } from '../../../contexts/user/AuthContext'
 import { Link as RouterLink } from 'react-router-dom'
 
 type AppBarProfileMenuProps = {
@@ -19,9 +19,7 @@ export const AppBarProfileMenu = ({
 }: AppBarProfileMenuProps): JSX.Element => {
   const { dispatch } = useAppBarContext()
 
-  const {
-    state: { isAuth },
-  } = useAuthContext()
+  const { isAuth } = useAuth()
 
   return (
     <>

@@ -1,64 +1,56 @@
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useContext,
-  useMemo,
-  useReducer,
-} from 'react'
-import {
-  AuthAction,
-  authReducer,
-  AuthState,
-  initialAuthState,
-} from '../../stores/user/auth.store'
+import { createContext, ReactNode, useContext } from 'react'
+import { useLocalStorage } from 'usehooks-ts'
+import AuthService, { AuthData } from '../../services/auth.service'
 
 type AuthProviderProps = {
   children: ReactNode
 }
 
 type AuthContextType = {
-  state: AuthState
-  dispatch: Dispatch<AuthAction>
-  handleSignIn: (user: { id: string; token: string }) => void
-  handleSignOut: () => void
+  isAuth: boolean
+  user?: AuthData
+  signIn: (email: string, pwd: string, callback: VoidFunction) => void
+  signOut: (callback: VoidFunction) => void
 }
 
 const AuthContext = createContext<AuthContextType>({
-  state: initialAuthState,
-  dispatch: () => null,
-  handleSignIn(): never {
+  isAuth: false,
+  signIn: (): never => {
     throw new Error('Forgot to wrap component in `AuthProvider`')
   },
-  handleSignOut(): never {
+  signOut: (): never => {
     throw new Error('Forgot to wrap component in `AuthProvider`')
   },
 })
 
-export const useAuthContext = (): AuthContextType => {
+export const useAuth = (): AuthContextType => {
   return useContext(AuthContext)
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
-  const [state, dispatch] = useReducer(authReducer, initialAuthState)
-
-  const handleSignIn = (user: { id: string; token: string }) => {
-    dispatch({ type: 'SIGN_IN', payload: { ...user } })
-  }
-
-  const handleSignOut = () => {
-    dispatch({ type: 'SIGN_OUT' })
-  }
-
-  const contextValue = useMemo(
-    () => ({
-      state,
-      dispatch,
-      handleSignIn,
-      handleSignOut,
-    }),
-    [state, dispatch],
+  const [user, setUser] = useLocalStorage<AuthData | undefined>(
+    'auth',
+    undefined,
   )
+  const isAuth = !!user
+
+  const signIn = async (email: string, pwd: string, cb: VoidFunction) => {
+    const user = await AuthService.signIn(email, pwd)
+    setUser(user)
+    cb()
+  }
+
+  const signOut = (cb: VoidFunction) => {
+    setUser(undefined)
+    cb()
+  }
+
+  const contextValue = {
+    isAuth,
+    user,
+    signIn,
+    signOut,
+  }
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
