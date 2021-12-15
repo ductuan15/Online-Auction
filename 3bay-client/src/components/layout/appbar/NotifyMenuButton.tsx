@@ -6,9 +6,17 @@ import IconButton from '@mui/material/IconButton'
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
 import { Badge } from '@mui/material'
 
-const NotifyMenuButton = (): JSX.Element => {
-  const { handleNotifyMenuOpen, notifyMenuId, notifyBadgeContent } =
-    useAppBarContext()
+type NotifyMenuButtonProps = {
+  notifyMenuId: string
+}
+
+const NotifyMenuButton = ({
+  notifyMenuId,
+}: NotifyMenuButtonProps): JSX.Element => {
+  const {
+    state: { notifyBadgeContent },
+    dispatch,
+  } = useAppBarContext()
 
   return (
     <>
@@ -21,7 +29,12 @@ const NotifyMenuButton = (): JSX.Element => {
       >
         <Tooltip title='Notifications'>
           <IconButton
-            onClick={handleNotifyMenuOpen}
+            onClick={(e) =>
+              dispatch({
+                type: 'OPEN_NOTIFY_MENU',
+                payload: e,
+              })
+            }
             size='large'
             edge='end'
             aria-label='current notifications'

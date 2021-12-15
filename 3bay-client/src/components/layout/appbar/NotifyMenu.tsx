@@ -33,15 +33,20 @@ const notifyMenu = {
 }
 
 export const NotifyMenu = (): JSX.Element => {
-  const { notifyAnchorEl, isNotifyMenuOpened, handleNotifyMenuClose } =
-    useAppBarContext()
+  const {
+    state: { notifyAnchorEl },
+    dispatch,
+  } = useAppBarContext()
+  const handleNotifyMenuClose = () => {
+    dispatch({ type: 'CLOSE_NOTIFY_MENU' })
+  }
 
-  const dl = '12/30/2021 08:00 AM'
+  const dl = '01/06/2021 13:30 AM'
 
   return (
     <Menu
       anchorEl={notifyAnchorEl}
-      open={isNotifyMenuOpened}
+      open={Boolean(notifyAnchorEl)}
       onClose={handleNotifyMenuClose}
       onClick={handleNotifyMenuClose}
       PaperProps={notifyMenu}

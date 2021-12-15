@@ -117,6 +117,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 }))
 
 export default function SearchAppBar(): JSX.Element {
+  const menuId = 'primary-search-account-menu'
+  const mobileMenuId = 'primary-search-account-menu-mobile'
+  const notifyMenuId = 'primary-search-account-menu-Notify'
+
   return (
     <AppBarCtxProvider>
       <Box sx={{ flexGrow: 1 }}>
@@ -151,7 +155,7 @@ export default function SearchAppBar(): JSX.Element {
               <Box sx={{ flexGrow: 1 }} />
 
               {/*Notifications*/}
-              <NotifyMenuButton />
+              <NotifyMenuButton notifyMenuId={notifyMenuId} />
 
               {/*Theme button*/}
               <ThemeChangeButton
@@ -159,13 +163,13 @@ export default function SearchAppBar(): JSX.Element {
               />
 
               {/* Profile */}
-              <AppBarProfileMenu />
+              <AppBarProfileMenu menuId={menuId} mobileMenuId={mobileMenuId} />
             </StyledToolbar>
           </StyledAppBar>
         </HideOnScroll>
 
-        <MobileMenu />
-        <AppBarMenu />
+        <MobileMenu mobileMenuId={mobileMenuId} />
+        <AppBarMenu id={menuId} />
         <NotifyMenu />
       </Box>
     </AppBarCtxProvider>
