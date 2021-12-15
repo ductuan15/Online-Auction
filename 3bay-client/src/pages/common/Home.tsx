@@ -1,8 +1,8 @@
 import * as React from 'react'
 import HomeLayout from '../../components/layout/HomeLayout'
 import MainBanner from '../../components/common/home/MainBanner'
-import ProductCard from '../../components/common/product/ProductCard'
 import { Grid, Typography } from '@mui/material'
+import CarouselCard from "../../components/common/Carousel";
 
 const Home = (): JSX.Element => {
   const banner = {
@@ -14,8 +14,6 @@ const Home = (): JSX.Element => {
     imageText: '',
     linkText: 'Go to this',
   }
-
-  const products = [{ name: 'Product 1' }]
 
   return (
     <HomeLayout>
@@ -38,26 +36,7 @@ const Home = (): JSX.Element => {
           👁️👄👁️
         </Typography>
 
-        <Grid
-          container
-          spacing={2}
-          display='flex'
-          alignItems='center'
-          flexDirection='row'
-        >
-          <Grid item xs={6} md={4} lg={3}>
-            <ProductCard product={products[0]} />
-          </Grid>
-          <Grid item xs={6} md={4} lg={3}>
-            <ProductCard product={products[0]} />
-          </Grid>
-          <Grid item xs={6} md={4} lg={3}>
-            <ProductCard product={products[0]} />
-          </Grid>
-          <Grid item xs={6} md={4} lg={3}>
-            <ProductCard product={products[0]} />
-          </Grid>
-        </Grid>
+        <CarouselCard/>
       </Grid>
     </HomeLayout>
   )

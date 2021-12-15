@@ -3,8 +3,9 @@ import CardProduct from "./CardProduct";
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import './Carousel.css';
+import {Container} from "@mui/material";
 
-export default function CarouselExample()
+export default function CarouselCard()
 {
     const data = [
         {
@@ -88,26 +89,28 @@ export default function CarouselExample()
     };
 
     return (
-        <Carousel
-            draggable={false}
-            showDots
-            responsive={responsive}                                                             //Numbers of slides to show at each breakpoint
-            // ssr={true} // means to render carousel on server-side.
-            infinite
-            autoPlay
-            autoPlaySpeed={4000}
-            customTransition="transform 300ms ease-in-out"
-            transitionDuration={300}
-            containerClass="container-with-dots"
-            itemClass="carousel-item-padding-10-px"
-            dotListClass="custom-dot-list-style"
-        >
-            {
-                data.map((product, index) => {
-                    return <CardProduct key={index} product={product}/>
-                })
-            }
-        </Carousel>
+        <Container>
+            <Carousel
+                draggable={false}
+                showDots
+                responsive={responsive}                                                             //Numbers of slides to show at each breakpoint
+                // ssr={true} // means to render carousel on server-side.
+                infinite
+                autoPlay
+                autoPlaySpeed={4000}
+                customTransition="transform 300ms ease-in-out"
+                transitionDuration={300}
+                containerClass="container-with-dots"
+                itemClass="carousel-item-padding-20-px"
+            >
+                {
+                    data.map((product, index) => {
+                        return <CardProduct key={index} product={product}/>
+                    })
+                }
+            </Carousel>
+        </Container>
+
     )
 }
 
