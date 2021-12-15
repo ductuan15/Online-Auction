@@ -41,7 +41,7 @@ export const NotifyMenu = (): JSX.Element => {
     dispatch({ type: 'CLOSE_NOTIFY_MENU' })
   }
 
-  const dl = '01/06/2021 13:30 AM'
+  const dl = '01/06/2022 01:00 PM'
 
   return (
     <Menu
