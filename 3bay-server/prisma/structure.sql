@@ -222,7 +222,7 @@ CREATE TABLE `users`
     `dob`          datetime                                                                     DEFAULT NULL,
     `verified`     tinyint(1)                                                          NOT NULL DEFAULT 0,
     `profile`      varchar(255) COLLATE utf8mb4_unicode_ci                                      DEFAULT NULL,
-    `refreshToken` varchar(255) COLLATE utf8mb4_unicode_ci                             NOT NULL,
+    `refreshToken` varchar(512) COLLATE utf8mb4_unicode_ci                             NOT NULL,
     `address`      varchar(255) COLLATE utf8mb4_unicode_ci                                      DEFAULT NULL,
     PRIMARY KEY (`uuid`),
     UNIQUE KEY `email` (`email`)

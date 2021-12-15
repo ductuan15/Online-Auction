@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex"]
 }
 
 datasource db {
@@ -87,9 +88,9 @@ model products {
   product_images      product_images[]
   user_watchlist      user_watchlist[]
 
-  @@index([name], map: "name")
   @@index([categoryId], map: "products_fk0")
   @@index([sellerId], map: "products_fk1")
+  @@fulltext([name], map: "name")
 }
 
 model upgrade_to_bidder_requests {
@@ -113,12 +114,12 @@ model users {
   name                       String                      @db.VarChar(255)
   email                      String                      @unique(map: "email") @db.VarChar(255)
   isDisabled                 Boolean                     @default(false)
-  type                       Role                        @default(BIDDER)
+  role                       Role                        @default(BIDDER)
   pwd                        String                      @db.VarChar(255)
   dob                        DateTime?                   @db.DateTime(0)
   verified                   Boolean                     @default(false)
   profile                    String?                     @db.VarChar(255)
-  refreshToken               String                      @default(uuid()) @db.VarChar(255)
+  refreshToken               String                      @default(uuid()) @db.VarChar(512)
   address                    String?                     @db.VarChar(255)
   bids                       bids[]
   products                   products[]
