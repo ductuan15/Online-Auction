@@ -5,6 +5,7 @@ import { AuthErrorCode, ErrorCode } from '../error/error-code.js'
 import Prisma from '@prisma/client'
 import jwt from 'jsonwebtoken'
 import config from '../config/config.js'
+import crypto from 'crypto'
 
 async function hasEmailAlreadyExisted(email: string) {
   const user = await prisma.users.findUnique({
@@ -26,7 +27,10 @@ export async function signUp(
 
     try {
       const result = await prisma.users.create({
-        data: req.body,
+        data: {
+          ...req.body,
+          refreshToken: crypto.randomBytes(256).toString('hex'),
+        },
         select: { uuid: true },
       })
       return res.json(result)
@@ -47,14 +51,22 @@ export async function signIn(
   if (!user.verified) {
     return next(new AuthError({ code: AuthErrorCode.NotVerified }))
   }
+  if (user.isDisabled) {
+    return next(new AuthError({ code: AuthErrorCode.AccountDisabled }))
+  }
   const payload = {
     user: user.uuid,
-    role: user.type,
+    role: user.role,
   }
 
   const token = jwt.sign(payload, config.JWT, {
-    expiresIn: '2m',
+    expiresIn: '5m',
   })
 
-  return res.json({ user: payload.user, token })
+  return res.json({
+    user: payload.user,
+    token,
+    refreshToken: user.refreshToken,
+    role: user.role,
+  })
 }

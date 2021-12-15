@@ -25,6 +25,19 @@ async function verifyPassword(
   return await bcrypt.compare(password, user.pwd)
 }
 
+async function verifyUser(
+  uuid: string,
+  role: string,
+): Promise<Prisma.users | undefined> {
+  const user = await prisma.users.findUnique({
+    where: { uuid: uuid },
+  })
+  if (user && role === user?.role && !user.isDisabled && user.verified) {
+    return user
+  }
+  return undefined
+}
+
 passport.use(
   new LocalStrategy(
     {
@@ -58,8 +71,19 @@ const opts: StrategyOptions = {
 }
 
 passport.use(
-  new JWTStrategy(opts, (jwtPayload: any, done: any) => {
-    done(null, jwtPayload)
+  new JWTStrategy(opts, async (jwtPayload: any, done: any) => {
+    console.log(jwtPayload)
+    try {
+      if (!jwtPayload.user && !jwtPayload.role) return done(null, false)
+      const user = await verifyUser(jwtPayload.user, jwtPayload.role)
+      console.log(user)
+      if (user) {
+        return done(null, user)
+      }
+      return done(null, false)
+    } catch (e) {
+      return done(e, false)
+    }
   }),
 )
 
