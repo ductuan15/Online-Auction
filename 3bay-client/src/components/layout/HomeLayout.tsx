@@ -6,6 +6,7 @@ import AppFooter from './footer/AppFooter'
 import StyledDiv from '../common/StyledDiv'
 import { AppBarCtxProvider } from '../../contexts/layout/AppBarContext'
 import AppDrawer from './AppDrawer'
+import { Outlet } from 'react-router-dom'
 
 interface Props {
   children?: React.ReactNode
@@ -17,13 +18,15 @@ export default function HomeLayout({ children }: Props): JSX.Element {
       {/* app bar */}
       <AppBarCtxProvider>
         <SearchAppBar />
-        <AppDrawer/>
+        <AppDrawer />
       </AppBarCtxProvider>
 
       <StyledToolbar sx={(theme) => ({ marginBottom: theme.spacing(1) })} />
 
       {/* main content */}
-      <Container sx={{ bgcolor: 'background.paper' }}>{children}</Container>
+      <Container sx={{ bgcolor: 'background.paper' }}>
+        {children ? children : <Outlet />}
+      </Container>
 
       <AppFooter />
     </StyledDiv>

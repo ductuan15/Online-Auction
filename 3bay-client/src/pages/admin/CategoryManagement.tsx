@@ -15,15 +15,12 @@ import {
   CategoryProvider,
   useCategoryContext,
 } from '../../contexts/admin/CategoryContext'
-import HomeLayout from '../../components/layout/HomeLayout'
 
 export const CategoryManagement = (): JSX.Element => {
   return (
-    <HomeLayout>
-      <CategoryProvider>
-        <CategoryManagementContent />
-      </CategoryProvider>
-    </HomeLayout>
+    <CategoryProvider>
+      <CategoryManagementContent />
+    </CategoryProvider>
   )
 }
 

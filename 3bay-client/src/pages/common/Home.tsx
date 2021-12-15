@@ -1,8 +1,9 @@
 import * as React from 'react'
-import HomeLayout from '../../components/layout/HomeLayout'
 import MainBanner from '../../components/common/home/MainBanner'
 import { Grid, Typography } from '@mui/material'
-import CarouselCard from "../../components/common/Carousel";
+import CarouselCard from '../../components/common/Carousel'
+import Link from '@mui/material/Link'
+import {Link as RouterLink} from 'react-router-dom'
 
 const Home = (): JSX.Element => {
   const banner = {
@@ -16,7 +17,7 @@ const Home = (): JSX.Element => {
   }
 
   return (
-    <HomeLayout>
+    <>
       <MainBanner {...banner} />
       <Grid container display='flex' alignItems='center' flexDirection='column'>
         <Typography
@@ -36,9 +37,13 @@ const Home = (): JSX.Element => {
           👁️👄👁️
         </Typography>
 
-        <CarouselCard/>
+        <CarouselCard />
+
+        <Link component={RouterLink} variant='h6' to='/cat' gutterBottom p={4}>
+          Test link (category management)
+        </Link>
       </Grid>
-    </HomeLayout>
+    </>
   )
 }
 

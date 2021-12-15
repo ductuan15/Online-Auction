@@ -9,7 +9,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import { Alert, Avatar, Divider, SvgIcon } from '@mui/material'
 import { ReactComponent as GoogleIcon } from '../../assets/Google__G__Logo.svg'
 import { ReactComponent as FBIcon } from '../../assets/Facebook_f_logo.svg'
-import SignInLayout from '../../components/layout/SignInLayout'
 import SignInForm from '../../components/user/auth/SignInForm'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/user/AuthContext'
@@ -43,7 +42,7 @@ const SignIn: () => JSX.Element = () => {
   }
 
   return (
-    <SignInLayout>
+    <>
       <Box
         sx={{
           marginTop: 8,
@@ -107,7 +106,7 @@ const SignIn: () => JSX.Element = () => {
           Facebook
         </Button>
       </Box>
-    </SignInLayout>
+    </>
   )
 }
 export default SignIn

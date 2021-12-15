@@ -4,7 +4,7 @@ import Category from '../data/category'
 import { Grid, Typography } from '@mui/material'
 import config from '../config/config'
 import HomeLayout from '../components/layout/HomeLayout'
-import CategoryCard from '../components/CategoryCard'
+import CategoryCard from '../components/common/CategoryCard'
 
 export const CategoryPage = (): JSX.Element => {
   const [categories, setCategories] = useState<Array<Category>>(() => [])

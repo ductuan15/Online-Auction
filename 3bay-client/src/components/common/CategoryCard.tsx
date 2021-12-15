@@ -4,7 +4,7 @@ import Card from '@mui/material/Card'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import { Box, CardActionArea } from '@mui/material'
-import Category from '../data/category'
+import Category from '../../data/category'
 
 interface Props {
   category: Category

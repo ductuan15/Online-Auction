@@ -1,9 +1,8 @@
 import * as React from 'react'
 import { BaseCategoryDialog } from './BaseCategoryDialog'
-import axios from 'axios'
-import config from '../../../config/config'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 import Category from '../../../data/category'
+import axiosApiInstance from '../../../services/api'
 
 // export type EditCategoryDialogProps = {}
 
@@ -22,8 +21,8 @@ export const EditCategoryDialog = (): JSX.Element => {
           headers: { 'content-type': 'multipart/form-data' },
         }
 
-        const response = await axios.patch(
-          `${config.apiHostName}/api/category/${category.id}`,
+        const response = await axiosApiInstance.patch(
+          `/api/category/${category.id}`,
           formData,
           headerConfig,
         )

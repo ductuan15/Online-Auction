@@ -68,8 +68,7 @@ const SignInForm = ({ handleSubmit }: SignInFormProps): JSX.Element => {
       </Button>
       <Grid container>
         <Grid item xs>
-          {/*TODO forgot password*/}
-          <Link component={RouterLink} variant='body2' to='/'>
+          <Link component={RouterLink} variant='body2' to='/forgot'>
             Forgot password?
           </Link>
         </Grid>
