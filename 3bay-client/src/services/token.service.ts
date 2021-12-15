@@ -20,7 +20,7 @@ function getAuthData(): AuthData | null {
   return parseJSON(data) as AuthData
 }
 
-function revokeAuthData() {
+function revokeAuthData(): void {
   localStorage.removeItem('auth')
 }
 
@@ -29,7 +29,7 @@ function getRefreshToken(): string | undefined {
   return data?.refreshToken
 }
 
-function updateRefreshToken(rf: string) {
+function updateRefreshToken(rf: string): void {
   const data = getAuthData()
   if (data) {
     data.refreshToken = rf
@@ -42,7 +42,7 @@ function getAccessToken(): string | undefined {
   return data?.token
 }
 
-function updateAccessToken(rf: string) {
+function updateAccessToken(rf: string): void {
   const data = getAuthData()
   if (data) {
     data.token = rf
