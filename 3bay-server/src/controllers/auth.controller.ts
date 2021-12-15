@@ -42,6 +42,24 @@ export async function signUp(
   return next(new ErrorException({ code: ErrorCode.BadRequest }))
 }
 
+function getUserCredential(user: Prisma.users) {
+  const payload = {
+    user: user.uuid,
+    role: user.role,
+  }
+
+  const token = jwt.sign(payload, config.JWT, {
+    expiresIn: '5m',
+  })
+
+  return {
+    user: payload.user,
+    token,
+    refreshToken: user.refreshToken,
+    role: user.role,
+  }
+}
+
 export async function signIn(
   req: e.Request,
   res: e.Response,
@@ -54,19 +72,85 @@ export async function signIn(
   if (user.isDisabled) {
     return next(new AuthError({ code: AuthErrorCode.AccountDisabled }))
   }
-  const payload = {
-    user: user.uuid,
-    role: user.role,
+  const response = getUserCredential(user)
+
+  return res.json(response)
+}
+
+export async function refreshAccessToken(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  if (typeof req.body === 'string') {
+    try {
+      const user = await prisma.users.findFirst({
+        where: { refreshToken: req.body },
+      })
+      if (user) {
+        return res.json(getUserCredential(user))
+      }
+    } catch (e) {
+      return next(new ErrorException({ code: ErrorCode.UnknownError }))
+    }
+
+    return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
   }
 
-  const token = jwt.sign(payload, config.JWT, {
-    expiresIn: '5m',
-  })
+  return next(new ErrorException({ code: ErrorCode.BadRequest }))
+}
 
-  return res.json({
-    user: payload.user,
-    token,
-    refreshToken: user.refreshToken,
-    role: user.role,
-  })
+export async function startVerify(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  const id = req.params.id
+  if (id) {
+    try {
+      const user = await prisma.users.findUnique({
+        where: { uuid: id },
+      })
+      if (user && !user.verified) {
+        // TODO start the otp process
+        return res.status(200).end()
+      }
+    } catch (e) {
+      return next(new ErrorException({ code: ErrorCode.UnknownError }))
+    }
+    return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
+  }
+  return next(new ErrorException({ code: ErrorCode.BadRequest }))
+}
+
+export async function verifyAccount(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  const id = req.params.id
+  const code = req.body as string
+  if (id && code) {
+    try {
+      const user = await prisma.users.findUnique({
+        where: { uuid: id },
+      })
+
+      // TODO: verify the OTP code
+
+      if (user) {
+        await prisma.users.update({
+          where: { uuid: id },
+          data: { verified: true },
+        })
+
+        return res.json(getUserCredential(user))
+      } else {
+        return next(new AuthError({ code: AuthErrorCode.WrongOTP }))
+      }
+    } catch (e) {
+      return next(new ErrorException({ code: ErrorCode.UnknownError }))
+    }
+  }
+  return next(new ErrorException({ code: ErrorCode.BadRequest }))
 }

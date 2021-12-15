@@ -97,6 +97,9 @@ export class AuthError extends ErrorException {
       case AuthErrorCode.AccountDisabled:
         this.status = 401
         break
+      case AuthErrorCode.InvalidRequest:
+        this.status = 401
+        break
       default:
         this.status = 500
         break

@@ -22,4 +22,6 @@ export class AuthErrorCode {
   public static readonly NotVerified = 'AuthEmailNotConfirmed'
   public static readonly TokenExpired = 'AuthTokenExpired'
   public static readonly AccountDisabled = 'AuthAccountDisabled'
+  public static readonly InvalidRequest = 'AuthInvalidRequest'
+  public static readonly WrongOTP = 'AuthWrongOTP'
 }
