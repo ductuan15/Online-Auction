@@ -1,11 +1,11 @@
 import React from 'react'
 import ThemeConfig from './theme'
-import SignUp from './pages/user/SignUp'
+import Home from "./pages/user/Home";
 
 function App(): JSX.Element {
   return (
     <ThemeConfig>
-      <SignUp />
+      <Home/>
     </ThemeConfig>
   )
 }

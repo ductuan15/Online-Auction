@@ -1,0 +1,11 @@
+.container-with-dots {
+    margin-top: 20px;
+    padding-bottom: 30px;
+}
+.carousel-item-padding-10-px{
+    padding-right: 10px;
+}
+.carousel-with-custom-dots {
+    margin-top: 100px;
+    padding-bottom: 100px;
+}
