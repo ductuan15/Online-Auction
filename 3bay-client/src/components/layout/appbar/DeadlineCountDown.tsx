@@ -20,9 +20,8 @@ const DeadlineCountDown = ({ date, sx }: Props): JSX.Element => {
 
   const showRemaining = () => {
     const now = moment()
-    const distance = endDate.date() - now.date()
 
-    if (distance < 0) {
+    if (!endDate.isAfter(now)) {
       if (timer) {
         clearInterval(timer)
       }

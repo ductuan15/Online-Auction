@@ -38,15 +38,16 @@ const profileMenu = {
   },
 }
 
-export const MobileMenu = (): JSX.Element => {
+type MobileMenuProps = {
+  mobileMenuId: string
+}
+
+export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
   const colorMode = React.useContext(ColorModeContext)
   const {
-    mobileMoreAnchorEl,
-    mobileMenuId,
-    isMobileMenuOpened,
-    handleMobileMenuClose,
+    state: { mobileMoreAnchorEl },
+    dispatch,
   } = useAppBarContext()
-
   const {
     state: { isAuth },
   } = useAuthContext()
@@ -56,8 +57,12 @@ export const MobileMenu = (): JSX.Element => {
       anchorEl={mobileMoreAnchorEl}
       id={mobileMenuId}
       keepMounted
-      open={isMobileMenuOpened}
-      onClose={handleMobileMenuClose}
+      open={Boolean(mobileMoreAnchorEl)}
+      onClose={() =>
+        dispatch({
+          type: 'CLOSE_MOBILE_MENU',
+        })
+      }
       PaperProps={profileMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -69,7 +74,7 @@ export const MobileMenu = (): JSX.Element => {
       ) : (
         <MenuItem>
           <ListItemIcon>
-            <LoginOutlinedIcon fontSize='small'  />
+            <LoginOutlinedIcon fontSize='small' />
           </ListItemIcon>
           Sign in
         </MenuItem>
@@ -98,18 +103,35 @@ export const MobileMenu = (): JSX.Element => {
   )
 }
 
-export const AppBarMenu = (): JSX.Element => {
-  const { anchorEl, isMenuOpened, handleMenuClose } = useAppBarContext()
+type AppBarMenuProps = {
+  id: string
+}
+
+export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
+  const {
+    state: { anchorEl },
+    dispatch,
+  } = useAppBarContext()
 
   const {
     state: { isAuth },
   } = useAuthContext()
   return (
     <Menu
+      id={id}
       anchorEl={anchorEl}
-      open={isMenuOpened}
-      onClose={handleMenuClose}
-      onClick={handleMenuClose}
+      open={Boolean(anchorEl)}
+      onClose={() =>
+        dispatch({
+          type: 'CLOSE_PROFILE_MENU',
+        })
+      }
+      onClick={(e) =>
+        dispatch({
+          type: 'OPEN_PROFILE_MENU',
+          payload: e,
+        })
+      }
       PaperProps={profileMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -121,7 +143,7 @@ export const AppBarMenu = (): JSX.Element => {
       ) : (
         <MenuItem>
           <ListItemIcon>
-            <LoginOutlinedIcon fontSize='small'  />
+            <LoginOutlinedIcon fontSize='small' />
           </ListItemIcon>
           Sign in
         </MenuItem>

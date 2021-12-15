@@ -8,9 +8,16 @@ import MoreIcon from '@mui/icons-material/MoreVert'
 import { useAuthContext } from '../../../contexts/user/AuthContext'
 import { Link as RouterLink } from 'react-router-dom'
 
-export const AppBarProfileMenu = (): JSX.Element => {
-  const { handleProfileMenuOpen, menuId, mobileMenuId, handleMobileMenuOpen } =
-    useAppBarContext()
+type AppBarProfileMenuProps = {
+  menuId: string
+  mobileMenuId: string
+}
+
+export const AppBarProfileMenu = ({
+  menuId,
+  mobileMenuId,
+}: AppBarProfileMenuProps): JSX.Element => {
+  const { dispatch } = useAppBarContext()
 
   const {
     state: { isAuth },
@@ -28,7 +35,12 @@ export const AppBarProfileMenu = (): JSX.Element => {
         {isAuth ? (
           <Tooltip title='Account settings'>
             <IconButton
-              onClick={handleProfileMenuOpen}
+              onClick={(e) =>
+                dispatch({
+                  type: 'OPEN_PROFILE_MENU',
+                  payload: e,
+                })
+              }
               size='large'
               edge='end'
               aria-label='account of current user'
@@ -59,7 +71,7 @@ export const AppBarProfileMenu = (): JSX.Element => {
           aria-label='show more'
           aria-controls={mobileMenuId}
           aria-haspopup='true'
-          onClick={handleMobileMenuOpen}
+          onClick={(e) => dispatch({ type: 'OPEN_MOBILE_MENU', payload: e })}
           color='inherit'
         >
           <MoreIcon />
