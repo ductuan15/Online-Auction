@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import StyledDiv from '../common/StyledDiv'
 import { Container } from '@mui/material'
 import { Copyright } from '../Copyright'
@@ -8,10 +8,10 @@ interface Props {
   maxWidth?: 'xl' | 'md' | 'sm' | 'xs' | 'lg' | false
 }
 
-const SignInLayout: FC<Props> = ({ children, maxWidth }) => {
+const SignInLayout = ({ children, maxWidth }: Props): JSX.Element => {
   return (
     <StyledDiv>
-      <Container component='main' maxWidth={maxWidth? maxWidth : 'xs'}>
+      <Container component='main' maxWidth={maxWidth ? maxWidth : 'xs'}>
         {children}
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>

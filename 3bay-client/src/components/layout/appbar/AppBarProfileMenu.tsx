@@ -1,15 +1,20 @@
 import * as React from 'react'
-import { FC } from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
-import { Avatar } from '@mui/material'
+import { Avatar, Button, Link } from '@mui/material'
 import MoreIcon from '@mui/icons-material/MoreVert'
+import { useAuthContext } from '../../../contexts/user/AuthContext'
+import { Link as RouterLink } from 'react-router-dom'
 
-export const AppBarProfileMenu: FC = () => {
+export const AppBarProfileMenu = (): JSX.Element => {
   const { handleProfileMenuOpen, menuId, mobileMenuId, handleMobileMenuOpen } =
     useAppBarContext()
+
+  const {
+    state: { isAuth },
+  } = useAuthContext()
 
   return (
     <>
@@ -20,19 +25,32 @@ export const AppBarProfileMenu: FC = () => {
           textAlign: 'center',
         }}
       >
-        <Tooltip title='Account settings'>
-          <IconButton
-            onClick={handleProfileMenuOpen}
-            size='large'
-            edge='end'
-            aria-label='account of current user'
-            aria-controls={menuId}
-            aria-haspopup='true'
-            color='inherit'
-          >
-            <Avatar>M</Avatar>
-          </IconButton>
-        </Tooltip>
+        {isAuth ? (
+          <Tooltip title='Account settings'>
+            <IconButton
+              onClick={handleProfileMenuOpen}
+              size='large'
+              edge='end'
+              aria-label='account of current user'
+              aria-controls={menuId}
+              aria-haspopup='true'
+              color='inherit'
+            >
+              <Avatar>M</Avatar>
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Button variant='text' color='inherit'>
+            <Link
+              color='inherit'
+              underline='none'
+              component={RouterLink}
+              to='/signin'
+            >
+              Sign in
+            </Link>
+          </Button>
+        )}
       </Box>
 
       <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

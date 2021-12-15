@@ -1,6 +1,5 @@
 import Menu from '@mui/material/Menu'
 import * as React from 'react'
-import { FC } from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import MenuItem from '@mui/material/MenuItem'
 import DeadlineCountDown from './DeadlineCountDown'
@@ -33,7 +32,7 @@ const notifyMenu = {
   },
 }
 
-export const NotifyMenu: FC = () => {
+export const NotifyMenu = (): JSX.Element => {
   const { notifyAnchorEl, isNotifyMenuOpened, handleNotifyMenuClose } =
     useAppBarContext()
 

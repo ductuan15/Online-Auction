@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { FC } from 'react'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -15,8 +14,9 @@ import { Avatar, Divider, SvgIcon } from '@mui/material'
 import { ReactComponent as GoogleIcon } from '../../assets/Google__G__Logo.svg'
 import { ReactComponent as FBIcon } from '../../assets/Facebook_f_logo.svg'
 import SignInLayout from '../../components/layout/SignInLayout'
+import { Link as RouterLink } from 'react-router-dom'
 
-const SignIn: FC = () => {
+const SignIn: () => JSX.Element = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
@@ -78,7 +78,8 @@ const SignIn: FC = () => {
             autoComplete='current-password'
             inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
           />
-          <FormControlLabel sx={{display: 'none'}}
+          <FormControlLabel
+            sx={{ display: 'none' }}
             control={<Checkbox value='remember' color='primary' />}
             label={
               <Typography variant='body1' color='text.primary'>
@@ -91,18 +92,21 @@ const SignIn: FC = () => {
             fullWidth
             variant='contained'
             sx={{ mt: 2, mb: 2 }}
+            target='_blank'
+            rel='noopener noreferrer'
             href='https://youtu.be/dQw4w9WgXcQ'
           >
             Sign In
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href='#' variant='body2'>
+              {/*TODO forgot password*/}
+              <Link component={RouterLink} variant='body2' to='/'>
                 Forgot password?
               </Link>
             </Grid>
             <Grid item>
-              <Link href='#' variant='body2'>
+              <Link component={RouterLink} variant='body2' to='/signup'>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

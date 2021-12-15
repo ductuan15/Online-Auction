@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { createContext, FC, ReactNode, useContext, useState } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 type AppBarContextProps = {
   children: ReactNode
@@ -61,7 +61,9 @@ export const AppBarContext =
 export const useAppBarContext: () => AppBarContextType = () =>
   useContext(AppBarContext)
 
-export const AppBarCtxProvider: FC<AppBarContextProps> = ({ children }) => {
+export const AppBarCtxProvider = ({
+  children,
+}: AppBarContextProps): JSX.Element => {
   const [profileAnchorEl, setProfileAnchorEl] =
     React.useState<null | HTMLElement>(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =

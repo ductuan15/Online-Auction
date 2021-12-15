@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { FC } from 'react'
 import { BaseCategoryDialog } from './BaseCategoryDialog'
 import axios from 'axios'
 import config from '../../../config/config'
@@ -8,7 +7,7 @@ import Category from '../../../data/category'
 
 // export type EditCategoryDialogProps = {}
 
-export const EditCategoryDialog: FC = () => {
+export const EditCategoryDialog = () => {
   const { state, updateCategory } = useCategoryContext()
   const { openEditDialog } = state
 

@@ -6,9 +6,10 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import Logout from '@mui/icons-material/Logout'
 import * as React from 'react'
-import { FC } from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { ColorModeContext } from '../../../theme'
+import { useAuthContext } from '../../../contexts/user/AuthContext'
+import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
 
 const profileMenu = {
   elevation: 0,
@@ -37,7 +38,7 @@ const profileMenu = {
   },
 }
 
-export const MobileMenu: FC = () => {
+export const MobileMenu = (): JSX.Element => {
   const colorMode = React.useContext(ColorModeContext)
   const {
     mobileMoreAnchorEl,
@@ -45,6 +46,10 @@ export const MobileMenu: FC = () => {
     isMobileMenuOpened,
     handleMobileMenuClose,
   } = useAppBarContext()
+
+  const {
+    state: { isAuth },
+  } = useAuthContext()
 
   return (
     <Menu
@@ -57,9 +62,18 @@ export const MobileMenu: FC = () => {
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
-      <MenuItem>
-        <Avatar /> My account
-      </MenuItem>
+      {isAuth ? (
+        <MenuItem>
+          <Avatar /> My account
+        </MenuItem>
+      ) : (
+        <MenuItem>
+          <ListItemIcon>
+            <LoginOutlinedIcon fontSize='small'  />
+          </ListItemIcon>
+          Sign in
+        </MenuItem>
+      )}
 
       <Divider />
 
@@ -72,19 +86,24 @@ export const MobileMenu: FC = () => {
 
       <Divider />
 
-      <MenuItem>
-        <ListItemIcon>
-          <Logout fontSize='small' />
-        </ListItemIcon>
-        Logout
-      </MenuItem>
+      {isAuth && (
+        <MenuItem>
+          <ListItemIcon>
+            <Logout fontSize='small' />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      )}
     </Menu>
   )
 }
 
-export const AppBarMenu: FC = () => {
+export const AppBarMenu = (): JSX.Element => {
   const { anchorEl, isMenuOpened, handleMenuClose } = useAppBarContext()
 
+  const {
+    state: { isAuth },
+  } = useAuthContext()
   return (
     <Menu
       anchorEl={anchorEl}
@@ -95,17 +114,29 @@ export const AppBarMenu: FC = () => {
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
-      <MenuItem>
-        <Avatar /> My account
-      </MenuItem>
+      {isAuth ? (
+        <MenuItem>
+          <Avatar /> My account
+        </MenuItem>
+      ) : (
+        <MenuItem>
+          <ListItemIcon>
+            <LoginOutlinedIcon fontSize='small'  />
+          </ListItemIcon>
+          Sign in
+        </MenuItem>
+      )}
+
       <Divider />
 
-      <MenuItem>
-        <ListItemIcon>
-          <Logout fontSize='small' />
-        </ListItemIcon>
-        Logout
-      </MenuItem>
+      {isAuth && (
+        <MenuItem>
+          <ListItemIcon>
+            <Logout fontSize='small' />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      )}
     </Menu>
   )
 }

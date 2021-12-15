@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { FC } from 'react'
 import Avatar from '@mui/material/Avatar'
 import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
@@ -9,11 +8,11 @@ import Typography from '@mui/material/Typography'
 import SignInLayout from '../../components/layout/SignInLayout'
 import { AppName } from '../../components/layout/AppName'
 import { SubmitHandler } from 'react-hook-form'
-import { SignUpFormInputs } from '../../store/admin/sign-up'
+import { SignUpFormInputs } from '../../data/sign-up'
 import SignUpForm from '../../components/user/signup/SignUpForm'
-
+import { Link as RouterLink } from 'react-router-dom'
 // TODO add recaptcha
-const SignUp: FC = () => {
+const SignUp: () => JSX.Element = () => {
   // console.log(watch())
 
   const onSubmit: SubmitHandler<SignUpFormInputs> = (data) => {
@@ -53,7 +52,7 @@ const SignUp: FC = () => {
 
         <Grid container justifyContent='flex-end'>
           <Grid item>
-            <Link href='#' variant='body2'>
+            <Link component={RouterLink} variant='body2' to='/signin'>
               Already have an account? Sign in
             </Link>
           </Grid>

@@ -1,7 +1,6 @@
 import { Controller } from 'react-hook-form'
 import { UseControllerProps } from 'react-hook-form/dist/types/controller'
 import * as React from 'react'
-import { FC } from 'react'
 import TextField, { TextFieldProps } from '@mui/material/TextField'
 
 export interface FormTextFieldProps {
@@ -11,12 +10,12 @@ export interface FormTextFieldProps {
   textFieldProps: TextFieldProps
 }
 
-const FormTextField: FC<FormTextFieldProps> = ({
+const FormTextField = ({
   error,
   errorMsg,
   controllerProps,
   textFieldProps,
-}) => {
+}: FormTextFieldProps) => {
   return (
     <Controller
       {...controllerProps}
@@ -33,4 +32,3 @@ const FormTextField: FC<FormTextFieldProps> = ({
 }
 
 export default FormTextField
-

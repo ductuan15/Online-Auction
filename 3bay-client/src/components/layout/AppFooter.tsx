@@ -44,6 +44,8 @@ function renderLinks() {
               return (
                 <Link
                   underline='none'
+                  target='_blank'
+                  rel='noopener noreferrer'
                   href='https://youtu.be/dQw4w9WgXcQ'
                   variant='body2'
                   color='text.secondary'

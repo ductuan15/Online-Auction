@@ -6,7 +6,7 @@ import AppFooter from './AppFooter'
 import StyledDiv from '../common/StyledDiv'
 
 interface Props {
-  children: React.ReactNode
+  children?: React.ReactNode
 }
 
 export default function HomeLayout({ children }: Props): JSX.Element {

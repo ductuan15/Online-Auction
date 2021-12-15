@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { FC, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded'
@@ -17,7 +17,7 @@ import {
 } from '../../contexts/admin/CategoryContext'
 import HomeLayout from '../../components/layout/HomeLayout'
 
-export const CategoryManagement: FC = () => {
+export const CategoryManagement = (): JSX.Element => {
   return (
     <HomeLayout>
       <CategoryProvider>
@@ -27,7 +27,7 @@ export const CategoryManagement: FC = () => {
   )
 }
 
-const CategoryManagementContent: FC = () => {
+const CategoryManagementContent = () => {
   const { addAllCategories, dispatch } = useCategoryContext()
 
   useEffect(() => {

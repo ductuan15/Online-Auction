@@ -1,8 +1,7 @@
 import * as React from 'react'
-import {FC} from 'react'
 import Box from '@mui/material/Box'
-import {AppName} from '../../components/layout/AppName'
-import {Avatar} from '@mui/material'
+import { AppName } from '../../components/layout/AppName'
+import { Avatar } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
@@ -10,7 +9,7 @@ import SignInLayout from '../../components/layout/SignInLayout'
 import KeyIcon from '@mui/icons-material/Key'
 import '@fontsource/jetbrains-mono'
 
-const ForgotPassword: FC = () => {
+const ForgotPassword = (): JSX.Element => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
@@ -30,10 +29,10 @@ const ForgotPassword: FC = () => {
           alignItems: 'center',
         }}
       >
-        <AppName bigSize/>
+        <AppName bigSize />
 
-        <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
-          <KeyIcon/>
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <KeyIcon />
         </Avatar>
 
         <Typography component='h1' variant='h6' color='text.primary'>
@@ -44,7 +43,7 @@ const ForgotPassword: FC = () => {
           Enter the email address associated with your account.
         </Typography>
 
-        <Box component='form' onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
+        <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             margin='normal'
             required
@@ -54,9 +53,9 @@ const ForgotPassword: FC = () => {
             name='email'
             autoComplete='email'
             autoFocus
-            inputProps={{style: {fontFamily: 'Jetbrains Mono'}}}
+            inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
           />
-          <Button fullWidth variant='contained' sx={{mt: 2, mb: 2}}>
+          <Button fullWidth variant='contained' sx={{ mt: 2, mb: 2 }}>
             Continue
           </Button>
         </Box>
