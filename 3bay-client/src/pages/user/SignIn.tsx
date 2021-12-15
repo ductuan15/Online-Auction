@@ -10,21 +10,18 @@ import Typography from '@mui/material/Typography'
 import { AppName } from '../../components/layout/AppName'
 import '@fontsource/jetbrains-mono'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import { Avatar, Divider, SvgIcon } from '@mui/material'
+import { Alert, Avatar, Divider, SvgIcon } from '@mui/material'
 import { ReactComponent as GoogleIcon } from '../../assets/Google__G__Logo.svg'
 import { ReactComponent as FBIcon } from '../../assets/Facebook_f_logo.svg'
 import SignInLayout from '../../components/layout/SignInLayout'
-import { Link as RouterLink } from 'react-router-dom'
+import SignInForm from '../../components/user/auth/SignInForm'
 
 const SignIn: () => JSX.Element = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
 
-    console.log({
-      email: data.get('email'),
-      pwd: data.get('password'),
-    })
+  const handleSubmit = async (data: { email: string; pwd: string }) => {
+    // const { email, pwd } = data
+    setError(false)
+    console.log(data)
   }
 
   return (
@@ -55,63 +52,9 @@ const SignIn: () => JSX.Element = () => {
           </Typography>
         </Box>
 
-        <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin='normal'
-            required
-            fullWidth
-            id='email'
-            label='Email Address'
-            name='email'
-            autoComplete='email'
-            autoFocus
-            inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
-          />
-          <TextField
-            margin='normal'
-            required
-            fullWidth
-            name='password'
-            label='Password'
-            type='password'
-            id='password'
-            autoComplete='current-password'
-            inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
-          />
-          <FormControlLabel
-            sx={{ display: 'none' }}
-            control={<Checkbox value='remember' color='primary' />}
-            label={
-              <Typography variant='body1' color='text.primary'>
-                Remember me
-              </Typography>
-            }
-          />
-          <Button
-            type='link'
-            fullWidth
-            variant='contained'
-            sx={{ mt: 2, mb: 2 }}
-            target='_blank'
-            rel='noopener noreferrer'
-            href='https://youtu.be/dQw4w9WgXcQ'
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              {/*TODO forgot password*/}
-              <Link component={RouterLink} variant='body2' to='/'>
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link component={RouterLink} variant='body2' to='/signup'>
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
-        </Box>
+        {isError && <Alert severity='error'>Wrong email or password</Alert>}
+
+        <SignInForm handleSubmit={handleSubmit} />
       </Box>
 
       <Divider sx={{ mt: 2, mb: 2 }}>

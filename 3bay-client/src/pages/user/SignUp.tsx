@@ -9,7 +9,7 @@ import SignInLayout from '../../components/layout/SignInLayout'
 import { AppName } from '../../components/layout/AppName'
 import { SubmitHandler } from 'react-hook-form'
 import { SignUpFormInputs } from '../../data/sign-up'
-import SignUpForm from '../../components/user/signup/SignUpForm'
+import SignUpForm from '../../components/user/auth/SignUpForm'
 import { Link as RouterLink } from 'react-router-dom'
 // TODO add recaptcha
 const SignUp: () => JSX.Element = () => {
