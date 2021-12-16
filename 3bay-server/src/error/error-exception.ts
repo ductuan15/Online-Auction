@@ -100,6 +100,12 @@ export class AuthError extends ErrorException {
       case AuthErrorCode.InvalidRequest:
         this.status = 401
         break
+      case AuthErrorCode.WrongOTP:
+        this.status = 401
+        break
+      case AuthErrorCode.OTPExpired:
+        this.status = 401
+        break
       default:
         this.status = 500
         break

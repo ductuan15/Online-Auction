@@ -24,4 +24,6 @@ export class AuthErrorCode {
   public static readonly AccountDisabled = 'AuthAccountDisabled'
   public static readonly InvalidRequest = 'AuthInvalidRequest'
   public static readonly WrongOTP = 'AuthWrongOTP'
+  public static readonly OTPExpired = 'AuthOTPExpired'
+  public static readonly OTPNotExpired = 'AuthOTPNotExpired'
 }

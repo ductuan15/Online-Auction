@@ -4,10 +4,11 @@ import userSchema from '../schemas/sign-up.js'
 import signInSchema from '../schemas/sign-in.js'
 import {
   refreshAccessToken,
+  reSendVerifyOTP,
   signIn,
   signUp,
   startVerify,
-  verifyAccount
+  verifyAccount,
 } from '../controllers/auth.controller.js'
 import { hashPassword } from '../middlewares/auth.mdw.js'
 import passport from '../auth/passport.js'
@@ -30,5 +31,6 @@ router.post('/auth/rf', refreshAccessToken)
 router
   .get('/auth/verify/:id', startVerify)
   .post('/auth/verify/:id', verifyAccount)
+  .get('/auth/verify/resend/:id', reSendVerifyOTP)
 
 export default router

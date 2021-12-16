@@ -6,6 +6,7 @@ import Prisma from '@prisma/client'
 import jwt from 'jsonwebtoken'
 import config from '../config/config.js'
 import crypto from 'crypto'
+import { sendVerifyOTP, verifyOTP } from '../auth/otp.js'
 
 async function hasEmailAlreadyExisted(email: string) {
   const user = await prisma.user.findUnique({
@@ -119,7 +120,9 @@ export async function startVerify(
         where: { uuid: id },
       })
       if (user && !user.verified) {
-        // TODO start the otp process
+        // start the otp process
+        await sendVerifyOTP(user, false)
+
         return res.status(200).end()
       }
     } catch (e) {
@@ -136,16 +139,15 @@ export async function verifyAccount(
   next: e.NextFunction,
 ) {
   const id = req.params.id
-  const code = req.body as string
+  const { otp: code } = req.body
   if (id && code) {
     try {
       const user = await prisma.user.findUnique({
         where: { uuid: id },
       })
 
-      // TODO: verify the OTP code
-
-      if (user) {
+      // verify the OTP code
+      if (user && (await verifyOTP(user, code))) {
         await prisma.user.update({
           where: { uuid: id },
           data: { verified: true },
@@ -153,9 +155,38 @@ export async function verifyAccount(
 
         return res.json(getUserCredential(user))
       } else {
+        console.log(user)
         return next(new AuthError({ code: AuthErrorCode.WrongOTP }))
       }
     } catch (e) {
+      if (e instanceof AuthError) return next(e)
+      return next(new ErrorException({ code: ErrorCode.UnknownError }))
+    }
+  }
+  return next(new ErrorException({ code: ErrorCode.BadRequest }))
+}
+
+export async function reSendVerifyOTP(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  const id = req.params.id
+
+  if (id) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { uuid: id },
+      })
+
+      if (user && !user.verified) {
+        await sendVerifyOTP(user, true)
+        return res.status(200).end()
+      } else {
+        return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
+      }
+    } catch (e) {
+      if (e instanceof AuthError) return next(e)
       return next(new ErrorException({ code: ErrorCode.UnknownError }))
     }
   }
