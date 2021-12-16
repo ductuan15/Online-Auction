@@ -138,6 +138,12 @@ model User {
   @@map("users")
 }
 
+model otp {
+  id         String   @id @default(uuid()) @db.VarChar(255)
+  otp        String   @db.VarChar(255)
+  expiryTime DateTime @db.DateTime(0)
+}
+
 enum Role {
   BIDDER
   SELLER
