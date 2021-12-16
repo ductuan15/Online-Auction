@@ -20,12 +20,15 @@ export const productById = async (
   _: string,
 ) => {
   try {
+    const isGetDescription = req.query.isGetDescription ? true : false
+    console.log(isGetDescription)
     req.product = await prisma.products.findUnique({
       where: {
         id: +value,
       },
       include: {
         auctions: true,
+        product_des_history: isGetDescription,
       },
       rejectOnNotFound: true,
     })
@@ -46,6 +49,11 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
         sellerId: data.sellerId,
         categoryId: +data.categoryId,
         currentPrice: 0,
+        product_des_history: {
+          create: {
+            description: data.description,
+          },
+        },
       },
     })
     await ensureProductImagePath(product.id)
@@ -75,6 +83,11 @@ export const update = async (
         categoryId: +data.categoryId || req.product?.categoryId,
         currentPrice: +data.currenPrice || req.product?.currentPrice,
         deletedAt: new Date() || req.product?.deletedAt,
+        product_des_history: {
+          create: {
+            description: data.description,
+          },
+        },
       },
       where: { id: +(req.product?.id || '') },
     })
@@ -128,7 +141,7 @@ export const getProductByCategoryId = async (
       })
     }
     products.forEach(async (product) => {
-      product.thumbnails = await getThumbnailLinks(product.id)
+      product.thumbnails = getThumbnailLinks(product.id)
       product.detail = await getDetailImageLinks(product.id)
     })
     res.status(201).json(products)
@@ -169,11 +182,36 @@ export const search = async (
           timeOrder === 'desc' ? pkg.Prisma.sql`desc` : pkg.Prisma.empty
         }, products.currentPrice ${
           priceOrder === 'desc' ? pkg.Prisma.sql`desc` : pkg.Prisma.empty
-        } LIMIT ${config.PAGE_LIMIT * (+(page || 1) - 1)},${
-          config.PAGE_LIMIT * +(page || 1)
-        };`,
+        } LIMIT ${config.PAGE_LIMIT * (page - 1)},${config.PAGE_LIMIT * page};`,
       )
     }
+    res.status(201).json(products)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
+  }
+}
+
+export const getTopPrice = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const products: ProductRes[] = await prisma.products.findMany({
+      where: {
+        deletedAt: null,
+      },
+      orderBy: {
+        currentPrice: 'desc',
+      },
+      take: config.TOP_LIMIT,
+    })
+    products.forEach(async (product) => {
+      product.thumbnails = getThumbnailLinks(product.id)
+      product.detail = await getDetailImageLinks(product.id)
+    })
     res.status(201).json(products)
   } catch (error) {
     if (error instanceof Error) {

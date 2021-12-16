@@ -10,6 +10,7 @@ const config = {
   DATABASE: process.env.DATABASE || '3bay',
   SALT_ROUND: process.env.SALT_ROUND || 10,
   PAGE_LIMIT: 20,
+  TOP_LIMIT:5
 }
 
 export default config

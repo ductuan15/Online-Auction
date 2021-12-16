@@ -64,7 +64,7 @@ export const getDetailImageFolderPath = (productId: Number) => {
 }
 
 export const ensureProductImagePath = async (productId: number) => {
-  await fs.ensureDirSync(getDetailImageFolderPath(productId))
+  await fs.ensureDir(getDetailImageFolderPath(productId))
 }
 export const getThumbnailLinks = (productId: Number) => {
   const link = getThumbnailPath(productId)
@@ -77,5 +77,10 @@ export const getThumbnailLinks = (productId: Number) => {
 }
 
 export const getDetailImageLinks = async (productId: Number) => {
-  return fs.readdir(getDetailImageFolderPath(productId))
+  try {
+    const files = await fs.readdir(getDetailImageFolderPath(productId))
+    return files
+  } catch (error) {
+    return []
+  }
 }

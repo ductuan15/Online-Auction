@@ -23,8 +23,11 @@ router
 
 router.route('/search').get(productController.search)
 
-router.route('/byCategory/:categoryId')
-.get(productController.getProductByCategoryId);
+router
+  .route('/byCategory/:categoryId')
+  .get(productController.getProductByCategoryId)
+
+router.route('/top/price').get(productController.getTopPrice)
 
 router
   .route('/:productId')
@@ -33,6 +36,7 @@ router
     uploadProductImages.fields(uploadProductImagesFields),
     productController.update,
   )
+
 
 router.param('productId', productController.productById)
 
