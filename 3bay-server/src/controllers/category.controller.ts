@@ -20,7 +20,7 @@ const categoryById = async (
 ) => {
   try {
     if (typeof value === 'number' || typeof value === 'string') {
-      req.category = await prisma.categories.findUnique({
+      req.category = await prisma.category.findUnique({
         select: categoryDefaultSelect,
         where: {
           id: +value,
@@ -64,7 +64,7 @@ interface CategoryRes {
   id: number
   title: string
   parentId: number | null
-  otherCategories: Array<Partial<pkg.categories>>
+  otherCategories: Array<Partial<pkg.Category>>
 }
 
 const categoryDefaultSelect = {
@@ -103,7 +103,7 @@ const categoryWithThumbnailLinks = (category: Partial<CategoryRes>) => {
 }
 
 const findAll = (req: Request, res: Response, next: NextFunction) => {
-  prisma.categories
+  prisma.category
     .findMany({
       select: categoryDefaultSelect,
       where: {
@@ -144,7 +144,7 @@ const add = async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body
     if (data && data.title) {
       try {
-        const category = await prisma.categories.create({
+        const category = await prisma.category.create({
           data: {
             title: data.title as string,
             parentId: JSON.parse(data.parentId) || null,
@@ -180,7 +180,7 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
         parentId = JSON.parse(data.parentId)
       }
 
-      const result = await prisma.categories.update({
+      const result = await prisma.category.update({
         data: {
           title: data.title || req.category.title,
           parentId: parentId,
@@ -206,12 +206,12 @@ const deleteCategory = async (
 ) => {
   if (req.category) {
     if (req.category.parentId != null) {
-      const parentCategory = await prisma.categories.findUnique({
+      const parentCategory = await prisma.category.findUnique({
         where: { id: req.category.parentId },
       })
 
       if (parentCategory) {
-        await prisma.categories.updateMany({
+        await prisma.category.updateMany({
           where: {
             parentId: req.category.id,
           },
@@ -223,7 +223,7 @@ const deleteCategory = async (
     }
 
     try {
-      const deletedCategory = await prisma.categories.delete({
+      const deletedCategory = await prisma.category.delete({
         where: {
           id: req.category.id,
         },

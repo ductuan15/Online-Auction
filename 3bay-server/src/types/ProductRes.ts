@@ -1,6 +1,6 @@
-import pkg from '@prisma/client'
+import Prisma from '@prisma/client'
 
-export interface ProductRes extends pkg.products {
+export interface ProductRes extends Prisma.Product {
   thumbnails?: {
     sm: string
     md: string
@@ -8,5 +8,5 @@ export interface ProductRes extends pkg.products {
     original: string
   }
   detail?: string[]
-  auctions?: pkg.auctions[]
+  auctions?: Prisma.Auction[]
 }

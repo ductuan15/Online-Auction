@@ -10,15 +10,15 @@ import prisma from '../db/prisma.js'
 import Prisma from '@prisma/client'
 import bcrypt from 'bcrypt'
 
-async function findUser(email: string): Promise<Prisma.users | undefined> {
-  const user = await prisma.users.findUnique({
+async function findUser(email: string): Promise<Prisma.User | undefined> {
+  const user = await prisma.user.findUnique({
     where: { email: email },
   })
   return user ? user : undefined
 }
 
 async function verifyPassword(
-  user: Prisma.users,
+  user: Prisma.User,
   password: string,
 ): Promise<boolean> {
   console.log(password, user.pwd)
@@ -28,8 +28,8 @@ async function verifyPassword(
 async function verifyUser(
   uuid: string,
   role: string,
-): Promise<Prisma.users | undefined> {
-  const user = await prisma.users.findUnique({
+): Promise<Prisma.User | undefined> {
+  const user = await prisma.user.findUnique({
     where: { uuid: uuid },
   })
   if (user && role === user?.role && !user.isDisabled && user.verified) {

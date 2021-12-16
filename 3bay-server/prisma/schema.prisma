@@ -8,127 +8,140 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model categories {
-  id              Int          @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  title           String       @unique(map: "categories_title_uindex") @default("") @db.VarChar(255)
-  parentId        Int?         @map("parent_id")
-  createdAt       DateTime?    @default(now()) @map("created_at") @db.DateTime(0)
-  categories      categories?  @relation("categoriesTocategories_parent_id", fields: [parentId], references: [id], map: "categories_fk0")
-  otherCategories categories[] @relation("categoriesTocategories_parent_id")
-  products        products[]
+model Category {
+  id              Int        @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  title           String     @unique(map: "categories_title_uindex") @default("") @db.VarChar(255)
+  parentId        Int?       @map("parent_id")
+  createdAt       DateTime?  @default(now()) @map("created_at") @db.DateTime(0)
+  categories      Category?  @relation("categoriesTocategories_parent_id", fields: [parentId], references: [id], map: "categories_fk0")
+  otherCategories Category[] @relation("categoriesTocategories_parent_id")
+  products        Product[]  @relation("categoriesToproducts")
 
   @@index([parentId], map: "fk_category_category_idx")
+  @@map("categories")
 }
 
-model auctions {
-  id                                 Int       @id @default(autoincrement())
-  startTime                          DateTime  @default(now()) @db.DateTime(0)
-  closeTime                          DateTime? @db.DateTime(0)
-  openPrice                          Decimal   @db.Decimal(19, 4)
-  incrementPrice                     Decimal   @db.Decimal(19, 4)
-  buyoutPrice                        Decimal?  @db.Decimal(19, 4)
-  productId                          Int
-  winnerBidderId                     Int?
-  autoExtendAuctionTiming            Boolean
-  products                           products  @relation(fields: [productId], references: [id], onUpdate: Restrict, map: "auctions_fk0")
-  bids_auctions_winnerBidderIdTobids bids?     @relation("auctions_winnerBidderIdTobids", fields: [winnerBidderId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auctions_fk1")
-  bids_auctionsTobids_auctionId      bids[]    @relation("auctionsTobids_auctionId")
+model Auction {
+  id                      Int       @id @default(autoincrement())
+  startTime               DateTime  @default(now()) @db.DateTime(0)
+  closeTime               DateTime? @db.DateTime(0)
+  openPrice               Decimal   @db.Decimal(19, 4)
+  incrementPrice          Decimal   @db.Decimal(19, 4)
+  buyoutPrice             Decimal?  @db.Decimal(19, 4)
+  productId               Int
+  winningBidId            Int?
+  autoExtendAuctionTiming Boolean
+  product                 Product   @relation("auctionsToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "auctions_fk0")
+  winningBid              Bid?      @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auctions_fk1")
+  bids                    Bid[]     @relation("auctionsTobids_auctionId")
 
   @@index([productId], map: "auctions_fk0")
-  @@index([winnerBidderId], map: "auctions_fk1")
+  @@index([winningBidId], map: "auctions_fk1")
+  @@map("auctions")
 }
 
-model bids {
-  id                                     Int        @id
-  bidPrice                               Decimal    @default(0.0000) @db.Decimal(19, 4)
-  bidTime                                DateTime   @default(now()) @db.DateTime(0)
-  bidComment                             String?    @db.VarChar(255)
-  isAccepted                             Boolean    @default(true)
-  bidderId                               String     @db.VarChar(255)
-  auctionId                              Int
-  auctions_auctionsTobids_auctionId      auctions   @relation("auctionsTobids_auctionId", fields: [auctionId], references: [id], onUpdate: Restrict, map: "bids_fk1")
-  users                                  users      @relation(fields: [bidderId], references: [uuid], onUpdate: Restrict, map: "bids_fk0")
-  auctions_auctions_winnerBidderIdTobids auctions[] @relation("auctions_winnerBidderIdTobids")
+model Bid {
+  id             Int       @id
+  bidPrice       Decimal   @default(0.0000) @db.Decimal(19, 4)
+  bidTime        DateTime  @default(now()) @db.DateTime(0)
+  bidComment     String?   @db.VarChar(255)
+  isAccepted     Boolean   @default(true)
+  bidderId       String    @db.VarChar(255)
+  auctionId      Int
+  auction        Auction   @relation("auctionsTobids_auctionId", fields: [auctionId], references: [id], onUpdate: Restrict, map: "bids_fk1")
+  bidder         User      @relation("bidsTousers", fields: [bidderId], references: [uuid], onUpdate: Restrict, map: "bids_fk0")
+  winningAuction Auction[] @relation("auctions_winningBidIdTobids")
 
   @@index([bidderId], map: "bids_fk0")
   @@index([auctionId], map: "bids_fk1")
+  @@map("bids")
 }
 
-model product_des_history {
+model ProductDescriptionHistory {
   id          Int      @id @default(autoincrement())
   description String   @db.VarChar(255)
   productId   Int
   createdAt   DateTime @default(now()) @db.DateTime(0)
-  products    products @relation(fields: [productId], references: [id], onUpdate: Restrict, map: "product_des_history_fk0")
+  products    Product  @relation("product_des_historyToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "product_des_history_fk0")
 
   @@index([productId], map: "product_des_history_fk0")
+  @@map("product_des_history")
 }
 
-model product_images {
-  id        Int      @id @default(autoincrement())
+model ProductImage {
+  id        Int     @id @default(autoincrement())
   productId Int
-  img       String   @db.Text
-  products  products @relation(fields: [productId], references: [id], onUpdate: Restrict, map: "product_images_fk0")
+  img       String  @db.Text
+  products  Product @relation("product_imagesToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "product_images_fk0")
 
   @@index([productId], map: "product_images_fk0")
+  @@map("product_images")
 }
 
-model products {
-  id                  Int                   @id @default(autoincrement())
-  name                String                @db.VarChar(255)
-  categoryId          Int
-  sellerId            String                @db.VarChar(255)
-  createdAt           DateTime              @default(now()) @db.DateTime(0)
-  deletedAt           DateTime?             @db.DateTime(0)
-  currentPrice        Decimal               @db.Decimal(19, 4)
-  categories          categories            @relation(fields: [categoryId], references: [id], map: "products_fk0")
-  users               users                 @relation(fields: [sellerId], references: [uuid], map: "products_fk1")
-  auctions            auctions[]
-  product_des_history product_des_history[]
-  product_images      product_images[]
-  user_watchlist      user_watchlist[]
+model Product {
+  id                        Int                         @id @default(autoincrement())
+  name                      String                      @db.VarChar(255)
+  categoryId                Int
+  sellerId                  String                      @db.VarChar(255)
+  createdAt                 DateTime                    @default(now()) @db.DateTime(0)
+  deletedAt                 DateTime?                   @db.DateTime(0)
+  currentPrice              Decimal                     @db.Decimal(19, 4)
+  categories                Category                    @relation("categoriesToproducts", fields: [categoryId], references: [id], map: "products_fk0")
+  users                     User                        @relation("productsTousers", fields: [sellerId], references: [uuid], map: "products_fk1")
+  auctions                  Auction[]                   @relation("auctionsToproducts")
+  productDescriptionHistory ProductDescriptionHistory[] @relation("product_des_historyToproducts")
+  productImages             ProductImage[]              @relation("product_imagesToproducts")
+  userWatchlist             UserWatchlist[]             @relation("productsTouser_watchlist")
 
   @@index([categoryId], map: "products_fk0")
   @@index([sellerId], map: "products_fk1")
   @@fulltext([name], map: "name")
+  @@map("products")
 }
 
-model upgrade_to_bidder_requests {
+model UpgradeToBidderRequest {
   userId String @id @db.VarChar(255)
-  users  users  @relation(fields: [userId], references: [uuid], map: "upgrade_to_bidder_requests_fk0")
+  user   User   @relation("upgrade_to_bidder_requestsTousers", fields: [userId], references: [uuid], map: "upgrade_to_bidder_requests_fk0")
+
+  @@map("upgrade_to_bidder_requests")
 }
 
-model user_watchlist {
-  userId    String   @db.VarChar(255)
+model UserWatchlist {
+  userId    String  @db.VarChar(255)
   productId Int
-  products  products @relation(fields: [productId], references: [id], onUpdate: Restrict, map: "user_watchlist_fk1")
-  users     users    @relation(fields: [userId], references: [uuid], map: "user_watchlist_fk0")
+  products  Product @relation("productsTouser_watchlist", fields: [productId], references: [id], onUpdate: Restrict, map: "user_watchlist_fk1")
+  user      User    @relation("user_watchlistTousers", fields: [userId], references: [uuid], map: "user_watchlist_fk0")
 
   @@id([userId, productId])
   @@index([userId], map: "user_watchlist_fk0")
   @@index([productId], map: "user_watchlist_fk1")
+  @@map("user_watchlist")
 }
 
-model users {
-  uuid                       String                      @id @default(uuid()) @db.VarChar(255)
-  name                       String                      @db.VarChar(255)
-  email                      String                      @unique(map: "email") @db.VarChar(255)
-  isDisabled                 Boolean                     @default(false)
-  role                       Role                        @default(BIDDER)
-  pwd                        String                      @db.VarChar(255)
-  dob                        DateTime?                   @db.DateTime(0)
-  verified                   Boolean                     @default(false)
-  profile                    String?                     @db.VarChar(255)
-  refreshToken               String                      @default(uuid()) @db.VarChar(512)
-  address                    String?                     @db.VarChar(255)
-  bids                       bids[]
-  products                   products[]
-  upgrade_to_bidder_requests upgrade_to_bidder_requests?
-  user_watchlist             user_watchlist[]
+model User {
+  uuid                  String                  @id @default(uuid()) @db.VarChar(255)
+  name                  String                  @db.VarChar(255)
+  email                 String                  @unique(map: "email") @db.VarChar(255)
+  isDisabled            Boolean                 @default(false)
+  role                  Role                    @default(BIDDER)
+  pwd                   String                  @db.VarChar(255)
+  dob                   DateTime?               @db.DateTime(0)
+  verified              Boolean                 @default(false)
+  profile               String?                 @db.VarChar(255)
+  refreshToken          String                  @default(uuid()) @db.VarChar(512)
+  address               String?                 @db.VarChar(255)
+  bids                  Bid[]                   @relation("bidsTousers")
+  products              Product[]               @relation("productsTousers")
+  ugradeToBidderRequest UpgradeToBidderRequest? @relation("upgrade_to_bidder_requestsTousers")
+  userWatchlist         UserWatchlist[]         @relation("user_watchlistTousers")
+
+  @@map("users")
 }
 
 enum Role {
   BIDDER
   SELLER
   ADMINISTRATOR
+
+  @@map("users_role")
 }

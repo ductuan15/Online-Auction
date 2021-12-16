@@ -1,6 +1,6 @@
-import pkg from '@prisma/client'
+import Prisma from '@prisma/client'
 
-const prisma = new pkg.PrismaClient({
+const prisma = new Prisma.PrismaClient({
   log: [
     {
       emit: 'event',

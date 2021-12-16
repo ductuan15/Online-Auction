@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
 import {
+  ensureProductImagePath,
+  getDetailImageLinks,
+  getThumbnailLinks,
   saveProductDetailImage,
   saveProductThumbnail,
-  ensureProductImagePath,
-  getThumbnailLinks,
-  getDetailImageLinks,
 } from './images-product.controller.js'
 
 import config from '../config/config.js'
 import { ProductRes } from '../types/ProductRes.js'
-import pkg from '@prisma/client'
+import Prisma from '@prisma/client'
 
 export const productById = async (
   req: Request,
@@ -22,13 +22,13 @@ export const productById = async (
   try {
     const isGetDescription = req.query.isGetDescription ? true : false
     console.log(isGetDescription)
-    req.product = await prisma.products.findUnique({
+    req.product = await prisma.product.findUnique({
       where: {
         id: +value,
       },
       include: {
         auctions: true,
-        product_des_history: isGetDescription,
+        productDescriptionHistory: isGetDescription,
       },
       rejectOnNotFound: true,
     })
@@ -43,13 +43,13 @@ export const productById = async (
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.body
-    const product: ProductRes = await prisma.products.create({
+    const product: ProductRes = await prisma.product.create({
       data: {
         name: data.name,
         sellerId: data.sellerId,
         categoryId: +data.categoryId,
         currentPrice: 0,
-        product_des_history: {
+        productDescriptionHistory: {
           create: {
             description: data.description,
           },
@@ -77,13 +77,13 @@ export const update = async (
 ) => {
   const data = req.body
   try {
-    const count = await prisma.products.update({
+    const count = await prisma.product.update({
       data: {
         name: data.name || req.product?.name,
         categoryId: +data.categoryId || req.product?.categoryId,
         currentPrice: +data.currenPrice || req.product?.currentPrice,
         deletedAt: new Date() || req.product?.deletedAt,
-        product_des_history: {
+        productDescriptionHistory: {
           create: {
             description: data.description,
           },
@@ -132,7 +132,7 @@ export const getProductByCategoryId = async (
     const page = +(req.query?.page || '/')
     let products: ProductRes[] = []
     if (page) {
-      products = await prisma.products.findMany({
+      products = await prisma.product.findMany({
         where: {
           categoryId: categoryId,
         },
@@ -169,20 +169,27 @@ export const search = async (
     if (page) {
       // WTF is this :<
       products = await prisma.$queryRaw<ProductRes[]>(
-        pkg.Prisma
-          .sql`SELECT * FROM products JOIN auctions on auctions.productId = products.id 
-          WHERE MATCH (name) AGAINST (${key}) and 
-            auctions.closeTime > CURRENT_TIMESTAMP and
-            ${
-              categoryId !== 0
-                ? pkg.Prisma.sql`products.categoryId = ${categoryId}`
-                : pkg.Prisma.empty
-            }
-        Order by auctions.closeTime ${
-          timeOrder === 'desc' ? pkg.Prisma.sql`desc` : pkg.Prisma.empty
-        }, products.currentPrice ${
-          priceOrder === 'desc' ? pkg.Prisma.sql`desc` : pkg.Prisma.empty
-        } LIMIT ${config.PAGE_LIMIT * (page - 1)},${config.PAGE_LIMIT * page};`,
+        Prisma.Prisma.sql`SELECT *
+               FROM products
+                        JOIN auctions on auctions.productId = products.id
+               WHERE MATCH (name) AGAINST (${key})
+                 and
+                   auctions.closeTime
+                   > CURRENT_TIMESTAMP
+                 and ${
+                   categoryId !== 0
+                     ? Prisma.Prisma.sql`products.categoryId = ${categoryId}`
+                     : Prisma.Prisma.empty
+                 }
+               Order by auctions.closeTime ${
+                 timeOrder === 'desc'
+                   ? Prisma.Prisma.sql`desc`
+                   : Prisma.Prisma.empty
+               }, products.currentPrice ${
+          priceOrder === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
+        } LIMIT ${config.PAGE_LIMIT * (page - 1)}, ${
+          config.PAGE_LIMIT * page
+        };`,
       )
     }
     res.status(201).json(products)
@@ -199,7 +206,7 @@ export const getTopPrice = async (
   next: NextFunction,
 ) => {
   try {
-    const products: ProductRes[] = await prisma.products.findMany({
+    const products: ProductRes[] = await prisma.product.findMany({
       where: {
         deletedAt: null,
       },

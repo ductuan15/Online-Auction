@@ -8,7 +8,7 @@ import config from '../config/config.js'
 import crypto from 'crypto'
 
 async function hasEmailAlreadyExisted(email: string) {
-  const user = await prisma.users.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: email },
   })
 
@@ -26,7 +26,7 @@ export async function signUp(
     }
 
     try {
-      const result = await prisma.users.create({
+      const result = await prisma.user.create({
         data: {
           ...req.body,
           refreshToken: crypto.randomBytes(256).toString('hex'),
@@ -42,7 +42,7 @@ export async function signUp(
   return next(new ErrorException({ code: ErrorCode.BadRequest }))
 }
 
-function getUserCredential(user: Prisma.users) {
+function getUserCredential(user: Prisma.User) {
   const payload = {
     user: user.uuid,
     role: user.role,
@@ -65,7 +65,7 @@ export async function signIn(
   res: e.Response,
   next: e.NextFunction,
 ) {
-  const user = req.user as Prisma.users
+  const user = req.user as Prisma.User
   if (!user.verified) {
     return next(new AuthError({ code: AuthErrorCode.NotVerified }))
   }
@@ -84,7 +84,7 @@ export async function refreshAccessToken(
 ) {
   if (typeof req.body === 'string') {
     try {
-      const user = await prisma.users.findFirst({
+      const user = await prisma.user.findFirst({
         where: { refreshToken: req.body },
       })
       if (user) {
@@ -108,7 +108,7 @@ export async function startVerify(
   const id = req.params.id
   if (id) {
     try {
-      const user = await prisma.users.findUnique({
+      const user = await prisma.user.findUnique({
         where: { uuid: id },
       })
       if (user && !user.verified) {
@@ -132,14 +132,14 @@ export async function verifyAccount(
   const code = req.body as string
   if (id && code) {
     try {
-      const user = await prisma.users.findUnique({
+      const user = await prisma.user.findUnique({
         where: { uuid: id },
       })
 
       // TODO: verify the OTP code
 
       if (user) {
-        await prisma.users.update({
+        await prisma.user.update({
           where: { uuid: id },
           data: { verified: true },
         })

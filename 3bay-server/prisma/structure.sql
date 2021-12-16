@@ -37,13 +37,13 @@ CREATE TABLE `auctions`
     `incrementPrice`          decimal(19, 4) NOT NULL,
     `buyoutPrice`             decimal(19, 4)          DEFAULT NULL,
     `productId`               int(11)        NOT NULL,
-    `winnerBidderId`          int(11)                 DEFAULT NULL,
+    `winningBidId`            int(11)                 DEFAULT NULL,
     `autoExtendAuctionTiming` tinyint(1)     NOT NULL,
     PRIMARY KEY (`id`),
     KEY `auctions_fk0` (`productId`),
-    KEY `auctions_fk1` (`winnerBidderId`),
+    KEY `auctions_fk1` (`winningBidId`),
     CONSTRAINT `auctions_fk0` FOREIGN KEY (`productId`) REFERENCES `products` (`id`),
-    CONSTRAINT `auctions_fk1` FOREIGN KEY (`winnerBidderId`) REFERENCES `bids` (`id`)
+    CONSTRAINT `auctions_fk1` FOREIGN KEY (`winningBidId`) REFERENCES `bids` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -217,7 +217,7 @@ CREATE TABLE `users`
     `name`         varchar(255) COLLATE utf8mb4_unicode_ci                             NOT NULL,
     `email`        varchar(255) COLLATE utf8mb4_unicode_ci                             NOT NULL,
     `isDisabled`   tinyint(1)                                                          NOT NULL DEFAULT 0,
-    `type`         enum ('BIDDER','SELLER','ADMINISTRATOR') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'BIDDER',
+    `role`         enum ('BIDDER','SELLER','ADMINISTRATOR') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'BIDDER',
     `pwd`          varchar(255) COLLATE utf8mb4_unicode_ci                             NOT NULL,
     `dob`          datetime                                                                     DEFAULT NULL,
     `verified`     tinyint(1)                                                          NOT NULL DEFAULT 0,
