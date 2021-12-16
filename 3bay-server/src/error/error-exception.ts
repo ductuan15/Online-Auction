@@ -98,13 +98,16 @@ export class AuthError extends ErrorException {
         this.status = 401
         break
       case AuthErrorCode.InvalidRequest:
+        this.message = 'Invalid Request'
         this.status = 401
         break
       case AuthErrorCode.WrongOTP:
         this.status = 401
+        this.message = 'Invalid OTP code'
         break
       case AuthErrorCode.OTPExpired:
         this.status = 401
+        this.message = 'OTP code has expired'
         break
       default:
         this.status = 500

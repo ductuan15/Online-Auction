@@ -50,7 +50,7 @@ const SignIn: () => JSX.Element = () => {
           console.log(parseError)
         }
       }
-      console.log(e)
+      // console.log(e)
       setError(true)
     }
   }

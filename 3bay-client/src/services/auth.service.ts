@@ -30,11 +30,15 @@ async function verify(id: string, otp: string): Promise<AuthData> {
   return response.data as AuthData
 }
 
+async function resendOTP(id: string) {
+  await axiosApiInstance.get(`/auth/verify/resend/${id}`)
+}
+
 function signOut() {
   TokenService.revokeAuthData()
 }
 
-async function register(user: SignUpFormInputs): Promise<{uuid: string}> {
+async function register(user: SignUpFormInputs): Promise<{ uuid: string }> {
   const response = await axiosApiInstance.post('/auth/signup', user)
   return response.data
 }
@@ -44,5 +48,6 @@ const AuthService = {
   signOut,
   register,
   verify,
+  resendOTP
 }
 export default AuthService
