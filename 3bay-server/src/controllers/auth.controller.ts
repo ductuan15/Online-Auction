@@ -67,7 +67,14 @@ export async function signIn(
 ) {
   const user = req.user as Prisma.User
   if (!user.verified) {
-    return next(new AuthError({ code: AuthErrorCode.NotVerified }))
+    return next(
+      new AuthError({
+        code: AuthErrorCode.NotVerified,
+        metaData: {
+          uuid: user.uuid,
+        },
+      }),
+    )
   }
   if (user.isDisabled) {
     return next(new AuthError({ code: AuthErrorCode.AccountDisabled }))

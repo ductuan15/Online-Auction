@@ -12,6 +12,7 @@ import { ReactComponent as FBIcon } from '../../assets/Facebook_f_logo.svg'
 import SignInForm from '../../components/user/auth/SignInForm'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/user/AuthContext'
+import axios, { AxiosError } from 'axios'
 
 const SignIn: () => JSX.Element = () => {
   const navigate = useNavigate()
@@ -36,6 +37,19 @@ const SignIn: () => JSX.Element = () => {
         navigate(from, { replace: true })
       })
     } catch (e) {
+      if (
+        axios.isAxiosError(e) &&
+        (e as AxiosError) &&
+        e.response?.data.name === 'AuthEmailNotConfirmed'
+      ) {
+        try {
+          const uuid = e.response?.data.metaData.uuid || ''
+          navigate(`/verify/${uuid}`, { replace: true })
+          return
+        } catch (parseError) {
+          console.log(parseError)
+        }
+      }
       console.log(e)
       setError(true)
     }
