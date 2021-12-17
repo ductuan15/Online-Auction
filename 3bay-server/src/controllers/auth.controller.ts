@@ -6,7 +6,7 @@ import Prisma from '@prisma/client'
 import jwt from 'jsonwebtoken'
 import config from '../config/config.js'
 import crypto from 'crypto'
-import { sendVerifyOTP, verifyOTP } from '../auth/otp.js'
+import { sendResetPasswordOTP, sendVerifyOTP, verifyOTP } from '../auth/otp.js'
 
 async function hasEmailAlreadyExisted(email: string) {
   const user = await prisma.user.findUnique({
@@ -147,6 +147,10 @@ export async function verifyAccount(
       })
 
       // verify the OTP code
+      if (user && user.verified) {
+        next(new AuthError({ code: AuthErrorCode.AlreadyVerified }))
+      }
+
       if (user && (await verifyOTP(user, code))) {
         await prisma.user.update({
           where: { uuid: id },
@@ -184,6 +188,92 @@ export async function reSendVerifyOTP(
         return res.status(200).end()
       } else {
         return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
+      }
+    } catch (e) {
+      if (e instanceof AuthError) return next(e)
+      return next(new ErrorException({ code: ErrorCode.UnknownError }))
+    }
+  }
+  return next(new ErrorException({ code: ErrorCode.BadRequest }))
+}
+
+export async function startResetPassword(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  if (req.body) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email: req.body.email },
+      })
+
+      if (!user) {
+        return next(new AuthError({ code: AuthErrorCode.AccountNotExist }))
+      }
+      if (user.isDisabled) {
+        return next(new AuthError({ code: AuthErrorCode.AccountDisabled }))
+      }
+      if (!user.verified) {
+        return next(new AuthError({ code: AuthErrorCode.NotVerified }))
+      }
+
+      // start the otp process
+      await sendResetPasswordOTP(user, false)
+      return res.status(200).end()
+    } catch (e) {
+      return next(new ErrorException({ code: ErrorCode.UnknownError }))
+    }
+  }
+
+  return next(new ErrorException({ code: ErrorCode.BadRequest }))
+}
+
+export async function resetPassword(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  const { otp: code, pwd, email } = req.body
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: email },
+    })
+
+    // verify OTP code
+    if (user && (await verifyOTP(user, code))) {
+      await prisma.user.update({
+        where: { email: email },
+        data: { pwd: pwd },
+      })
+
+      return res.json(getUserCredential(user))
+    } else {
+      console.log(user)
+      return next(new AuthError({ code: AuthErrorCode.WrongOTP }))
+    }
+  } catch (e) {
+    console.log(e)
+    if (e instanceof AuthError) return next(e)
+    return next(new ErrorException({ code: ErrorCode.UnknownError }))
+  }
+}
+
+export async function reSendResetPasswordOTP(
+  req: e.Request,
+  res: e.Response,
+  next: e.NextFunction,
+) {
+  if (req.body) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email: req.body.email },
+      })
+
+      if (user && user.verified && !user.isDisabled) {
+        // start the otp process
+        await sendResetPasswordOTP(user, true)
+        return res.status(200).end()
       }
     } catch (e) {
       if (e instanceof AuthError) return next(e)

@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const verifyMjmlFile = path.join(__dirname, '../templates/verify-template.mjml')
+const verifyMjmlFile = path.join(__dirname, '../templates/verify.mjml')
 const verifyMjmlContent = await fs.readFile(verifyMjmlFile)
 const verifyTemplate = Handlebars.compile(
   mjml(verifyMjmlContent.toString()).html,
@@ -25,6 +25,19 @@ const sendVerifyEmail = async (otp: string, user: Prisma.User) => {
     [user.email],
     subject,
     verifyTemplate({ otp: otp, name: user.name }),
+  )
+}
+
+const rpMjmlFile = path.join(__dirname, '../templates/reset-password.mjml')
+const rpMjmlContent = await fs.readFile(rpMjmlFile)
+const rpTemplate = Handlebars.compile(mjml(rpMjmlContent.toString()).html)
+
+const sendResetPasswordEmail = async (otp: string, user: Prisma.User) => {
+  const subject = `Reset your 3bay account password`
+  await sendMail(
+    [user.email],
+    subject,
+    rpTemplate({ otp: otp, name: user.name }),
   )
 }
 
@@ -42,8 +55,11 @@ export function generateOtp(
   return { otp, expiryTime }
 }
 
-export async function sendVerifyOTP(user: Prisma.User, resend: boolean) {
-  if (user.verified) return
+async function sendOTP(
+  user: Prisma.User,
+  resend: boolean,
+  cb: (otpCode: string, user: Prisma.User) => void,
+) {
 
   const hasOtp = await prisma.otp.findUnique({
     where: { id: user.uuid },
@@ -74,15 +90,30 @@ export async function sendVerifyOTP(user: Prisma.User, resend: boolean) {
       },
     })
   }
-  // send the email
-  await sendVerifyEmail(otpCode, user)
+  cb(otpCode, user)
+}
+
+export async function sendVerifyOTP(user: Prisma.User, resend: boolean) {
+  if (user.verified) return
+
+  await sendOTP(user, resend, async (otpCode: string, user: Prisma.User) => {
+    // send the email
+    await sendVerifyEmail(otpCode, user)
+  })
+}
+
+export async function sendResetPasswordOTP(user: Prisma.User, resend: boolean) {
+
+  await sendOTP(user, resend, async (otpCode: string, user: Prisma.User) => {
+    // send the email
+    await sendResetPasswordEmail(otpCode, user)
+  })
 }
 
 export async function verifyOTP(
   user: Prisma.User,
   otpCode: string,
 ): Promise<boolean> {
-  if (user.verified) return true
 
   const otp = await prisma.otp.findFirst({
     where: { id: user.uuid },
