@@ -72,7 +72,7 @@ const VerifyAccount = (): JSX.Element => {
 
   const handleResendOtp = async () => {
     try {
-      await AuthService.resendOTP(id)
+      await AuthService.resendVerifyOTP(id)
       setResendButtonDisabled(true)
       setTimeout(() => {
         setResendButtonDisabled(false)
@@ -133,9 +133,9 @@ const VerifyAccount = (): JSX.Element => {
               </Alert>
             )}
 
-            {!error && setResendButtonDisabled && (
+            {!error && resendButtonDisabled && (
               <Alert sx={{ mt: 2, mb: 2 }} severity='info'>
-                OTP resent! Please check your email again
+                OTP has been sent! Please check your email
               </Alert>
             )}
           </Box>
