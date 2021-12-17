@@ -19,7 +19,6 @@ const {
   MAIL_USER,
   MAIL_PWD,
   MAIL_CYPHER,
-
 } = process.env
 
 const config = {
@@ -33,7 +32,7 @@ const config = {
 }
 
 export const mailConfig = {
-  IS_ENABLED: Boolean(MAIL_ENABLE_SERVICE) || false,
+  IS_ENABLED: MAIL_ENABLE_SERVICE === 'true',
   SERVICE: MAIL_SERVICE || 'gmail',
   HOST: MAIL_HOST || 'smtp.gmail.com',
   PORT: +(MAIL_PORT || '465') || 465,

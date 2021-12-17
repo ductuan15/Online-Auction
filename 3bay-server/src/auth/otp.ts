@@ -3,6 +3,30 @@ import Prisma from '@prisma/client'
 import prisma from '../db/prisma.js'
 import { AuthError } from '../error/error-exception.js'
 import { AuthErrorCode } from '../error/error-code.js'
+import path, { dirname } from 'path'
+import fs from 'fs-extra'
+import Handlebars from 'handlebars'
+import mjml from 'mjml'
+import sendMail from '../services/mail.service.js'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+const verifyMjmlFile = path.join(__dirname, '../templates/verify-template.mjml')
+const verifyMjmlContent = await fs.readFile(verifyMjmlFile)
+const verifyTemplate = Handlebars.compile(
+  mjml(verifyMjmlContent.toString()).html,
+)
+
+const sendVerifyEmail = async (otp: string, user: Prisma.User) => {
+  const subject = `Please verify your 3bay account`
+  await sendMail(
+    [user.email],
+    subject,
+    verifyTemplate({ otp: otp, name: user.name }),
+  )
+}
 
 export function generateOtp(
   nDigit = 6,
@@ -51,7 +75,7 @@ export async function sendVerifyOTP(user: Prisma.User, resend: boolean) {
     })
   }
   // send the email
-  // await sendMail([user.email], )
+  await sendVerifyEmail(otpCode, user)
 }
 
 export async function verifyOTP(
