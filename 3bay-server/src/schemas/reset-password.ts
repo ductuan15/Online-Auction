@@ -26,7 +26,7 @@ const schema = {
     },
     properties: {
       pwd: 'Password should have at least 8 characters',
-      otp: 'OTP is required',
+      otp: 'Wrong OTP format',
       email: 'Invalid email format',
     },
     _: 'Bad request',

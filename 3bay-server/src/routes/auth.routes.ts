@@ -39,8 +39,8 @@ router
   .post('/auth/verify/:id', verifyAccount)
 
 router
-  .get('/auth/reset-pwd/resend', reSendResetPasswordOTP)
-  .get('/auth/reset-pwd/', startResetPassword)
+  .post('/auth/reset-pwd/resend', reSendResetPasswordOTP)
+  .post('/auth/reset-pwd/request', startResetPassword)
   .post(
     '/auth/reset-pwd/',
     validate(resetPasswordSchema),
