@@ -4,6 +4,7 @@ import ajvErrors from 'ajv-errors'
 
 import userSchema from './sign-up.js'
 import signInSchema from './sign-in.js'
+import resetPasswordSchema from './reset-password.js'
 
 const ajv = new Ajv({ removeAdditional: true, allErrors: true })
 addFormats(ajv)
@@ -19,6 +20,9 @@ ajv.addFormat('custom-date-time', function (dateTimeString) {
 
 ajv.compile(userSchema)
 
-export type SchemaTypes = typeof userSchema | typeof signInSchema
+export type SchemaTypes =
+  | typeof userSchema
+  | typeof signInSchema
+  | typeof resetPasswordSchema
 
 export default ajv
