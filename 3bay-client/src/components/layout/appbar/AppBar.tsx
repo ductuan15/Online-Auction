@@ -16,8 +16,8 @@ import NotifyMenuButton from './NotifyMenuButton'
 import { NotifyMenu } from './NotifyMenu'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 
-const APPBAR_LARGE = 92
-const APPBAR_SMALL = 80
+export const APPBAR_LARGE = 92
+export const APPBAR_SMALL = 80
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -77,7 +77,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   minHeight: APPBAR_SMALL,
-  [theme.breakpoints.up('md')]: {
+  [theme.breakpoints.up('sm')]: {
     minHeight: APPBAR_LARGE,
     padding: theme.spacing(0, 5),
   },

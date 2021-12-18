@@ -1,11 +1,16 @@
 import Drawer from '@mui/material/Drawer'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import Box from '@mui/material/Box'
-import { Typography } from '@mui/material'
+import { APPBAR_LARGE, APPBAR_SMALL } from '../appbar/AppBar'
+import { AppName } from '../AppName'
+import { CategoryProvider } from '../../../contexts/admin/CategoryContext'
+import CategoryList from './CategoryList'
 
 type AppDrawerProps = {
   anchor?: 'left' | 'top' | 'right' | 'bottom'
 }
+
+const DRAWER_WIDTH = 256
 
 const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
   const {
@@ -18,14 +23,34 @@ const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
       anchor={anchor ?? 'left'}
       open={openDrawer}
       onClose={toggleDrawer(false)}
+      sx={{
+        width: DRAWER_WIDTH,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: DRAWER_WIDTH,
+          boxSizing: 'border-box',
+        },
+      }}
     >
       <Box
-        sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
-        role='presentation'
-        onClick={toggleDrawer(false)}
-        onKeyDown={toggleDrawer(false)}
+        display='flex'
+        flexDirection='column'
+        alignItems='center'
+        justifyContent='center'
+        sx={(theme) => ({
+          height: APPBAR_SMALL,
+          [theme.breakpoints.up('sm')]: {
+            height: APPBAR_LARGE,
+          },
+        })}
       >
-        <Typography>Hello world</Typography>
+        <AppName />
+      </Box>
+
+      <Box>
+        <CategoryProvider>
+          <CategoryList />
+        </CategoryProvider>
       </Box>
     </Drawer>
   )
