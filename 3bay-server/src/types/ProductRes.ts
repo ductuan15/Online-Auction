@@ -9,4 +9,5 @@ export interface ProductRes extends Prisma.Product {
   }
   detail?: string[]
   auctions?: Prisma.Auction[]
+  productDescriptionHistory?:Prisma.ProductDescriptionHistory[]
 }
