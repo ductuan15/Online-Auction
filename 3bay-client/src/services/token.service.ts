@@ -42,7 +42,7 @@ function getAccessToken(): string | undefined {
   return data?.token
 }
 
-function updateAccessToken(rf: string): void {
+function updateAccessToken(rf: string) {
   const data = getAuthData()
   if (data) {
     data.token = rf

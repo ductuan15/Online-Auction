@@ -7,6 +7,7 @@ export type AuthData = {
   token: string
   refreshToken: string
   role: string
+  name: string
 }
 
 async function signIn(email: string, pwd: string): Promise<AuthData> {

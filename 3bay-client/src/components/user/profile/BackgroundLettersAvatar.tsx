@@ -1,0 +1,77 @@
+import * as React from 'react'
+import Avatar, { AvatarProps } from '@mui/material/Avatar'
+import { useDarkMode } from 'usehooks-ts'
+
+function adjust(color: string, amount: number) {
+  return `#${color
+    .replace(/^#/, '')
+    .replace(/../g, (color) =>
+      (
+        '0' +
+        Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)
+      ).substr(-2),
+    )}`
+}
+
+function stringToColor(string: string) {
+  let hash = 0
+  let i
+
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash)
+  }
+
+  let color = '#'
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff
+    color += `00${value.toString(16)}`.substr(-2)
+  }
+
+  return color
+}
+
+function stringAvatar(name: string, darkTheme?: boolean) {
+  const nameParts = name.split('')
+
+  let avatarName = ''
+  switch (nameParts.length) {
+    case 0:
+      break
+    case 1:
+      if (nameParts[0].length > 0) {
+        avatarName = nameParts[0][0]
+      }
+      break
+    default:
+      if (nameParts[0].length > 0 && nameParts[1].length > 0) {
+        avatarName = `${nameParts[0][0]}${nameParts[1][0]}`
+      }
+      break
+  }
+
+  let color = stringToColor(name)
+  if (darkTheme === true) {
+    color = adjust(color, 50)
+  }
+
+  return {
+    sx: {
+      bgcolor: color,
+    },
+    children: avatarName,
+  }
+}
+
+type Props = {
+  name: string
+} & AvatarProps
+
+export default function BackgroundLetterAvatars({
+  name,
+  ...avatarProps
+}: Props) {
+  const { isDarkMode } = useDarkMode()
+
+  return <Avatar {...stringAvatar(name, isDarkMode)} {...avatarProps} />
+}

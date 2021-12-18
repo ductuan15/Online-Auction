@@ -5,7 +5,7 @@ import SearchAppBar, { StyledToolbar } from './appbar/AppBar'
 import AppFooter from './footer/AppFooter'
 import StyledDiv from '../common/StyledDiv'
 import { AppBarCtxProvider } from '../../contexts/layout/AppBarContext'
-import AppDrawer from './AppDrawer'
+import AppDrawer from './drawer/AppDrawer'
 import { Outlet } from 'react-router-dom'
 
 interface Props {

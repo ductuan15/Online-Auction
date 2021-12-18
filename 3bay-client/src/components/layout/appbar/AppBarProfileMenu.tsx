@@ -3,10 +3,11 @@ import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
-import { Avatar, Button, Link } from '@mui/material'
+import { Button, Link } from '@mui/material'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { Link as RouterLink } from 'react-router-dom'
+import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 
 type AppBarProfileMenuProps = {
   menuId: string
@@ -19,7 +20,7 @@ export const AppBarProfileMenu = ({
 }: AppBarProfileMenuProps): JSX.Element => {
   const { dispatch } = useAppBarContext()
 
-  const { isAuth } = useAuth()
+  const { isAuth, user } = useAuth()
 
   return (
     <>
@@ -46,7 +47,7 @@ export const AppBarProfileMenu = ({
               aria-haspopup='true'
               color='inherit'
             >
-              <Avatar>M</Avatar>
+              <BackgroundLetterAvatars name={user?.name ?? ''} />
             </IconButton>
           </Tooltip>
         ) : (
