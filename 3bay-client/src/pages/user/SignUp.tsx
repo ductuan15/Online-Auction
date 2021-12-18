@@ -28,8 +28,8 @@ const SignUp: () => JSX.Element = () => {
       const response = await AuthService.register(data)
       navigate(`/verify/${response.uuid}`, { replace: true })
     } catch (e) {
-      if (axios.isAxiosError(error) && (error as AxiosError)) {
-        setError(error.response?.data.message || '')
+      if (axios.isAxiosError(e) && (e as AxiosError)) {
+        setError(e.response?.data.message || '')
       } else {
         setError('Unknown error')
       }

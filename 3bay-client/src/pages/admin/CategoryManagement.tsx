@@ -29,7 +29,7 @@ const CategoryManagementContent = () => {
   const { addAllCategories, dispatch } = useCategoryContext()
 
   useEffect(() => {
-    fetch(`${config.apiHostName}/api/category/`)
+    fetch(`${config.API_HOST_NAME}/api/category/`)
       .then((r) => {
         return r.json() as Promise<Array<Category>>
       })

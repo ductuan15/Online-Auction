@@ -5,5 +5,6 @@ export interface SignUpFormInputs {
   address: string
   pwd: string
   pwd2: string
-  emailSubscription: boolean
+  termAndConditionAccepted: boolean
+  captchaToken: string
 }

@@ -3,7 +3,7 @@ import config from '../config/config'
 import TokenService from './token.service'
 
 const axiosApiInstance = axios.create({
-  baseURL: config.apiHostName,
+  baseURL: config.API_HOST_NAME,
   headers: {
     'Content-Type': 'application/json',
   },
