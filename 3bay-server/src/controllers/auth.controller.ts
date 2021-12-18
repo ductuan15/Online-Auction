@@ -55,6 +55,7 @@ function getUserCredential(user: Prisma.User) {
 
   return {
     user: payload.user,
+    name: user.name,
     token,
     refreshToken: user.refreshToken,
     role: user.role,

@@ -20,7 +20,7 @@ export const productById = async (
   _: string,
 ) => {
   try {
-    const isWithDescription = req.query.isWithDescription ? true : false
+    const isWithDescription = !!req.query.isWithDescription
     console.log(isWithDescription)
     req.product = await prisma.product.findUnique({
       where: {
@@ -172,24 +172,26 @@ export const search = async (
     let products: ProductRes[] = []
     if (page) {
       // WTF is this :<
+      // it's not that bad tbh. More readable than your `best-friend`'s code, obviously
       products = await prisma.$queryRaw<ProductRes[]>(
         Prisma.Prisma.sql`SELECT *
-               FROM products
-                        JOIN auctions on auctions.productId = products.id
-               WHERE MATCH (name) AGAINST (${key})
-                 and
-                   auctions.closeTime
-                   > CURRENT_TIMESTAMP
-                 and ${
-                   categoryId !== 0
-                     ? Prisma.Prisma.sql`products.categoryId = ${categoryId}`
-                     : Prisma.Prisma.empty
-                 }
-               Order by auctions.closeTime ${
-                 timeOrder === 'desc'
-                   ? Prisma.Prisma.sql`desc`
-                   : Prisma.Prisma.empty
-               }, products.currentPrice ${
+                          FROM products
+                                   JOIN auctions on auctions.productId = products.id
+                          WHERE MATCH (name) AGAINST (${key})
+                            and
+                              auctions.closeTime
+                              > CURRENT_TIMESTAMP
+                            and ${
+                              categoryId !== 0
+                                ? Prisma.Prisma
+                                    .sql`products.categoryId = ${categoryId}`
+                                : Prisma.Prisma.empty
+                            }
+                          Order by auctions.closeTime ${
+                            timeOrder === 'desc'
+                              ? Prisma.Prisma.sql`desc`
+                              : Prisma.Prisma.empty
+                          }, products.currentPrice ${
           priceOrder === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
         } LIMIT ${config.PAGE_LIMIT * (page - 1)}, ${
           config.PAGE_LIMIT * page
@@ -239,7 +241,7 @@ export const isProductOwner = async (
   try {
     await prisma.product.findFirst({
       where: {
-        id: +(req.body.productId || req.product?.id||'/'),
+        id: +(req.body.productId || req.product?.id || '/'),
         sellerId: req.user?.uuid,
       },
       rejectOnNotFound: true,
