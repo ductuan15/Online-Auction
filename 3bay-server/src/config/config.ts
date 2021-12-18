@@ -19,6 +19,9 @@ const {
   MAIL_USER,
   MAIL_PWD,
   MAIL_CYPHER,
+
+  RECAPTCHA_ENABLE,
+  RECAPTCHA_SECRET_KEY
 } = process.env
 
 const config = {
@@ -39,6 +42,11 @@ export const mailConfig = {
   USER: MAIL_USER || '',
   PWD: MAIL_PWD || '',
   CYPHERS: MAIL_CYPHER || 'SSLv3',
+}
+
+export const recaptchaConfig = {
+  IS_ENABLED: RECAPTCHA_ENABLE === 'true',
+  SECRET_KEY: RECAPTCHA_SECRET_KEY || ''
 }
 
 export default config

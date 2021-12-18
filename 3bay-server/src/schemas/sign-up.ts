@@ -17,11 +17,12 @@ const schema = {
           format: 'date-time',
         },
         address: { type: 'string', nullable: false, minLength: 1 },
+        captchaToken: {type: 'string', nullable: false }
       },
       additionalProperties: false,
     },
   ],
-  required: ['name', 'email', 'pwd', 'dob', 'address'],
+  required: ['name', 'email', 'pwd', 'dob', 'address', 'captchaToken'],
 
   errorMessage: {
     type: 'Bad request (Invalid request type)',
@@ -31,6 +32,7 @@ const schema = {
       pwd: 'Password is required',
       dob: 'Date of birth is required',
       address: 'Address is required',
+      captchaToken: 'Captcha is required',
     },
     properties: {
       name: 'Empty name is not allowed',

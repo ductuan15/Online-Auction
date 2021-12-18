@@ -15,12 +15,18 @@ import {
   startVerify,
   verifyAccount,
 } from '../controllers/auth.controller.js'
-import { hashPassword } from '../middlewares/auth.mdw.js'
+import { hashPassword, verifyRecaptcha } from '../middlewares/auth.mdw.js'
 import passport from '../auth/passport.js'
 
 const router = express.Router()
 
-router.post('/auth/signup', validate(userSchema), hashPassword, signUp)
+router.post(
+  '/auth/signup',
+  validate(userSchema),
+  verifyRecaptcha,
+  hashPassword,
+  signUp,
+)
 
 router.post(
   '/auth/signin',

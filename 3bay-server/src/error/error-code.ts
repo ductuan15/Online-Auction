@@ -28,4 +28,5 @@ export class AuthErrorCode {
   public static readonly OTPNotExpired = 'AuthOTPNotExpired'
   public static readonly AccountNotExist = 'AuthAccountNotExisted'
   public static readonly AlreadyVerified = 'AuthAlreadyVerified'
+  public static readonly RecaptchaFailed = 'AuthRecaptchaFailed'
 }

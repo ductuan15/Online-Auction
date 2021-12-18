@@ -115,6 +115,10 @@ export class AuthError extends ErrorException {
         this.status = 401
         this.message = 'Email not exist'
         break
+      case AuthErrorCode.RecaptchaFailed:
+        this.status = 401
+        this.message = 'Failed to verify recaptcha'
+        break
       default:
         this.status = 500
         break
