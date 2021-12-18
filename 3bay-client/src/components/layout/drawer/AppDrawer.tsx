@@ -3,8 +3,11 @@ import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import Box from '@mui/material/Box'
 import { APPBAR_LARGE, APPBAR_SMALL } from '../appbar/AppBar'
 import { AppName } from '../AppName'
-import { CategoryProvider } from '../../../contexts/admin/CategoryContext'
 import CategoryList from './CategoryList'
+import { useEffect } from 'react'
+import axiosApiInstance from '../../../services/api'
+import Category from '../../../data/category'
+import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 
 type AppDrawerProps = {
   anchor?: 'left' | 'top' | 'right' | 'bottom'
@@ -17,6 +20,15 @@ const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
     state: { openDrawer },
     toggleDrawer,
   } = useAppBarContext()
+
+  const { addAllCategories } = useCategoryContext()
+
+  useEffect(() => {
+    axiosApiInstance.get(`/api/category/`).then((response) => {
+      const data = response.data as Array<Category>
+      addAllCategories(data)
+    })
+  }, [])
 
   return (
     <Drawer
@@ -48,9 +60,7 @@ const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
       </Box>
 
       <Box>
-        <CategoryProvider>
-          <CategoryList />
-        </CategoryProvider>
+        <CategoryList />
       </Box>
     </Drawer>
   )

@@ -6,7 +6,6 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import Category from '../../../data/category'
 import CategoryListItem from './CategoryListItem'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
-import axiosApiInstance from '../../../services/api'
 
 // declare module 'react' {
 //   interface CSSProperties {
@@ -34,7 +33,7 @@ function renderCategoryTree(categories?: Array<Category>): JSX.Element {
 }
 
 function CategoryList(): JSX.Element {
-  const { addAllCategories, state } = useCategoryContext()
+  const { state } = useCategoryContext()
   const [expanded, setExpanded] = React.useState<string[]>([])
 
   const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
@@ -42,17 +41,12 @@ function CategoryList(): JSX.Element {
   }
 
   useEffect(() => {
-    axiosApiInstance.get(`/api/category/`).then((response) => {
-      const data = response.data as Array<Category>
-      addAllCategories(data)
-      setExpanded([])
-      setExpanded(
-        state.allCategories.map((cat) => {
-          return `${cat.id}`
-        }),
-      )
-    })
-  }, [])
+    setExpanded(
+      state.allCategories.map((cat) => {
+        return `${cat.id}`
+      }),
+    )
+  }, [state.allCategories])
 
   return (
     <TreeView

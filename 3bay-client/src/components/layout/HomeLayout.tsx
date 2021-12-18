@@ -7,6 +7,7 @@ import StyledDiv from '../common/StyledDiv'
 import { AppBarCtxProvider } from '../../contexts/layout/AppBarContext'
 import AppDrawer from './drawer/AppDrawer'
 import { Outlet } from 'react-router-dom'
+import { CategoryProvider } from '../../contexts/admin/CategoryContext'
 
 interface Props {
   children?: React.ReactNode
@@ -18,7 +19,9 @@ export default function HomeLayout({ children }: Props): JSX.Element {
       {/* app bar */}
       <AppBarCtxProvider>
         <SearchAppBar />
-        <AppDrawer />
+        <CategoryProvider>
+          <AppDrawer />
+        </CategoryProvider>
       </AppBarCtxProvider>
 
       <StyledToolbar sx={(theme) => ({ marginBottom: theme.spacing(1) })} />

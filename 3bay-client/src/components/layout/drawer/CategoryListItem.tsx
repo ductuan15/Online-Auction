@@ -16,7 +16,7 @@ type CategoryListItemProps = TreeItemProps & {
 }
 
 const CategoryListItemRoot = styled(TreeItem)(({ theme }) => ({
-  // color: theme.palette.text.secondary,
+  color: theme.palette.text.secondary,
   [`& .${treeItemClasses.content}`]: {
     // color: theme.palette.text.secondary,
     paddingRight: theme.spacing(1),
@@ -41,7 +41,7 @@ function CategoryListItem(props: CategoryListItemProps) {
     <CategoryListItemRoot
       label={
         <Box
-          sx={{ display: 'flex', alignItems: 'center', p: 1 }}
+          sx={{ display: 'flex', alignItems: 'center', p: 1, py: 1.25 }}
           onClick={onCategoryClicked}
         >
           <Typography

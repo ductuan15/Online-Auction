@@ -32,7 +32,7 @@ function stringToColor(string: string) {
 }
 
 function stringAvatar(name: string, darkTheme?: boolean) {
-  const nameParts = name.split('')
+  const nameParts = name.split(' ')
 
   let avatarName = ''
   switch (nameParts.length) {
