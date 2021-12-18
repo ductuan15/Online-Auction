@@ -41,6 +41,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
         autoExtendAuctionTiming: req.body.autoExtendAuctionTiming,
         openPrice: +req.body.openPrice,
         productId: +req.body.productId,
+        closeTime: req.body.closeTime
       },
     })
     res.json(auction)
@@ -51,23 +52,11 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-export const isProductOwner = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    await prisma.product.findFirst({
-      where: {
-        id: +req.body.productId,
-        sellerId: req.user?.uuid,
-      },
-      rejectOnNotFound: true,
-    })
-    next()
-  } catch (error) {
-    if (error instanceof Error) {
-      next(error)
-    }
-  }
+export const getOpenAuction = async (productId: number) => {
+  return prisma.auction.findFirst({
+    where: {
+      productId: productId,
+      closeTime: null,
+    },
+  })
 }

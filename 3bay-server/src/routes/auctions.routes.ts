@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import * as auctionController from '../controllers/auction.controller.js'
+import * as productController from '../controllers/product.controller.js'
 import passport from 'passport'
 
 const route = Router()
@@ -8,7 +9,7 @@ route
   .route('')
   .post(
     passport.authenticate('jwt', { session: false }),
-    auctionController.isProductOwner,
+    productController.isProductOwner,
     auctionController.add,
   )
 

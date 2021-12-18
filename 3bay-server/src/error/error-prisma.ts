@@ -22,6 +22,12 @@ export const prismaErrorHandler = (
       code: 'Incorrect field type provided or missing field',
       status: 400,
     } as ErrorModel)
+  } else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+    // TODO: Get message only
+    res.status(400).send({
+      code: err.message,
+      status: 400,
+    } as ErrorModel)
   } else {
     next(err)
   }

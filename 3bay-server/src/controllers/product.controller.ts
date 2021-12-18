@@ -230,3 +230,24 @@ export const getTopPrice = async (
     }
   }
 }
+
+export const isProductOwner = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    await prisma.product.findFirst({
+      where: {
+        id: +(req.body.productId || req.product?.id||'/'),
+        sellerId: req.user?.uuid,
+      },
+      rejectOnNotFound: true,
+    })
+    next()
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
+  }
+}
