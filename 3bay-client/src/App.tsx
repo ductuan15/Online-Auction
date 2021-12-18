@@ -12,6 +12,7 @@ import HomeLayout from './components/layout/HomeLayout'
 import SignInLayout from './components/layout/SignInLayout'
 import ForgotPassword from './pages/user/ForgotPassword'
 import VerifyAccount from './pages/user/VerifyAccount'
+import Product from "./pages/common/productDetail/Product";
 
 function App(): JSX.Element {
   return (
@@ -29,6 +30,7 @@ function App(): JSX.Element {
                   </RequireAuth>
                 }
               />
+              <Route path='/product/:id' element={<Product />} />
               <Route path='*' element={<Error404 />} />
             </Route>
 

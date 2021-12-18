@@ -3,9 +3,14 @@ import CardProduct from './product/CardProduct'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import './Carousel.css'
-import { Container } from '@mui/material'
+import {Container, Divider} from '@mui/material'
+import Typography from "@mui/material/Typography";
 
-export default function CarouselCard() {
+type carouselProps = {
+    name: string
+}
+
+const CarouselCard = ({ name }: carouselProps): JSX.Element => {
   const data = [
     {
       id: 1,
@@ -143,6 +148,10 @@ export default function CarouselCard() {
 
   return (
     <Container>
+        <Divider />
+        <Typography gutterBottom variant='h4' component='h5'>
+            {name}
+        </Typography>
       <Carousel
         draggable={false}
         showDots
@@ -163,3 +172,5 @@ export default function CarouselCard() {
     </Container>
   )
 }
+
+export default CarouselCard;

@@ -37,7 +37,7 @@ const Home = (): JSX.Element => {
           👁️👄👁️
         </Typography>
 
-        <CarouselCard />
+        <CarouselCard name={"Tìm kiếm phổ biến"}/>
 
         <Link component={RouterLink} variant='h6' to='/cat' gutterBottom p={4}>
           Test link (category management)
