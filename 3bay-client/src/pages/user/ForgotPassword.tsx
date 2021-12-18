@@ -16,6 +16,7 @@ import { useAuth } from '../../contexts/user/AuthContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const ForgotPassword = (): JSX.Element => {
+
   const [error, setError] = useState<string | null>(null)
   const [emailOK, setEmailOK] = useState(false)
   const [verifying, setVerifying] = useState(false)
