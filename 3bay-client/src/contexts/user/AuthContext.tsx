@@ -12,6 +12,12 @@ type AuthContextType = {
   signIn: (email: string, pwd: string, callback: VoidFunction) => void
   signOut: (callback: VoidFunction) => void
   verify: (id: string, otp: string, callback: VoidFunction) => void
+  resetPassword: (
+    email: string,
+    pwd: string,
+    otp: string,
+    cb: VoidFunction,
+  ) => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -23,6 +29,9 @@ const AuthContext = createContext<AuthContextType>({
     throw new Error('Forgot to wrap component in `AuthProvider`')
   },
   verify: (): never => {
+    throw new Error('Forgot to wrap component in `AuthProvider`')
+  },
+  resetPassword: (): never => {
     throw new Error('Forgot to wrap component in `AuthProvider`')
   },
 })
@@ -57,6 +66,18 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     setUser(user)
     cb()
   }
+  const resetPassword = async (
+    email: string,
+    pwd: string,
+    otp: string,
+    cb: VoidFunction,
+  ) => {
+    // the response data is expected to be the same with sign-in case
+    const user = await AuthService.resetPassword(email, pwd, otp)
+    console.log(user)
+    setUser(user)
+    cb()
+  }
 
   const contextValue = {
     isAuth,
@@ -64,6 +85,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     signIn,
     signOut,
     verify,
+    resetPassword
   }
 
   return (

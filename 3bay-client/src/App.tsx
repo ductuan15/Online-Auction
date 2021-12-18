@@ -6,13 +6,13 @@ import SignIn from './pages/user/SignIn'
 import Error404 from './pages/common/Error404'
 import Home from './pages/common/Home'
 import { AuthProvider } from './contexts/user/AuthContext'
-import RequireAuth from './components/user/auth/RequireAuth'
 import CategoryManagement from './pages/admin/CategoryManagement'
 import HomeLayout from './components/layout/HomeLayout'
 import SignInLayout from './components/layout/SignInLayout'
 import ForgotPassword from './pages/user/ForgotPassword'
 import VerifyAccount from './pages/user/VerifyAccount'
 import Product from "./pages/common/productDetail/Product";
+import RequireAdminRole from './components/user/auth/RequireAdminRole'
 
 function App(): JSX.Element {
   return (
@@ -31,6 +31,11 @@ function App(): JSX.Element {
                 }
               />
               <Route path='/product/:id' element={<Product />} />
+
+              <Route element={<RequireAdminRole />}>
+                <Route path='/cat' element={<CategoryManagement />} />
+              </Route>
+
               <Route path='*' element={<Error404 />} />
             </Route>
 

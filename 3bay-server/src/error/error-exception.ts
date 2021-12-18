@@ -83,6 +83,7 @@ export class AuthError extends ErrorException {
     switch (code) {
       case AuthErrorCode.NotVerified:
         this.status = 401
+        this.message = 'Account is not verified'
         break
       case AuthErrorCode.EmailAlreadyUsed:
         this.status = 400
@@ -96,9 +97,23 @@ export class AuthError extends ErrorException {
         break
       case AuthErrorCode.AccountDisabled:
         this.status = 401
+        this.message = 'Account is disabled'
         break
       case AuthErrorCode.InvalidRequest:
+        this.message = 'Invalid Request'
         this.status = 401
+        break
+      case AuthErrorCode.WrongOTP:
+        this.status = 401
+        this.message = 'Invalid OTP code'
+        break
+      case AuthErrorCode.OTPExpired:
+        this.status = 401
+        this.message = 'OTP code has expired'
+        break
+      case AuthErrorCode.AccountNotExist:
+        this.status = 401
+        this.message = 'Email not exist'
         break
       default:
         this.status = 500

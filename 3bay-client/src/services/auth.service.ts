@@ -30,11 +30,41 @@ async function verify(id: string, otp: string): Promise<AuthData> {
   return response.data as AuthData
 }
 
-function signOut() {
+async function resendVerifyOTP(id: string) {
+  await axiosApiInstance.get(`/auth/verify/resend/${id}`)
+}
+
+async function checkEmailBeforeResetPassword(email: string): Promise<void> {
+  console.log('axios email', email)
+  await axiosApiInstance.post('/auth/reset-pwd/request', {
+    email,
+  })
+}
+
+async function resendResetPasswordOTP(email: string): Promise<void> {
+  await axiosApiInstance.post('auth/reset-pwd/resend', {
+    email,
+  })
+}
+
+async function resetPassword(
+  email: string,
+  pwd: string,
+  otp: string,
+): Promise<AuthData> {
+  const response = await axiosApiInstance.post('auth/reset-pwd/', {
+    email,
+    pwd,
+    otp,
+  })
+  return response.data as AuthData
+}
+
+function signOut(): void {
   TokenService.revokeAuthData()
 }
 
-async function register(user: SignUpFormInputs): Promise<{uuid: string}> {
+async function register(user: SignUpFormInputs): Promise<{ uuid: string }> {
   const response = await axiosApiInstance.post('/auth/signup', user)
   return response.data
 }
@@ -44,5 +74,9 @@ const AuthService = {
   signOut,
   register,
   verify,
+  resendVerifyOTP,
+  checkEmailBeforeResetPassword,
+  resetPassword,
+  resendResetPasswordOTP,
 }
 export default AuthService

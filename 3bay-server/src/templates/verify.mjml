@@ -1,0 +1,86 @@
+<mjml>
+  <mj-head>
+    <mj-font name="Libre Baskerville" href="https://fonts.googleapis.com/css?family=Libre+Baskerville"/>
+    <mj-font name="Noto Sans Display" href="https://fonts.googleapis.com/css?family=Noto+Sans+Display"/>
+
+    <mj-attributes>
+      <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif"
+                padding="0 20px"/>
+      <mj-class name="company-name" font-size="32px" font-family="Libre Baskerville, serif" color="#3366FF"
+                font-style="italic"/>
+      <mj-class name="title" font-size="30px" font-family="Ubuntu" color="#626262"/>
+      <mj-class name="text" color="#525252" font-size='18px' font-family='Noto Sans Display' line-height='1.25'/>
+      <mj-class name="btn" background-color="#3366FF" font-size='18px' font-family='Noto Sans Display'
+                line-height='1.25'/>
+    </mj-attributes>
+
+    <mj-preview>Use the OTP {{otp}} to verify your account</mj-preview>
+
+  </mj-head>
+
+  <mj-body>
+
+    <mj-raw>
+      <!-- Company Header -->
+    </mj-raw>
+
+    <mj-section>
+      <mj-column>
+        <mj-text mj-class="company-name">3bay
+        </mj-text>
+        <mj-divider border-width='1px' border-color='#525252'/>
+      </mj-column>
+    </mj-section>
+
+    <mj-raw>
+      <!-- Image Header -->
+    </mj-raw>
+
+    <mj-raw>
+      <!-- Intro text -->
+    </mj-raw>
+
+    <mj-section padding-top="0px">
+
+      <mj-column width="600px">
+
+        <mj-text mj-class="title">
+          <b>Verify your account</b>
+        </mj-text>
+
+        <mj-text mj-class="text">Hello
+          <b>{{name}}</b>,
+          <br/>
+          To finish setting up your 3bay account, we just need to make sure this email address is yours.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          Please use the following One Time Password (OTP):
+        </mj-text>
+
+        <mj-button mj-class="btn">
+          {{otp}}
+        </mj-button>
+
+        <mj-text mj-class="text">The OTP is valid
+          for only
+          <b>3 minutes</b>.
+          <br/>
+        </mj-text>
+
+        <mj-text mj-class="text">
+          If you didn't request this code, you can safely ignore this email. Someone else might have typed your email
+          address by mistake.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          Thanks,
+          <br/>
+          - 3bay
+          security
+        </mj-text>
+
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
