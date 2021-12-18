@@ -11,7 +11,7 @@ import HomeLayout from './components/layout/HomeLayout'
 import SignInLayout from './components/layout/SignInLayout'
 import ForgotPassword from './pages/user/ForgotPassword'
 import VerifyAccount from './pages/user/VerifyAccount'
-import Product from "./pages/common/productDetail/Product";
+import Product from './pages/common/productDetail/Product'
 import RequireAdminRole from './components/user/auth/RequireAdminRole'
 
 function App(): JSX.Element {
@@ -22,14 +22,11 @@ function App(): JSX.Element {
           <Routes>
             <Route path='/' element={<HomeLayout />}>
               <Route index element={<Home />} />
-              <Route
-                path='/cat'
-                element={
-                  <RequireAuth>
-                    <CategoryManagement />
-                  </RequireAuth>
-                }
-              />
+
+              <Route element={<RequireAdminRole />}>
+                <Route path='/cat' element={<CategoryManagement />} />
+              </Route>
+
               <Route path='/product/:id' element={<Product />} />
 
               <Route element={<RequireAdminRole />}>
