@@ -20,15 +20,19 @@ export const productById = async (
   _: string,
 ) => {
   try {
-    const isGetDescription = req.query.isGetDescription ? true : false
-    console.log(isGetDescription)
+    const isWithDescription = req.query.isWithDescription ? true : false
+    console.log(isWithDescription)
     req.product = await prisma.product.findUnique({
       where: {
         id: +value,
       },
       include: {
-        auctions: true,
-        productDescriptionHistory: isGetDescription,
+        auctions: {
+          where: {
+            closeTime: null,
+          },
+        },
+        productDescriptionHistory: isWithDescription,
       },
       rejectOnNotFound: true,
     })
@@ -46,7 +50,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     const product: ProductRes = await prisma.product.create({
       data: {
         name: data.name,
-        sellerId: data.sellerId,
+        sellerId: req.user?.uuid || '',
         categoryId: +data.categoryId,
         currentPrice: 0,
         productDescriptionHistory: {

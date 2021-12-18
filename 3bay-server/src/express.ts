@@ -13,10 +13,13 @@ import path, { dirname } from 'path'
 import categoryRoute from './routes/category.routes.js'
 import imagesRoute from './routes/images.routes.js'
 import productRoute from './routes/product.routes.js'
+import auctionRoute from './routes/auctions.routes.js'
 import authRoute from './routes/auth.routes.js'
 import { errorHandler } from './error/error-handler.js'
 import { ProductRes } from './types/ProductRes.js'
 import { prismaErrorHandler } from './error/error-prisma.js'
+import { AuctionRes } from './types/AuctionRes.js'
+import Prisma from '@prisma/client'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -26,8 +29,10 @@ declare global {
     interface Request {
       category?: any | null
       product?: ProductRes | null | undefined
+      auction?: AuctionRes | null | undefined
       id?: string | number | null
     }
+    interface User extends Prisma.User {}
   }
 }
 
@@ -51,6 +56,7 @@ function initializeMiddlewares() {
 function mountRoutes() {
   app.use('/', express.static(path.join(__dirname, '../public')))
   app.use('/api/product', productRoute)
+  app.use('/api/auction', auctionRoute)
   app.use('/', categoryRoute)
   app.use('/', imagesRoute)
   app.use('/', authRoute)
