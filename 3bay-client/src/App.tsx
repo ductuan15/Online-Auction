@@ -13,6 +13,7 @@ import ForgotPassword from './pages/user/ForgotPassword'
 import VerifyAccount from './pages/user/VerifyAccount'
 import Product from './pages/common/productDetail/Product'
 import RequireAdminRole from './components/user/auth/RequireAdminRole'
+import ProductList from "./pages/common/productList/productList";
 
 function App(): JSX.Element {
   return (
@@ -28,6 +29,7 @@ function App(): JSX.Element {
               </Route>
 
               <Route path='/product/:id' element={<Product />} />
+              <Route path='/products/' element={<ProductList />} />
 
               <Route element={<RequireAdminRole />}>
                 <Route path='/cat' element={<CategoryManagement />} />

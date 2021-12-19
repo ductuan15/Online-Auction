@@ -4,7 +4,8 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
-import { CardActionArea } from '@mui/material'
+import {CardActionArea, Link} from '@mui/material'
+import {Link as RouterLink} from "react-router-dom";
 
 type CardProps = {
   product: {
@@ -50,36 +51,44 @@ const CardProduct = ({ product }: CardProps): JSX.Element => {
     }
   })
   return (
-    <Card sx={{ maxWidth: 350 }}>
-      <CardActionArea>
-        <CardMedia component='img' height='250px' image={product.image} />
-        <CardContent>
-          <Typography gutterBottom variant='h5' component='div'>
-            {product.title}
-          </Typography>
-          <Typography variant='body2' color='text.secondary'>
-            ({product.number_bidder})
-          </Typography>
-          <Typography variant='body2' color='text.secondary'>
-            {product.present_price} VND
-            {product.buy_now_price ? (
-              <span> to {product.buy_now_price} VND</span>
-            ) : null}
-          </Typography>
-          <Typography variant='body2' color='text.secondary'>
-            from {product.date}
-          </Typography>
-          <Typography variant='body2' color='text.secondary'>
-            {minutes === 0 && seconds === 0 ? null : (
-              <span>
+      <Link
+          color='inherit'
+          underline='none'
+          component={RouterLink}
+          to='/product/1'
+      >
+          <Card sx={{ maxWidth: 350 }}>
+              <CardActionArea>
+                  <CardMedia component='img' height='50%' image={product.image} />
+                  <CardContent>
+                      <Typography gutterBottom variant='h5' component='div'>
+                          {product.title}
+                      </Typography>
+                      <Typography variant='body2' color='text.secondary'>
+                          ({product.number_bidder})
+                      </Typography>
+                      <Typography variant='body2' color='text.secondary'>
+                          {product.present_price} VND
+                          {product.buy_now_price ? (
+                              <span> to {product.buy_now_price} VND</span>
+                          ) : null}
+                      </Typography>
+                      <Typography variant='body2' color='text.secondary'>
+                          from {product.date}
+                      </Typography>
+                      <Typography variant='body2' color='text.secondary'>
+                          {minutes === 0 && seconds === 0 ? null : (
+                              <span>
                 {' '}
-                {hours}:{minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+                                  {hours}:{minutes}:{seconds < 10 ? `0${seconds}` : seconds}
               </span>
-            )}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
+                          )}
+                      </Typography>
+                  </CardContent>
+              </CardActionArea>
+          </Card>
+      </Link>
+
   )
 }
 
