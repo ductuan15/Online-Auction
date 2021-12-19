@@ -1,9 +1,7 @@
 import * as React from 'react'
-// import MainBanner from '../../components/common/home/MainBanner'
-import { Box, Divider, Grid, Paper, Typography } from '@mui/material'
+import { Divider, Grid, Typography } from '@mui/material'
 import CarouselCard from '../../../components/common/Carousel'
-import Link from '@mui/material/Link'
-import { Link as RouterLink } from 'react-router-dom'
+
 import ProductImage from './ProductImage'
 import ProductInfo from './ProductInfo'
 
