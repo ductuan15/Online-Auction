@@ -86,6 +86,7 @@ export class AuthError extends ErrorException {
         this.message = 'Account is not verified'
         break
       case AuthErrorCode.EmailAlreadyUsed:
+        this.message = 'This email address is already used'
         this.status = 400
         break
       case AuthErrorCode.TokenExpired:
@@ -108,7 +109,7 @@ export class AuthError extends ErrorException {
         this.message = 'Invalid OTP code'
         break
       case AuthErrorCode.OTPExpired:
-        this.status = 401
+        this.status = 498
         this.message = 'OTP code has expired'
         break
       case AuthErrorCode.AccountNotExist:

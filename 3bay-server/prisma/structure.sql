@@ -242,7 +242,7 @@ CREATE TABLE `users`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
-  DELIMITER $$
+DELIMITER $$
 CREATE TRIGGER only_one_opening_auction_per_product 
 BEFORE INSERT on auctions FOR EACH ROW 
 BEGIN   
@@ -253,7 +253,7 @@ BEGIN
     WHERE auctions.productId = NEW.productId AND (auctions.closeTime IS NULL OR auctions.closeTime > NOW());     
     IF openingAuction > 0 THEN   
 		SIGNAL SQLSTATE '45000'          
-        SET MESSAGE_TEXT = "One auction has been opened for this product";  
+        SET MESSAGE_TEXT = 'One auction has been opened for this product';
 	END IF; 
 END $$
 

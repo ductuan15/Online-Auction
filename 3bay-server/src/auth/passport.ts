@@ -21,7 +21,7 @@ async function verifyPassword(
   user: Prisma.User,
   password: string,
 ): Promise<boolean> {
-  console.log(password, user.pwd)
+  // console.log(password, user.pwd)
   return await bcrypt.compare(password, user.pwd)
 }
 
@@ -72,11 +72,11 @@ const opts: StrategyOptions = {
 
 passport.use(
   new JWTStrategy(opts, async (jwtPayload: any, done: any) => {
-    console.log(jwtPayload)
+    // console.log(jwtPayload)
     try {
       if (!jwtPayload.user && !jwtPayload.role) return done(null, false)
       const user = await verifyUser(jwtPayload.user, jwtPayload.role)
-      console.log(user)
+      // console.log(user)
       if (user) {
         return done(null, user)
       }

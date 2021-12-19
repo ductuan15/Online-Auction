@@ -28,6 +28,11 @@ export async function verifyRecaptcha(
   next: e.NextFunction,
 ) {
   if (!recaptchaConfig.IS_ENABLED || recaptchaConfig.SECRET_KEY.length === 0) {
+    // No need captchaToken anymore
+    if (req.body && req.body.captchaToken) {
+      delete req.body.captchaToken
+    }
+
     return next()
   }
   try {
@@ -37,10 +42,10 @@ export async function verifyRecaptcha(
       req.body.captchaToken.length !== 0
     ) {
       // Call Google's API to get score
-      console.log(
-        `https://www.google.com/recaptcha/api/siteverify` +
-          `?secret=${recaptchaConfig.SECRET_KEY}&response=${req.body.captchaToken}`,
-      )
+      // console.log(
+      //   `https://www.google.com/recaptcha/api/siteverify` +
+      //     `?secret=${recaptchaConfig.SECRET_KEY}&response=${req.body.captchaToken}`,
+      // )
       const response = await axios.post(
         `https://www.google.com/recaptcha/api/siteverify` +
           `?secret=${recaptchaConfig.SECRET_KEY}&response=${req.body.captchaToken}`,
@@ -48,7 +53,7 @@ export async function verifyRecaptcha(
 
       if (response.data.success) {
         console.log('Recaptcha verified successfully')
-        // No need for the token data anymore
+        // No need captchaToken anymore
         delete req.body.captchaToken
         return next()
       }
