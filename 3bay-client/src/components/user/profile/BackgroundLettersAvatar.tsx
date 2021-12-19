@@ -70,7 +70,7 @@ type Props = {
 export default function BackgroundLetterAvatars({
   name,
   ...avatarProps
-}: Props) {
+}: Props): JSX.Element {
   const { isDarkMode } = useDarkMode()
 
   return <Avatar {...stringAvatar(name, isDarkMode)} {...avatarProps} />

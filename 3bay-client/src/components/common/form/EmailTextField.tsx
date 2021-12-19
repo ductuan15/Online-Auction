@@ -2,14 +2,17 @@ import TextField from '@mui/material/TextField'
 import { Controller, FieldError } from 'react-hook-form'
 import * as React from 'react'
 import { UseControllerProps } from 'react-hook-form/dist/types/controller'
+import {TextFieldProps} from '@mui/material'
 
 type EmailTextFieldProps<T extends { email: string }> =
   UseControllerProps<T> & {
     error: FieldError | undefined
+    textFieldProps?: TextFieldProps
   }
 
 const EmailTextField = <T extends { email: string }>({
   error,
+  textFieldProps,
   ...control
 }: EmailTextFieldProps<T>): JSX.Element => {
   return (
@@ -31,6 +34,7 @@ const EmailTextField = <T extends { email: string }>({
           autoComplete='email'
           inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
           helperText={error?.message}
+          {...textFieldProps}
           {...field}
         />
       )}

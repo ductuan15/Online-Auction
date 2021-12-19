@@ -29,7 +29,7 @@ const CategoryListItemRoot = styled(TreeItem)(({ theme }) => ({
   },
 }))
 
-function CategoryListItem(props: CategoryListItemProps) {
+function CategoryListItem(props: CategoryListItemProps): JSX.Element {
   const { bgColor, color, category, ...other } = props
   const navigate = useNavigate()
 

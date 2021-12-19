@@ -3,7 +3,7 @@ import {Controller, FieldError, Path} from 'react-hook-form'
 import TextField from '@mui/material/TextField'
 import * as React from 'react'
 import { SyntheticEvent, useState } from 'react'
-import { InputAdornment } from '@mui/material'
+import {InputAdornment, TextFieldProps} from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import {FieldPathValue, UnpackNestedValue} from 'react-hook-form/dist/types'
@@ -14,12 +14,14 @@ type PasswordInputFieldProps<T> =
     id?: string
     error: FieldError | undefined
     defaultValue: UnpackNestedValue<FieldPathValue<T, Path<T>>>
-  }
+    textFieldProps?: TextFieldProps
+}
 
 const PasswordInputField = <T extends { pwd: string }>({
   label,
   error,
   id,
+  textFieldProps,
   ...controllerProps
 }: PasswordInputFieldProps<T>): JSX.Element => {
   const [showPassword, setShowPassword] = useState(false)
@@ -64,6 +66,7 @@ const PasswordInputField = <T extends { pwd: string }>({
               </InputAdornment>
             ),
           }}
+          {...textFieldProps}
           {...field}
         />
       )}

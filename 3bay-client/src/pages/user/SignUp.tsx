@@ -15,7 +15,6 @@ import {Alert} from '@mui/material'
 import AuthService from '../../services/auth.service'
 import axios, {AxiosError} from 'axios'
 
-// TODO add recaptcha
 const SignUp: () => JSX.Element = () => {
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
