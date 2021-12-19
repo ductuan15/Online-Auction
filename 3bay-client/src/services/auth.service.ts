@@ -31,7 +31,7 @@ async function verify(id: string, otp: string): Promise<AuthData> {
   return response.data as AuthData
 }
 
-async function resendVerifyOTP(id: string) {
+async function resendVerifyOTP(id: string): Promise<void> {
   await axiosApiInstance.get(`/auth/verify/resend/${id}`)
 }
 

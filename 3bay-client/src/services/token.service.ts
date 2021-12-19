@@ -10,7 +10,7 @@ function parseJSON<T>(value: string | null): T | undefined {
   }
 }
 
-function saveAuthData(data: AuthData) {
+function saveAuthData(data: AuthData): void {
   localStorage.setItem('auth', JSON.stringify(data))
 }
 
@@ -42,7 +42,7 @@ function getAccessToken(): string | undefined {
   return data?.token
 }
 
-function updateAccessToken(rf: string) {
+function updateAccessToken(rf: string): void {
   const data = getAuthData()
   if (data) {
     data.token = rf

@@ -1,19 +1,19 @@
 import React from 'react'
 import ThemeConfig from './theme'
-import SignUp from './pages/user/SignUp'
+import SignUp from './pages/user/auth/SignUp'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import SignIn from './pages/user/SignIn'
+import SignIn from './pages/user/auth/SignIn'
 import Error404 from './pages/common/Error404'
 import Home from './pages/common/Home'
 import { AuthProvider } from './contexts/user/AuthContext'
 import CategoryManagement from './pages/admin/CategoryManagement'
 import HomeLayout from './components/layout/HomeLayout'
 import SignInLayout from './components/layout/SignInLayout'
-import ForgotPassword from './pages/user/ForgotPassword'
-import VerifyAccount from './pages/user/VerifyAccount'
+import ForgotPassword from './pages/user/auth/ForgotPassword'
+import VerifyAccount from './pages/user/auth/VerifyAccount'
 import Product from './pages/common/productDetail/Product'
 import RequireAdminRole from './components/user/auth/RequireAdminRole'
-import ProductList from "./pages/common/productList/productList";
+import ProductList from './pages/common/productList/productList'
 
 function App(): JSX.Element {
   return (
@@ -25,14 +25,14 @@ function App(): JSX.Element {
               <Route index element={<Home />} />
 
               <Route element={<RequireAdminRole />}>
-                <Route path='/cat' element={<CategoryManagement />} />
+                <Route path='cat' element={<CategoryManagement />} />
               </Route>
 
-              <Route path='/product/:id' element={<Product />} />
-              <Route path='/products/' element={<ProductList />} />
+              <Route path='product/:id' element={<Product />} />
+              <Route path='products/' element={<ProductList />} />
 
               <Route element={<RequireAdminRole />}>
-                <Route path='/cat' element={<CategoryManagement />} />
+                <Route path='cat' element={<CategoryManagement />} />
               </Route>
 
               <Route path='*' element={<Error404 />} />

@@ -72,6 +72,15 @@ export default function BackgroundLetterAvatars({
   ...avatarProps
 }: Props): JSX.Element {
   const { isDarkMode } = useDarkMode()
+  const nameProps = stringAvatar(name, isDarkMode)
+  if (avatarProps?.sx) {
+    avatarProps.sx = {
+      ...avatarProps.sx,
+      ...nameProps.sx,
+    }
+  } else {
+    avatarProps.sx = nameProps.sx
+  }
 
-  return <Avatar {...stringAvatar(name, isDarkMode)} {...avatarProps} />
+  return <Avatar {...avatarProps}>{avatarProps?.children ?? nameProps.children}</Avatar>
 }

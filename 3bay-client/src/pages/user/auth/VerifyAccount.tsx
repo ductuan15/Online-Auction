@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import { AppName } from '../../components/layout/AppName'
+import { AppName } from '../../../components/layout/AppName'
 import Avatar from '@mui/material/Avatar'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
@@ -7,12 +7,12 @@ import { Alert } from '@mui/material'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import axiosApiInstance from '../../services/api'
+import axiosApiInstance from '../../../services/api'
 import axios, { AxiosError } from 'axios'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import { useAuth } from '../../contexts/user/AuthContext'
-import AuthService from '../../services/auth.service'
+import { useAuth } from '../../../contexts/user/AuthContext'
+import AuthService from '../../../services/auth.service'
 
 const VerifyAccount = (): JSX.Element => {
   const [loading, setLoading] = useState(true)

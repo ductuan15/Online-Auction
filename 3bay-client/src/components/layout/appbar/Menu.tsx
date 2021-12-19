@@ -1,6 +1,5 @@
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { Avatar } from '@mui/material'
 import Divider from '@mui/material/Divider'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
@@ -10,7 +9,8 @@ import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
 import { useDarkMode } from 'usehooks-ts'
-import { useNavigate } from 'react-router-dom'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 
 const profileMenu = {
   elevation: 0,
@@ -79,11 +79,14 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       {isAuth ? (
-        <MenuItem>
-          <Avatar /> My account
+        <MenuItem component={RouterLink} to='/user'>
+          <ListItemIcon>
+            <AccountCircleOutlinedIcon fontSize='small' />
+          </ListItemIcon>
+          My account
         </MenuItem>
       ) : (
-        <MenuItem>
+        <MenuItem component={RouterLink} to='/signin'>
           <ListItemIcon>
             <LoginOutlinedIcon fontSize='small' />
           </ListItemIcon>
@@ -146,22 +149,19 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
           type: 'CLOSE_PROFILE_MENU',
         })
       }
-      onClick={(e) =>
-        dispatch({
-          type: 'OPEN_PROFILE_MENU',
-          payload: e,
-        })
-      }
       PaperProps={profileMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       {isAuth ? (
-        <MenuItem>
-          <Avatar /> My account
+        <MenuItem component={RouterLink} to='/user'>
+          <ListItemIcon>
+            <AccountCircleOutlinedIcon fontSize='small' />
+          </ListItemIcon>
+          My account
         </MenuItem>
       ) : (
-        <MenuItem>
+        <MenuItem component={RouterLink} to='/signin'>
           <ListItemIcon>
             <LoginOutlinedIcon fontSize='small' />
           </ListItemIcon>
