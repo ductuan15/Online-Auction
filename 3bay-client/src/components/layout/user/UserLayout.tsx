@@ -1,7 +1,14 @@
 import { Button, Grid, MenuItem, MenuList, Typography } from '@mui/material'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useAuth } from '../../../contexts/user/AuthContext'
-import { Link as RouterLink, Outlet, To } from 'react-router-dom'
+import {
+  Link as RouterLink,
+  NavLink,
+  Outlet,
+  To,
+  useMatch,
+  useResolvedPath,
+} from 'react-router-dom'
 
 // type UserLayoutProps = {
 //   children?: ReactNode
@@ -13,22 +20,21 @@ type StyledMenuItemProps = {
   text: string
 }
 
-const StyledMenuItem = ({
-  to,
-  selected,
-  text,
-}: StyledMenuItemProps): JSX.Element => {
+const StyledMenuItem = ({ to, text }: StyledMenuItemProps): JSX.Element => {
+  const resolved = useResolvedPath(to)
+  const match = useMatch({ path: resolved.pathname, end: true })
+
   return (
     <MenuItem
-      component={RouterLink}
+      component={NavLink}
       sx={{
         py: 1,
         borderRadius: '8px',
       }}
       to={to}
-      selected={selected}
+      selected={!!match}
     >
-      <Typography variant='button' color='text.primary'>
+      <Typography variant='button' color={match ? 'primary' : 'text.primary'}>
         {text}
       </Typography>
     </MenuItem>

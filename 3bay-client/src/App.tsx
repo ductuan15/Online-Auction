@@ -16,6 +16,7 @@ import RequireAdminRole from './components/user/auth/RequireAdminRole'
 import ProductList from './pages/common/productList/productList'
 import UserLayout from './components/layout/user/UserLayout'
 import Account from './pages/user/profile/Account'
+import Password from './pages/user/profile/Password'
 
 function App(): JSX.Element {
   return (
@@ -34,8 +35,10 @@ function App(): JSX.Element {
               <Route path='products/' element={<ProductList />} />
 
               <Route path='user' element={<UserLayout />}>
-                <Route path='account' element={<Account/>}/>
-                <Route path='*' element={<Home />} />
+                <Route index element={<Home />} />
+                <Route path='account' element={<Account />} />
+                <Route path='password' element={<Password />} />
+                <Route path='*' />
               </Route>
 
               <Route element={<RequireAdminRole />}>
