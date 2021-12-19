@@ -50,9 +50,16 @@ const CardProduct = ({ product }: CardProps): JSX.Element => {
     }
   })
   return (
-    <Card sx={{ maxWidth: 350 }}>
+    <Card>
       <CardActionArea>
-        <CardMedia component='img' height='250px' image={product.image} />
+        <CardMedia component='img' image={product.image} sx={(theme) => ({
+          [theme.breakpoints.up('xs')]: {
+            height: 256,
+          },
+          [theme.breakpoints.up('md')]: {
+            height: 300,
+          }
+        })}/>
         <CardContent>
           <Typography gutterBottom variant='h5' component='div'>
             {product.title}

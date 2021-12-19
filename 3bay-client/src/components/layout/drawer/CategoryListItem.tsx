@@ -44,10 +44,7 @@ function CategoryListItem(props: CategoryListItemProps): JSX.Element {
           sx={{ display: 'flex', alignItems: 'center', p: 1, py: 1.25 }}
           onClick={onCategoryClicked}
         >
-          <Typography
-            variant='body2'
-            sx={{ fontWeight: 'inherit', flexGrow: 1 }}
-          >
+          <Typography sx={{ flexGrow: 1 }}>
             {category.title}
           </Typography>
         </Box>

@@ -3,11 +3,11 @@ import CardProduct from './product/CardProduct'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import './Carousel.css'
-import {Container, Divider} from '@mui/material'
-import Typography from "@mui/material/Typography";
+import { Container, Divider } from '@mui/material'
+import Typography from '@mui/material/Typography'
 
 type carouselProps = {
-    name: string
+  name: string
 }
 
 const CarouselCard = ({ name }: carouselProps): JSX.Element => {
@@ -124,35 +124,47 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       date: '2021-12-11',
       time: '19:00:00',
       image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+        'http://http.cat/404',
     },
   ]
   const responsive = {
-    superLargeDesktop: {
-      breakpoint: { max: 4000, min: 3000 },
+    xl: {
+      breakpoint: { min: 1536, max: 4000 },
       items: 5,
     },
-    desktop: {
-      breakpoint: { max: 3000, min: 1024 },
+    lg: {
+      breakpoint: { min: 1200, max: 1535 },
+      items: 4,
+    },
+    md: {
+      breakpoint: { min: 900, max: 1999 },
       items: 3,
     },
-    tablet: {
-      breakpoint: { max: 1024, min: 464 },
-      items: 3,
-    },
-    mobile: {
-      breakpoint: { max: 464, min: 0 },
+    sm: {
+      breakpoint: { min: 600, max: 799 },
       items: 2,
+    },
+    xs: {
+      breakpoint: { min: 0, max: 599 },
+      items: 1,
     },
   }
 
   return (
     <Container>
-        <Divider />
-        <Typography gutterBottom variant='h4' component='h5'>
-            {name}
-        </Typography>
+      <Divider />
+      <Typography
+        pt={2}
+        gutterBottom
+        variant='h4'
+        component='h5'
+        color='text.primary'
+        align='center'
+      >
+        {name}
+      </Typography>
       <Carousel
+        renderButtonGroupOutside={true}
         draggable={false}
         showDots
         responsive={responsive} //Numbers of slides to show at each breakpoint
@@ -173,4 +185,4 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
   )
 }
 
-export default CarouselCard;
+export default CarouselCard

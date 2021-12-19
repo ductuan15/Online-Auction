@@ -13,7 +13,7 @@ type AppDrawerProps = {
   anchor?: 'left' | 'top' | 'right' | 'bottom'
 }
 
-const DRAWER_WIDTH = 256
+const DRAWER_WIDTH = 300
 
 const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
   const {
