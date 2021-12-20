@@ -15,6 +15,8 @@ import imagesRoute from './routes/images.routes.js'
 import productRoute from './routes/product.routes.js'
 import auctionRoute from './routes/auctions.routes.js'
 import authRoute from './routes/auth.routes.js'
+import userRoute from './routes/user.routes.js'
+
 import { errorHandler } from './error/error-handler.js'
 import { ProductRes } from './types/ProductRes.js'
 import { prismaErrorHandler } from './error/error-prisma.js'
@@ -59,6 +61,7 @@ function mountRoutes() {
   app.use('/api/auction', auctionRoute)
   app.use('/', categoryRoute)
   app.use('/', imagesRoute)
+  app.use('/', userRoute)
   app.use('/', authRoute)
 }
 

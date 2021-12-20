@@ -120,6 +120,10 @@ export class AuthError extends ErrorException {
         this.status = 401
         this.message = 'Failed to verify recaptcha'
         break
+      case AuthErrorCode.WrongPassword:
+        this.status = 401
+        this.message = 'Wrong password'
+        break
       default:
         this.status = 500
         break

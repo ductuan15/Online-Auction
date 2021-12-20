@@ -29,4 +29,5 @@ export class AuthErrorCode {
   public static readonly AccountNotExist = 'AuthAccountNotExisted'
   public static readonly AlreadyVerified = 'AuthAlreadyVerified'
   public static readonly RecaptchaFailed = 'AuthRecaptchaFailed'
+  public static readonly WrongPassword = 'AuthWrongPassword'
 }

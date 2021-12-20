@@ -17,7 +17,7 @@ async function findUser(email: string): Promise<Prisma.User | undefined> {
   return user ? user : undefined
 }
 
-async function verifyPassword(
+export async function verifyPassword(
   user: Prisma.User,
   password: string,
 ): Promise<boolean> {

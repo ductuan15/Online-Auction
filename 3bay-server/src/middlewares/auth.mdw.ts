@@ -1,9 +1,10 @@
-import e from 'express'
+import { NextFunction, Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import config, { recaptchaConfig } from '../config/config.js'
 import axios from 'axios'
 import { AuthError } from '../error/error-exception.js'
 import { AuthErrorCode } from '../error/error-code.js'
+import Prisma from '@prisma/client'
 
 /**
  * Hash the raw password (from req.body.pwd) by using bcrypt
@@ -12,9 +13,9 @@ import { AuthErrorCode } from '../error/error-code.js'
  * @param next
  */
 export async function hashPassword(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
   if (req.body && req.body.pwd) {
     req.body.pwd = await bcrypt.hash(req.body.pwd, config.SALT_ROUND)
@@ -22,14 +23,27 @@ export async function hashPassword(
   next()
 }
 
+export function hashPasswordField(fieldName: string) {
+  return async function hashPassword(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    if (req.body && req.body[fieldName]) {
+      req.body[fieldName] = await bcrypt.hash(req.body[fieldName], config.SALT_ROUND)
+    }
+    next()
+  }
+}
+
 export async function verifyRecaptcha(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
   if (!recaptchaConfig.IS_ENABLED || recaptchaConfig.SECRET_KEY.length === 0) {
     // No need captchaToken anymore
-    if (req.body && req.body.captchaToken) {
+    if (req.body) {
       delete req.body.captchaToken
     }
 
@@ -63,4 +77,16 @@ export async function verifyRecaptcha(
   }
 
   return next(new AuthError({ code: AuthErrorCode.RecaptchaFailed }))
+}
+
+export function ensureParamIdSameWithJWTPayload(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const user: Partial<Prisma.User> = req.user as Prisma.User
+  if (user.uuid !== req.params.id) {
+    return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
+  }
+  next()
 }
