@@ -8,6 +8,7 @@ import { AppBarCtxProvider } from '../../contexts/layout/AppBarContext'
 import AppDrawer from './drawer/AppDrawer'
 import { Outlet } from 'react-router-dom'
 import { CategoryProvider } from '../../contexts/admin/CategoryContext'
+import { UserProvider } from '../../contexts/user/UserContext'
 
 interface Props {
   children?: React.ReactNode
@@ -27,9 +28,11 @@ export default function HomeLayout({ children }: Props): JSX.Element {
       <StyledToolbar sx={(theme) => ({ marginBottom: theme.spacing(1) })} />
 
       {/* main content */}
-      <Container sx={{ bgcolor: 'background.paper' }}>
-        {children ? children : <Outlet />}
-      </Container>
+      <UserProvider>
+        <Container sx={{ bgcolor: 'background.paper' }}>
+          {children ? children : <Outlet />}
+        </Container>
+      </UserProvider>
 
       <AppFooter />
     </StyledDiv>

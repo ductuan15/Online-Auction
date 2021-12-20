@@ -84,7 +84,7 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       {isAuth ? (
-        <MenuItem component={RouterLink} to='/user/account'>
+        <MenuItem component={RouterLink} to='/user/view'>
           <ListItemIcon>
             <AccountCircleOutlinedIcon fontSize='small' />
           </ListItemIcon>
@@ -164,7 +164,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       {isAuth ? (
-        <MenuItem component={RouterLink} to='/user/account'>
+        <MenuItem component={RouterLink} to='/user/view'>
           <ListItemIcon>
             <AccountCircleOutlinedIcon fontSize='small' />
           </ListItemIcon>
