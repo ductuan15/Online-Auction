@@ -28,7 +28,7 @@ const Account = (): JSX.Element => {
     mode: 'onBlur',
   })
 
-  const [error, setError] = useState<string | null>('hvem er jeg')
+  const [errorText, setErrorText] = useState<string | null>('hvem er jeg')
   const [save, setSave] = useState(false)
 
   useMemo(() => {
@@ -60,13 +60,13 @@ const Account = (): JSX.Element => {
   const onSubmit: SubmitHandler<UserDetails> = async (data) => {
     try {
       await UserService.updateUserInfo(data, dispatch, authContext)
-      setError(null)
+      setErrorText(null)
       setSave(true)
     } catch (e) {
-      if (axios.isAxiosError(error) && (error as AxiosError)) {
-        setError(error.response?.data.message || '')
+      if (axios.isAxiosError(e) && (e as AxiosError)) {
+        setErrorText(e.response?.data.message || 'Unknown error occurred')
       } else {
-        setError('Unknown error occurred')
+        setErrorText('Unknown error occurred')
       }
     }
   }
@@ -98,10 +98,10 @@ const Account = (): JSX.Element => {
         </Button>
       </Grid>
 
-      {error && (
+      {errorText && (
         <Grid container {...gridRowProps} mt={1} justifyContent='flex-end'>
           <Grid item {...inputGridProps}>
-            <Alert severity='error'>{error}</Alert>
+            <Alert severity='error'>{errorText}</Alert>
           </Grid>
         </Grid>
       )}
@@ -126,9 +126,9 @@ const Account = (): JSX.Element => {
             error={errors.email}
             control={control}
             name={'email'}
-            textFieldProps={{
-              disabled: true,
-            }}
+            // textFieldProps={{
+            //   disabled: true,
+            // }}
           />
         </Grid>
       </Grid>

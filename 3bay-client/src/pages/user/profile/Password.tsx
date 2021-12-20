@@ -58,7 +58,7 @@ const Password = (): JSX.Element => {
       if (axios.isAxiosError(e) && (e as AxiosError)) {
         setErrorText(e.response?.data.message || '')
       } else {
-        setErrorText('Unknown errorText occurred')
+        setErrorText('Unknown error occurred')
       }
     }
   }
