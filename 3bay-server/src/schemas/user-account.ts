@@ -18,9 +18,13 @@ const schema = {
   },
   additionalProperties: false,
 
-  oneOf: [{ required: 'name' }, { required: 'dob' }, { required: 'address' }],
+  // oneOf: [
+  //   { required: ['name'] },
+  //   { required: ['dob'] },
+  //   { required: ['address'] },
+  // ],
 
-  required: ['name', 'email', 'dob', 'address'],
+  required: ['name', 'dob', 'address'],
 
   errorMessage: {
     type: 'Bad request (Invalid request type)',

@@ -25,15 +25,15 @@ export async function updateAccountInfo(
   res: Response,
   next: NextFunction,
 ) {
-  const user: Partial<Prisma.User> = req.user as Prisma.User
+  // const user: Partial<Prisma.User> = req.user as Prisma.User
 
   try {
     let response: Partial<Prisma.User> = await prisma.user.update({
       where: {
-        uuid: req.body.id,
+        uuid: req.params.id,
       },
       data: {
-        ...user,
+        // ...user,
         ...req.body,
       },
     })
