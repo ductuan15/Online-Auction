@@ -39,7 +39,7 @@ axiosApiInstance.interceptors.response.use(
       originalUrl !== '/auth/signin' &&
       refreshToken &&
       (error.response.status === 401 || // unauthorized
-      error.response.status === 403) && // forbidden
+        error.response.status === 403) && // forbidden
       !originalRequest._retry
     ) {
       originalRequest._retry = true

@@ -1,16 +1,16 @@
 import { Button, Grid, Typography } from '@mui/material'
-import {SubmitHandler, useForm} from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import EmailTextField from '../../../components/common/form/EmailTextField'
 import * as React from 'react'
-import {useMemo, useState} from 'react'
+import { useMemo, useState } from 'react'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import DateInputField from '../../../components/common/form/DateInputField'
 import { UserDetails } from '../../../data/user'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import UserService from '../../../services/user.service'
-import axios, {AxiosError} from 'axios'
-import {Alert} from '@mui/lab'
-import {useAuth} from '../../../contexts/user/AuthContext'
+import axios, { AxiosError } from 'axios'
+import { Alert } from '@mui/lab'
+import { useAuth } from '../../../contexts/user/AuthContext'
 
 // type AccountProps = {
 //   foo?: string
@@ -24,12 +24,12 @@ const Account = (): JSX.Element => {
 
   const authContext = useAuth()
 
-  const { control, reset, handleSubmit, formState } =
-    useForm<UserDetails>({ mode: 'onBlur' })
+  const { control, reset, handleSubmit, formState } = useForm<UserDetails>({
+    mode: 'onBlur',
+  })
 
   const [error, setError] = useState<string | null>('hvem er jeg')
   const [save, setSave] = useState(false)
-
 
   useMemo(() => {
     reset({
@@ -65,17 +65,19 @@ const Account = (): JSX.Element => {
     } catch (e) {
       if (axios.isAxiosError(error) && (error as AxiosError)) {
         setError(error.response?.data.message || '')
-      }
-      else {
+      } else {
         setError('Unknown error occurred')
       }
     }
   }
 
   return (
-    <Grid container component='form'
-          noValidate
-          onSubmit={handleSubmit(onSubmit)}>
+    <Grid
+      container
+      component='form'
+      noValidate
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <Grid
         container
         direction='row'
@@ -91,15 +93,15 @@ const Account = (): JSX.Element => {
           Account Settings
         </Typography>
 
-        <Button variant='contained' type='submit'>Save changes</Button>
+        <Button variant='contained' type='submit'>
+          Save changes
+        </Button>
       </Grid>
 
       {error && (
         <Grid container {...gridRowProps} mt={1} justifyContent='flex-end'>
           <Grid item {...inputGridProps}>
-            <Alert severity='error'>
-              {error}
-            </Alert>
+            <Alert severity='error'>{error}</Alert>
           </Grid>
         </Grid>
       )}
@@ -107,9 +109,7 @@ const Account = (): JSX.Element => {
       {save && (
         <Grid container {...gridRowProps} justifyContent='flex-end'>
           <Grid item {...inputGridProps}>
-            <Alert severity='success'>
-              Changes saved!
-            </Alert>
+            <Alert severity='success'>Changes saved!</Alert>
           </Grid>
         </Grid>
       )}

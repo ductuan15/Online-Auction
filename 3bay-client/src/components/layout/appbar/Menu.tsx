@@ -74,6 +74,11 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
           type: 'CLOSE_MOBILE_MENU',
         })
       }
+      onClick={() =>
+        dispatch({
+          type: 'CLOSE_PROFILE_MENU',
+        })
+      }
       PaperProps={profileMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -144,6 +149,11 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       id={id}
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
+      onClick={() =>
+        dispatch({
+          type: 'CLOSE_PROFILE_MENU',
+        })
+      }
       onClose={() =>
         dispatch({
           type: 'CLOSE_PROFILE_MENU',

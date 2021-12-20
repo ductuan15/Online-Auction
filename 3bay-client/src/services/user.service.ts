@@ -4,6 +4,8 @@ import axiosApiInstance from './api'
 import { Dispatch } from 'react'
 import { UserAction } from '../stores/user/user.store'
 import { AuthContextType } from '../contexts/user/AuthContext'
+import { PasswordFormType } from '../pages/user/profile/Password'
+import { AxiosResponse } from 'axios'
 
 async function getUserInfo(authData?: AuthData): Promise<UserDetails> {
   const response = await axiosApiInstance.get(
@@ -30,9 +32,17 @@ async function updateUserInfo(
   }
 }
 
+async function changePassword(
+  user: UserDetails,
+  data: PasswordFormType,
+): Promise<AxiosResponse<UserDetails>> {
+  return await axiosApiInstance.post(`api/user/password/${user.uuid}`, data)
+}
+
 const UserService = {
   getUserInfo,
   updateUserInfo,
+  changePassword,
 }
 
 export default UserService
