@@ -66,6 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     setUser(user)
     cb()
   }
+
   const resetPassword = async (
     email: string,
     pwd: string,
@@ -85,7 +86,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     signIn,
     signOut,
     verify,
-    resetPassword
+    resetPassword,
   }
 
   return (

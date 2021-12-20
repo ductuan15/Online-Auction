@@ -1,25 +1,22 @@
 import { Button, Grid, Typography } from '@mui/material'
-import { useAuth } from '../../../contexts/user/AuthContext'
 import { useForm } from 'react-hook-form'
 import EmailTextField from '../../../components/common/form/EmailTextField'
 import * as React from 'react'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import DateInputField from '../../../components/common/form/DateInputField'
+import { UserDetails } from '../../../data/user'
+import { useUserContext } from '../../../contexts/user/UserContext'
 
 // type AccountProps = {
 //   foo?: string
 // }
 
-type AccountFormType = {
-  name: string
-  email: string
-  dob: string | null
-  address: string
-}
-
 const Account = (): JSX.Element => {
-  const { user } = useAuth()
-  const { control, handleSubmit, watch, formState } = useForm<AccountFormType>()
+  const {
+    state: { userDetails: user },
+  } = useUserContext()
+
+  const { control, handleSubmit, watch, formState } = useForm<UserDetails>()
 
   const { errors } = formState
 
@@ -66,7 +63,7 @@ const Account = (): JSX.Element => {
 
         <Grid item {...inputGridProps}>
           <EmailTextField
-            defaultValue={'email@example.com'}
+            defaultValue={user?.email || ''}
             error={errors.email}
             control={control}
             name={'email'}
@@ -91,7 +88,7 @@ const Account = (): JSX.Element => {
             id='name'
             name='name'
             control={control}
-            defaultValue='Nguyen Van A'
+            defaultValue={user?.name || ''}
             rules={{
               required: 'This field is required',
               validate: {
@@ -120,7 +117,7 @@ const Account = (): JSX.Element => {
             error={errors.dob}
             control={control}
             name='dob'
-            defaultValue={null}
+            defaultValue={user?.dob || null}
           />
         </Grid>
       </Grid>
@@ -139,7 +136,7 @@ const Account = (): JSX.Element => {
             id='address'
             name='address'
             control={control}
-            defaultValue={'Vietnam'}
+            defaultValue={user?.address || ''}
             rules={{
               required: 'This field is required',
               validate: {

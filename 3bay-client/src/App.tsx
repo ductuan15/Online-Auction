@@ -17,6 +17,7 @@ import ProductList from './pages/common/productList/productList'
 import UserLayout from './components/layout/user/UserLayout'
 import Account from './pages/user/profile/Account'
 import Password from './pages/user/profile/Password'
+import { UserProvider } from './contexts/user/UserContext'
 
 function App(): JSX.Element {
   return (
@@ -34,7 +35,14 @@ function App(): JSX.Element {
               <Route path='product/:id' element={<Product />} />
               <Route path='products/' element={<ProductList />} />
 
-              <Route path='user' element={<UserLayout />}>
+              <Route
+                path='user'
+                element={
+                  <UserProvider>
+                    <UserLayout />
+                  </UserProvider>
+                }
+              >
                 <Route index element={<Home />} />
                 <Route path='account' element={<Account />} />
                 <Route path='password' element={<Password />} />

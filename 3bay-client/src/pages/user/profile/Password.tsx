@@ -80,6 +80,8 @@ const Password = (): JSX.Element => {
         <Grid item {...inputGridProps}>
           <PasswordInputField
             name='newPwd'
+            id='newPwd'
+            label='New password'
             error={errors.newPwd}
             defaultValue={''}
             control={control}
