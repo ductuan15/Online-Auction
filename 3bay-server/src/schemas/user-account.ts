@@ -3,12 +3,12 @@ const schema = {
 
   properties: {
     name: { type: 'string', nullable: false, minLength: 1, maxLength: 255 },
-    // email: {
-    //   type: 'string',
-    //   format: 'email',
-    //   nullable: false,
-    //   maxLength: 50,
-    // },
+    email: {
+      type: 'string',
+      format: 'email',
+      nullable: false,
+      maxLength: 50,
+    },
     dob: {
       type: 'string',
       nullable: false,
@@ -28,16 +28,15 @@ const schema = {
 
   errorMessage: {
     type: 'Bad request (Invalid request type)',
-    // required: {
-    //   name: 'Name is required',
-    //   email: 'Email is required',
-    //   dob: 'Date of birth is required',
-    //   address: 'Address is required',
-    // },
-    required: 'At least one field is required',
+    required: {
+      name: 'Name is required',
+      email: 'Email is required',
+      dob: 'Date of birth is required',
+      address: 'Address is required',
+    },
     properties: {
       name: 'Empty name is not allowed',
-      // email: 'Invalid email format',
+      email: 'Invalid email format',
       dob: 'Invalid date of birth format',
       address: 'Empty address is not allowed',
     },

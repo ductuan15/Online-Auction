@@ -30,7 +30,7 @@ const sendMail = async (to: string[], subject: string, html: string) => {
     subject,
     html,
   }
-  return transporter.sendMail(options)
+  return await transporter.sendMail(options)
 }
 
 export const test = async (to: string) => {
@@ -40,7 +40,7 @@ export const test = async (to: string) => {
   const mjmlContent = await fs.readFile(testFile)
   const html = mjml(mjmlContent.toString()).html
 
-  return sendMail([to], '[3bay]　テスト', html)
+  return await sendMail([to], '[3bay]　テスト', html)
 }
 
 export default sendMail

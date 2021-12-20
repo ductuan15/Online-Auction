@@ -47,6 +47,15 @@ export async function updateAccountInfo(
 
     return res.json()
   } catch (e) {
+    if (
+      e instanceof Prisma.Prisma.PrismaClientKnownRequestError &&
+      e.code === 'P2002' // &&
+      // e.meta?.target === 'email'
+    ) {
+      // console.log(e.meta)
+      return next(new AuthError({ code: AuthErrorCode.EmailAlreadyUsed }))
+    }
+
     return next(e)
   }
 }
