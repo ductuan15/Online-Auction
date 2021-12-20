@@ -5,6 +5,8 @@ import ajvErrors from 'ajv-errors'
 import userSchema from './sign-up.js'
 import signInSchema from './sign-in.js'
 import resetPasswordSchema from './reset-password.js'
+import accountSchema from './user-account.js'
+import passwordSchema from './user-password.js'
 
 const ajv = new Ajv({ removeAdditional: true, allErrors: true })
 addFormats(ajv)
@@ -24,5 +26,7 @@ export type SchemaTypes =
   | typeof userSchema
   | typeof signInSchema
   | typeof resetPasswordSchema
+  | typeof accountSchema
+  | typeof passwordSchema
 
 export default ajv
