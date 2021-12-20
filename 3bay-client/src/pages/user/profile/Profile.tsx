@@ -1,24 +1,24 @@
-import {Box, Button, Divider, Grid, Typography} from '@mui/material'
+import { Box, Button, Divider, Grid, Typography } from '@mui/material'
 import BackgroundLetterAvatars from '../../../components/user/profile/BackgroundLettersAvatar'
-import {useUserContext} from '../../../contexts/user/UserContext'
+import { useUserContext } from '../../../contexts/user/UserContext'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import moment from 'moment'
 import RoleLabel from '../../../components/user/profile/RoleLabel'
-import {Link as RouterLink} from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 
 const Profile = (): JSX.Element => {
   const {
-    state: {userDetails: user},
+    state: { userDetails: user },
   } = useUserContext()
 
   return (
     <Grid container mt={2} mb={2}>
       <Grid
         md={3}
-        sx={{display: {xs: 'none', md: 'flex'}}}
+        sx={{ display: { xs: 'none', md: 'flex' } }}
         item
         direction='row'
         alignItems='center'
@@ -46,27 +46,28 @@ const Profile = (): JSX.Element => {
             {user?.name || ''}
           </Typography>
 
-          <RoleLabel sx={{mb: 1}}/>
+          <RoleLabel sx={{ mb: 1 }} />
 
-          <Box flexGrow={1}/>
+          <Box flexGrow={1} />
 
           <Button
-            startIcon={<EditOutlinedIcon/>}
+            startIcon={<EditOutlinedIcon />}
             variant='contained'
             component={RouterLink}
             to={'/user/account'}
+            sx={{ mb: 1 }}
           >
             Edit profile
           </Button>
         </Grid>
 
         <Grid item my={2}>
-          <Divider/>
+          <Divider />
         </Grid>
 
         <Grid item container direction='row' spacing={2}>
           <Grid item>
-            <EmailOutlinedIcon color='action'/>
+            <EmailOutlinedIcon color='action' />
           </Grid>
           <Grid item>
             <Typography color='text.secondary'>{user?.email || ''}</Typography>
@@ -75,7 +76,7 @@ const Profile = (): JSX.Element => {
 
         <Grid item container direction='row' spacing={2}>
           <Grid item>
-            <CakeOutlinedIcon color='action'/>
+            <CakeOutlinedIcon color='action' />
           </Grid>
           <Grid item>
             <Typography color='text.secondary'>
@@ -86,7 +87,7 @@ const Profile = (): JSX.Element => {
 
         <Grid item container direction='row' spacing={2}>
           <Grid item>
-            <HomeOutlinedIcon color='action'/>
+            <HomeOutlinedIcon color='action' />
           </Grid>
           <Grid item>
             <Typography color='text.secondary'>

@@ -3,7 +3,7 @@ import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
-import { Button, Link } from '@mui/material'
+import { Button } from '@mui/material'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { Link as RouterLink } from 'react-router-dom'
@@ -51,15 +51,13 @@ export const AppBarProfileMenu = ({
             </IconButton>
           </Tooltip>
         ) : (
-          <Button variant='text' color='inherit'>
-            <Link
-              color='inherit'
-              underline='none'
-              component={RouterLink}
-              to='/signin'
-            >
-              Sign in
-            </Link>
+          <Button
+            variant='text'
+            color='inherit'
+            component={RouterLink}
+            to={'/signin'}
+          >
+            Sign in
           </Button>
         )}
       </Box>

@@ -15,6 +15,8 @@ import { HideOnScroll } from './HideOnScroll'
 import NotifyMenuButton from './NotifyMenuButton'
 import { NotifyMenu } from './NotifyMenu'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
+import { useAuth } from '../../../contexts/user/AuthContext'
+import RoleLabel from '../../user/profile/RoleLabel'
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -123,6 +125,8 @@ export default function SearchAppBar(): JSX.Element {
 
   const { toggleDrawer } = useAppBarContext()
 
+  const { user } = useAuth()
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <HideOnScroll>
@@ -142,6 +146,10 @@ export default function SearchAppBar(): JSX.Element {
 
             {/*Hide app name when the size is xs*/}
             <AppName sx={{ display: { xs: 'none', sm: 'block' } }} />
+
+            {user?.role === 'ADMINISTRATOR' && (
+              <RoleLabel sx={{ mx: 1, display: { xs: 'none', sm: 'flex' } }} />
+            )}
 
             {/*Search bar*/}
             <Search>
