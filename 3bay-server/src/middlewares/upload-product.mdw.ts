@@ -9,5 +9,5 @@ export const uploadProductImages = multer({
     console.log(file)
     return callback(null, true)
   },
-  limits: { files: 7, fileSize: 1024 * 1024 * 15 },
+  limits: { files: 7, fileSize: 2048 * 2048 * 15 },
 })
