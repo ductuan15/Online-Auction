@@ -70,6 +70,10 @@ export class CategoryErrorException extends ErrorException {
         this.status = 418 // i'm a teapot!
         this.message = 'Cannot perform the request'
         break
+      case CategoryErrorCode.ProductExisted:
+        this.status = 403
+        this.message = 'Product existed in this category'
+        break
       default:
         this.status = 500
         break

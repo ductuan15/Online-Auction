@@ -139,7 +139,7 @@ const read = (req: Request, res: Response, next: NextFunction) => {
 }
 
 const add = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.file);
+  console.log(req.file)
   if (req.body) {
     const data = req.body
     if (data && data.title) {
@@ -205,21 +205,22 @@ const deleteCategory = async (
   next: NextFunction,
 ) => {
   if (req.category) {
+    let parentCategory
+    let categoryIdsToUpdateParent
+
     if (req.category.parentId != null) {
-      const parentCategory = await prisma.category.findUnique({
+      parentCategory = await prisma.category.findUnique({
         where: { id: req.category.parentId },
       })
 
-      if (parentCategory) {
-        await prisma.category.updateMany({
-          where: {
-            parentId: req.category.id,
-          },
-          data: {
-            parentId: parentCategory.parentId,
-          },
-        })
-      }
+      const categoriesToUpdateParent = await prisma.category.findMany({
+        where: {
+          parentId: req.category.id,
+        },
+      })
+      categoryIdsToUpdateParent = categoriesToUpdateParent?.map((cat) => {
+        return cat.id
+      })
     }
 
     try {
@@ -228,10 +229,38 @@ const deleteCategory = async (
           id: req.category.id,
         },
       })
+
+      if (parentCategory) {
+        await prisma.category.updateMany({
+          where: {
+            id: {
+              in: categoryIdsToUpdateParent,
+            },
+          },
+          data: {
+            parentId: parentCategory.parentId,
+          },
+        })
+      }
+
       // console.log(deleteCategory)
       return res.json(categoryWithThumbnailLinks(deletedCategory))
     } catch (e) {
-      return next()
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2003' // Foreign key constraint failed
+      ) {
+        // console.log(e)
+        return next(
+          new CategoryErrorException({
+            code: CategoryErrorCode.ProductExisted,
+          }),
+        )
+      }
+
+      return next(
+        new CategoryErrorException({ code: CategoryErrorCode.UnknownError }),
+      )
     }
   }
   return errorNotFound(next)
