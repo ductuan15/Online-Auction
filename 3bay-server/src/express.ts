@@ -12,6 +12,7 @@ import path, { dirname } from 'path'
 // routers
 import categoryRoute from './routes/category.routes.js'
 import imagesRoute from './routes/images.routes.js'
+import imagesProductRoute from './routes/image-product.routes.js'
 import productRoute from './routes/product.routes.js'
 import auctionRoute from './routes/auctions.routes.js'
 import authRoute from './routes/auth.routes.js'
@@ -56,6 +57,7 @@ function initializeMiddlewares() {
 function mountRoutes() {
   app.use('/', express.static(path.join(__dirname, '../public')))
   app.use('/api/product', productRoute)
+  app.use('/api/images/product', imagesProductRoute);
   app.use('/api/auction', auctionRoute)
   app.use('/', categoryRoute)
   app.use('/', imagesRoute)
