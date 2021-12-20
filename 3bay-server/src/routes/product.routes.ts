@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import passport from '../auth/passport.js'
 import * as productController from '../controllers/product.controller.js'
 import { uploadProductImages } from '../middlewares/upload-product.mdw.js'
 
@@ -17,6 +18,7 @@ const uploadProductImagesFields = [
 router
   .route('/')
   .post(
+    passport.authenticate('jwt', { session: false }),
     uploadProductImages.fields(uploadProductImagesFields),
     productController.add,
   )
@@ -33,6 +35,8 @@ router
   .route('/:productId')
   .get(productController.read)
   .patch(
+    passport.authenticate('jwt', { session: false }),
+    productController.isProductOwner,
     uploadProductImages.fields(uploadProductImagesFields),
     productController.update,
   )

@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
 import {
   ensureProductImagePath,
-  getDetailImageLinks,
-  getThumbnailLinks,
+  getAllDetailImageLinks,
+  getAllThumbnailLink,
+  getThumbnailUrl,
   saveProductDetailImage,
   saveProductThumbnail,
 } from './images-product.controller.js'
@@ -63,7 +64,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     await ensureProductImagePath(product.id)
     const files = req.files as { [fieldname: string]: Express.Multer.File[] }
     if (req.files) {
-      await saveProductThumbnail(files['thumbnail'][0], product.id)
+      await saveProductThumbnail(files['thumbnail'], product.id)
       await saveProductDetailImage(files['detail'], product.id)
     }
     return res.status(201).json(product)
@@ -98,7 +99,7 @@ export const update = async (
     if (req.product) {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] }
       if (data.isUpdateThumbnail && files['thumbnail'].length > 0) {
-        await saveProductThumbnail(files['thumbnail'][0], req.product.id)
+        await saveProductThumbnail(files['thumbnail'], req.product.id)
       }
       if (data.isUpdateDetailImage && files['detail'].length > 0) {
         await saveProductDetailImage(files['detail'], req.product.id)
@@ -115,8 +116,8 @@ export const update = async (
 export const read = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req.product) {
-      req.product.thumbnails = getThumbnailLinks(req.product.id)
-      req.product.detail = await getDetailImageLinks(req.product.id)
+      req.product.thumbnails = getAllThumbnailLink(req.product.id);
+      req.product.detail = await getAllDetailImageLinks(req.product.id)
     }
     return res.json(req.product)
   } catch (error) {
@@ -145,8 +146,8 @@ export const getProductByCategoryId = async (
       })
     }
     products.forEach(async (product) => {
-      product.thumbnails = getThumbnailLinks(product.id)
-      product.detail = await getDetailImageLinks(product.id)
+      product.thumbnails = getAllThumbnailLink(product.id)
+      product.detail = await getAllDetailImageLinks(product.id)
     })
     res.status(201).json(products)
   } catch (error) {
@@ -222,8 +223,8 @@ export const getTopPrice = async (
       take: config.TOP_LIMIT,
     })
     products.forEach(async (product) => {
-      product.thumbnails = getThumbnailLinks(product.id)
-      product.detail = await getDetailImageLinks(product.id)
+      product.thumbnails = getAllThumbnailLink(product.id)
+      product.detail = await getAllDetailImageLinks(product.id)
     })
     res.status(201).json(products)
   } catch (error) {
