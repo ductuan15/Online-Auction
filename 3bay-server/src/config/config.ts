@@ -26,7 +26,7 @@ const {
 
 const config = {
   PORT: PORT || 3030,
-  HOST_NAME: `http://localhost:${PORT || 3030}`,
+  HOST_NAME: HOST_NAME || `http://localhost:${PORT || 3030}`,
   JWT: JWT || 'JWT',
   DATABASE: DATABASE_URL || '3bay',
   SALT_ROUND: +(SALT_ROUND || '10') || 10,
