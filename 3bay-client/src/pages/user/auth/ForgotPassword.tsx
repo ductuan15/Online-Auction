@@ -73,7 +73,7 @@ const ForgotPassword = (): JSX.Element => {
 
   function handleError(error: unknown) {
     if (axios.isAxiosError(error) && (error as AxiosError)) {
-      console.log(error.response?.data.message)
+      //console.log(error.response?.data.message)
       setError(error.response?.data.message || 'Unknown error')
     } else {
       setError('Unknown error')

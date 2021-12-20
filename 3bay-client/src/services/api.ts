@@ -52,7 +52,7 @@ axiosApiInstance.interceptors.response.use(
           TokenService.updateAccessToken(res.data.token)
           // localStorage.setItem('t', res.data.accessToken)
 
-          console.log('Access token refreshed!')
+          // console.log('Access token refreshed!')
           return axiosApiInstance(originalRequest)
         }
       } catch (e) {

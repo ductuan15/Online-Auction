@@ -25,7 +25,7 @@ const SignIn: () => JSX.Element = () => {
   const handleSubmit = async (data: { email: string; pwd: string }) => {
     const { email, pwd } = data
     setError(false)
-    console.log(data)
+    //console.log(data)
     try {
       await signIn(email, pwd, () => {
         // Send them back to the page they tried to visit when they were

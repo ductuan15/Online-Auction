@@ -34,7 +34,7 @@ const CategoryManagementContent = () => {
         return r.json() as Promise<Array<Category>>
       })
       .then((data) => {
-        console.log(data)
+        // console.log(data)
         if (data) {
           addAllCategories(data)
         }

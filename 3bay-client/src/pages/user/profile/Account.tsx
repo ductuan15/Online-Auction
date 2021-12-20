@@ -1,11 +1,16 @@
 import { Button, Grid, Typography } from '@mui/material'
-import { useForm } from 'react-hook-form'
+import {SubmitHandler, useForm} from 'react-hook-form'
 import EmailTextField from '../../../components/common/form/EmailTextField'
 import * as React from 'react'
+import {useMemo, useState} from 'react'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import DateInputField from '../../../components/common/form/DateInputField'
 import { UserDetails } from '../../../data/user'
 import { useUserContext } from '../../../contexts/user/UserContext'
+import UserService from '../../../services/user.service'
+import axios, {AxiosError} from 'axios'
+import {Alert} from '@mui/lab'
+import {useAuth} from '../../../contexts/user/AuthContext'
 
 // type AccountProps = {
 //   foo?: string
@@ -14,9 +19,27 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 const Account = (): JSX.Element => {
   const {
     state: { userDetails: user },
+    dispatch,
   } = useUserContext()
 
-  const { control, handleSubmit, watch, formState } = useForm<UserDetails>()
+  const authContext = useAuth()
+
+  const { control, reset, handleSubmit, formState } =
+    useForm<UserDetails>({ mode: 'onBlur' })
+
+  const [error, setError] = useState<string | null>('hvem er jeg')
+  const [save, setSave] = useState(false)
+
+
+  useMemo(() => {
+    reset({
+      uuid: user?.uuid || '',
+      email: user?.email || '',
+      name: user?.name || '',
+      dob: user?.dob || null,
+      address: user?.address || '',
+    })
+  }, [user])
 
   const { errors } = formState
 
@@ -34,8 +57,25 @@ const Account = (): JSX.Element => {
     xs: 9,
   }
 
+  const onSubmit: SubmitHandler<UserDetails> = async (data) => {
+    try {
+      await UserService.updateUserInfo(data, dispatch, authContext)
+      setError(null)
+      setSave(true)
+    } catch (e) {
+      if (axios.isAxiosError(error) && (error as AxiosError)) {
+        setError(error.response?.data.message || '')
+      }
+      else {
+        setError('Unknown error occurred')
+      }
+    }
+  }
+
   return (
-    <Grid container>
+    <Grid container component='form'
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}>
       <Grid
         container
         direction='row'
@@ -51,8 +91,28 @@ const Account = (): JSX.Element => {
           Account Settings
         </Typography>
 
-        <Button variant='contained'>Save changes</Button>
+        <Button variant='contained' type='submit'>Save changes</Button>
       </Grid>
+
+      {error && (
+        <Grid container {...gridRowProps} mt={1} justifyContent='flex-end'>
+          <Grid item {...inputGridProps}>
+            <Alert severity='error'>
+              {error}
+            </Alert>
+          </Grid>
+        </Grid>
+      )}
+
+      {save && (
+        <Grid container {...gridRowProps} justifyContent='flex-end'>
+          <Grid item {...inputGridProps}>
+            <Alert severity='success'>
+              Changes saved!
+            </Alert>
+          </Grid>
+        </Grid>
+      )}
 
       <Grid container {...gridRowProps} mt={2}>
         <Grid item {...labelGridProps}>
@@ -63,7 +123,6 @@ const Account = (): JSX.Element => {
 
         <Grid item {...inputGridProps}>
           <EmailTextField
-            defaultValue={user?.email || ''}
             error={errors.email}
             control={control}
             name={'email'}
@@ -88,7 +147,6 @@ const Account = (): JSX.Element => {
             id='name'
             name='name'
             control={control}
-            defaultValue={user?.name || ''}
             rules={{
               required: 'This field is required',
               validate: {
@@ -117,7 +175,6 @@ const Account = (): JSX.Element => {
             error={errors.dob}
             control={control}
             name='dob'
-            defaultValue={user?.dob || null}
           />
         </Grid>
       </Grid>
@@ -136,7 +193,6 @@ const Account = (): JSX.Element => {
             id='address'
             name='address'
             control={control}
-            defaultValue={user?.address || ''}
             rules={{
               required: 'This field is required',
               validate: {

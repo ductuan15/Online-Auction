@@ -46,7 +46,7 @@ const VerifyAccount = (): JSX.Element => {
 
   function handleError(error: unknown) {
     if (axios.isAxiosError(error) && (error as AxiosError)) {
-      console.log(error.response?.data.message)
+      //console.log(error.response?.data.message)
       setError(error.response?.data.message || '')
     } else {
       setError('Unknown error')

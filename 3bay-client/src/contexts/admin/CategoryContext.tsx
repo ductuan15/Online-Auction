@@ -54,7 +54,7 @@ export const CategoryProvider = ({
   const [state, dispatch] = useReducer(categoryReducer, initialCategoryState)
 
   const addAllCategories = (categories: Array<Category>) => {
-    console.log(categories)
+    //console.log(categories)
     dispatch({ type: 'ADD_ALL', payload: categories })
   }
   const addCategory = (category: Category) => {

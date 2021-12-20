@@ -14,7 +14,7 @@ type PasswordFormType = {
 
 const Password = (): JSX.Element => {
   // const { user } = useAuth()
-  const { control, handleSubmit, watch, formState } =
+  const { control, formState } =
     useForm<PasswordFormType>()
 
   const { errors } = formState

@@ -32,7 +32,7 @@ export const EditCategoryDialog = (): JSX.Element => {
           // response does not include otherCategories key
           otherCategories: category.otherCategories,
         }
-        console.log(editedCategory)
+        //console.log(editedCategory)
 
         updateCategory(category, editedCategory)
 

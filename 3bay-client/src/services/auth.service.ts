@@ -36,7 +36,7 @@ async function resendVerifyOTP(id: string): Promise<void> {
 }
 
 async function checkEmailBeforeResetPassword(email: string): Promise<void> {
-  console.log('axios email', email)
+  //console.log('axios email', email)
   await axiosApiInstance.post('/auth/reset-pwd/request', {
     email,
   })

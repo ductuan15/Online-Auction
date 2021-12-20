@@ -15,7 +15,7 @@ export const CategoryPage = (): JSX.Element => {
         return r.json() as Promise<Array<Category>>
       })
       .then((data) => {
-        console.log(data)
+        //console.log(data)
         if (data) {
           const categories = data.map((obj) => {
             return new Category(obj)
