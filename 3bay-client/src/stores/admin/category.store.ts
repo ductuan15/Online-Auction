@@ -94,7 +94,11 @@ function addNewCategory(
 
   for (const category of categories) {
     traverseCategoryTree(category, newCategory.parentId, (parentCategory) => {
-      parentCategory.otherCategories?.push(newCategory)
+      if (!parentCategory.otherCategories) {
+        parentCategory.otherCategories = [newCategory]
+      } else {
+        parentCategory.otherCategories?.push(newCategory)
+      }
     })
   }
   return categories
@@ -141,9 +145,12 @@ function removeCategory(
 
   if (!categoryToRemoved.parentId) {
     categories = categories.filter(
-      (category) => category.id != categoryToRemoved.id,
+      (category) => category.id !== categoryToRemoved.id,
     )
     if (categoryToRemoved.otherCategories) {
+      categoryToRemoved.otherCategories.forEach((cat) => {
+        cat.parentId = undefined
+      })
       categories.push(...categoryToRemoved.otherCategories)
     }
   } else {
@@ -156,8 +163,15 @@ function removeCategory(
 
           parentCategory.otherCategories =
             parentCategory.otherCategories.filter(
-              (category) => category.id != categoryToRemoved.id,
+              (category) => category.id !== categoryToRemoved.id,
             )
+
+          if (categoryToRemoved.otherCategories) {
+            categoryToRemoved.otherCategories.forEach((cat) => {
+              cat.parentId = parentCategory.id
+            })
+            parentCategory.otherCategories.push(...categoryToRemoved.otherCategories)
+          }
         },
       )
     }
