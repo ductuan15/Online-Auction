@@ -22,19 +22,9 @@ export const productById = async (
   _: string,
 ) => {
   try {
-    const isWithDescription = !!req.query.isWithDescription
-    console.log(isWithDescription)
     req.product = await prisma.product.findUnique({
       where: {
         id: +value,
-      },
-      include: {
-        auctions: {
-          where: {
-            closeTime: null,
-          },
-        },
-        productDescriptionHistory: isWithDescription,
       },
       rejectOnNotFound: true,
     })
@@ -65,8 +55,14 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     await ensureProductImagePath(product.id)
     const files = req.files as { [fieldname: string]: Express.Multer.File[] }
     if (req.files) {
-      await saveProductThumbnail(files['thumbnail'], product.id)
-      await saveProductDetailImage(files['detail'], product.id)
+      await saveProductThumbnail(
+        files[uploadProductImagesFields.thumbnail.name],
+        product.id,
+      )
+      await saveProductDetailImage(
+        files[uploadProductImagesFields.detail.name],
+        product.id,
+      )
     }
     return res.status(201).json(product)
   } catch (error) {
@@ -97,15 +93,25 @@ export const update = async (
     })
     if (req.product) {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] }
-      if (data.isUpdateThumbnail && files['thumbnail'].length > 0) {
-        console.log('I am here')
-
+      if (
+        data.isUpdateThumbnail &&
+        files[uploadProductImagesFields.thumbnail.name].length > 0
+      ) {
         await removeProductThumbnailCache(req.product.id)
-        await saveProductThumbnail(files['thumbnail'], req.product.id)
+        await saveProductThumbnail(
+          files[uploadProductImagesFields.detail.name],
+          req.product.id,
+        )
       }
-      if (data.isUpdateDetailImage && files['detail'].length > 0) {
+      if (
+        data.isUpdateDetailImage &&
+        files[uploadProductImagesFields.thumbnail.name].length > 0
+      ) {
         await removeProductDetailImageCache(req.product.id)
-        await saveProductDetailImage(files['detail'], req.product.id)
+        await saveProductDetailImage(
+          files[uploadProductImagesFields.detail.name],
+          req.product.id,
+        )
       }
     }
     return res.json(count)
@@ -225,10 +231,10 @@ export const getTopPrice = async (
       },
       take: config.TOP_LIMIT,
     })
-    products.forEach(async (product) => {
+    for await (const product of products) {      
       product.thumbnails = getAllThumbnailLink(product.id)
       product.detail = await getAllDetailImageLinks(product.id)
-    })
+    }
     res.status(201).json(products)
   } catch (error) {
     if (error instanceof Error) {
@@ -245,7 +251,7 @@ export const isProductOwner = async (
   try {
     await prisma.product.findFirst({
       where: {
-        id: +(req.body.productId || req.product?.id || '/'),
+        id: +(req.product?.id || NaN),
         sellerId: req.user?.uuid,
       },
       rejectOnNotFound: true,
@@ -278,4 +284,15 @@ export const deleteProduct = async (
       next(error)
     }
   }
+}
+
+export const uploadProductImagesFields = {
+  thumbnail: {
+    name: 'thumbnail',
+    maxCount: 1,
+  },
+  detail: {
+    name: 'detail',
+    maxCount: 6,
+  },
 }
