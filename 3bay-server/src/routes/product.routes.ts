@@ -40,6 +40,11 @@ router
     uploadProductImages.fields(uploadProductImagesFields),
     productController.update,
   )
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    productController.isProductOwner,
+    productController.deleteProduct
+  )
 
 
 router.param('productId', productController.productById)

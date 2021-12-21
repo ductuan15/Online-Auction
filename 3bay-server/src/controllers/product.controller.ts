@@ -4,7 +4,8 @@ import {
   ensureProductImagePath,
   getAllDetailImageLinks,
   getAllThumbnailLink,
-  getThumbnailUrl,
+  removeProductDetailImageCache,
+  removeProductThumbnailCache,
   saveProductDetailImage,
   saveProductThumbnail,
 } from './images-product.controller.js'
@@ -86,8 +87,6 @@ export const update = async (
       data: {
         name: data.name || req.product?.name,
         categoryId: +data.categoryId || req.product?.categoryId,
-        currentPrice: +data.currenPrice || req.product?.currentPrice,
-        deletedAt: new Date() || req.product?.deletedAt,
         productDescriptionHistory: {
           create: {
             description: data.description,
@@ -99,9 +98,13 @@ export const update = async (
     if (req.product) {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] }
       if (data.isUpdateThumbnail && files['thumbnail'].length > 0) {
+        console.log('I am here')
+
+        await removeProductThumbnailCache(req.product.id)
         await saveProductThumbnail(files['thumbnail'], req.product.id)
       }
       if (data.isUpdateDetailImage && files['detail'].length > 0) {
+        await removeProductDetailImageCache(req.product.id)
         await saveProductDetailImage(files['detail'], req.product.id)
       }
     }
@@ -116,7 +119,7 @@ export const update = async (
 export const read = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req.product) {
-      req.product.thumbnails = getAllThumbnailLink(req.product.id);
+      req.product.thumbnails = getAllThumbnailLink(req.product.id)
       req.product.detail = await getAllDetailImageLinks(req.product.id)
     }
     return res.json(req.product)
@@ -248,6 +251,28 @@ export const isProductOwner = async (
       rejectOnNotFound: true,
     })
     next()
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
+  }
+}
+
+export const deleteProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const product = await prisma.product.update({
+      data: {
+        deletedAt: new Date(),
+      },
+      where: {
+        id: req.product?.id,
+      },
+    })
+    res.status(201).json(product)
   } catch (error) {
     if (error instanceof Error) {
       next(error)
