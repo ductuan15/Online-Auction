@@ -1,25 +1,45 @@
 import { Button, Grid, Typography } from '@mui/material'
-import { useAuth } from '../../../contexts/user/AuthContext'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import EmailTextField from '../../../components/common/form/EmailTextField'
 import * as React from 'react'
+import { useMemo, useState } from 'react'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import DateInputField from '../../../components/common/form/DateInputField'
+import { UserDetails } from '../../../data/user'
+import { useUserContext } from '../../../contexts/user/UserContext'
+import UserService from '../../../services/user.service'
+import axios, { AxiosError } from 'axios'
+import { Alert } from '@mui/lab'
+import { useAuth } from '../../../contexts/user/AuthContext'
 
 // type AccountProps = {
 //   foo?: string
 // }
 
-type AccountFormType = {
-  name: string
-  email: string
-  dob: string | null
-  address: string
-}
-
 const Account = (): JSX.Element => {
-  const { user } = useAuth()
-  const { control, handleSubmit, watch, formState } = useForm<AccountFormType>()
+  const {
+    state: { userDetails: user },
+    dispatch,
+  } = useUserContext()
+
+  const authContext = useAuth()
+
+  const { control, reset, handleSubmit, formState } = useForm<UserDetails>({
+    mode: 'onBlur',
+  })
+
+  const [errorText, setErrorText] = useState<string | null>('hvem er jeg')
+  const [save, setSave] = useState(false)
+
+  useMemo(() => {
+    reset({
+      uuid: user?.uuid || '',
+      email: user?.email || '',
+      name: user?.name || '',
+      dob: user?.dob || null,
+      address: user?.address || '',
+    })
+  }, [user])
 
   const { errors } = formState
 
@@ -37,8 +57,27 @@ const Account = (): JSX.Element => {
     xs: 9,
   }
 
+  const onSubmit: SubmitHandler<UserDetails> = async (data) => {
+    try {
+      await UserService.updateUserInfo(data, dispatch, authContext)
+      setErrorText(null)
+      setSave(true)
+    } catch (e) {
+      if (axios.isAxiosError(e) && (e as AxiosError)) {
+        setErrorText(e.response?.data.message || 'Unknown error occurred')
+      } else {
+        setErrorText('Unknown error occurred')
+      }
+    }
+  }
+
   return (
-    <Grid container>
+    <Grid
+      container
+      component='form'
+      noValidate
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <Grid
         container
         direction='row'
@@ -54,8 +93,26 @@ const Account = (): JSX.Element => {
           Account Settings
         </Typography>
 
-        <Button variant='contained'>Save changes</Button>
+        <Button variant='contained' type='submit'>
+          Save changes
+        </Button>
       </Grid>
+
+      {errorText && (
+        <Grid container {...gridRowProps} mt={1} justifyContent='flex-end'>
+          <Grid item {...inputGridProps}>
+            <Alert severity='error'>{errorText}</Alert>
+          </Grid>
+        </Grid>
+      )}
+
+      {save && (
+        <Grid container {...gridRowProps} justifyContent='flex-end'>
+          <Grid item {...inputGridProps}>
+            <Alert severity='success'>Changes saved!</Alert>
+          </Grid>
+        </Grid>
+      )}
 
       <Grid container {...gridRowProps} mt={2}>
         <Grid item {...labelGridProps}>
@@ -66,13 +123,12 @@ const Account = (): JSX.Element => {
 
         <Grid item {...inputGridProps}>
           <EmailTextField
-            defaultValue={'email@example.com'}
             error={errors.email}
             control={control}
             name={'email'}
-            textFieldProps={{
-              disabled: true,
-            }}
+            // textFieldProps={{
+            //   disabled: true,
+            // }}
           />
         </Grid>
       </Grid>
@@ -91,7 +147,6 @@ const Account = (): JSX.Element => {
             id='name'
             name='name'
             control={control}
-            defaultValue='Nguyen Van A'
             rules={{
               required: 'This field is required',
               validate: {
@@ -120,7 +175,6 @@ const Account = (): JSX.Element => {
             error={errors.dob}
             control={control}
             name='dob'
-            defaultValue={null}
           />
         </Grid>
       </Grid>
@@ -139,7 +193,6 @@ const Account = (): JSX.Element => {
             id='address'
             name='address'
             control={control}
-            defaultValue={'Vietnam'}
             rules={{
               required: 'This field is required',
               validate: {

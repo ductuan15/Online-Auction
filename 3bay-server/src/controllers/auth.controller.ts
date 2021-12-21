@@ -1,4 +1,4 @@
-import e from 'express'
+import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
 import { AuthError, ErrorException } from '../error/error-exception.js'
 import { AuthErrorCode, ErrorCode } from '../error/error-code.js'
@@ -16,11 +16,7 @@ async function hasEmailAlreadyExisted(email: string) {
   if (user) return true
 }
 
-export async function signUp(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
-) {
+export async function signUp(req: Request, res: Response, next: NextFunction) {
   if (req.body) {
     if (await hasEmailAlreadyExisted(req.body.email)) {
       return next(new AuthError({ code: AuthErrorCode.EmailAlreadyUsed }))
@@ -62,11 +58,7 @@ function getUserCredential(user: Prisma.User) {
   }
 }
 
-export async function signIn(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
-) {
+export async function signIn(req: Request, res: Response, next: NextFunction) {
   const user = req.user as Prisma.User
   if (!user.verified) {
     return next(
@@ -87,14 +79,15 @@ export async function signIn(
 }
 
 export async function refreshAccessToken(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
-  if (typeof req.body === 'string') {
+  if (req.body && req.body.refreshToken) {
+    // console.log(req.body)
     try {
       const user = await prisma.user.findFirst({
-        where: { refreshToken: req.body },
+        where: { refreshToken: req.body.refreshToken },
       })
       if (user) {
         return res.json(getUserCredential(user))
@@ -110,9 +103,9 @@ export async function refreshAccessToken(
 }
 
 export async function startVerify(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
   const id = req.params.id
   if (id) {
@@ -135,9 +128,9 @@ export async function startVerify(
 }
 
 export async function verifyAccount(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
   const id = req.params.id
   const { otp: code } = req.body
@@ -152,7 +145,7 @@ export async function verifyAccount(
         next(new AuthError({ code: AuthErrorCode.AlreadyVerified }))
       }
 
-      if (user && (await verifyOTP(user, code))) {
+      if (user && (await verifyOTP(user, code, Prisma.OtpType.VERIFY, null))) {
         await prisma.user.update({
           where: { uuid: id },
           data: { verified: true },
@@ -172,9 +165,9 @@ export async function verifyAccount(
 }
 
 export async function reSendVerifyOTP(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
   const id = req.params.id
 
@@ -199,9 +192,9 @@ export async function reSendVerifyOTP(
 }
 
 export async function startResetPassword(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
   if (req.body) {
     try {
@@ -231,9 +224,9 @@ export async function startResetPassword(
 }
 
 export async function resetPassword(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
   const { otp: code, pwd, email } = req.body
   try {
@@ -242,7 +235,7 @@ export async function resetPassword(
     })
 
     // verify OTP code
-    if (user && (await verifyOTP(user, code))) {
+    if (user && (await verifyOTP(user, code, Prisma.OtpType.CHANGE_PWD, null))) {
       await prisma.user.update({
         where: { email: email },
         data: { pwd: pwd },
@@ -261,9 +254,9 @@ export async function resetPassword(
 }
 
 export async function reSendResetPasswordOTP(
-  req: e.Request,
-  res: e.Response,
-  next: e.NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
   if (req.body) {
     try {

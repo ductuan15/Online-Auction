@@ -25,15 +25,15 @@ export async function updateAccountInfo(
   res: Response,
   next: NextFunction,
 ) {
-  const user: Partial<Prisma.User> = req.user as Prisma.User
+  // const user: Partial<Prisma.User> = req.user as Prisma.User
 
   try {
     let response: Partial<Prisma.User> = await prisma.user.update({
       where: {
-        uuid: req.body.id,
+        uuid: req.params.id,
       },
       data: {
-        ...user,
+        // ...user,
         ...req.body,
       },
     })
@@ -47,6 +47,15 @@ export async function updateAccountInfo(
 
     return res.json()
   } catch (e) {
+    if (
+      e instanceof Prisma.Prisma.PrismaClientKnownRequestError &&
+      e.code === 'P2002' // &&
+      // e.meta?.target === 'email'
+    ) {
+      // console.log(e.meta)
+      return next(new AuthError({ code: AuthErrorCode.EmailAlreadyUsed }))
+    }
+
     return next(e)
   }
 }

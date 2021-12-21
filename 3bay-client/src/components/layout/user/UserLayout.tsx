@@ -1,6 +1,5 @@
 import { Button, Grid, MenuItem, MenuList, Typography } from '@mui/material'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
-import { useAuth } from '../../../contexts/user/AuthContext'
 import {
   Link as RouterLink,
   NavLink,
@@ -9,6 +8,7 @@ import {
   useMatch,
   useResolvedPath,
 } from 'react-router-dom'
+import { useUserContext } from '../../../contexts/user/UserContext'
 
 // type UserLayoutProps = {
 //   children?: ReactNode
@@ -61,7 +61,9 @@ const MENU_ITEMS: MenuItemLink[] = [
 ]
 
 const UserLayout = (): JSX.Element => {
-  const { user } = useAuth()
+  const {
+    state: { userDetails: user },
+  } = useUserContext()
 
   return (
     <Grid

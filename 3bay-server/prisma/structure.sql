@@ -42,6 +42,36 @@ CREATE TABLE `auctions`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client = @@character_set_client */;
+/*!50003 SET @saved_cs_results = @@character_set_results */;
+/*!50003 SET @saved_col_connection = @@collation_connection */;
+/*!50003 SET character_set_client = utf8mb3 */;
+/*!50003 SET character_set_results = utf8mb3 */;
+/*!50003 SET collation_connection = utf8mb4_general_ci */;
+/*!50003 SET @saved_sql_mode = @@sql_mode */;
+/*!50003 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO' */;
+DELIMITER ;;
+/*!50003 CREATE */ /*!50017 DEFINER =`root`@`localhost`*/ /*!50003 TRIGGER only_one_opening_auction_per_product
+    BEFORE INSERT
+    on auctions
+    FOR EACH ROW
+BEGIN
+    DECLARE openingAuction INT;
+    SELECT COUNT(*)
+    INTO openingAuction
+    FROM auctions
+    WHERE auctions.productId = NEW.productId
+      AND (auctions.closeTime IS NULL OR auctions.closeTime > NOW());
+    IF openingAuction > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'One auction has been opened for this product';
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode = @saved_sql_mode */;
+/*!50003 SET character_set_client = @saved_cs_client */;
+/*!50003 SET character_set_results = @saved_cs_results */;
+/*!50003 SET collation_connection = @saved_col_connection */;
 
 --
 -- Table structure for table `bids`
@@ -79,7 +109,7 @@ DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories`
 (
     `id`         int(11)                                 NOT NULL AUTO_INCREMENT,
-    `title`      varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+    `title`      varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '''',
     `parent_id`  int(11)                                          DEFAULT NULL,
     `created_at` datetime                                         DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
@@ -101,10 +131,12 @@ DROP TABLE IF EXISTS `otp`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `otp`
 (
-    `id`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `otp`        varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `expiryTime` datetime                                NOT NULL,
-    PRIMARY KEY (`id`)
+    `id`         varchar(255) COLLATE utf8mb4_unicode_ci                                NOT NULL,
+    `type`       enum ('VERIFY','CHANGE_PWD','CHANGE_EMAIL') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'VERIFY',
+    `otp`        varchar(255) COLLATE utf8mb4_unicode_ci                                NOT NULL,
+    `expiryTime` datetime                                                               NOT NULL,
+    `data`       varchar(255) COLLATE utf8mb4_unicode_ci                                         DEFAULT NULL,
+    PRIMARY KEY (`id`, `type`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -127,6 +159,7 @@ CREATE TABLE `product_des_history`
     KEY `product_des_history_fk0` (`productId`),
     CONSTRAINT `product_des_history_fk0` FOREIGN KEY (`productId`) REFERENCES `products` (`id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -174,6 +207,7 @@ CREATE TABLE `products`
     CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
     CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -241,25 +275,7 @@ CREATE TABLE `users`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
-
-DELIMITER $$
-CREATE TRIGGER only_one_opening_auction_per_product 
-BEFORE INSERT on auctions FOR EACH ROW 
-BEGIN   
-	DECLARE openingAuction INT;       
-    SELECT COUNT(*)  
-    INTO openingAuction     
-    FROM auctions     
-    WHERE auctions.productId = NEW.productId AND (auctions.closeTime IS NULL OR auctions.closeTime > NOW());     
-    IF openingAuction > 0 THEN   
-		SIGNAL SQLSTATE '45000'          
-        SET MESSAGE_TEXT = 'One auction has been opened for this product';
-	END IF; 
-END $$
-
-DELIMITER ;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
 /*!40103 SET TIME_ZONE = @OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE = @OLD_SQL_MODE */;
@@ -270,4 +286,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-17  1:14:24
+-- Dump completed on 2021-12-21 16:59:40

@@ -1,12 +1,13 @@
-import { createContext, ReactNode, useContext } from 'react'
+import { createContext, ReactNode, useContext, useEffect } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import AuthService, { AuthData } from '../../services/auth.service'
+import axiosApiInstance, { setUpAxiosInterceptor } from '../../services/api'
 
 type AuthProviderProps = {
   children: ReactNode
 }
 
-type AuthContextType = {
+export type AuthContextType = {
   isAuth: boolean
   user?: AuthData
   signIn: (email: string, pwd: string, callback: VoidFunction) => void
@@ -18,6 +19,7 @@ type AuthContextType = {
     otp: string,
     cb: VoidFunction,
   ) => void
+  rename: (name: string) => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -32,6 +34,9 @@ const AuthContext = createContext<AuthContextType>({
     throw new Error('Forgot to wrap component in `AuthProvider`')
   },
   resetPassword: (): never => {
+    throw new Error('Forgot to wrap component in `AuthProvider`')
+  },
+  rename: (): never => {
     throw new Error('Forgot to wrap component in `AuthProvider`')
   },
 })
@@ -49,7 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   const signIn = async (email: string, pwd: string, cb: VoidFunction) => {
     const user = await AuthService.signIn(email, pwd)
-    console.log(user)
+    //console.log(user)
     setUser(user)
     cb()
   }
@@ -62,10 +67,11 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const verify = async (id: string, otp: string, cb: VoidFunction) => {
     // the response data is expected to be the same with sign-in case
     const user = await AuthService.verify(id, otp)
-    console.log(user)
+    //console.log(user)
     setUser(user)
     cb()
   }
+
   const resetPassword = async (
     email: string,
     pwd: string,
@@ -74,10 +80,28 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   ) => {
     // the response data is expected to be the same with sign-in case
     const user = await AuthService.resetPassword(email, pwd, otp)
-    console.log(user)
+    //console.log(user)
     setUser(user)
     cb()
   }
+
+  const rename = (name: string) => {
+    if (user) {
+      setUser({
+        ...user,
+        name: name,
+      })
+    }
+  }
+
+  useEffect(() => {
+    const resInterceptor = setUpAxiosInterceptor(() => {
+      setUser(undefined)
+    })
+    return () => {
+      axiosApiInstance.interceptors.response.eject(resInterceptor)
+    }
+  }, [])
 
   const contextValue = {
     isAuth,
@@ -85,7 +109,8 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     signIn,
     signOut,
     verify,
-    resetPassword
+    resetPassword,
+    rename,
   }
 
   return (

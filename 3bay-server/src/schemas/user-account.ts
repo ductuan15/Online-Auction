@@ -18,19 +18,22 @@ const schema = {
   },
   additionalProperties: false,
 
-  oneOf: [{ required: 'name' }, { required: 'dob' }, { required: 'address' }],
+  // oneOf: [
+  //   { required: ['name'] },
+  //   { required: ['dob'] },
+  //   { required: ['address'] },
+  // ],
 
-  required: ['name', 'email', 'dob', 'address'],
+  required: ['name', 'dob', 'address'],
 
   errorMessage: {
     type: 'Bad request (Invalid request type)',
-    // required: {
-    //   name: 'Name is required',
-    //   email: 'Email is required',
-    //   dob: 'Date of birth is required',
-    //   address: 'Address is required',
-    // },
-    required: 'At least one field is required',
+    required: {
+      name: 'Name is required',
+      // email: 'Email is required',
+      dob: 'Date of birth is required',
+      address: 'Address is required',
+    },
     properties: {
       name: 'Empty name is not allowed',
       // email: 'Invalid email format',

@@ -26,17 +26,16 @@ export const saveProductThumbnail = async (
   productId: Number,
 ) => {
   if (files) {
-    removeProductThumbnailCache(productId)
     // crop the original image & save
     await sharp(files[0].buffer)
       .resize(2048)
       .toFile(getThumbnailUrl.getPath(productId))
 
-    // for (const key in ProductImageSize) {
-    //   await sharp(files[0].buffer)
-    //     .resize(ProductImageSize[key])
-    //     .toFile(getThumbnailUrl.getPath(productId, key))
-    // }
+    for (const key in ProductImageSize) {
+      await sharp(files[0].buffer)
+        .resize(ProductImageSize[key])
+        .toFile(getThumbnailUrl.getPath(productId, key))
+    }
   }
 }
 
@@ -46,7 +45,7 @@ export const saveProductDetailImage = async (
 ) => {
   if (files) {
     files.forEach(async (file, index) => {
-      sharp(file.buffer)
+      await sharp(file.buffer)
         .resize(2048)
         .toFile(getDetailImageUrl.getPath(productId, index))
     })
@@ -60,7 +59,7 @@ export const removeProductThumbnailCache = async (productId: Number) => {
 
 export const removeProductDetailImageCache = async (productId: Number) => {
   const folder = getDetailImageFolderPath(productId)
-  await fs.remove(folder)
+  await fs.emptyDir(folder)
 }
 
 export const getThumbnailUrl = {
@@ -112,6 +111,7 @@ export const getDetailImageFolderPath = (productId: Number) => {
 
 export const ensureProductImagePath = async (productId: number) => {
   await fs.ensureDir(getDetailImageFolderPath(productId))
+  await fs.ensureDir(getThumbnailOutputPath(productId))
 }
 export const getAllThumbnailLink = (productId: Number) => {
   const link = `${ImageURLPrefixType.LINK}/${productId}/`

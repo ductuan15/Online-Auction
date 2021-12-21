@@ -7,7 +7,6 @@ import { Alert } from '@mui/material'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import axiosApiInstance from '../../../services/api'
 import axios, { AxiosError } from 'axios'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
@@ -18,7 +17,7 @@ const VerifyAccount = (): JSX.Element => {
   const [loading, setLoading] = useState(true)
   const [verifying, setVerifying] = useState(false)
   const [resendButtonDisabled, setResendButtonDisabled] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [errorText, setErrorText] = useState<string | null>(null)
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -29,27 +28,27 @@ const VerifyAccount = (): JSX.Element => {
 
   const id = urlParams.id || ''
   useEffect(() => {
-    if (id === undefined) {
-      navigate('/', { replace: true })
-    }
-
-    axiosApiInstance
-      .get(`/auth/verify/${id}`)
-      .catch((error) => {
-        console.log(error)
+    ;(async () => {
+      if (id === undefined) {
         navigate('/', { replace: true })
-      })
-      .finally(() => {
+      }
+      try {
+        await AuthService.startVerifyingProcess(id)
+      } catch (e) {
+        console.log(e)
+        navigate('/', { replace: true })
+      } finally {
         setLoading(false)
-      })
+      }
+    })()
   }, [])
 
   function handleError(error: unknown) {
     if (axios.isAxiosError(error) && (error as AxiosError)) {
-      console.log(error.response?.data.message)
-      setError(error.response?.data.message || '')
+      //console.log(error.response?.data.message)
+      setErrorText(error.response?.data.message || '')
     } else {
-      setError('Unknown error')
+      setErrorText('Unknown error')
     }
   }
 
@@ -127,13 +126,13 @@ const VerifyAccount = (): JSX.Element => {
               Check your email for the OTP code
             </Typography>
 
-            {error && (
+            {errorText && (
               <Alert sx={{ mt: 2, mb: 2 }} severity='error'>
-                {error}
+                {errorText}
               </Alert>
             )}
 
-            {!error && resendButtonDisabled && (
+            {!errorText && resendButtonDisabled && (
               <Alert sx={{ mt: 2, mb: 2 }} severity='info'>
                 OTP has been sent! Please check your email
               </Alert>

@@ -118,7 +118,7 @@ export function BaseCategoryDialog(
 
   // TODO: refactor me
   const onError = (error: unknown) => {
-    console.log(error)
+    //console.log(error)
     if (progressRef.current && progressRef.current.style) {
       progressRef.current.style.display = 'none'
     }
@@ -126,15 +126,15 @@ export function BaseCategoryDialog(
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        console.log(error.response.data)
-        console.log(error.response.status)
-        console.log(error.response.headers)
+        //console.log(error.response.data)
+        //console.log(error.response.status)
+        //console.log(error.response.headers)
         setErrorMsg(error.response.data.message)
       } else if (error.request) {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
         // http.ClientRequest in node.js
-        console.log(error.request)
+        //console.log(error.request)
         setErrorMsg(error.request.data.message)
       }
     } else if (error instanceof Error) {

@@ -21,6 +21,10 @@ async function signIn(email: string, pwd: string): Promise<AuthData> {
   return response.data as AuthData
 }
 
+async function startVerifyingProcess(id: string): Promise<unknown> {
+  return await axiosApiInstance.get(`/auth/verify/${id}`)
+}
+
 async function verify(id: string, otp: string): Promise<AuthData> {
   const response = await axiosApiInstance.post(`/auth/verify/${id}`, {
     otp,
@@ -36,7 +40,7 @@ async function resendVerifyOTP(id: string): Promise<void> {
 }
 
 async function checkEmailBeforeResetPassword(email: string): Promise<void> {
-  console.log('axios email', email)
+  //console.log('axios email', email)
   await axiosApiInstance.post('/auth/reset-pwd/request', {
     email,
   })
@@ -74,6 +78,7 @@ const AuthService = {
   signIn,
   signOut,
   register,
+  startVerifyingProcess,
   verify,
   resendVerifyOTP,
   checkEmailBeforeResetPassword,

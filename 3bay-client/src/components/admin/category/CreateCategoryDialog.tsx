@@ -26,7 +26,7 @@ export function CreateCategoryDialog(): JSX.Element {
           headerConfig,
         )
         const category = new Category(response.data)
-        console.log(category)
+        //console.log(category)
 
         addCategory(category)
         // console.log(response)

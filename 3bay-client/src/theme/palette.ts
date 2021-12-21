@@ -50,14 +50,14 @@ const INFO = {
   darker: '#04297A',
   contrastText: '#fff',
 }
-const SUCCESS = {
-  lighter: '#E9FCD4',
-  light: '#AAF27F',
-  main: '#54D62C',
-  dark: '#229A16',
-  darker: '#08660D',
-  contrastText: GREY[800],
-}
+// const SUCCESS = {
+//   lighter: '#E9FCD4',
+//   light: '#AAF27F',
+//   main: '#54D62C',
+//   dark: '#229A16',
+//   darker: '#08660D',
+//   contrastText: GREY[800],
+// }
 const WARNING = {
   lighter: '#FFF7CD',
   light: '#FFE16A',
@@ -78,7 +78,7 @@ const ERROR = {
 const GRADIENTS = {
   primary: createGradient(PRIMARY.light, PRIMARY.main),
   info: createGradient(INFO.light, INFO.main),
-  success: createGradient(SUCCESS.light, SUCCESS.main),
+  // success: createGradient(SUCCESS.light, SUCCESS.main),
   warning: createGradient(WARNING.light, WARNING.main),
   error: createGradient(ERROR.light, ERROR.main),
 }
@@ -96,9 +96,9 @@ const palette = {
   primary: { ...PRIMARY },
   secondary: { ...SECONDARY },
   info: { ...INFO },
-  success: { ...SUCCESS },
-  warning: { ...WARNING },
-  error: { ...ERROR },
+  // success: { ...SUCCESS },
+  // warning: { ...WARNING },
+  // error: { ...ERROR },
   // grey: GREY,
   gradients: GRADIENTS,
   chart: CHART_COLORS,

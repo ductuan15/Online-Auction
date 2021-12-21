@@ -14,6 +14,7 @@ export class CategoryErrorCode {
   public static readonly UnknownUpdateError = 'CategoryUnknownUpdateError'
   public static readonly UnknownError = 'CategoryUnknownError'
   public static readonly EmptyRequest = 'CategoryEmptyRequest'
+  public static readonly ProductExisted = 'CategoryProductExisted'
 }
 
 export class AuthErrorCode {

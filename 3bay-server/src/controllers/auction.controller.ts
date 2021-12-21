@@ -8,7 +8,7 @@ export const auctionById = async (
   next: NextFunction,
 ) => {
   try {
-    const auctionId = +(req.query.auctionId || '/')
+    const auctionId = +(req.query.auctionId || NaN)
     req.auction = await prisma.auction.findUnique({
       where: {
         id: auctionId,
@@ -40,8 +40,17 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
         incrementPrice: req.body.incrementPrice,
         autoExtendAuctionTiming: req.body.autoExtendAuctionTiming,
         openPrice: +req.body.openPrice,
-        productId: +req.body.productId,
-        closeTime: req.body.closeTime
+        productId: +(req.product?.id || NaN),
+        closeTime: new Date(req.body.closeTime),
+        buyoutPrice: req.body.buyoutPrice,
+      },
+    })
+    await prisma.product.update({
+      data: {
+        currentPrice: auction.openPrice,
+      },
+      where: {
+        id: auction.productId,
       },
     })
     res.json(auction)
@@ -52,11 +61,50 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-export const getOpenAuction = async (productId: number) => {
-  return prisma.auction.findFirst({
-    where: {
-      productId: productId,
-      closeTime: null,
-    },
-  })
+export const getOpenAuction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const auction = await prisma.auction.findFirst({
+      where: {
+        productId: +(req.product?.id || '/'),
+        closeTime: {
+          gte: new Date(),
+        },
+      },
+      include: {
+        winningBid: {
+          include: {
+            bidder: true,
+          },
+        },
+      },
+    })
+    res.json(auction)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
+  }
+}
+
+export const auctionsByProductId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const auctions = await prisma.auction.findMany({
+      where: {
+        productId: req.product?.id,
+      },
+    })
+    res.json(auctions)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
+  }
 }

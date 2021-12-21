@@ -47,13 +47,13 @@ export const AppBarCtxProvider = ({
   const [state, dispatch] = useReducer(AppbarReducer, initialAppBarState)
   const toggleDrawer =
     (open: boolean) => (event: KeyboardEvent | MouseEvent | SyntheticEvent) => {
-      console.log(event)
+      //console.log(event)
       if (
         event.type === 'keydown' &&
         ((event as KeyboardEvent).key === 'Tab' ||
           (event as KeyboardEvent).key === 'Shift')
       ) {
-        console.log('return called')
+        //console.log('return called')
         return
       }
       dispatch({ type: 'TOGGLE_DRAWER', payload: open })

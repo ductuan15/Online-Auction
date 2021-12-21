@@ -58,11 +58,17 @@ export function generateOtp(
 async function sendOTP(
   user: Prisma.User,
   resend: boolean,
+  otpType: Prisma.OtpType,
+  data: string | null,
   cb: (otpCode: string, user: Prisma.User) => void,
 ) {
-
   const hasOtp = await prisma.otp.findUnique({
-    where: { id: user.uuid },
+    where: {
+      id_type: {
+        id: user.uuid,
+        type: otpType,
+      },
+    },
   })
 
   const { otp: otpCode, expiryTime } = generateOtp()
@@ -75,18 +81,26 @@ async function sendOTP(
     }
 
     await prisma.otp.update({
-      where: { id: user.uuid },
+      where: {
+        id_type: {
+          id: user.uuid,
+          type: otpType,
+        },
+      },
       data: {
         otp: otpCode,
         expiryTime: expiryTime,
+        data: data,
       },
     })
   } else {
     await prisma.otp.create({
       data: {
         id: user.uuid,
+        type: otpType,
         otp: otpCode,
         expiryTime: expiryTime,
+        data: data,
       },
     })
   }
@@ -96,27 +110,43 @@ async function sendOTP(
 export async function sendVerifyOTP(user: Prisma.User, resend: boolean) {
   if (user.verified) return
 
-  await sendOTP(user, resend, async (otpCode: string, user: Prisma.User) => {
-    // send the email
-    await sendVerifyEmail(otpCode, user)
-  })
+  await sendOTP(
+    user,
+    resend,
+    Prisma.OtpType.VERIFY,
+    null,
+    async (otpCode: string, user: Prisma.User) => {
+      // send the email
+      await sendVerifyEmail(otpCode, user)
+    },
+  )
 }
 
 export async function sendResetPasswordOTP(user: Prisma.User, resend: boolean) {
-
-  await sendOTP(user, resend, async (otpCode: string, user: Prisma.User) => {
-    // send the email
-    await sendResetPasswordEmail(otpCode, user)
-  })
+  await sendOTP(
+    user,
+    resend,
+    Prisma.OtpType.CHANGE_PWD,
+    null,
+    async (otpCode: string, user: Prisma.User) => {
+      // send the email
+      await sendResetPasswordEmail(otpCode, user)
+    },
+  )
 }
 
 export async function verifyOTP(
   user: Prisma.User,
   otpCode: string,
+  otpType: Prisma.OtpType,
+  data: string | null,
 ): Promise<boolean> {
-
   const otp = await prisma.otp.findFirst({
-    where: { id: user.uuid },
+    where: {
+      id: user.uuid,
+      type: otpType,
+      data: data,
+    },
   })
 
   if (!otp) return false
@@ -130,7 +160,12 @@ export async function verifyOTP(
 
   if (otpCode.trim() === otp.otp) {
     await prisma.otp.delete({
-      where: { id: user.uuid },
+      where: {
+        id_type: {
+          id: user.uuid,
+          type: otpType,
+        },
+      },
     })
     return true
   }

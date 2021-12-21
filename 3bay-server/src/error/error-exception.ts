@@ -70,6 +70,10 @@ export class CategoryErrorException extends ErrorException {
         this.status = 418 // i'm a teapot!
         this.message = 'Cannot perform the request'
         break
+      case CategoryErrorCode.ProductExisted:
+        this.status = 403
+        this.message = 'Product existed in this category'
+        break
       default:
         this.status = 500
         break
@@ -114,7 +118,7 @@ export class AuthError extends ErrorException {
         break
       case AuthErrorCode.AccountNotExist:
         this.status = 401
-        this.message = 'Email not exist'
+        this.message = 'Email does not exist'
         break
       case AuthErrorCode.RecaptchaFailed:
         this.status = 401
@@ -123,6 +127,10 @@ export class AuthError extends ErrorException {
       case AuthErrorCode.WrongPassword:
         this.status = 401
         this.message = 'Wrong password'
+        break
+      case AuthErrorCode.OTPNotExpired:
+        this.status = 400
+        this.message = 'OTP code has not expired yet'
         break
       default:
         this.status = 500

@@ -1,25 +1,16 @@
 import { Router } from 'express'
 import passport from '../auth/passport.js'
+import { uploadProductImagesFields } from '../controllers/product.controller.js'
 import * as productController from '../controllers/product.controller.js'
 import { uploadProductImages } from '../middlewares/upload-product.mdw.js'
 
 const router = Router()
-const uploadProductImagesFields = [
-  {
-    name: 'thumbnail',
-    maxCount: 1,
-  },
-  {
-    name: 'detail',
-    maxCount: 6,
-  },
-]
 
 router
   .route('/')
   .post(
     passport.authenticate('jwt', { session: false }),
-    uploadProductImages.fields(uploadProductImagesFields),
+    uploadProductImages.fields(Object.values(uploadProductImagesFields)),
     productController.add,
   )
 
@@ -37,10 +28,14 @@ router
   .patch(
     passport.authenticate('jwt', { session: false }),
     productController.isProductOwner,
-    uploadProductImages.fields(uploadProductImagesFields),
+    uploadProductImages.fields(Object.values(uploadProductImagesFields)),
     productController.update,
   )
-
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    productController.isProductOwner,
+    productController.deleteProduct,
+  )
 
 router.param('productId', productController.productById)
 

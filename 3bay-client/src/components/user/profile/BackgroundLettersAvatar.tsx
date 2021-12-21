@@ -1,6 +1,7 @@
 import * as React from 'react'
 import Avatar, { AvatarProps } from '@mui/material/Avatar'
 import { useDarkMode } from 'usehooks-ts'
+import { Typography } from '@mui/material'
 
 function adjust(color: string, amount: number) {
   return `#${color
@@ -65,10 +66,12 @@ function stringAvatar(name: string, darkTheme?: boolean) {
 
 type Props = {
   name: string
+  fontSize?: string
 } & AvatarProps
 
 export default function BackgroundLetterAvatars({
   name,
+  fontSize,
   ...avatarProps
 }: Props): JSX.Element {
   const { isDarkMode } = useDarkMode()
@@ -82,5 +85,11 @@ export default function BackgroundLetterAvatars({
     avatarProps.sx = nameProps.sx
   }
 
-  return <Avatar {...avatarProps}>{avatarProps?.children ?? nameProps.children}</Avatar>
+  return (
+    <Avatar {...avatarProps}>
+      {avatarProps?.children ?? (
+        <Typography fontSize={fontSize}>{nameProps.children}</Typography>
+      )}
+    </Avatar>
+  )
 }

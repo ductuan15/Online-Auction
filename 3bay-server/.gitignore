@@ -6,3 +6,6 @@ dist/
 .env
 # ignore auto cropped images
 public/images/category/output/
+
+# Visual Code Folder
+.vscode
