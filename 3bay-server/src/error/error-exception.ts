@@ -128,6 +128,10 @@ export class AuthError extends ErrorException {
         this.status = 401
         this.message = 'Wrong password'
         break
+      case AuthErrorCode.OTPNotExpired:
+        this.status = 400
+        this.message = 'OTP code has not expired yet'
+        break
       default:
         this.status = 500
         break
