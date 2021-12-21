@@ -26,17 +26,16 @@ export const saveProductThumbnail = async (
   productId: Number,
 ) => {
   if (files) {
-    removeProductThumbnailCache(productId)
     // crop the original image & save
     await sharp(files[0].buffer)
       .resize(2048)
       .toFile(getThumbnailUrl.getPath(productId))
 
-    // for (const key in ProductImageSize) {
-    //   await sharp(files[0].buffer)
-    //     .resize(ProductImageSize[key])
-    //     .toFile(getThumbnailUrl.getPath(productId, key))
-    // }
+    for (const key in ProductImageSize) {
+      await sharp(files[0].buffer)
+        .resize(ProductImageSize[key])
+        .toFile(getThumbnailUrl.getPath(productId, key))
+    }
   }
 }
 
@@ -112,7 +111,7 @@ export const getDetailImageFolderPath = (productId: Number) => {
 
 export const ensureProductImagePath = async (productId: number) => {
   await fs.ensureDir(getDetailImageFolderPath(productId))
-  await fs.mkdir(getDetailImageFolderPath(productId), { recursive: true })
+  await fs.ensureDir(getThumbnailOutputPath(productId))
 }
 export const getAllThumbnailLink = (productId: Number) => {
   const link = `${ImageURLPrefixType.LINK}/${productId}/`
