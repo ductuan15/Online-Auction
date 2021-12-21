@@ -139,9 +139,13 @@ model User {
 }
 
 model otp {
-  id         String   @id @default(uuid()) @db.VarChar(255)
+  id         String   @default(uuid()) @db.VarChar(255)
+  type       OtpType  @default(VERIFY)
   otp        String   @db.VarChar(255)
   expiryTime DateTime @db.DateTime(0)
+  data       String?  @db.VarChar(255)
+
+  @@id([id, type])
 }
 
 enum Role {
@@ -150,4 +154,12 @@ enum Role {
   ADMINISTRATOR
 
   @@map("users_role")
+}
+
+enum OtpType {
+  VERIFY
+  CHANGE_PWD
+  CHANGE_EMAIL
+
+  @@map("otp_type")
 }
