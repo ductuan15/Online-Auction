@@ -1,6 +1,7 @@
-import { createContext, ReactNode, useContext } from 'react'
+import { createContext, ReactNode, useContext, useEffect } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import AuthService, { AuthData } from '../../services/auth.service'
+import axiosApiInstance, { setUpAxiosInterceptor } from '../../services/api'
 
 type AuthProviderProps = {
   children: ReactNode
@@ -88,10 +89,19 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     if (user) {
       setUser({
         ...user,
-        name: name
+        name: name,
       })
     }
   }
+
+  useEffect(() => {
+    const resInterceptor = setUpAxiosInterceptor(() => {
+      setUser(undefined)
+    })
+    return () => {
+      axiosApiInstance.interceptors.response.eject(resInterceptor)
+    }
+  }, [])
 
   const contextValue = {
     isAuth,

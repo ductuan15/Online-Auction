@@ -20,6 +20,7 @@ const Profile = (): JSX.Element => {
         md={3}
         sx={{ display: { xs: 'none', md: 'flex' } }}
         item
+        container
         direction='row'
         alignItems='center'
         justifyContent='center'

@@ -44,11 +44,13 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
   useEffect(() => {
     ;(async () => {
       try {
-        const user = await UserService.getUserInfo(authData)
-        dispatch({
-          type: 'GET_ACCOUNT_INFO',
-          payload: user
-        })
+        if (authData) {
+          const user = await UserService.getUserInfo(authData)
+          dispatch({
+            type: 'GET_ACCOUNT_INFO',
+            payload: user,
+          })
+        }
       } catch (e) {
         console.log(e)
       }

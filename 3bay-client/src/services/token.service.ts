@@ -21,7 +21,7 @@ function getAuthData(): AuthData | null {
 }
 
 function revokeAuthData(): void {
-  localStorage.removeItem('auth')
+  localStorage.setItem('auth', 'undefined')
 }
 
 function getRefreshToken(): string | undefined {
