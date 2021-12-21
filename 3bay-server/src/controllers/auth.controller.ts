@@ -89,11 +89,11 @@ export async function refreshAccessToken(
   res: Response,
   next: NextFunction,
 ) {
-  if (req.body && req.body.refreshToken) {
+  if (req.body && req.body.refreshToken && req.body.uuid) {
     // console.log(req.body)
     try {
       const user = await prisma.user.findFirst({
-        where: { refreshToken: req.body.refreshToken },
+        where: { refreshToken: req.body.refreshToken, uuid: req.body.uuid },
       })
       if (user) {
         return res.json(getUserCredential(user))
