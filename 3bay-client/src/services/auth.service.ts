@@ -1,6 +1,8 @@
 import axiosApiInstance from './api'
 import { SignUpFormInputs } from '../data/sign-up'
 import TokenService from './token.service'
+import {ChangeEmailForm} from '../pages/user/auth/ChangeEmail'
+import {UserDetails} from '../data/user'
 
 export type AuthData = {
   user: string
@@ -74,6 +76,24 @@ async function register(user: SignUpFormInputs): Promise<{ uuid: string }> {
   return response.data
 }
 
+async function startChangingEmail(email: string): Promise<void> {
+  // const authData = TokenService.getAuthData()
+  if (email /*&& authData*/) {
+    await axiosApiInstance.post(`/auth/change-email/`, {
+      email
+    })
+  }
+}
+
+async function resendChangeEmailOTP(): Promise<void> {
+  await axiosApiInstance.post('auth/change-email/resend')
+}
+
+async function verifyNewEmail(data: ChangeEmailForm): Promise<UserDetails> {
+  const response = await axiosApiInstance.post(`/auth/change-email/verify/`, data)
+  return response.data as UserDetails
+}
+
 const AuthService = {
   signIn,
   signOut,
@@ -84,5 +104,8 @@ const AuthService = {
   checkEmailBeforeResetPassword,
   resetPassword,
   resendResetPasswordOTP,
+  startChangingEmail,
+  resendChangeEmailOTP,
+  verifyNewEmail,
 }
 export default AuthService

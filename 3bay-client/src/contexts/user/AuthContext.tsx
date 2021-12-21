@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useEffect } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import AuthService, { AuthData } from '../../services/auth.service'
 import axiosApiInstance, { setUpAxiosInterceptor } from '../../services/api'
+import {UserDetails} from '../../data/user'
 
 type AuthProviderProps = {
   children: ReactNode
@@ -19,7 +20,7 @@ export type AuthContextType = {
     otp: string,
     cb: VoidFunction,
   ) => void
-  rename: (name: string) => void
+  updateUserInfo: (data: UserDetails) => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -36,7 +37,7 @@ const AuthContext = createContext<AuthContextType>({
   resetPassword: (): never => {
     throw new Error('Forgot to wrap component in `AuthProvider`')
   },
-  rename: (): never => {
+  updateUserInfo: (): never => {
     throw new Error('Forgot to wrap component in `AuthProvider`')
   },
 })
@@ -85,11 +86,12 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     cb()
   }
 
-  const rename = (name: string) => {
-    if (user) {
+  const updateUserInfo = (data: UserDetails) => {
+    if (user && data) {
       setUser({
         ...user,
-        name: name,
+        name: data.name || user.name,
+        role: data.role || user.role,
       })
     }
   }
@@ -110,7 +112,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     signOut,
     verify,
     resetPassword,
-    rename,
+    updateUserInfo,
   }
 
   return (

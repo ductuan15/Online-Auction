@@ -28,7 +28,7 @@ async function updateUserInfo(
   const data = response.data as UserDetails
   dispatch({ type: 'GET_ACCOUNT_INFO', payload: response.data })
   if (data.name) {
-    context.rename(data.name)
+    context.updateUserInfo(data)
   }
 }
 

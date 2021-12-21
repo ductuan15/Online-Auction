@@ -8,11 +8,15 @@ type EmailTextFieldProps<T extends { email: string }> =
   UseControllerProps<T> & {
     error: FieldError | undefined
     textFieldProps?: TextFieldProps
+    id?: string
+    label?: string
   }
 
 const EmailTextField = <T extends { email: string }>({
   error,
   textFieldProps,
+  id,
+  label,
   ...control
 }: EmailTextFieldProps<T>): JSX.Element => {
   return (
@@ -29,8 +33,8 @@ const EmailTextField = <T extends { email: string }>({
         <TextField
           error={!!error}
           fullWidth
-          id='email'
-          label='Email Address'
+          id={id ?? 'email'}
+          label={label ?? 'Email Address'}
           autoComplete='email'
           inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
           helperText={error?.message}

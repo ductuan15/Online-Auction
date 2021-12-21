@@ -19,6 +19,7 @@ import Account from './pages/user/profile/Account'
 import Password from './pages/user/profile/Password'
 import Profile from './pages/user/profile/Profile'
 import RequireLogin from './components/user/auth/RequireLogin'
+import ChangeEmail from './pages/user/auth/ChangeEmail'
 
 function GlobalRouter(): JSX.Element {
   return <BrowserRouter>
@@ -55,6 +56,11 @@ function GlobalRouter(): JSX.Element {
         <Route path='/signin' element={<SignIn/>}/>
         <Route path='/forgot' element={<ForgotPassword/>}/>
         <Route path='/verify/:id' element={<VerifyAccount/>}/>
+
+        <Route element={<RequireLogin/>}>
+          <Route path='/change-email' element={<ChangeEmail/>}/>
+        </Route>
+
       </Route>
 
       <Route element={<SignInLayout maxWidth='sm'/>}>

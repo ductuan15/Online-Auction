@@ -4,4 +4,5 @@ export type UserDetails = {
   email: string
   dob: string | null
   address: string
+  role: string
 }

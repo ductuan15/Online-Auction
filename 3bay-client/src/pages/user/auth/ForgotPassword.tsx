@@ -17,7 +17,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 const ForgotPassword = (): JSX.Element => {
 
-  const [error, setError] = useState<string | null>(null)
+  const [errorText, setErrorText] = useState<string | null>(null)
   const [emailOK, setEmailOK] = useState(false)
   const [verifying, setVerifying] = useState(false)
   const [resendButtonDisabled, setResendButtonDisabled] = useState(false)
@@ -50,7 +50,7 @@ const ForgotPassword = (): JSX.Element => {
 
     await AuthService.checkEmailBeforeResetPassword(data.get('email') as string)
     setEmailOK(true)
-    setError(null)
+    setErrorText(null)
   }
 
   async function changePassword(event: React.FormEvent<HTMLFormElement>) {
@@ -58,7 +58,7 @@ const ForgotPassword = (): JSX.Element => {
     const pwd = data.get('pwd') as string
     const pwd2 = data.get('pwd2') as string
     if (pwd !== pwd2) {
-      setError('Password mismatched')
+      setErrorText('Password mismatched')
       return
     }
 
@@ -68,15 +68,15 @@ const ForgotPassword = (): JSX.Element => {
       navigate(from, { replace: true })
     })
 
-    setError(null)
+    setErrorText(null)
   }
 
   function handleError(error: unknown) {
     if (axios.isAxiosError(error) && (error as AxiosError)) {
       //console.log(error.response?.data.message)
-      setError(error.response?.data.message || 'Unknown error')
+      setErrorText(error.response?.data.message || 'Unknown error')
     } else {
-      setError('Unknown error')
+      setErrorText('Unknown error')
     }
   }
 
@@ -97,7 +97,7 @@ const ForgotPassword = (): JSX.Element => {
   const handleResendOtp = async () => {
     try {
       await AuthService.resendResetPasswordOTP(email)
-      setError(null)
+      setErrorText(null)
       setResendButtonDisabled(true)
       setTimeout(() => {
         setResendButtonDisabled(false)
@@ -132,9 +132,9 @@ const ForgotPassword = (): JSX.Element => {
         </Typography>
       )}
 
-      {error && (
+      {errorText && (
         <Alert sx={{ mt: 2, mb: 2, width: 1 }} severity='error'>
-          {error}
+          {errorText}
         </Alert>
       )}
 

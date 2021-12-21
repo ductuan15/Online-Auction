@@ -11,6 +11,8 @@ import UserService from '../../../services/user.service'
 import axios, { AxiosError } from 'axios'
 import { Alert } from '@mui/lab'
 import { useAuth } from '../../../contexts/user/AuthContext'
+import { useIsMounted } from 'usehooks-ts'
+import { Link as RouterLink } from 'react-router-dom'
 
 // type AccountProps = {
 //   foo?: string
@@ -23,6 +25,7 @@ const Account = (): JSX.Element => {
   } = useUserContext()
 
   const authContext = useAuth()
+  const isMounted = useIsMounted()
 
   const { control, reset, handleSubmit, formState } = useForm<UserDetails>({
     mode: 'onBlur',
@@ -50,11 +53,13 @@ const Account = (): JSX.Element => {
     alignItems: 'center',
   }
   const labelGridProps = {
-    xs: 3,
+    xs: 2,
+    sm: 3,
   }
 
   const inputGridProps = {
-    xs: 9,
+    xs: 10,
+    sm: 9,
   }
 
   const onSubmit: SubmitHandler<UserDetails> = async (data) => {
@@ -63,10 +68,12 @@ const Account = (): JSX.Element => {
       setErrorText(null)
       setSave(true)
     } catch (e) {
+      let msg = 'Unknown error occurred'
       if (axios.isAxiosError(e) && (e as AxiosError)) {
-        setErrorText(e.response?.data.message || 'Unknown error occurred')
-      } else {
-        setErrorText('Unknown error occurred')
+        msg = e.response?.data.message || 'Unknown error occurred'
+      }
+      if (isMounted()) {
+        setErrorText(msg)
       }
     }
   }
@@ -121,15 +128,21 @@ const Account = (): JSX.Element => {
           </Typography>
         </Grid>
 
-        <Grid item {...inputGridProps}>
+        <Grid item {...inputGridProps} xs={7} sm={6}>
           <EmailTextField
             error={errors.email}
             control={control}
             name={'email'}
-            // textFieldProps={{
-            //   disabled: true,
-            // }}
+            textFieldProps={{
+              disabled: true,
+            }}
           />
+        </Grid>
+
+        <Grid item container xs={3} sm={3} justifyContent='flex-end'>
+          <Button variant='outlined' color='error' component={RouterLink} to={'/change-email'}>
+            Change email
+          </Button>
         </Grid>
       </Grid>
 
