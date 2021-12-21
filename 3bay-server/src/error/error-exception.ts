@@ -85,20 +85,20 @@ export class AuthError extends ErrorException {
   constructor({ code, message, metaData }: ErrorParams) {
     super({ code, metaData, message })
     switch (code) {
-      case AuthErrorCode.NotVerified:
-        this.status = 401
-        this.message = 'Account is not verified'
-        break
       case AuthErrorCode.EmailAlreadyUsed:
         this.message = 'This email address is already used'
         this.status = 400
         break
-      case AuthErrorCode.TokenExpired:
-        this.status = 498
-        break
       case AuthErrorCode.WrongEmailOrPassword:
         this.status = 401
         this.message = 'Invalid Email or password'
+        break
+      case AuthErrorCode.NotVerified:
+        this.status = 401
+        this.message = 'Account is not verified'
+        break
+      case AuthErrorCode.TokenExpired:
+        this.status = 498
         break
       case AuthErrorCode.AccountDisabled:
         this.status = 401
@@ -116,9 +116,17 @@ export class AuthError extends ErrorException {
         this.status = 498
         this.message = 'OTP code has expired'
         break
+      case AuthErrorCode.OTPNotExpired:
+        this.status = 400
+        this.message = 'OTP code has not expired yet'
+        break
       case AuthErrorCode.AccountNotExist:
         this.status = 401
         this.message = 'Email does not exist'
+        break
+      case AuthErrorCode.AlreadyVerified:
+        this.status = 400
+        this.message = 'Account is already verfied'
         break
       case AuthErrorCode.RecaptchaFailed:
         this.status = 401
@@ -128,9 +136,8 @@ export class AuthError extends ErrorException {
         this.status = 401
         this.message = 'Wrong password'
         break
-      case AuthErrorCode.OTPNotExpired:
-        this.status = 400
-        this.message = 'OTP code has not expired yet'
+      case AuthErrorCode.NotHavePermisison:
+        this.status = 403
         break
       default:
         this.status = 500

@@ -19,7 +19,10 @@ const verifyTemplate = Handlebars.compile(
   mjml(verifyMjmlContent.toString()).html,
 )
 
-const sendVerifyEmail = async (otp: string, user: Prisma.User) => {
+const sendVerifyEmail = async (otp: string, user: {
+  email: string,
+  name: string
+}) => {
   const subject = `Please verify your 3bay account`
   await sendMail(
     [user.email],
@@ -57,10 +60,11 @@ export function generateOtp(
 
 async function sendOTP(
   user: Prisma.User,
-  resend: boolean,
+  overrideExistedOtp: boolean,
   otpType: Prisma.OtpType,
-  data: string | null,
-  cb: (otpCode: string, user: Prisma.User) => void,
+  data: string | null | undefined,
+  cb: (otpCode: Prisma.otp, user: Prisma.User) => void,
+  ignoreExpiryTime?: boolean,
 ) {
   const hasOtp = await prisma.otp.findUnique({
     where: {
@@ -73,14 +77,27 @@ async function sendOTP(
 
   const { otp: otpCode, expiryTime } = generateOtp()
 
-  if (hasOtp) {
-    if (!resend) return
+  let otpData = {
+    id: user.uuid,
+    type: otpType,
+    otp: otpCode,
+    expiryTime: expiryTime,
+    data: data,
+  }
+  if (data === undefined) {
+    delete otpData.data
+  }
 
-    if (moment(hasOtp.expiryTime).isAfter(moment.now())) {
+  let otpResponse: Prisma.otp
+
+  if (hasOtp) {
+    if (!overrideExistedOtp) return
+
+    if (moment(hasOtp.expiryTime).isAfter(moment.now()) && !ignoreExpiryTime) {
       throw new AuthError({ code: AuthErrorCode.OTPNotExpired })
     }
 
-    await prisma.otp.update({
+    otpResponse = await prisma.otp.update({
       where: {
         id_type: {
           id: user.uuid,
@@ -88,23 +105,17 @@ async function sendOTP(
         },
       },
       data: {
-        otp: otpCode,
-        expiryTime: expiryTime,
-        data: data,
+        ...otpData,
       },
     })
   } else {
-    await prisma.otp.create({
+    otpResponse = await prisma.otp.create({
       data: {
-        id: user.uuid,
-        type: otpType,
-        otp: otpCode,
-        expiryTime: expiryTime,
-        data: data,
+        ...otpData,
       },
     })
   }
-  cb(otpCode, user)
+  cb(otpResponse, user)
 }
 
 export async function sendVerifyOTP(user: Prisma.User, resend: boolean) {
@@ -115,9 +126,8 @@ export async function sendVerifyOTP(user: Prisma.User, resend: boolean) {
     resend,
     Prisma.OtpType.VERIFY,
     null,
-    async (otpCode: string, user: Prisma.User) => {
-      // send the email
-      await sendVerifyEmail(otpCode, user)
+    async (otpCode: Prisma.otp, user: Prisma.User) => {
+      await sendVerifyEmail(otpCode.otp, user)
     },
   )
 }
@@ -128,10 +138,31 @@ export async function sendResetPasswordOTP(user: Prisma.User, resend: boolean) {
     resend,
     Prisma.OtpType.CHANGE_PWD,
     null,
-    async (otpCode: string, user: Prisma.User) => {
+    async (otpCode: Prisma.otp, user: Prisma.User) => {
       // send the email
-      await sendResetPasswordEmail(otpCode, user)
+      await sendResetPasswordEmail(otpCode.otp, user)
     },
+  )
+}
+
+export async function sendChangeEmailOTP(
+  user: Prisma.User,
+  resend: boolean,
+  email?: string,
+) {
+  await sendOTP(
+    user,
+    true,
+    Prisma.OtpType.CHANGE_EMAIL,
+    !resend ? email : undefined,
+    async (otpCode: Prisma.otp, user: Prisma.User) => {
+      //
+      await sendVerifyEmail(otpCode.otp, {
+        ...user,
+        email: otpCode.data!,
+      })
+    },
+    resend,
   )
 }
 
@@ -139,13 +170,23 @@ export async function verifyOTP(
   user: Prisma.User,
   otpCode: string,
   otpType: Prisma.OtpType,
-  data: string | null,
+  data?: string | null,
 ): Promise<boolean> {
+
+  let whereClause = {
+    id: user.uuid,
+    type: otpType,
+    data: data,
+  }
+  // When it is unnecessary to compare the data column at `otp` table
+  if (data === undefined) {
+    delete whereClause.data
+  }
+
   const otp = await prisma.otp.findFirst({
     where: {
       id: user.uuid,
       type: otpType,
-      data: data,
     },
   })
 

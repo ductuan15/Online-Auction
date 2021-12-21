@@ -6,7 +6,13 @@ import Prisma from '@prisma/client'
 import jwt from 'jsonwebtoken'
 import config from '../config/config.js'
 import crypto from 'crypto'
-import { sendResetPasswordOTP, sendVerifyOTP, verifyOTP } from '../auth/otp.js'
+import {
+  sendChangeEmailOTP,
+  sendResetPasswordOTP,
+  sendVerifyOTP,
+  verifyOTP,
+} from '../auth/otp.js'
+import { getAccountInfo } from './user.controller.js'
 
 async function hasEmailAlreadyExisted(email: string) {
   const user = await prisma.user.findUnique({
@@ -145,7 +151,7 @@ export async function verifyAccount(
         next(new AuthError({ code: AuthErrorCode.AlreadyVerified }))
       }
 
-      if (user && (await verifyOTP(user, code, Prisma.OtpType.VERIFY, null))) {
+      if (user && (await verifyOTP(user, code, Prisma.OtpType.VERIFY))) {
         await prisma.user.update({
           where: { uuid: id },
           data: { verified: true },
@@ -235,7 +241,7 @@ export async function resetPassword(
     })
 
     // verify OTP code
-    if (user && (await verifyOTP(user, code, Prisma.OtpType.CHANGE_PWD, null))) {
+    if (user && (await verifyOTP(user, code, Prisma.OtpType.CHANGE_PWD))) {
       await prisma.user.update({
         where: { email: email },
         data: { pwd: pwd },
@@ -275,4 +281,89 @@ export async function reSendResetPasswordOTP(
     }
   }
   return next(new ErrorException({ code: ErrorCode.BadRequest }))
+}
+
+export async function startChangingEmail(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const user = req.user as Prisma.User
+
+  try {
+    const hasEmail = await prisma.user.findFirst({
+      where: {
+        email: req.body.email,
+      },
+    })
+    if (hasEmail) {
+      return next(new AuthError({ code: AuthErrorCode.EmailAlreadyUsed }))
+    }
+
+    await sendChangeEmailOTP(user, false, req.body.email)
+    return res.status(200).end()
+  } catch (e) {
+    return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
+  }
+}
+
+export async function resendChangeEmailOtp(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const user = req.user as Prisma.User
+  try {
+    await sendChangeEmailOTP(user, true)
+    return res.status(200).end()
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return next(e)
+    }
+    return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
+  }
+}
+
+export async function verifyNewEmail(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const user = req.user as Prisma.User
+  // console.log(req.body)
+  try {
+    const hasEmail = await prisma.user.findFirst({
+      where: {
+        email: req.body.email,
+      },
+    })
+    if (hasEmail) {
+      return next(new AuthError({ code: AuthErrorCode.EmailAlreadyUsed }))
+    }
+    if (
+      await verifyOTP(
+        user,
+        req.body.otp,
+        Prisma.OtpType.CHANGE_EMAIL,
+        req.body.email,
+      )
+    ) {
+      await prisma.user.update({
+        where: {
+          uuid: user.uuid,
+        },
+        data: {
+          email: req.body.email,
+        },
+      })
+      return getAccountInfo(req, res)
+    }
+    return next(new AuthError({ code: AuthErrorCode.WrongOTP }))
+  } catch (e) {
+    console.log(e)
+    if (e instanceof AuthError) {
+      return next(e)
+    }
+    return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
+  }
 }

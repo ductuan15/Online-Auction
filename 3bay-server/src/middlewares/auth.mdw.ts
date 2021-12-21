@@ -93,15 +93,15 @@ export function ensureParamIdSameWithJWTPayload(
 
 export function isAuthorize(role: keyof typeof Prisma.Role) {
   return (req: Request, res: Response, next: NextFunction) => {
-    console.log(role, req.user?.role)
+    // console.log(role, req.user?.role)
 
     if (req.user?.role === role) {
       return next()
     }
-    //New Auth Error Code
     return next(
       new AuthError({
-        code: `This action is only for ${role}`,
+        code: AuthErrorCode.NotHavePermisison,
+        message: `This action is only for ${role}`,
       }),
     )
   }

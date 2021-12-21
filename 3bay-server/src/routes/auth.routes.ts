@@ -2,18 +2,19 @@ import * as express from 'express'
 import validate from '../middlewares/ajv-validate.js'
 import userSchema from '../schemas/sign-up.js'
 import signInSchema from '../schemas/sign-in.js'
+import changeEmailSchema from '../schemas/change-email.js'
 import resetPasswordSchema from '../schemas/reset-password.js'
 
 import {
-  refreshAccessToken,
+  refreshAccessToken, resendChangeEmailOtp,
   reSendResetPasswordOTP,
   reSendVerifyOTP,
   resetPassword,
   signIn,
-  signUp,
+  signUp, startChangingEmail,
   startResetPassword,
   startVerify,
-  verifyAccount,
+  verifyAccount, verifyNewEmail,
 } from '../controllers/auth.controller.js'
 import { hashPassword, verifyRecaptcha } from '../middlewares/auth.mdw.js'
 import passport from '../auth/passport.js'
@@ -52,6 +53,31 @@ router
     validate(resetPasswordSchema),
     hashPassword,
     resetPassword,
+  )
+
+router
+  .post(
+    '/auth/change-email/resend/',
+    passport.authenticate('jwt', {
+      session: false,
+    }),
+    resendChangeEmailOtp
+  )
+  .post(
+    '/auth/change-email/verify/',
+    passport.authenticate('jwt', {
+      session: false,
+    }),
+    validate(changeEmailSchema),
+    verifyNewEmail
+  )
+  .post(
+    '/auth/change-email/',
+    passport.authenticate('jwt', {
+      session: false,
+    }),
+    validate(changeEmailSchema),
+    startChangingEmail
   )
 
 export default router
