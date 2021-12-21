@@ -31,8 +31,8 @@ model Auction {
   productId               Int
   winningBidId            Int?
   autoExtendAuctionTiming Boolean
-  product                 Product   @relation("auctionsToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "auctions_fk0")
-  winningBid              Bid?      @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auctions_fk1")
+  product                 Product   @relation("auctionsToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auctions_fk0")
+  winningBid              Bid?      @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auctions_fk1")
   bids                    Bid[]     @relation("auctionsTobids_auctionId")
 
   @@index([productId], map: "auctions_fk0")
@@ -48,8 +48,8 @@ model Bid {
   isAccepted     Boolean   @default(true)
   bidderId       String    @db.VarChar(255)
   auctionId      Int
-  auction        Auction   @relation("auctionsTobids_auctionId", fields: [auctionId], references: [id], onUpdate: Restrict, map: "bids_fk1")
-  bidder         User      @relation("bidsTousers", fields: [bidderId], references: [uuid], onUpdate: Restrict, map: "bids_fk0")
+  auction        Auction   @relation("auctionsTobids_auctionId", fields: [auctionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "bids_fk1")
+  bidder         User      @relation("bidsTousers", fields: [bidderId], references: [uuid], onDelete: NoAction, onUpdate: NoAction, map: "bids_fk0")
   winningAuction Auction[] @relation("auctions_winningBidIdTobids")
 
   @@index([bidderId], map: "bids_fk0")
@@ -62,7 +62,7 @@ model ProductDescriptionHistory {
   description String   @db.VarChar(255)
   productId   Int
   createdAt   DateTime @default(now()) @db.DateTime(0)
-  products    Product  @relation("product_des_historyToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "product_des_history_fk0")
+  products    Product  @relation("product_des_historyToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_des_history_fk0")
 
   @@index([productId], map: "product_des_history_fk0")
   @@map("product_des_history")
@@ -72,7 +72,7 @@ model ProductImage {
   id        Int     @id @default(autoincrement())
   productId Int
   img       String  @db.Text
-  products  Product @relation("product_imagesToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "product_images_fk0")
+  products  Product @relation("product_imagesToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_images_fk0")
 
   @@index([productId], map: "product_images_fk0")
   @@map("product_images")
@@ -86,8 +86,8 @@ model Product {
   createdAt                 DateTime                    @default(now()) @db.DateTime(0)
   deletedAt                 DateTime?                   @db.DateTime(0)
   currentPrice              Decimal                     @db.Decimal(19, 4)
-  categories                Category                    @relation("categoriesToproducts", fields: [categoryId], references: [id], map: "products_fk0")
-  users                     User                        @relation("productsTousers", fields: [sellerId], references: [uuid], map: "products_fk1")
+  categories                Category                    @relation("categoriesToproducts", fields: [categoryId], references: [id], onDelete: NoAction, map: "products_fk0")
+  users                     User                        @relation("productsTousers", fields: [sellerId], references: [uuid], onDelete: NoAction, map: "products_fk1")
   auctions                  Auction[]                   @relation("auctionsToproducts")
   productDescriptionHistory ProductDescriptionHistory[] @relation("product_des_historyToproducts")
   productImages             ProductImage[]              @relation("product_imagesToproducts")
@@ -101,7 +101,7 @@ model Product {
 
 model UpgradeToBidderRequest {
   userId String @id @db.VarChar(255)
-  user   User   @relation("upgrade_to_bidder_requestsTousers", fields: [userId], references: [uuid], map: "upgrade_to_bidder_requests_fk0")
+  user   User   @relation("upgrade_to_bidder_requestsTousers", fields: [userId], references: [uuid], onDelete: NoAction, map: "upgrade_to_bidder_requests_fk0")
 
   @@map("upgrade_to_bidder_requests")
 }
@@ -109,8 +109,8 @@ model UpgradeToBidderRequest {
 model UserWatchlist {
   userId    String  @db.VarChar(255)
   productId Int
-  products  Product @relation("productsTouser_watchlist", fields: [productId], references: [id], onUpdate: Restrict, map: "user_watchlist_fk1")
-  user      User    @relation("user_watchlistTousers", fields: [userId], references: [uuid], map: "user_watchlist_fk0")
+  products  Product @relation("productsTouser_watchlist", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_watchlist_fk1")
+  user      User    @relation("user_watchlistTousers", fields: [userId], references: [uuid], onDelete: NoAction, map: "user_watchlist_fk0")
 
   @@id([userId, productId])
   @@index([userId], map: "user_watchlist_fk0")
