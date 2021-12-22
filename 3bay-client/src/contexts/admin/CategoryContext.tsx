@@ -3,6 +3,7 @@ import {
   Dispatch,
   ReactNode,
   useContext,
+  useEffect,
   useMemo,
   useReducer,
 } from 'react'
@@ -13,6 +14,7 @@ import {
   initialCategoryState,
 } from '../../stores/admin/category.store'
 import Category from '../../data/category'
+import axiosApiInstance from '../../services/api'
 
 type CategoryProviderProps = {
   children: ReactNode
@@ -66,6 +68,17 @@ export const CategoryProvider = ({
   const updateCategory = (current: Category, updated: Category) => {
     dispatch({ type: 'UPDATE', payload: { current, updated } })
   }
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const response = await axiosApiInstance.get(`api/category`)
+        addAllCategories(response.data as Array<Category>)
+      } catch (e) {
+        console.log(e)
+      }
+    })()
+  }, [])
 
   const contextValue = useMemo(
     () => ({

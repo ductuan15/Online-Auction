@@ -32,7 +32,7 @@ const AdminMenu = (): JSX.Element | null => {
             color='primary.main'
             align='center'
           >
-            🏷️ Administrator tasks
+            🏷️ Administration tasks
           </Typography>
         </Grid>
         {adminMenuItems.map((card) => (

@@ -16,23 +16,23 @@ interface Props {
 export default function HomeLayout({ children }: Props): JSX.Element {
   return (
     <StyledDiv>
-      {/* app bar */}
-      <AppBarCtxProvider>
-        <SearchAppBar />
-        <CategoryProvider>
+      <CategoryProvider>
+        {/* app bar */}
+        <AppBarCtxProvider>
+          <SearchAppBar />
           <AppDrawer />
-        </CategoryProvider>
-      </AppBarCtxProvider>
+        </AppBarCtxProvider>
 
-      <StyledToolbar sx={(theme) => ({ marginBottom: theme.spacing(1) })} />
+        <StyledToolbar sx={(theme) => ({ marginBottom: theme.spacing(1) })} />
 
-      {/* main content */}
+        {/* main content */}
 
-      <Container sx={{ bgcolor: 'background.paper' }}>
-        {children ? children : <Outlet />}
-      </Container>
+        <Container sx={{ bgcolor: 'background.paper' }}>
+          {children ? children : <Outlet />}
+        </Container>
 
-      <AppFooter />
+        <AppFooter />
+      </CategoryProvider>
     </StyledDiv>
   )
 }

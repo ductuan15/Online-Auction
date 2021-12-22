@@ -62,7 +62,7 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
         console.log(e)
       }
     })()
-  }, [])
+  }, [authData])
 
   const contextValue = useMemo(
     () => ({
