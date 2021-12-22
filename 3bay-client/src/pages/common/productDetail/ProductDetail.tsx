@@ -1,6 +1,6 @@
 import * as React from 'react'
-import {useEffect, useState} from 'react'
-import { Divider, Grid, Typography } from '@mui/material'
+import { useEffect } from 'react'
+import { Divider, Grid, Paper, Typography } from '@mui/material'
 import CarouselCard from '../../../components/common/Carousel'
 
 import ProductImage from '../../../components/common/product/ProductImage'
@@ -12,7 +12,9 @@ import {
 } from '../../../contexts/product/ProductContext'
 import axiosApiInstance from '../../../services/api'
 import Product from '../../../data/product'
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from '@mui/icons-material/Edit'
+import moment from 'moment'
+
 const ProductDetail = (): JSX.Element => {
   return (
     <ProductProvider>
@@ -25,13 +27,11 @@ export default ProductDetail
 const ProductDetailContent = (): JSX.Element | null => {
   // const productId = props.match.params.productId                                               //get productId
 
-  const { updateCurrentProduct, dispatch } = useProductContext()
+  const { updateCurrentProduct } = useProductContext()
   const { state } = useProductContext()
-  const [description, setDescription] = useState('')
-
 
   useEffect(() => {
-    (async function loadProduct() {
+    ;(async function loadProduct() {
       try {
         const response = await axiosApiInstance.get(
           '/api/product/1?isWithDescription=true',
@@ -46,21 +46,7 @@ const ProductDetailContent = (): JSX.Element | null => {
     })()
   }, [])
 
-  // useEffect(() => {
-  //   // console.log(product?.detail)    //log ra undefined => ch có product => làm sao để gọi api xong mới render mn và vì sao Info có product còn bên đây thì ko dù cả 2 render cùng lúc?
-  //   if(state.currentProduct?.productDescriptionHistory) {
-  //     const des = ""
-  //   }
-  //
-  //
-  //   // console.log(images)
-  //   // setImages(images)
-  // }, [state.currentProduct])
-
-  // const product = state.currentProduct
-  // console.log(product)
-
-  return  (
+  return (
     <Grid container display='flex' alignItems='center' flexDirection='column'>
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         <Grid item xs={6}>
@@ -73,21 +59,36 @@ const ProductDetailContent = (): JSX.Element | null => {
 
       <CarouselCard name={'Sản phẩm tương tự'} />
 
-      <Grid
-        container
-        marginTop={1}
-        marginBottom={4}
-        spacing={4}
-        justifyContent='between'
+      <Paper
+        elevation={0}
+        variant='outlined'
+        sx={{
+          width: 1,
+        }}
       >
         <Divider />
         <Typography gutterBottom variant='h4' component='h5'>
           Mô tả sản phẩm
         </Typography>
-        <Typography variant='body1' color='text.secondary'>
-
-        </Typography>
-      </Grid>
+        {
+          state.currentProduct ?
+          state.currentProduct.productDescriptionHistory
+            .map(function (des) {
+              return (
+                <Grid key={des.id}>
+                  <Typography variant='body1' color='text.primary'>
+                    <EditIcon />
+                    <span>{moment(des.time).format('DD/MM/YYYY')}</span>
+                  </Typography>
+                  <Typography variant='body1' color='text.primary' component={"div"}>
+                    - {des.description}
+                  </Typography>
+                </Grid>
+              )
+            })
+            : null
+        }
+      </Paper>
     </Grid>
   )
 }
