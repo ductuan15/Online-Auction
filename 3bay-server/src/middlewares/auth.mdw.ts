@@ -30,7 +30,10 @@ export function hashPasswordField(fieldName: string) {
     next: NextFunction,
   ) {
     if (req.body && req.body[fieldName]) {
-      req.body[fieldName] = await bcrypt.hash(req.body[fieldName], config.SALT_ROUND)
+      req.body[fieldName] = await bcrypt.hash(
+        req.body[fieldName],
+        config.SALT_ROUND,
+      )
     }
     next()
   }
@@ -105,4 +108,8 @@ export function isAuthorize(role: keyof typeof Prisma.Role) {
       }),
     )
   }
+}
+
+export function requireAdminRole() {
+  return isAuthorize(Prisma.Role.ADMINISTRATOR)
 }

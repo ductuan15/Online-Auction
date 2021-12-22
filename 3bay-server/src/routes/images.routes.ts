@@ -4,7 +4,7 @@ import imagesController from '../controllers/images.controller.js'
 const router = express.Router()
 
 router
-  .route('/api/images/category/:categoryId/')
+  .route('/category/:categoryId/')
   .get(imagesController.findCategoryThumbnail)
 
 router.param('categoryId', imagesController.findCategoryThumbnailById)

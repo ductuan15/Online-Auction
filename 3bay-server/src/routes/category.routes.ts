@@ -6,7 +6,7 @@ import passport from '../auth/passport.js'
 const router = express.Router()
 
 router
-  .route('/api/category')
+  .route('/')
   .get(categoryController.findAll)
   .post(
     passport.authenticate('jwt', { session: false }),
@@ -15,7 +15,7 @@ router
   )
 
 router
-  .route('/api/category/:categoryId')
+  .route('/:categoryId')
   .get(categoryController.read)
   .patch(
     passport.authenticate('jwt', { session: false }),

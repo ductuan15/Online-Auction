@@ -61,10 +61,10 @@ function mountRoutes() {
   app.use('/api/product', productRoute)
   app.use('/api/images/product', imagesProductRoute);
   app.use('/api/auction', auctionRoute)
-  app.use('/', categoryRoute)
-  app.use('/', imagesRoute)
-  app.use('/', userRoute)
-  app.use('/', authRoute)
+  app.use('/api/category', categoryRoute)
+  app.use('/api/images', imagesRoute)
+  app.use('/api/user', userRoute)
+  app.use('/auth', authRoute)
 }
 
 function initializeErrorHandler() {

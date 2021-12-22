@@ -16,24 +16,24 @@ import {
 
 const router = express.Router()
 
-// router.use(passport.authenticate('jwt', { session: false }))
+router.use(
+  passport.authenticate('jwt', { session: false }),
+  // ensureParamIdSameWithJWTPayload,
+)
 
 router
-  .route('/api/user/account/:id')
+  .route('/account/:id')
   .get(
-    passport.authenticate('jwt', { session: false }),
     ensureParamIdSameWithJWTPayload,
     getAccountInfo,
   )
   .post(
-    passport.authenticate('jwt', { session: false }),
     validate(accountSchema),
     ensureParamIdSameWithJWTPayload,
     updateAccountInfo,
   )
 
-router.route('/api/user/password/:id').post(
-  passport.authenticate('jwt', { session: false }),
+router.route('/password/:id').post(
   validate(passwordSchema),
   ensureParamIdSameWithJWTPayload,
   hashPasswordField('newPwd'),

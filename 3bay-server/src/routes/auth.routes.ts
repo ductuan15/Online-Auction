@@ -22,7 +22,7 @@ import passport from '../auth/passport.js'
 const router = express.Router()
 
 router.post(
-  '/auth/signup',
+  '/signup',
   validate(userSchema),
   verifyRecaptcha,
   hashPassword,
@@ -30,7 +30,7 @@ router.post(
 )
 
 router.post(
-  '/auth/signin',
+  '/signin',
   validate(signInSchema),
   passport.authenticate('local', {
     session: false,
@@ -38,18 +38,18 @@ router.post(
   signIn,
 )
 
-router.post('/auth/rf', refreshAccessToken)
+router.post('/rf', refreshAccessToken)
 
 router
-  .get('/auth/verify/resend/:id', reSendVerifyOTP)
-  .get('/auth/verify/:id', startVerify)
-  .post('/auth/verify/:id', verifyAccount)
+  .get('/verify/resend/:id', reSendVerifyOTP)
+  .get('/verify/:id', startVerify)
+  .post('/verify/:id', verifyAccount)
 
 router
-  .post('/auth/reset-pwd/resend', reSendResetPasswordOTP)
-  .post('/auth/reset-pwd/request', startResetPassword)
+  .post('/reset-pwd/resend', reSendResetPasswordOTP)
+  .post('/reset-pwd/request', startResetPassword)
   .post(
-    '/auth/reset-pwd/',
+    '/reset-pwd/',
     validate(resetPasswordSchema),
     hashPassword,
     resetPassword,
@@ -57,14 +57,14 @@ router
 
 router
   .post(
-    '/auth/change-email/resend/',
+    '/change-email/resend/',
     passport.authenticate('jwt', {
       session: false,
     }),
     resendChangeEmailOtp
   )
   .post(
-    '/auth/change-email/verify/',
+    '/change-email/verify/',
     passport.authenticate('jwt', {
       session: false,
     }),
@@ -72,7 +72,7 @@ router
     verifyNewEmail
   )
   .post(
-    '/auth/change-email/',
+    '/change-email/',
     passport.authenticate('jwt', {
       session: false,
     }),
