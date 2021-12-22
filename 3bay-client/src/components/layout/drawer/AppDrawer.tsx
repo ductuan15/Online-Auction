@@ -8,6 +8,7 @@ import { useEffect } from 'react'
 import axiosApiInstance from '../../../services/api'
 import Category from '../../../data/category'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import AdminDrawerMenu from '../../admin/home/AdminDrawerMenu'
 
 type AppDrawerProps = {
   anchor?: 'left' | 'top' | 'right' | 'bottom'
@@ -62,6 +63,10 @@ const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
         })}
       >
         <AppName />
+      </Box>
+
+      <Box>
+        <AdminDrawerMenu />
       </Box>
 
       <Box>

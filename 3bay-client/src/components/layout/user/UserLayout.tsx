@@ -1,45 +1,12 @@
-import { Button, Grid, MenuItem, MenuList, Typography } from '@mui/material'
+import { Button, Grid, MenuList, Typography } from '@mui/material'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
-import {
-  Link as RouterLink,
-  NavLink,
-  Outlet,
-  To,
-  useMatch,
-  useResolvedPath,
-} from 'react-router-dom'
+import { Link as RouterLink, Outlet } from 'react-router-dom'
 import { useUserContext } from '../../../contexts/user/UserContext'
+import StyledMenuItem from '../../common/StyledMenuItem'
 
 // type UserLayoutProps = {
 //   children?: ReactNode
 // }
-
-type StyledMenuItemProps = {
-  to: To
-  selected?: boolean
-  text: string
-}
-
-const StyledMenuItem = ({ to, text }: StyledMenuItemProps): JSX.Element => {
-  const resolved = useResolvedPath(to)
-  const match = useMatch({ path: resolved.pathname, end: true })
-
-  return (
-    <MenuItem
-      component={NavLink}
-      sx={{
-        py: 1,
-        borderRadius: '8px',
-      }}
-      to={to}
-      selected={!!match}
-    >
-      <Typography variant='button' color={match ? 'primary' : 'text.primary'}>
-        {text}
-      </Typography>
-    </MenuItem>
-  )
-}
 
 type MenuItemLink = {
   id: number

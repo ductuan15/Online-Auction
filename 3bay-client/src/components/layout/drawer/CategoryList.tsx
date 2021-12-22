@@ -11,7 +11,61 @@ import {
   ListSubheader,
 } from '@mui/material'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
-import { useNavigate } from 'react-router-dom'
+import {
+  NavigateFunction,
+  useMatch,
+  useNavigate,
+  useResolvedPath,
+} from 'react-router-dom'
+
+function renderCategoryItem(navigate: NavigateFunction, category: Category) {
+  const [open, setOpen] = useState(true)
+
+  const categoryLink = `/product/cat/${category.id}`
+  const resolved = useResolvedPath(categoryLink)
+  const match = useMatch({ path: resolved.pathname, end: true })
+
+  const onCategoryClicked = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    navigate(categoryLink)
+  }
+
+  const handleExpand = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    setOpen(!open)
+  }
+
+  const hasSubCategories =
+    category.otherCategories && category.otherCategories.length != 0
+
+  return (
+    <React.Fragment key={category.id}>
+      <ListItemButton onClick={onCategoryClicked} selected={!!match}>
+        <ListItemText
+          primary={category.title}
+          primaryTypographyProps={{
+            color: 'text.secondary',
+            typography: 'subtitle',
+            letterSpacing: 0,
+          }}
+        />
+
+        {hasSubCategories && open && <ExpandLess onClick={handleExpand} />}
+        {category.otherCategories && !open && (
+          <ExpandMore onClick={handleExpand} />
+        )}
+      </ListItemButton>
+      {hasSubCategories && (
+        <Collapse in={open} timeout='auto' unmountOnExit>
+          <List component='div' disablePadding sx={{ ml: 2 }}>
+            {/* recursion */}
+            {renderCategoryTree(category.otherCategories)}
+          </List>
+        </Collapse>
+      )}
+    </React.Fragment>
+  )
+}
 
 function renderCategoryTree(categories?: Category[]): JSX.Element | null {
   if (categories) {
@@ -19,49 +73,7 @@ function renderCategoryTree(categories?: Category[]): JSX.Element | null {
     return (
       <>
         {categories.map((category) => {
-          const [open, setOpen] = useState(true)
-          const onCategoryClicked = (e: SyntheticEvent) => {
-            e.stopPropagation()
-            navigate(`/product/cat/${category.id}`)
-          }
-
-          const handleExpand = (e: SyntheticEvent) => {
-            e.stopPropagation()
-            setOpen(!open)
-          }
-
-          const hasSubCategories =
-            category.otherCategories && category.otherCategories.length != 0
-
-          return (
-            <React.Fragment key={category.id}>
-              <ListItemButton onClick={onCategoryClicked}>
-                <ListItemText
-                  primary={category.title}
-                  primaryTypographyProps={{
-                    color: 'text.secondary',
-                    typography: 'subtitle',
-                    letterSpacing: 0,
-                  }}
-                />
-
-                {hasSubCategories && open && (
-                  <ExpandLess onClick={handleExpand} />
-                )}
-                {category.otherCategories && !open && (
-                  <ExpandMore onClick={handleExpand} />
-                )}
-              </ListItemButton>
-              {hasSubCategories && (
-                <Collapse in={open} timeout='auto' unmountOnExit>
-                  <List component='div' disablePadding sx={{ ml: 2 }}>
-                    {/* recursion */}
-                    {renderCategoryTree(category.otherCategories)}
-                  </List>
-                </Collapse>
-              )}
-            </React.Fragment>
-          )
+          return renderCategoryItem(navigate, category)
         })}
       </>
     )
