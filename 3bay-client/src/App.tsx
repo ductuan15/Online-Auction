@@ -11,7 +11,6 @@ import HomeLayout from './components/layout/HomeLayout'
 import SignInLayout from './components/layout/SignInLayout'
 import ForgotPassword from './pages/user/auth/ForgotPassword'
 import VerifyAccount from './pages/user/auth/VerifyAccount'
-import Product from './pages/common/productDetail/Product'
 import RequireAdminRole from './components/user/auth/RequireAdminRole'
 import ProductList from './pages/common/productList/productList'
 import UserLayout from './components/layout/user/UserLayout'
@@ -19,9 +18,11 @@ import Account from './pages/user/profile/Account'
 import Password from './pages/user/profile/Password'
 import Profile from './pages/user/profile/Profile'
 import RequireLogin from './components/user/auth/RequireLogin'
+import ProductDetail from './pages/common/productDetail/ProductDetail';
 import ChangeEmail from './pages/user/auth/ChangeEmail'
 import ScrollToTop from './components/layout/ScrollToTop'
 import { UserProvider } from './contexts/user/UserContext'
+
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -36,8 +37,8 @@ function GlobalRouter(): JSX.Element {
             <Route path='cat' element={<CategoryManagement />} />
           </Route>
 
-          <Route path='product/:id' element={<Product />} />
-          <Route path='products/' element={<ProductList />} />
+        <Route path='product/:id' element={<ProductDetail/>}/>
+        <Route path='products/' element={<ProductList/>}/>
 
           <Route element={<RequireLogin />}>
             <Route path='user/view' element={<Profile />} />

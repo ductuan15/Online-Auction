@@ -1,16 +1,7 @@
 import * as React from 'react'
-import { experimentalStyled as styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
 import CardProduct from '../../../components/common/product/CardProduct'
-
-const Item = styled(Paper)(({ theme }) => ({
-  ...theme.typography.body2,
-  padding: theme.spacing(2),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}))
 
 const Product = (): JSX.Element => {
   const data = [
