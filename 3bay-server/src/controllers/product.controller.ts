@@ -22,9 +22,15 @@ export const productById = async (
   _: string,
 ) => {
   try {
-    req.product = await prisma.product.findUnique({
+    const isWithDescription = !!req.query.isWithDescription
+    console.log(req.query.isWithDescription)
+    req.product = await prisma.product.findFirst({
       where: {
         id: +value,
+        deletedAt: null,
+      },
+      include: {
+        productDescriptionHistory: isWithDescription,
       },
       rejectOnNotFound: true,
     })
@@ -231,7 +237,7 @@ export const getTopPrice = async (
       },
       take: config.TOP_LIMIT,
     })
-    for await (const product of products) {      
+    for await (const product of products) {
       product.thumbnails = getAllThumbnailLink(product.id)
       product.detail = await getAllDetailImageLinks(product.id)
     }

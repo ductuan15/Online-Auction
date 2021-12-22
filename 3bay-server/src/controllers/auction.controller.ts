@@ -100,6 +100,13 @@ export const auctionsByProductId = async (
       where: {
         productId: req.product?.id,
       },
+      include: {
+        winningBid: {
+          include: {
+            bidder: true,
+          },
+        },
+      },
     })
     res.json(auctions)
   } catch (error) {
