@@ -10,7 +10,7 @@ import { CreateCategoryDialog } from '../../components/admin/category/CreateCate
 import { EditCategoryDialog } from '../../components/admin/category/EditCategoryDialog'
 import { useCategoryContext } from '../../contexts/admin/CategoryContext'
 
-const CategoryManagement = () => {
+const CategoryManagement = (): JSX.Element => {
   const { dispatch } = useCategoryContext()
 
   const openDialog = () => {

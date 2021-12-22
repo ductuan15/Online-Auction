@@ -45,8 +45,8 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
   useEffect(() => {
     ;(async () => {
       try {
-        console.log(authData)
-        console.log(axiosApiInstance.interceptors.response)
+        // console.log(authData)
+        // console.log(axiosApiInstance.interceptors.response)
         if (authData) {
           // const user = await UserService.getUserInfo(authData)
           const response = await axiosApiInstance.get(

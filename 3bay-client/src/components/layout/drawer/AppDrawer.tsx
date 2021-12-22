@@ -43,6 +43,11 @@ const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
           boxSizing: 'border-box',
         },
       }}
+      PaperProps={{
+        sx: (theme) => ({
+          background: theme.palette.background.paper,
+        }),
+      }}
     >
       <Box
         display='flex'

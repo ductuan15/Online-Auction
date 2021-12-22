@@ -4,15 +4,16 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import Category from '../../../data/category'
 import EditIcon from '@mui/icons-material/Edit'
-import { CategoryTreeItem, StyledTreeItemRoot } from './CategoryTreeItem'
-import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import {CategoryTreeItem, StyledTreeItemRoot} from './CategoryTreeItem'
+import {useCategoryContext} from '../../../contexts/admin/CategoryContext'
 
 // type CategoryTreeProps = {}
 
-function renderCategoryTree(categories?: Array<Category>): JSX.Element {
-  return (
+function renderCategoryTree(categories?: Array<Category> | null): JSX.Element | null {
+
+  return categories ? (
     <>
-      {categories?.map((category) => (
+      {categories.map((category) => (
         <CategoryTreeItem
           nodeId={`${category.id}`}
           labelText={category.title}
@@ -26,19 +27,19 @@ function renderCategoryTree(categories?: Array<Category>): JSX.Element {
         </CategoryTreeItem>
       ))}
     </>
-  )
+  ) : null
 }
 
 export default function CategoryTree(): JSX.Element {
-  const { state } = useCategoryContext()
-  const { allCategories } = state
+  const {state} = useCategoryContext()
+  const {allCategories} = state
 
   return (
     <TreeView
       aria-label='customized'
-      defaultExpanded={['1']}
-      defaultCollapseIcon={<KeyboardArrowUpIcon />}
-      defaultExpandIcon={<KeyboardArrowDownIcon />}
+      defaultExpanded={['-1']}
+      defaultCollapseIcon={<KeyboardArrowUpIcon/>}
+      defaultExpandIcon={<KeyboardArrowDownIcon/>}
       sx={(theme) => ({
         [theme.breakpoints.up('lg')]: {
           maxWidth: 0.75,
