@@ -1,4 +1,22 @@
+.image-gallery {
+  width: 100%;
+  height: auto;
+}
+
 .image-gallery-slide img {
   width: 100%;
   height: 400px;
+  max-height: 80vh;
+  object-fit: cover;
+  overflow: hidden;
+  object-position: center center;
+}
+
+.fullscreen .image-gallery-slide img {
+  height: calc(100vh - 80px);
+}
+
+.image-gallery-thumbnail img {
+  width: auto;
+  height: 80px;
 }
