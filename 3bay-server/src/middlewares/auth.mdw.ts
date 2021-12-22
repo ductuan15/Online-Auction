@@ -110,6 +110,6 @@ export function isAuthorize(role: keyof typeof Prisma.Role) {
   }
 }
 
-export function requireAdminRole() {
-  return isAuthorize(Prisma.Role.ADMINISTRATOR)
+export function requireAdminRole(req: Request, res: Response, next: NextFunction) {
+  return isAuthorize(Prisma.Role.ADMINISTRATOR)(req, res, next)
 }

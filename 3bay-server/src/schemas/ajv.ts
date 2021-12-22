@@ -8,6 +8,8 @@ import resetPasswordSchema from './reset-password.js'
 import accountSchema from './user-account.js'
 import passwordSchema from './user-password.js'
 import changeEmailSchema from './change-email.js'
+import updateUserSchema from './update-user.js'
+import Prisma from '@prisma/client'
 
 const ajv = new Ajv({ removeAdditional: true, allErrors: true })
 addFormats(ajv)
@@ -21,6 +23,11 @@ ajv.addFormat('custom-date-time', function (dateTimeString) {
   return !isNaN(Date.parse(dateTimeString)) // any test that returns true/false
 })
 
+ajv.addFormat('user-role', function(role) {
+  role = role.trim()
+  return Object.values(Prisma.Role).includes(role as Prisma.Role)
+})
+
 ajv.compile(userSchema)
 
 export type SchemaTypes =
@@ -30,5 +37,6 @@ export type SchemaTypes =
   | typeof accountSchema
   | typeof passwordSchema
   | typeof changeEmailSchema
+  | typeof updateUserSchema
 
 export default ajv

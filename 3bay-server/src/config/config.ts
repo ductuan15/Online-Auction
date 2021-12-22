@@ -32,6 +32,7 @@ const config = {
   SALT_ROUND: +(SALT_ROUND || '10') || 10,
   PAGE_LIMIT: +(PAGE_LIMIT || '20') || 20,
   TOP_LIMIT: +(TOP_LIMIT || '5') || 5,
+  USER_PAGE_LIMIT: +(PAGE_LIMIT || '25') || 25,
 }
 
 export const mailConfig = {
