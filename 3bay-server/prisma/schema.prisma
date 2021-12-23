@@ -15,7 +15,7 @@ model Category {
   createdAt       DateTime?  @default(now()) @map("created_at") @db.DateTime(0)
   categories      Category?  @relation("categoriesTocategories_parent_id", fields: [parentId], references: [id], map: "categories_fk0")
   otherCategories Category[] @relation("categoriesTocategories_parent_id")
-  products        ProductDetail[]  @relation("categoriesToproducts")
+  products        Product[]  @relation("categoriesToproducts")
 
   @@index([parentId], map: "fk_category_category_idx")
   @@map("categories")
@@ -31,7 +31,7 @@ model Auction {
   productId               Int
   winningBidId            Int?
   autoExtendAuctionTiming Boolean
-  product                 ProductDetail   @relation("auctionsToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auctions_fk0")
+  product                 Product   @relation("auctionsToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auctions_fk0")
   winningBid              Bid?      @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auctions_fk1")
   bids                    Bid[]     @relation("auctionsTobids_auctionId")
 
@@ -62,7 +62,7 @@ model ProductDescriptionHistory {
   description String   @db.VarChar(255)
   productId   Int
   createdAt   DateTime @default(now()) @db.DateTime(0)
-  products    ProductDetail  @relation("product_des_historyToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_des_history_fk0")
+  products    Product  @relation("product_des_historyToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_des_history_fk0")
 
   @@index([productId], map: "product_des_history_fk0")
   @@map("product_des_history")
@@ -72,13 +72,13 @@ model ProductImage {
   id        Int     @id @default(autoincrement())
   productId Int
   img       String  @db.Text
-  products  ProductDetail @relation("product_imagesToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_images_fk0")
+  products  Product @relation("product_imagesToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_images_fk0")
 
   @@index([productId], map: "product_images_fk0")
   @@map("product_images")
 }
 
-model ProductDetail {
+model Product {
   id                        Int                         @id @default(autoincrement())
   name                      String                      @db.VarChar(255)
   categoryId                Int
@@ -109,7 +109,7 @@ model UpgradeToBidderRequest {
 model UserWatchlist {
   userId    String  @db.VarChar(255)
   productId Int
-  products  ProductDetail @relation("productsTouser_watchlist", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_watchlist_fk1")
+  products  Product @relation("productsTouser_watchlist", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_watchlist_fk1")
   user      User    @relation("user_watchlistTousers", fields: [userId], references: [uuid], onDelete: NoAction, map: "user_watchlist_fk0")
 
   @@id([userId, productId])
@@ -131,7 +131,7 @@ model User {
   refreshToken          String                  @default(uuid()) @db.VarChar(512)
   address               String?                 @db.VarChar(255)
   bids                  Bid[]                   @relation("bidsTousers")
-  products              ProductDetail[]               @relation("productsTousers")
+  products              Product[]               @relation("productsTousers")
   ugradeToBidderRequest UpgradeToBidderRequest? @relation("upgrade_to_bidder_requestsTousers")
   userWatchlist         UserWatchlist[]         @relation("user_watchlistTousers")
 
