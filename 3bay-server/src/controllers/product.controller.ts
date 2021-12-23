@@ -191,6 +191,11 @@ export const getProductByCategoryId = async (
         },
         include: {
           auctions: {
+            where: {
+              closeTime: {
+                gte: new Date(),
+              },
+            },
             include: {
               winningBid: {
                 include: {
@@ -297,6 +302,11 @@ export const getTopPrice = async (
       },
       include: {
         auctions: {
+          where: {
+            closeTime: {
+              gte: new Date(),
+            },
+          },
           include: {
             winningBid: {
               include: {
