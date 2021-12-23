@@ -94,7 +94,7 @@ export function ensureParamIdSameWithJWTPayload(
   next()
 }
 
-export function isAuthorize(role: keyof typeof Prisma.Role) {
+export function isAuthorized(role: keyof typeof Prisma.Role) {
   return (req: Request, res: Response, next: NextFunction) => {
     // console.log(role, req.user?.role)
     if (req.user?.role) {
@@ -102,7 +102,7 @@ export function isAuthorize(role: keyof typeof Prisma.Role) {
       const userRoleLevel = Object.keys(Prisma.Role).indexOf(req.user?.role)
       console.log(roleNeedLevel, userRoleLevel);
       
-      if (userRoleLevel > roleNeedLevel) {
+      if (userRoleLevel >= roleNeedLevel) {
         return next()
       }
     }
@@ -120,5 +120,5 @@ export function requireAdminRole(
   res: Response,
   next: NextFunction,
 ) {
-  return isAuthorize(Prisma.Role.ADMINISTRATOR)(req, res, next)
+  return isAuthorized(Prisma.Role.ADMINISTRATOR)(req, res, next)
 }

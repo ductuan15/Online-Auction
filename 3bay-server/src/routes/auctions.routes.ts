@@ -10,7 +10,7 @@ route
   .route('/byProduct/:productId')
   .post(
     passport.authenticate('jwt', { session: false }),
-    authMdw.isAuthorize('SELLER'),
+    authMdw.isAuthorized('SELLER'),
     productController.isProductOwner,
     auctionController.add,
   )
