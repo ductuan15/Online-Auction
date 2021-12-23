@@ -110,7 +110,7 @@ function updateCategory(
   updated: Category,
 ) {
   if (current.parentId !== updated.parentId) {
-    const cats = removeCategory(allCategories, current)
+    const cats = removeCategory(allCategories, current, false)
     return addNewCategory(cats, updated)
   }
 
@@ -140,6 +140,7 @@ function updateCategory(
 function removeCategory(
   allCategories: Array<Category>,
   categoryToRemoved: Category,
+  reassignChildParent = true,
 ) {
   let categories = _.cloneDeep(allCategories)
 
@@ -147,7 +148,7 @@ function removeCategory(
     categories = categories.filter(
       (category) => category.id !== categoryToRemoved.id,
     )
-    if (categoryToRemoved.otherCategories) {
+    if (categoryToRemoved.otherCategories && reassignChildParent) {
       categoryToRemoved.otherCategories.forEach((cat) => {
         cat.parentId = undefined
       })
@@ -166,11 +167,13 @@ function removeCategory(
               (category) => category.id !== categoryToRemoved.id,
             )
 
-          if (categoryToRemoved.otherCategories) {
+          if (categoryToRemoved.otherCategories && reassignChildParent) {
             categoryToRemoved.otherCategories.forEach((cat) => {
               cat.parentId = parentCategory.id
             })
-            parentCategory.otherCategories.push(...categoryToRemoved.otherCategories)
+            parentCategory.otherCategories.push(
+              ...categoryToRemoved.otherCategories,
+            )
           }
         },
       )
