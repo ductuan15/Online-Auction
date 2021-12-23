@@ -15,12 +15,10 @@ import { ProductRes } from '../types/ProductRes.js'
 import Prisma from '@prisma/client'
 
 const userShortenSelection = {
-  select: {
-    uuid: true,
-    name: true,
-    address: true,
-    email: true,
-  },
+  uuid: true,
+  name: true,
+  address: true,
+  email: true,
 }
 
 export const productById = async (
@@ -39,8 +37,10 @@ export const productById = async (
       },
       include: {
         productDescriptionHistory: isWithDescription,
-        categories: true,
-        users: userShortenSelection,
+        category: true,
+        seller: {
+          select: userShortenSelection,
+        },
       },
       rejectOnNotFound: true,
     })
@@ -182,12 +182,30 @@ export const getProductByCategoryId = async (
 ) => {
   try {
     const categoryId = +req.params.categoryId
-    const page = +(req.query?.page || '/')
+    const page = +(req.query?.page || 1)
     let products: ProductRes[] = []
     if (page) {
       products = await prisma.product.findMany({
         where: {
           categoryId: categoryId,
+        },
+        include: {
+          auctions: {
+            include: {
+              winningBid: {
+                include: {
+                  bidder: {
+                    select: userShortenSelection,
+                  },
+                },
+              },
+              _count: {
+                select: {
+                  bids: true,
+                },
+              },
+            },
+          },
         },
         skip: (page - 1) * config.PAGE_LIMIT,
         take: config.PAGE_LIMIT,
@@ -195,7 +213,6 @@ export const getProductByCategoryId = async (
     }
     products.forEach(async (product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
-      product.detail = await getAllDetailImageLinks(product.id)
     })
     res.status(201).json(products)
   } catch (error) {
@@ -220,22 +237,28 @@ export const search = async (
     console.log(categoryId)
     let products: ProductRes[] = []
     if (page) {
+      // TODO: Fix this query, not good :<
       // WTF is this :<
       // it's not that bad tbh. More readable than your `best-friend`'s code, obviously
-      products = await prisma.$queryRaw<ProductRes[]>(
-        Prisma.Prisma.sql`SELECT *
-                          FROM products
-                                   JOIN auctions on auctions.productId = products.id
-                          WHERE MATCH (name) AGAINST (${key})
+      const searchResult = await prisma.$queryRaw<any[]>(
+        Prisma.Prisma
+          .sql`SELECT seller.uuid as sellerId, seller.name as sellerName , products.*, auctions.*, auctions.id as auctionId, bids.*, users.uuid,  users.name as usersName, users.email, categories.*, categories.id as categoryId
+          FROM products
+                    JOIN categories on products.categoryId = categories.id
+                    JOIN auctions on auctions.productId = products.id
+                    LEFT JOIN bids on auctions.winningBidId = bids.id
+                    LEFT JOIN users on bids.bidderId = users.uuid
+                    LEFT JOIN users as seller on products.sellerId = seller.uuid
+                          WHERE MATCH (products.name) AGAINST (${key})
                             and
                               auctions.closeTime
                               > CURRENT_TIMESTAMP
-                            and ${
-                              categoryId !== 0
-                                ? Prisma.Prisma
-                                    .sql`products.categoryId = ${categoryId}`
-                                : Prisma.Prisma.empty
-                            }
+                             ${
+                               categoryId !== 0
+                                 ? Prisma.Prisma
+                                     .sql`and products.categoryId = ${categoryId}`
+                                 : Prisma.Prisma.empty
+                             }
                           Order by auctions.closeTime ${
                             timeOrder === 'desc'
                               ? Prisma.Prisma.sql`desc`
@@ -246,6 +269,10 @@ export const search = async (
           config.PAGE_LIMIT * page
         };`,
       )
+      products = mappingSearchProduct(searchResult)
+      products.forEach((product) => {
+        product.thumbnails = getAllThumbnailLink(product.id)
+      })
     }
     res.status(201).json(products)
   } catch (error) {
@@ -269,15 +296,28 @@ export const getTopPrice = async (
         currentPrice: 'desc',
       },
       include: {
-        categories: true,
-        users: userShortenSelection,
+        auctions: {
+          include: {
+            winningBid: {
+              include: {
+                bidder: {
+                  select: userShortenSelection,
+                },
+              },
+            },
+            _count: {
+              select: {
+                bids: true,
+              },
+            },
+          },
+        },
       },
       take: config.TOP_LIMIT,
     })
-    for await (const product of products) {
+    products.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
-      product.detail = await getAllDetailImageLinks(product.id)
-    }
+    })
     res.status(201).json(products)
   } catch (error) {
     if (error instanceof Error) {
@@ -327,6 +367,45 @@ export const deleteProduct = async (
       next(error)
     }
   }
+}
+
+const mappingSearchProduct = (searchResult: any[]) => {
+  const products: any[] = []
+  searchResult.forEach((row) => {
+    products.push({
+      id: row.productId,
+      name: row.name,
+      currentPrice: row.currentPrice,
+      users: {
+        uuid: row.sellerId,
+        name: row.sellerName,
+      },
+      auctions: [
+        {
+          id: row.auctionId,
+          buyoutPrice: row.buyoutPrice,
+          openPrice: row.openPrice,
+          closeTime: row.closeTime,
+          autoExtendAuctionTiming: row.autoExtendAuctionTiming,
+          incrementPrice: row.incrementPrice,
+          startTime: row.startTime,
+          winningBid: {
+            id: row.winningBidId,
+            bidder: {
+              uuid: row.uuid,
+              name: row.userName,
+              email: row.email,
+            },
+          },
+        },
+      ],
+      category: {
+        id: row.categoryId,
+        title: row.title,
+      },
+    })
+  })
+  return products
 }
 
 export const uploadProductImagesFields = {
