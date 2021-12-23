@@ -14,6 +14,15 @@ import config from '../config/config.js'
 import { ProductRes } from '../types/ProductRes.js'
 import Prisma from '@prisma/client'
 
+const userShortenSelection = {
+  select: {
+    uuid: true,
+    name: true,
+    address: true,
+    email: true,
+  },
+}
+
 export const productById = async (
   req: Request,
   res: Response,
@@ -23,7 +32,6 @@ export const productById = async (
 ) => {
   try {
     const isWithDescription = !!req.query.isWithDescription
-    console.log(req.query.isWithDescription)
     req.product = await prisma.product.findFirst({
       where: {
         id: +value,
@@ -31,6 +39,31 @@ export const productById = async (
       },
       include: {
         productDescriptionHistory: isWithDescription,
+        categories: true,
+        users: userShortenSelection,
+      },
+      rejectOnNotFound: true,
+    })
+    next()
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
+  }
+}
+
+export const checkProductExist = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  value: any,
+  _: string,
+) => {
+  try {
+    req.product = await prisma.product.findFirst({
+      where: {
+        id: +value,
+        deletedAt: null,
       },
       rejectOnNotFound: true,
     })
@@ -234,6 +267,10 @@ export const getTopPrice = async (
       },
       orderBy: {
         currentPrice: 'desc',
+      },
+      include: {
+        categories: true,
+        users: userShortenSelection,
       },
       take: config.TOP_LIMIT,
     })

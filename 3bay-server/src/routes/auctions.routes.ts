@@ -22,6 +22,6 @@ route
 route.route('/:auctionId').get(auctionController.read)
 
 route.param('auctionId', auctionController.auctionById)
-route.param('productId', productController.productById)
+route.param('productId', productController.checkProductExist)
 
 export default route
