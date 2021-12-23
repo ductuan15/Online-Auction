@@ -11,12 +11,11 @@ import '@fontsource/jetbrains-mono'
 import IconButton from '@mui/material/IconButton'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import AuthService from '../../../services/auth.service'
-import axios, { AxiosError } from 'axios'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { setErrorTextMsg } from '../../../utils/error'
 
 const ForgotPassword = (): JSX.Element => {
-
   const [errorText, setErrorText] = useState<string | null>(null)
   const [emailOK, setEmailOK] = useState(false)
   const [verifying, setVerifying] = useState(false)
@@ -72,12 +71,7 @@ const ForgotPassword = (): JSX.Element => {
   }
 
   function handleError(error: unknown) {
-    if (axios.isAxiosError(error) && (error as AxiosError)) {
-      //console.log(error.response?.data.message)
-      setErrorText(error.response?.data.message || 'Unknown error')
-    } else {
-      setErrorText('Unknown error')
-    }
+    setErrorTextMsg(error, setErrorText)
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

@@ -7,11 +7,11 @@ import { Alert } from '@mui/material'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import axios, { AxiosError } from 'axios'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import AuthService from '../../../services/auth.service'
+import { setErrorTextMsg } from '../../../utils/error'
 
 const VerifyAccount = (): JSX.Element => {
   const [loading, setLoading] = useState(true)
@@ -44,12 +44,7 @@ const VerifyAccount = (): JSX.Element => {
   }, [])
 
   function handleError(error: unknown) {
-    if (axios.isAxiosError(error) && (error as AxiosError)) {
-      //console.log(error.response?.data.message)
-      setErrorText(error.response?.data.message || '')
-    } else {
-      setErrorText('Unknown error')
-    }
+    setErrorTextMsg(error, setErrorText)
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

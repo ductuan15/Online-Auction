@@ -13,10 +13,11 @@ import Button from '@mui/material/Button'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import DialogActions from '@mui/material/DialogActions'
 import Category from '../../../data/category'
-import axios, { AxiosError, AxiosPromise } from 'axios'
+import axios, { AxiosPromise } from 'axios'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 import axiosApiInstance from '../../../services/api'
+import { setErrorTextMsg } from '../../../utils/error'
 
 const Input = styled('input')({
   display: 'none',
@@ -122,28 +123,7 @@ export function BaseCategoryDialog(
     if (progressRef.current && progressRef.current.style) {
       progressRef.current.style.display = 'none'
     }
-    if (axios.isAxiosError(error) && (error as AxiosError)) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        //console.log(error.response.data)
-        //console.log(error.response.status)
-        //console.log(error.response.headers)
-        setErrorMsg(error.response.data.message)
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
-        //console.log(error.request)
-        setErrorMsg(error.request.data.message)
-      }
-    } else if (error instanceof Error) {
-      setErrorMsg(error.message)
-    } else if (typeof error === 'string') {
-      setErrorMsg(error)
-    } else {
-      setErrorMsg('Error occurred')
-    }
+    setErrorTextMsg(error, setErrorMsg)
   }
 
   return (

@@ -8,13 +8,13 @@ import Button from '@mui/material/Button'
 import KeyIcon from '@mui/icons-material/Key'
 import '@fontsource/jetbrains-mono'
 import AuthService from '../../../services/auth.service'
-import axios, { AxiosError } from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom'
 import EmailTextField from '../../../components/common/form/EmailTextField'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useIsMounted } from 'usehooks-ts'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import GenericTextField from '../../../components/common/form/GenericTextField'
+import { setErrorTextMsg } from '../../../utils/error'
 
 export type ChangeEmailForm = {
   email: string
@@ -66,12 +66,7 @@ const ChangeEmail = (): JSX.Element => {
   }
 
   function handleError(error: unknown) {
-    if (axios.isAxiosError(error) && (error as AxiosError)) {
-      //console.log(error.response?.data.message)
-      setErrorText(error.response?.data.message || 'Unknown error')
-    } else {
-      setErrorText('Unknown error')
-    }
+    setErrorTextMsg(error, setErrorText)
   }
 
   const onSubmit: SubmitHandler<ChangeEmailForm> = async (data) => {

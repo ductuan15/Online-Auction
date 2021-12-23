@@ -8,11 +8,11 @@ import DateInputField from '../../../components/common/form/DateInputField'
 import { UserDetails } from '../../../data/user'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import UserService from '../../../services/user.service'
-import axios, { AxiosError } from 'axios'
 import { Alert } from '@mui/lab'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { useIsMounted } from 'usehooks-ts'
 import { Link as RouterLink } from 'react-router-dom'
+import { setErrorTextMsg } from '../../../utils/error'
 
 // type AccountProps = {
 //   foo?: string
@@ -68,13 +68,11 @@ const Account = (): JSX.Element => {
       setErrorText(null)
       setSave(true)
     } catch (e) {
-      let msg = 'Unknown error occurred'
-      if (axios.isAxiosError(e) && (e as AxiosError)) {
-        msg = e.response?.data.message || 'Unknown error occurred'
-      }
-      if (isMounted()) {
-        setErrorText(msg)
-      }
+      setErrorTextMsg(e, (msg) => {
+        if (isMounted()) {
+          setErrorText(msg)
+        }
+      })
     }
   }
 
@@ -140,7 +138,12 @@ const Account = (): JSX.Element => {
         </Grid>
 
         <Grid item container xs={3} sm={3} justifyContent='flex-end'>
-          <Button variant='outlined' color='error' component={RouterLink} to={'/change-email'}>
+          <Button
+            variant='outlined'
+            color='error'
+            component={RouterLink}
+            to={'/change-email'}
+          >
             Change email
           </Button>
         </Grid>

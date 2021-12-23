@@ -13,25 +13,21 @@ import SignUpForm from '../../../components/user/auth/SignUpForm'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { Alert } from '@mui/material'
 import AuthService from '../../../services/auth.service'
-import axios, { AxiosError } from 'axios'
+import { setErrorTextMsg } from '../../../utils/error'
 
 const SignUp: () => JSX.Element = () => {
-  const [error, setError] = useState<string | null>(null)
+  const [errorText, setErrorText] = useState<string | null>(null)
   const navigate = useNavigate()
 
   const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
-    setError(null)
+    setErrorText(null)
     // console.log(data)
 
     try {
       const response = await AuthService.register(data)
       navigate(`/verify/${response.uuid}`, { replace: true })
     } catch (e) {
-      if (axios.isAxiosError(e) && (e as AxiosError)) {
-        setError(e.response?.data.message || '')
-      } else {
-        setError('Unknown error')
-      }
+      setErrorTextMsg(e, setErrorText)
     }
   }
 
@@ -62,7 +58,7 @@ const SignUp: () => JSX.Element = () => {
         </Typography>
       </Box>
 
-      {error && <Alert severity='error'>{error}</Alert>}
+      {errorText && <Alert severity='error'>{errorText}</Alert>}
 
       <SignUpForm onSubmit={onSubmit} />
 
