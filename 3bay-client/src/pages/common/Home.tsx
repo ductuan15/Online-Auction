@@ -44,7 +44,7 @@ const Home = (): JSX.Element => {
 
         <CarouselCard name={'Tìm kiếm phổ biến'}/>
 
-        <Link component={RouterLink} variant='h6' to='/cat' gutterBottom p={4}>
+        <Link component={RouterLink} variant='h6' to='/admin/cat' gutterBottom p={4}>
           Test link (category management)
         </Link>
       </Grid>

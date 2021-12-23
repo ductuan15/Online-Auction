@@ -6,7 +6,7 @@ import adminUsersImg from '../../../assets/admin_users.jpeg'
 import { useAuth } from '../../../contexts/user/AuthContext'
 
 export const ADMIN_MENU_ITEMS = [
-  { title: '🏷️ Categories', link: '/cat', img: adminCategoriesImg },
+  { title: '🏷️ Categories', link: '/admin/cat', img: adminCategoriesImg },
   { title: '🛒 Products', link: '/admin/products', img: adminProductsImg },
   { title: '👤 Users', link: '/admin/users', img: adminUsersImg },
 ]

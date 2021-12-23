@@ -21,9 +21,7 @@ async function updateUserInfo(
 ): Promise<void> {
   const response = await axiosApiInstance.post(
     `api/user/account/${user.uuid}`,
-    {
-      ...user,
-    },
+    user,
   )
   const data = response.data as UserDetails
   dispatch({ type: 'GET_ACCOUNT_INFO', payload: response.data })

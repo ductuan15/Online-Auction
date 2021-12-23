@@ -5,8 +5,8 @@ import { useState } from 'react'
 import PasswordInputField from '../../../components/common/form/PasswordInputField'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import UserService from '../../../services/user.service'
-import axios, { AxiosError } from 'axios'
 import { Alert } from '@mui/lab'
+import { setErrorTextMsg } from '../../../utils/error'
 
 // type AccountProps = {
 //   foo?: string
@@ -55,11 +55,7 @@ const Password = (): JSX.Element => {
         })
       }
     } catch (e) {
-      if (axios.isAxiosError(e) && (e as AxiosError)) {
-        setErrorText(e.response?.data.message || '')
-      } else {
-        setErrorText('Unknown error occurred')
-      }
+      setErrorTextMsg(e, setErrorText)
     }
   }
 
@@ -85,7 +81,9 @@ const Password = (): JSX.Element => {
           Password Settings
         </Typography>
 
-        <Button variant='contained' type='submit'>Save changes</Button>
+        <Button variant='contained' type='submit'>
+          Save changes
+        </Button>
       </Grid>
 
       {errorText && (

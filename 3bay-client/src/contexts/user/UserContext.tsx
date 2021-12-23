@@ -14,8 +14,7 @@ import {
   UserState,
 } from '../../stores/user/user.store'
 import { useAuth } from './AuthContext'
-import axiosApiInstance from '../../services/api'
-import { UserDetails } from '../../data/user'
+import UserService from '../../services/user.service'
 
 type UserProviderProps = {
   children: ReactNode
@@ -49,10 +48,7 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
         // console.log(axiosApiInstance.interceptors.response)
         if (authData) {
           // const user = await UserService.getUserInfo(authData)
-          const response = await axiosApiInstance.get(
-            `/api/user/account/${authData?.user || ''}`,
-          )
-          const user = response.data as UserDetails
+          const user = await UserService.getUserInfo(authData)
           dispatch({
             type: 'GET_ACCOUNT_INFO',
             payload: user,
