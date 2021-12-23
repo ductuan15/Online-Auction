@@ -97,19 +97,28 @@ export function ensureParamIdSameWithJWTPayload(
 export function isAuthorize(role: keyof typeof Prisma.Role) {
   return (req: Request, res: Response, next: NextFunction) => {
     // console.log(role, req.user?.role)
-
-    if (req.user?.role === role) {
-      return next()
+    if (req.user?.role) {
+      const roleNeedLevel = Object.keys(Prisma.Role).indexOf(role)
+      const userRoleLevel = Object.keys(Prisma.Role).indexOf(req.user?.role)
+      console.log(roleNeedLevel, userRoleLevel);
+      
+      if (userRoleLevel > roleNeedLevel) {
+        return next()
+      }
     }
     return next(
       new AuthError({
-        code: AuthErrorCode.NotHavePermisison,
+        code: AuthErrorCode.NotHavePermission,
         message: `This action is only for ${role}`,
       }),
     )
   }
 }
 
-export function requireAdminRole(req: Request, res: Response, next: NextFunction) {
+export function requireAdminRole(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   return isAuthorize(Prisma.Role.ADMINISTRATOR)(req, res, next)
 }

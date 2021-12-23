@@ -31,5 +31,5 @@ export class AuthErrorCode {
   public static readonly AlreadyVerified = 'AuthAlreadyVerified'
   public static readonly RecaptchaFailed = 'AuthRecaptchaFailed'
   public static readonly WrongPassword = 'AuthWrongPassword'
-  public static readonly NotHavePermisison = 'AuthNotHavePermisison'
+  public static readonly  NotHavePermission = 'AuthNotHavePermisison'
 }

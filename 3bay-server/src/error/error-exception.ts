@@ -136,7 +136,7 @@ export class AuthError extends ErrorException {
         this.status = 401
         this.message = 'Wrong password'
         break
-      case AuthErrorCode.NotHavePermisison:
+      case AuthErrorCode.NotHavePermission:
         this.status = 403
         break
       default:
