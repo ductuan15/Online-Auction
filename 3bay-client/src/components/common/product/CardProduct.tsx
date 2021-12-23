@@ -6,19 +6,10 @@ import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import { CardActionArea, Link } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
+import Product from "../../../data/product";
 
 type CardProps = {
-  product: {
-    id: number
-    title: string
-    present_price: number
-    image: string
-    rate: number
-    buy_now_price?: number
-    number_bidder: number
-    date: string
-    time: string
-  }
+  product: Product
 }
 
 const CardProduct = ({ product }: CardProps): JSX.Element => {
@@ -73,13 +64,13 @@ const CardProduct = ({ product }: CardProps): JSX.Element => {
           />
           <CardContent>
             <Typography gutterBottom variant='h5' component='div'>
-              {product.title}
+              {product.name}
             </Typography>
             <Typography variant='body2' color='text.secondary'>
               ({product.number_bidder})
             </Typography>
             <Typography variant='body2' color='text.secondary'>
-              {product.present_price} VND
+              {product.currentPrice} VND
               {product.buy_now_price ? (
                 <span> to {product.buy_now_price} VND</span>
               ) : null}

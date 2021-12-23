@@ -19,7 +19,7 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
         {product.name}
       </Typography>
       <Typography variant='body1' color='text.secondary'>
-        Category: {product.categoryId}
+        Category: {product.category.title}
       </Typography>
       <Typography variant='body1' color='text.secondary'>
         Current price: {product.currentPrice}
@@ -29,7 +29,7 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
       {/*    Giá mua ngay:*/}
       {/*</Typography>*/}
       <Typography variant='body1' color='text.secondary'>
-        Seller: <Link href='#'>{product.sellerId}</Link> (
+        Seller: <Link href='#'>{product.seller?.name}</Link> (
         <Rating
           name='read-only'
           value={value}

@@ -5,12 +5,16 @@ import 'react-multi-carousel/lib/styles.css'
 import './Carousel.css'
 import { Container, Divider } from '@mui/material'
 import Typography from '@mui/material/Typography'
+import Product from "../../data/product";
 
 type carouselProps = {
   name: string
 }
 
 const CarouselCard = ({ name }: carouselProps): JSX.Element => {
+  const imageLink =
+    'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D'
+
   const data = [
     {
       id: 1,
@@ -21,8 +25,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+      image: imageLink,
     },
     {
       id: 2,
@@ -32,8 +35,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+      image: imageLink,
     },
     {
       id: 3,
@@ -44,8 +46,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+      image: imageLink,
     },
     {
       id: 4,
@@ -55,8 +56,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+      image: imageLink,
     },
     {
       id: 5,
@@ -66,8 +66,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+      image: imageLink,
     },
     {
       id: 6,
@@ -78,8 +77,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+      image: imageLink,
     },
     {
       id: 7,
@@ -89,8 +87,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+      image: imageLink,
     },
     {
       id: 8,
@@ -100,8 +97,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+      image: imageLink,
     },
     {
       id: 9,
@@ -112,8 +108,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D',
+      image: imageLink,
     },
     {
       id: 10,
@@ -123,14 +118,13 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
       number_bidder: 123456,
       date: '2021-12-11',
       time: '19:00:00',
-      image:
-        'http://http.cat/404',
+      image: 'http://http.cat/404',
     },
   ]
   const responsive = {
     xl: {
       breakpoint: { min: 1536, max: 4000 },
-      items: 5,
+      items: 4,
     },
     lg: {
       breakpoint: { min: 1200, max: 1535 },
@@ -178,7 +172,7 @@ const CarouselCard = ({ name }: carouselProps): JSX.Element => {
         itemClass='carousel-item-padding-20-px'
       >
         {data.map((product, index) => {
-          return <CardProduct key={index} product={product} />
+          return <CardProduct key={index} product={new Product(product)} />
         })}
       </Carousel>
     </Container>
