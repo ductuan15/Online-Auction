@@ -219,7 +219,7 @@ export const getProductByCategoryId = async (
     products.forEach(async (product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
     })
-    res.status(201).json(products)
+    res.json(products)
   } catch (error) {
     if (error instanceof Error) {
       next(error)
@@ -227,66 +227,138 @@ export const getProductByCategoryId = async (
   }
 }
 
-//http://localhost:3030/api/product/search/?key=iphone&page=1&timeOrder=desc&priceOrder=acs&categoryId=5
+// //http://localhost:3030/api/product/search/?key=iphone&page=1&timeOrder=desc&priceOrder=acs&categoryId=5
+// export const search = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   try {
+//     // https://www.prisma.io/docs/concepts/components/prisma-client/full-text-search
+//     // Prisma does not support MySQL FTS?  :<<
+//     const { key, timeOrder, priceOrder } = req.query
+//     const page = +(req.query?.page || '/')
+//     const categoryId = +(req.query?.categoryId || '')
+//     console.log(categoryId)
+//     let products: ProductRes[] = []
+//     if (page) {
+//       // TODO: Fix this query, not good :<
+//       // WTF is this :<
+//       // it's not that bad tbh. More readable than your `best-friend`'s code, obviously
+//       const searchResult = await prisma.$queryRaw<any[]>(
+//         Prisma.Prisma
+//           .sql`SELECT seller.uuid as sellerId, seller.name as sellerName , products.*, auctions.*, auctions.id as auctionId, bids.*, users.uuid,  users.name as usersName, users.email, categories.*, categories.id as categoryId
+//           FROM products
+//                     JOIN categories on products.categoryId = categories.id
+//                     JOIN auctions on auctions.productId = products.id
+//                     LEFT JOIN bids on auctions.winningBidId = bids.id
+//                     LEFT JOIN users on bids.bidderId = users.uuid
+//                     LEFT JOIN users as seller on products.sellerId = seller.uuid
+//                           WHERE MATCH (products.name) AGAINST (${key})
+//                             and
+//                               auctions.closeTime
+//                               > CURRENT_TIMESTAMP
+//                              ${
+//                                categoryId !== 0
+//                                  ? Prisma.Prisma
+//                                      .sql`and products.categoryId = ${categoryId}`
+//                                  : Prisma.Prisma.empty
+//                              }
+//                           Order by auctions.closeTime ${
+//                             timeOrder === 'desc'
+//                               ? Prisma.Prisma.sql`desc`
+//                               : Prisma.Prisma.empty
+//                           }, products.currentPrice ${
+//           priceOrder === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
+//         } LIMIT ${config.PAGE_LIMIT * (page - 1)}, ${
+//           config.PAGE_LIMIT * page
+//         };`,
+//       )
+//       // products = mappingSearchProduct(searchResult)
+//       products.forEach((product) => {
+//         product.thumbnails = getAllThumbnailLink(product.id)
+//       })
+//     }
+//     res..json(products)
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       next(error)
+//     }
+//   }
+// }
+
 export const search = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    // https://www.prisma.io/docs/concepts/components/prisma-client/full-text-search
-    // Prisma does not support MySQL FTS?  :<<
     const { key, timeOrder, priceOrder } = req.query
     const page = +(req.query?.page || '/')
     const categoryId = +(req.query?.categoryId || '')
-    console.log(categoryId)
-    let products: ProductRes[] = []
-    if (page) {
-      // TODO: Fix this query, not good :<
-      // WTF is this :<
-      // it's not that bad tbh. More readable than your `best-friend`'s code, obviously
-      const searchResult = await prisma.$queryRaw<any[]>(
-        Prisma.Prisma
-          .sql`SELECT seller.uuid as sellerId, seller.name as sellerName , products.*, auctions.*, auctions.id as auctionId, bids.*, users.uuid,  users.name as usersName, users.email, categories.*, categories.id as categoryId
-          FROM products
-                    JOIN categories on products.categoryId = categories.id
-                    JOIN auctions on auctions.productId = products.id
-                    LEFT JOIN bids on auctions.winningBidId = bids.id
-                    LEFT JOIN users on bids.bidderId = users.uuid
-                    LEFT JOIN users as seller on products.sellerId = seller.uuid
-                          WHERE MATCH (products.name) AGAINST (${key})
-                            and
-                              auctions.closeTime
-                              > CURRENT_TIMESTAMP
-                             ${
-                               categoryId !== 0
-                                 ? Prisma.Prisma
-                                     .sql`and products.categoryId = ${categoryId}`
-                                 : Prisma.Prisma.empty
-                             }
-                          Order by auctions.closeTime ${
-                            timeOrder === 'desc'
-                              ? Prisma.Prisma.sql`desc`
-                              : Prisma.Prisma.empty
-                          }, products.currentPrice ${
-          priceOrder === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
-        } LIMIT ${config.PAGE_LIMIT * (page - 1)}, ${
-          config.PAGE_LIMIT * page
-        };`,
-      )
-      products = mappingSearchProduct(searchResult)
-      products.forEach((product) => {
-        product.thumbnails = getAllThumbnailLink(product.id)
-      })
-    }
-    res.status(201).json(products)
+    // get all searched ProductsId,
+    const queryResultRows = await prisma.$queryRaw<any[]>(Prisma.Prisma
+      .sql`SELECT products.id
+  FROM products
+  JOIN auctions on auctions.productId = products.id
+  WHERE MATCH (products.name) AGAINST (${key})
+  ${
+    categoryId !== 0
+      ? Prisma.Prisma.sql`AND products.categoryId = ${categoryId}`
+      : Prisma.Prisma.empty
+  }
+  Order by 
+    auctions.closeTime ${
+      timeOrder === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
+    }, 
+    products.currentPrice ${
+      priceOrder === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
+    } 
+  LIMIT ${config.PAGE_LIMIT * (page - 1)}, ${config.PAGE_LIMIT * page};`)
+
+    // get all info for products
+    const productsId = queryResultRows.map((row) => row.id as number)
+    const products = await prisma.product.findMany({
+      where: {
+        id: {
+          in: productsId,
+        },
+      },
+      include: {
+        category: true,
+        seller: {
+          select: userShortenSelection,
+        },
+        auctions: {
+          where: {
+            closeTime: {
+              gt: new Date(),
+            },
+          },
+          include: {
+            winningBid: {
+              include: {
+                bidder: {
+                  select: userShortenSelection,
+                },
+              },
+            },
+            _count: {
+              select: {
+                bids: true,
+              },
+            },
+          },
+        },
+      },
+    })
+    res.json(products)
   } catch (error) {
     if (error instanceof Error) {
       next(error)
     }
   }
 }
-
 export const getTopPrice = async (
   req: Request,
   res: Response,
@@ -328,7 +400,7 @@ export const getTopPrice = async (
     products.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
     })
-    res.status(201).json(products)
+    res.json(products)
   } catch (error) {
     if (error instanceof Error) {
       next(error)
@@ -371,51 +443,12 @@ export const deleteProduct = async (
         id: req.product?.id,
       },
     })
-    res.status(201).json(product)
+    res.json(product)
   } catch (error) {
     if (error instanceof Error) {
       next(error)
     }
   }
-}
-
-const mappingSearchProduct = (searchResult: any[]) => {
-  const products: any[] = []
-  searchResult.forEach((row) => {
-    products.push({
-      id: row.productId,
-      name: row.name,
-      currentPrice: row.currentPrice,
-      users: {
-        uuid: row.sellerId,
-        name: row.sellerName,
-      },
-      auctions: [
-        {
-          id: row.auctionId,
-          buyoutPrice: row.buyoutPrice,
-          openPrice: row.openPrice,
-          closeTime: row.closeTime,
-          autoExtendAuctionTiming: row.autoExtendAuctionTiming,
-          incrementPrice: row.incrementPrice,
-          startTime: row.startTime,
-          winningBid: {
-            id: row.winningBidId,
-            bidder: {
-              uuid: row.uuid,
-              name: row.userName,
-              email: row.email,
-            },
-          },
-        },
-      ],
-      category: {
-        id: row.categoryId,
-        title: row.title,
-      },
-    })
-  })
-  return products
 }
 
 export const uploadProductImagesFields = {
