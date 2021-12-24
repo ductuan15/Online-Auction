@@ -1,21 +1,21 @@
 import * as React from 'react'
-import {useEffect, useState} from 'react'
-import {Alert, Grid, LinearProgress} from '@mui/material'
+import { useEffect, useState } from 'react'
+import { Alert, Grid, LinearProgress } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import Box from '@mui/material/Box'
 import GroupIcon from '@mui/icons-material/Group'
-import {useAdminUsersContext} from '../../contexts/admin/UsersContext'
-import {setErrorTextMsg} from '../../utils/error'
+import { useAdminUsersContext } from '../../contexts/admin/UsersContext'
+import { setErrorTextMsg } from '../../utils/error'
 import AdminUserService from '../../services/admin-users.service'
-import {useIsMounted} from 'usehooks-ts'
-// import UserTable from '../../components/admin/users/UserTable'
+import { useIsMounted } from 'usehooks-ts'
+import UserTable from '../../components/admin/users/UserTable'
 
 const UsersManagement = (): JSX.Element => {
   const [isLoading, setLoading] = useState(false)
   const [errorText, setErrorText] = useState<string | null>(null)
-  const {state: userState, dispatch} = useAdminUsersContext()
+  const { state: userState, dispatch } = useAdminUsersContext()
   const isMounted = useIsMounted()
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const UsersManagement = (): JSX.Element => {
           userState.limit,
         )
 
-        dispatch({type: 'ADD_ALL', payload: userResponse})
+        dispatch({ type: 'ADD_ALL', payload: userResponse })
       } catch (e) {
         setErrorTextMsg(e, (msg) => {
           if (isMounted()) {
@@ -91,7 +91,7 @@ const UsersManagement = (): JSX.Element => {
             </Alert>
           )}
           {isLoading && <LinearProgress variant='indeterminate' />}
-          {/*<UserTable />*/}
+          <UserTable />
         </Grid>
       </Grid>
       {/*  TODO add user dialog*/}
