@@ -10,7 +10,7 @@ import {useAdminUsersContext} from '../../contexts/admin/UsersContext'
 import {setErrorTextMsg} from '../../utils/error'
 import AdminUserService from '../../services/admin-users.service'
 import {useIsMounted} from 'usehooks-ts'
-import UserTable from '../../components/admin/users/UserTable'
+// import UserTable from '../../components/admin/users/UserTable'
 
 const UsersManagement = (): JSX.Element => {
   const [isLoading, setLoading] = useState(false)
@@ -91,7 +91,7 @@ const UsersManagement = (): JSX.Element => {
             </Alert>
           )}
           {isLoading && <LinearProgress variant='indeterminate' />}
-          <UserTable />
+          {/*<UserTable />*/}
         </Grid>
       </Grid>
       {/*  TODO add user dialog*/}
