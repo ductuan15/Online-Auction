@@ -6,16 +6,16 @@ export function setErrorTextMsg(error: unknown, setErrorMsg: (errorText: string)
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      //console.log(error.response.data)
-      //console.log(error.response.status)
-      //console.log(error.response.headers)
-      console.log(error.response)
+      // console.log(error.response.data)
+      // console.log(error.response.status)
+      // console.log(error.response.headers)
+      // console.log(error.response)
       msg = error.response.data?.message || 'Unknown response error occured'
     } else if (error.request) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
       // http.ClientRequest in node.js
-      console.log(error.request)
+      // console.log(error.request)
       msg = error.request.data?.message || 'Unknown Request error occurred'
     }
   } else if (error instanceof Error) {

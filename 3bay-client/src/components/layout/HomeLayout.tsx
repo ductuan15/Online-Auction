@@ -27,12 +27,11 @@ export default function HomeLayout({ children }: Props): JSX.Element {
 
         {/* main content */}
 
-        <Container sx={{ bgcolor: 'background.paper' }}>
+        <Container sx={{ bgcolor: 'background.default' }}>
           {children ? children : <Outlet />}
         </Container>
-
-        <AppFooter />
       </CategoryProvider>
+      <AppFooter />
     </StyledDiv>
   )
 }

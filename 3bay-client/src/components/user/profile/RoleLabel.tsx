@@ -1,6 +1,5 @@
 import { useAuth } from '../../../contexts/user/AuthContext'
-import {Chip, ChipProps} from '@mui/material'
-
+import { Chip, ChipProps, Typography } from '@mui/material'
 
 const RoleLabel = (props?: ChipProps): JSX.Element => {
   const { user } = useAuth()
@@ -25,7 +24,17 @@ const RoleLabel = (props?: ChipProps): JSX.Element => {
       color = 'success'
       break
   }
-  return <>{user && <Chip {...props} color={color} label={user?.role} />}</>
+  return (
+    <>
+      {user && (
+        <Chip
+          {...props}
+          color={color}
+          label={<Typography fontWeight={550} variant='body1'>{user?.role}</Typography>}
+        />
+      )}
+    </>
+  )
 }
 
 export default RoleLabel

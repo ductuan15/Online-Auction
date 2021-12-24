@@ -1,4 +1,5 @@
 import { alpha } from '@mui/material/styles'
+import '@fontsource/manrope'
 
 function createGradient(color1: string, color2: string) {
   return `linear-gradient(to bottom, ${color1}, ${color2})`
@@ -91,7 +92,7 @@ const CHART_COLORS = {
   red: ['#FF6C40', '#FF8F6D', '#FFBD98', '#FFF2D4'],
 }
 
-const palette = {
+export const palette = {
   common: { black: '#000', white: '#fff' },
   primary: { ...PRIMARY },
   secondary: { ...SECONDARY },
@@ -104,7 +105,11 @@ const palette = {
   chart: CHART_COLORS,
   divider: GREY[500_24],
   // text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
-  background: { paper: '#fefefe', default: '#fefefe', neutral: GREY[200] },
+  background: {
+    paper: /*'#eaecf2'*/ '#fefefe',
+    default: '#fefefe',
+    neutral: GREY[200],
+  },
   action: {
     active: GREY[600],
     hover: GREY[500_8],
@@ -117,4 +122,6 @@ const palette = {
   },
 }
 
-export default palette
+export const darkPalette = {
+  // typography: { fontFamily: 'Manrope, sans-serif' },
+}

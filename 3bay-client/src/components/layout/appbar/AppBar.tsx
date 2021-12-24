@@ -26,12 +26,12 @@ const Search = styled('div')(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   backgroundColor:
     theme.palette.mode === 'light'
-      ? 'alpha(theme.palette.common.white, 0.15)'
+      ? 'alpha(theme.palette.background.paper, 0.15)'
       : theme.palette.background.paper,
   '&:hover': {
     backgroundColor:
       theme.palette.mode === 'light'
-        ? 'alpha(theme.palette.common.white, 0.25)'
+        ? 'alpha(theme.palette.background.paper, 0.45)'
         : theme.palette.background.paper,
   },
   marginRight: theme.spacing(2),
@@ -106,11 +106,8 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
       : theme.palette.text.primary,
   '& .MuiIconButton-root': {
     /*borderRadius: theme.shape.borderRadius,*/
-    color:
-      theme.palette.mode === 'light'
-        ? theme.palette.primary
-        : theme.palette.primary.light,
-    background: theme.palette.background.default,
+    // color: 'inherit',
+    // background: theme.palette.background.default,
     // [theme.breakpoints.up('sm')]: {
     //   border: `1px solid ${theme.palette.grey[300]}`,
     //   borderRadius: '8px',
