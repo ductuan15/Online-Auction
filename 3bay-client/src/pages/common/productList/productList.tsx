@@ -3,10 +3,9 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import CardProduct from '../../../components/common/product/CardProduct'
 import Product from '../../../data/product'
-
-// type productProps = {
-//   currentProducts: Product[]
-// }
+import { useEffect, useState } from 'react'
+import _ from 'lodash'
+import Pagination from '@mui/material/Pagination'
 
 const sampleImage =
   'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/261136866_3212007769028490_6108586411649421599_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=ae9488&_nc_ohc=NK6KdSpdGKMAX_Zd5WE&_nc_ht=scontent.fsgn2-4.fna&oh=03_AVLzVcc4x1wJ0YUxlg4ruC2Ao3bLyijqKJEN8_gqFabVoA&oe=61DE6B0D'
@@ -165,6 +164,56 @@ const data = [
     time: '19:00:00',
     image: sampleImage,
   },
+  {
+    id: 16,
+    name: 'product 16',
+    currentPrice: 45000,
+    rate: 4.5,
+    number_bidder: 123456,
+    date: '2021-12-11',
+    time: '19:00:00',
+    image: sampleImage,
+  },
+  {
+    id: 17,
+    name: 'product 17',
+    currentPrice: 45000,
+    rate: 4.5,
+    number_bidder: 123456,
+    date: '2021-12-11',
+    time: '19:00:00',
+    image: sampleImage,
+  },
+  {
+    id: 18,
+    name: 'product 18',
+    currentPrice: 45000,
+    rate: 4.5,
+    number_bidder: 123456,
+    date: '2021-12-11',
+    time: '19:00:00',
+    image: sampleImage,
+  },
+  {
+    id: 19,
+    name: 'product 19',
+    currentPrice: 45000,
+    rate: 4.5,
+    number_bidder: 123456,
+    date: '2021-12-11',
+    time: '19:00:00',
+    image: sampleImage,
+  },
+  {
+    id: 20,
+    name: 'product 20',
+    currentPrice: 45000,
+    rate: 4.5,
+    number_bidder: 123456,
+    date: '2021-12-11',
+    time: '19:00:00',
+    image: sampleImage,
+  },
 ]
 
 function renderProducts(currentProducts: Product[]): JSX.Element {
@@ -183,6 +232,32 @@ function renderProducts(currentProducts: Product[]): JSX.Element {
 }
 
 const ProductList = (): JSX.Element => {
+  const itemsPerPage = 6
+  const initialCurrentItems: Product[] = []
+  // We start with an empty list of items.
+  const [currentItems, setCurrentItems] = useState(initialCurrentItems)
+  const [pageCount, setPageCount] = useState(0)
+  // Here we use item offsets; we could also use page offsets
+  // following the API or data you're working with.
+  const [itemOffset, setItemOffset] = useState(0)
+
+  useEffect(() => {
+    // Fetch items from another resources.
+    const endOffset = itemOffset + itemsPerPage
+    console.log(`Loading items from ${itemOffset} to ${endOffset}`)
+    const products = _.slice(data as Product[], itemOffset, endOffset)
+    setCurrentItems(products)
+    setPageCount(Math.ceil(data.length / itemsPerPage))
+  }, [itemOffset, itemsPerPage])
+
+  // Invoke when user click to request another page.
+  const handlePageClick = (event: any, value: any) => {
+    const newOffset = ((value - 1) * itemsPerPage) % data.length
+    console.log(
+      `User requested page number ${(value - 1)}, which is offset ${newOffset}`,
+    )
+    setItemOffset(newOffset)
+  }
   return (
     <Grid container display='flex' alignItems='center' flexDirection='column'>
       <Box sx={{ flexGrow: 1 }}>
@@ -191,7 +266,10 @@ const ProductList = (): JSX.Element => {
           spacing={{ xs: 2, md: 3 }}
           columns={{ xs: 4, sm: 8, md: 12 }}
         >
-          {renderProducts(data as Product[])}
+          {renderProducts(currentItems as Product[])}
+          <Grid container justifyContent="center">
+            <Pagination count={pageCount} size="large" onChange={handlePageClick} />
+          </Grid>
         </Grid>
       </Box>
     </Grid>
