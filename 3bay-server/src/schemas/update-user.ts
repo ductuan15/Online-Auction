@@ -4,7 +4,7 @@ const schema = {
   properties: {
     uuid: { type: 'string', nullable: false },
     isDisabled: { type: 'boolean', nullable: false },
-    role: { type: 'user-role', nullable: false },
+    role: { type: 'string', format: 'user-role', nullable: false },
     verified: { type: 'boolean', nullable: false },
   },
   additionalProperties: false,
