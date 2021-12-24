@@ -77,11 +77,13 @@ const UserTable = ({
     {
       title: 'Verified',
       field: 'verified',
+      // type: 'boolean',
       lookup,
     },
     {
       title: 'Disabled',
       field: 'isDisabled',
+      // type: 'boolean',
       lookup,
     },
   ]
@@ -121,8 +123,18 @@ const UserTable = ({
         ;(async () => {
           try {
             onLoadingData && onLoadingData()
-            const userResponse = await AdminUserService.updateUser(newData)
-            onDataLoaded && onDataLoaded()
+            const data = {
+              ...newData,
+              verified:
+                typeof newData.verified === 'string'
+                  ? newData.verified === 'true'
+                  : newData.verified,
+              isDisabled:
+                typeof newData.isDisabled === 'string'
+                  ? newData.isDisabled === 'true'
+                  : newData.isDisabled,
+            }
+            const userResponse = await AdminUserService.updateUser(data)
             dispatch({ type: 'UPDATE', payload: userResponse })
 
             resolve({
@@ -130,6 +142,7 @@ const UserTable = ({
               page: userState.page - 1,
               totalCount: userState.total,
             })
+            onDataLoaded && onDataLoaded()
           } catch (e) {
             onError && onError(e)
             reject(e)

@@ -2,10 +2,10 @@ export type AdminUserDetail = {
   uuid: string
   name: string
   email: string
-  isDisabled: boolean
+  isDisabled: boolean | 'true' | 'false'
   role: string
   dob: Date | null
-  verified: boolean
+  verified: boolean | 'true' | 'false'
   profile: string | null
   address: string | null
 }
