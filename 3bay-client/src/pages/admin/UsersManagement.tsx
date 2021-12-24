@@ -83,7 +83,6 @@ const UsersManagement = (): JSX.Element => {
           />
         </Grid>
       </Grid>
-      {/*  TODO add user dialog*/}
     </>
   )
 }

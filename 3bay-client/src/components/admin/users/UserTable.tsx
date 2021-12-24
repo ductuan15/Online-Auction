@@ -26,7 +26,7 @@ const UserTable = ({
   onDataLoaded,
   onError,
 }: UserTableProps): JSX.Element => {
-  const { /*state: userState,*/ dispatch } = useAdminUsersContext()
+  const { state: userState, dispatch } = useAdminUsersContext()
   const tableRef = createRef<MaterialTableProps<AdminUserDetail>>()
 
   const lookup = { true: 'Yes', false: 'No' }
@@ -115,6 +115,29 @@ const UserTable = ({
     },
   ]
 
+  const editable: MaterialTableProps<AdminUserDetail>['editable'] = {
+    onRowUpdate: (newData /*, oldData */) =>
+      new Promise((resolve, reject) => {
+        ;(async () => {
+          try {
+            onLoadingData && onLoadingData()
+            const userResponse = await AdminUserService.updateUser(newData)
+            onDataLoaded && onDataLoaded()
+            dispatch({ type: 'UPDATE', payload: userResponse })
+
+            resolve({
+              data: userState.users,
+              page: userState.page - 1,
+              totalCount: userState.total,
+            })
+          } catch (e) {
+            onError && onError(e)
+            reject(e)
+          }
+        })()
+      }),
+  }
+
   const fetchData = (
     query: Query<AdminUserDetail>,
   ): Promise<QueryResult<AdminUserDetail>> => {
@@ -149,6 +172,7 @@ const UserTable = ({
       data={fetchData}
       detailPanel={detailPanel}
       actions={actions}
+      editable={editable}
     />
   )
 }
