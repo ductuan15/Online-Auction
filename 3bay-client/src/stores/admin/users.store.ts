@@ -30,7 +30,8 @@ export const usersReducer = (
       return {
         ...state,
         users: action.payload.users,
-        total: action.payload.total
+        total: action.payload.total,
+        page: action.payload.page,
       }
     default:
       return state

@@ -9,16 +9,17 @@ export function setErrorTextMsg(error: unknown, setErrorMsg: (errorText: string)
       //console.log(error.response.data)
       //console.log(error.response.status)
       //console.log(error.response.headers)
-      msg = error.response.data.message
+      console.log(error.response)
+      msg = error.response.data?.message || 'Unknown response error occured'
     } else if (error.request) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
       // http.ClientRequest in node.js
-      //console.log(error.request)
-      msg = error.request.data.message
+      console.log(error.request)
+      msg = error.request.data?.message || 'Unknown Request error occurred'
     }
   } else if (error instanceof Error) {
-    msg = error.message
+    msg = error.message || 'Error occurred'
   } else if (typeof error === 'string') {
     msg = error
   } else {

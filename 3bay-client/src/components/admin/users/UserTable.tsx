@@ -1,22 +1,34 @@
 import { useAdminUsersContext } from '../../../contexts/admin/UsersContext'
-import MaterialTable, { Column } from '@material-table/core'
+import MaterialTable, {
+  Action,
+  Column,
+  MaterialTableProps,
+  Query,
+  QueryResult,
+} from '@material-table/core'
 import { AdminUserDetail } from '../../../data/admin-user'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import moment from 'moment/moment'
 import { Typography } from '@mui/material'
 import '@fontsource/jetbrains-mono'
+import AdminUserService from '../../../services/admin-users.service'
+import { createRef } from 'react'
+import RefreshIcon from '@mui/icons-material/Refresh'
 
-const UserTable = (): JSX.Element => {
-  const { state: userState } = useAdminUsersContext()
-  // uuid: string
-  // name: string
-  // email: string
-  // isDisabled: boolean
-  // role: string
-  // dob: Date | null
-  // verified: boolean
-  // profile: string | null
-  // address: string | null
+type UserTableProps = {
+  onLoadingData?: () => void
+  onDataLoaded?: () => void
+  onError?: (e: unknown) => void
+}
+
+const UserTable = ({
+  onLoadingData,
+  onDataLoaded,
+  onError,
+}: UserTableProps): JSX.Element => {
+  const { /*state: userState,*/ dispatch } = useAdminUsersContext()
+  const tableRef = createRef<MaterialTableProps<AdminUserDetail>>()
+
   const lookup = { true: 'Yes', false: 'No' }
   const roleLookup = {
     BIDDER: 'BIDDER',
@@ -74,44 +86,69 @@ const UserTable = (): JSX.Element => {
     },
   ]
 
+  const detailPanel = ({ rowData }: { rowData: AdminUserDetail }) => {
+    return (
+      <Typography
+        variant='body1'
+        fontFamily='Jetbrains Mono'
+        mx={2}
+        color='text.main'
+        aria-multiline='true'
+        sx={{
+          whiteSpace: 'pre',
+        }}
+      >
+        {JSON.stringify(rowData, null, 2)}
+      </Typography>
+    )
+  }
+
+  const actions: Action<AdminUserDetail>[] = [
+    {
+      icon: () => <RefreshIcon />,
+      tooltip: 'Refresh Data',
+      isFreeAction: true,
+      onClick: () =>
+        tableRef.current &&
+        tableRef.current.onQueryChange &&
+        tableRef.current?.onQueryChange(),
+    },
+  ]
+
+  const fetchData = (
+    query: Query<AdminUserDetail>,
+  ): Promise<QueryResult<AdminUserDetail>> => {
+    return new Promise((resolve, reject) => {
+      ;(async () => {
+        try {
+          onLoadingData && onLoadingData()
+          const userResponse = await AdminUserService.getUserList(
+            query.page + 1,
+            query.pageSize,
+          )
+          dispatch({ type: 'ADD_ALL', payload: userResponse })
+          resolve({
+            data: userResponse.users,
+            page: userResponse.page - 1,
+            totalCount: userResponse.total,
+          })
+          onDataLoaded && onDataLoaded()
+        } catch (e) {
+          onError && onError(e)
+          reject(e)
+        }
+      })()
+    })
+  }
+
   return (
     <MaterialTable
       title={'Users'}
+      tableRef={tableRef}
       columns={columns}
-      data={userState.users}
-      detailPanel={(rowData) => {
-        console.log(JSON.stringify(rowData, null, 2))
-        return (
-          <Typography
-            variant='body1'
-            fontFamily='Jetbrains Mono'
-            mx={2}
-            color='text.main'
-            aria-multiline='true'
-            sx={{
-              whiteSpace: 'pre',
-            }}
-          >
-            {JSON.stringify(rowData, null, 2)}
-          </Typography>
-        )
-      }}
-      editable={{
-        onRowAddCancelled: () => console.log('Row adding cancelled'),
-        onRowUpdateCancelled: () => console.log('Row editing cancelled'),
-        onRowUpdate: (newData) =>
-          new Promise((resolve /*reject*/) => {
-            setTimeout(() => {
-              // const dataUpdate = [...data];
-              // const index = oldData.tableData.id;
-              // dataUpdate[index] = newData;
-              // setData([...dataUpdate]);
-              alert(JSON.stringify(newData, null, 2))
-
-              resolve(newData)
-            }, 1000)
-          }),
-      }}
+      data={fetchData}
+      detailPanel={detailPanel}
+      actions={actions}
     />
   )
 }

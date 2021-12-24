@@ -33,7 +33,7 @@ export async function getUsers(
         take: limit,
       }),
     ])
-    return res.json({ total, users })
+    return res.json({ total, page, users })
   } catch (e) {
     return next(e)
   }

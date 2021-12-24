@@ -1,46 +1,19 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Alert, Grid, LinearProgress } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import Box from '@mui/material/Box'
 import GroupIcon from '@mui/icons-material/Group'
-import { useAdminUsersContext } from '../../contexts/admin/UsersContext'
-import { setErrorTextMsg } from '../../utils/error'
-import AdminUserService from '../../services/admin-users.service'
 import { useIsMounted } from 'usehooks-ts'
 import UserTable from '../../components/admin/users/UserTable'
+import { setErrorTextMsg } from '../../utils/error'
 
 const UsersManagement = (): JSX.Element => {
   const [isLoading, setLoading] = useState(false)
   const [errorText, setErrorText] = useState<string | null>(null)
-  const { state: userState, dispatch } = useAdminUsersContext()
   const isMounted = useIsMounted()
-
-  useEffect(() => {
-    ;(async () => {
-      try {
-        setLoading(true)
-        const userResponse = await AdminUserService.getUserList(
-          userState.page,
-          userState.limit,
-        )
-
-        dispatch({ type: 'ADD_ALL', payload: userResponse })
-      } catch (e) {
-        setErrorTextMsg(e, (msg) => {
-          if (isMounted()) {
-            setErrorText(msg)
-          }
-        })
-      } finally {
-        if (isMounted()) {
-          setLoading(false)
-        }
-      }
-    })()
-  }, [])
 
   return (
     <>
@@ -91,7 +64,23 @@ const UsersManagement = (): JSX.Element => {
             </Alert>
           )}
           {isLoading && <LinearProgress variant='indeterminate' />}
-          <UserTable />
+          <UserTable
+            onLoadingData={() => {
+              if (isMounted()) setLoading(true)
+            }}
+            onDataLoaded={() => {
+              if (isMounted()) {
+                setErrorText(null)
+                setLoading(false)
+              }
+            }}
+            onError={(e) => {
+              if (isMounted()) {
+                setErrorTextMsg(e, setErrorText)
+                setLoading(false)
+              }
+            }}
+          />
         </Grid>
       </Grid>
       {/*  TODO add user dialog*/}
