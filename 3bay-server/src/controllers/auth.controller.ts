@@ -52,7 +52,7 @@ function getUserCredential(user: Prisma.User) {
   }
 
   const token = jwt.sign(payload, config.JWT, {
-    expiresIn: '5m',
+    expiresIn: '3m',
   })
 
   return {
@@ -95,6 +95,12 @@ export async function refreshAccessToken(
       const user = await prisma.user.findFirst({
         where: { refreshToken: req.body.refreshToken, uuid: req.body.uuid },
       })
+      if (user && user.isDisabled) {
+        return next(new AuthError({ code: AuthErrorCode.AccountDisabled }))
+      }
+      if (user && !user.verified) {
+        return next(new AuthError({ code: AuthErrorCode.NotVerified }))
+      }
       if (user) {
         return res.json(getUserCredential(user))
       }

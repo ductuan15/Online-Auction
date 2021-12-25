@@ -126,7 +126,7 @@ export class AuthError extends ErrorException {
         break
       case AuthErrorCode.AlreadyVerified:
         this.status = 400
-        this.message = 'Account is already verfied'
+        this.message = 'Account is already verified'
         break
       case AuthErrorCode.RecaptchaFailed:
         this.status = 401
