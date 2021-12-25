@@ -18,6 +18,7 @@ import auctionRoute from './routes/auctions.routes.js'
 import authRoute from './routes/auth.routes.js'
 import userRoute from './routes/user.routes.js'
 import adminRoute from './routes/admin.route.js'
+import watchlistRoute from "./routes/watchlist.route.js";
 
 import { errorHandler } from './error/error-handler.js'
 import { ProductRes } from './types/ProductRes.js'
@@ -67,6 +68,7 @@ function mountRoutes() {
   app.use('/api/user', userRoute)
   app.use('/auth', authRoute)
   app.use('/api/admin', adminRoute)
+  app.use('/api/watchlist', watchlistRoute)
 }
 
 function initializeErrorHandler() {
