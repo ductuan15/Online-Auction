@@ -9,12 +9,14 @@ import GroupIcon from '@mui/icons-material/Group'
 import { useIsMounted } from 'usehooks-ts'
 import UserTable from '../../components/admin/users/UserTable'
 import { setErrorTextMsg } from '../../utils/error'
+import AddUserDialog from '../../components/admin/users/AddUserDialog'
+import { useAdminUsersContext } from '../../contexts/admin/UsersContext'
 
 const UsersManagement = (): JSX.Element => {
   const [isLoading, setLoading] = useState(false)
   const [errorText, setErrorText] = useState<string | null>(null)
   const isMounted = useIsMounted()
-
+  const { dispatch } = useAdminUsersContext()
   return (
     <>
       <Grid
@@ -42,7 +44,9 @@ const UsersManagement = (): JSX.Element => {
 
           <Grid justifyContent='flex-end' alignItems='center'>
             <Button
-              // onClick={openDialog}
+              onClick={() => {
+                dispatch({ type: 'OPEN_ADD_USER_DIALOG' })
+              }}
               startIcon={<AddRoundedIcon />}
               variant='contained'
             >
@@ -83,6 +87,12 @@ const UsersManagement = (): JSX.Element => {
           />
         </Grid>
       </Grid>
+
+      <AddUserDialog
+        onSuccess={() => {
+          //
+        }}
+      />
     </>
   )
 }

@@ -60,7 +60,7 @@ export function BaseCategoryDialog(
     dispatch({ type: 'CLOSE_ALL_DIALOGS' })
   }
 
-  // TODO: refactor me -.-
+  // TODO: refactor me -.- // の
   const onSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
 
