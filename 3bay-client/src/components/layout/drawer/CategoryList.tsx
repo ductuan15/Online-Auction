@@ -18,7 +18,12 @@ import {
   useResolvedPath,
 } from 'react-router-dom'
 
-function renderCategoryItem(navigate: NavigateFunction, category: Category) {
+type CategoryItemProps = {
+  navigate: NavigateFunction
+  category: Category
+}
+
+const CategoryItem = ({ navigate, category }: CategoryItemProps) => {
   const [open, setOpen] = useState(true)
 
   const categoryLink = `/product/cat/${category.id}`
@@ -59,7 +64,7 @@ function renderCategoryItem(navigate: NavigateFunction, category: Category) {
         <Collapse in={open} timeout='auto' unmountOnExit>
           <List component='div' disablePadding sx={{ ml: 2 }}>
             {/* recursion */}
-            {renderCategoryTree(category.otherCategories)}
+            <CategoryTree categories={category.otherCategories} />
           </List>
         </Collapse>
       )}
@@ -67,13 +72,23 @@ function renderCategoryItem(navigate: NavigateFunction, category: Category) {
   )
 }
 
-function renderCategoryTree(categories?: Category[]): JSX.Element | null {
+function CategoryTree({
+  categories,
+}: {
+  categories?: Category[]
+}): JSX.Element | null {
+  const navigate = useNavigate()
   if (categories) {
-    const navigate = useNavigate()
     return (
       <>
         {categories.map((category) => {
-          return renderCategoryItem(navigate, category)
+          return (
+            <CategoryItem
+              navigate={navigate}
+              category={category}
+              key={category.id}
+            />
+          )
         })}
       </>
     )
@@ -95,7 +110,7 @@ function CategoryList(): JSX.Element {
       }
     >
       <Divider variant='middle' />
-      {renderCategoryTree(state.allCategories)}
+      <CategoryTree categories={state.allCategories} />
     </List>
   )
 }

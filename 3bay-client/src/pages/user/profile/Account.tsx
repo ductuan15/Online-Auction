@@ -31,7 +31,7 @@ const Account = (): JSX.Element => {
     mode: 'onBlur',
   })
 
-  const [errorText, setErrorText] = useState<string | null>('hvem er jeg')
+  const [errorText, setErrorText] = useState<string | null>(null)
   const [save, setSave] = useState(false)
 
   useMemo(() => {
@@ -42,7 +42,7 @@ const Account = (): JSX.Element => {
       dob: user?.dob || null,
       address: user?.address || '',
     })
-  }, [user])
+  }, [reset, user])
 
   const { errors } = formState
 

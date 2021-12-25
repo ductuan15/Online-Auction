@@ -4,6 +4,7 @@ import {
   Dispatch,
   ReactNode,
   SyntheticEvent,
+  useCallback,
   useContext,
   useMemo,
   useReducer,
@@ -45,7 +46,7 @@ export const AppBarCtxProvider = ({
   children,
 }: AppBarContextProps): JSX.Element => {
   const [state, dispatch] = useReducer(AppbarReducer, initialAppBarState)
-  const toggleDrawer =
+  const toggleDrawer = useCallback(
     (open: boolean) => (event: KeyboardEvent | MouseEvent | SyntheticEvent) => {
       //console.log(event)
       if (
@@ -57,7 +58,9 @@ export const AppBarCtxProvider = ({
         return
       }
       dispatch({ type: 'TOGGLE_DRAWER', payload: open })
-    }
+    },
+    [dispatch],
+  )
 
   const contextValue = useMemo(
     () => ({
@@ -65,7 +68,7 @@ export const AppBarCtxProvider = ({
       dispatch,
       toggleDrawer,
     }),
-    [state, dispatch],
+    [state, toggleDrawer],
   )
 
   return (

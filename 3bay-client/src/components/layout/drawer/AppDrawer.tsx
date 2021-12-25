@@ -21,7 +21,6 @@ const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
     state: { openDrawer },
     toggleDrawer,
   } = useAppBarContext()
-
   const { addAllCategories } = useCategoryContext()
 
   useEffect(() => {

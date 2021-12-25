@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import AuthService, { AuthData } from '../../services/auth.service'
 import { UserDetails } from '../../data/user'
@@ -52,58 +58,70 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   )
   const isAuth = !!user
 
-  const signIn = async (email: string, pwd: string, cb: VoidFunction) => {
-    const user = await AuthService.signIn(email, pwd)
-    //console.log(user)
-    setUser(user)
-    cb()
-  }
+  const signIn = useCallback(
+    async (email: string, pwd: string, cb: VoidFunction) => {
+      const user = await AuthService.signIn(email, pwd)
+      //console.log(user)
+      setUser(user)
+      cb()
+    },
+    [setUser],
+  )
 
-  const signOut = (cb: VoidFunction) => {
-    setUser(undefined)
-    cb()
-  }
+  const signOut = useCallback(
+    (cb: VoidFunction) => {
+      setUser(undefined)
+      cb()
+    },
+    [setUser],
+  )
 
-  const verify = async (id: string, otp: string, cb: VoidFunction) => {
-    // the response data is expected to be the same with sign-in case
-    const user = await AuthService.verify(id, otp)
-    //console.log(user)
-    setUser(user)
-    cb()
-  }
+  const verify = useCallback(
+    async (id: string, otp: string, cb: VoidFunction) => {
+      // the response data is expected to be the same with sign-in case
+      const user = await AuthService.verify(id, otp)
+      //console.log(user)
+      setUser(user)
+      cb()
+    },
+    [setUser],
+  )
 
-  const resetPassword = async (
-    email: string,
-    pwd: string,
-    otp: string,
-    cb: VoidFunction,
-  ) => {
-    // the response data is expected to be the same with sign-in case
-    const user = await AuthService.resetPassword(email, pwd, otp)
-    //console.log(user)
-    setUser(user)
-    cb()
-  }
+  const resetPassword = useCallback(
+    async (email: string, pwd: string, otp: string, cb: VoidFunction) => {
+      // the response data is expected to be the same with sign-in case
+      const user = await AuthService.resetPassword(email, pwd, otp)
+      //console.log(user)
+      setUser(user)
+      cb()
+    },
+    [setUser],
+  )
 
-  const updateUserInfo = (data: UserDetails) => {
-    if (user && data) {
-      setUser({
-        ...user,
-        name: data.name || user.name,
-        role: data.role || user.role,
-      })
+  const updateUserInfo = useCallback(
+    (data: UserDetails) => {
+      if (user && data) {
+        setUser({
+          ...user,
+          name: data.name || user.name,
+          role: data.role || user.role,
+        })
+      }
+    },
+    [setUser, user],
+  )
+
+  const contextValue = useMemo(() => {
+    return {
+      isAuth,
+      user,
+      signIn,
+      signOut,
+      verify,
+      resetPassword,
+      updateUserInfo,
     }
-  }
-
-  const contextValue = {
-    isAuth,
-    user,
-    signIn,
-    signOut,
-    verify,
-    resetPassword,
-    updateUserInfo,
-  }
+  }, [isAuth, resetPassword, signIn, signOut, updateUserInfo, user, verify])
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
