@@ -31,5 +31,9 @@ export class AuthErrorCode {
   public static readonly AlreadyVerified = 'AuthAlreadyVerified'
   public static readonly RecaptchaFailed = 'AuthRecaptchaFailed'
   public static readonly WrongPassword = 'AuthWrongPassword'
-  public static readonly  NotHavePermission = 'AuthNotHavePermisison'
+  public static readonly NotHavePermission = 'AuthNotHavePermisison'
+}
+
+export class UserErrorCode {
+  public static readonly CannotDeleteUser = 'UserErrorCannotDeleteUser'
 }

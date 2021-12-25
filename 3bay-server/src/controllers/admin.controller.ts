@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
 import config from '../config/config.js'
+import { ErrorException, UserError } from '../error/error-exception.js'
+import { ErrorCode, UserErrorCode } from '../error/error-code.js'
+import Prisma from '@prisma/client'
 
 const userDefaultSelection = {
   uuid: true,
@@ -54,5 +57,27 @@ export async function updateUser(
     return res.json(user)
   } catch (e) {
     return next(e)
+  }
+}
+
+export async function deleteUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const uuid = req.params.id
+    if (!uuid) {
+      return next(new ErrorException({ code: ErrorCode.BadRequest }))
+    }
+    const user = await prisma.user.delete({
+      where: { uuid: uuid },
+    })
+    return res.json(user)
+  } catch (e) {
+    if (e instanceof Prisma.Prisma.PrismaClientKnownRequestError) {
+      return next(new UserError({ code: UserErrorCode.CannotDeleteUser }))
+    }
+    return next(new ErrorException({ code: ErrorCode.UnknownError }))
   }
 }

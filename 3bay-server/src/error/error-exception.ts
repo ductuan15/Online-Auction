@@ -1,4 +1,9 @@
-import { AuthErrorCode, CategoryErrorCode, ErrorCode } from './error-code.js'
+import {
+  AuthErrorCode,
+  CategoryErrorCode,
+  ErrorCode,
+  UserErrorCode,
+} from './error-code.js'
 
 type ErrorParams = {
   code: string
@@ -137,6 +142,21 @@ export class AuthError extends ErrorException {
         this.message = 'Wrong password'
         break
       case AuthErrorCode.NotHavePermission:
+        this.status = 403
+        break
+      default:
+        this.status = 500
+        break
+    }
+  }
+}
+
+export class UserError extends ErrorException {
+  constructor({ code, message, metaData }: ErrorParams) {
+    super({ code, metaData, message })
+    switch (code) {
+      case UserErrorCode.CannotDeleteUser:
+        this.message = 'Cannot delete user'
         this.status = 403
         break
       default:
