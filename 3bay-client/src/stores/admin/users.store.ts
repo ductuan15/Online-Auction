@@ -10,14 +10,9 @@ export type UsersState = {
 }
 
 export type UsersAction =
-  | {
-      type: 'ADD_ALL'
-      payload: AdminUserListResponse
-    }
-  | {
-      type: 'UPDATE'
-      payload: AdminUserDetail
-    }
+  | { type: 'ADD_ALL'; payload: AdminUserListResponse }
+  | { type: 'UPDATE'; payload: AdminUserDetail }
+  | { type: 'DELETE'; payload: AdminUserDetail }
 
 export const initialUsersState: UsersState = {
   users: [],
@@ -43,6 +38,12 @@ export const usersReducer = (
         ...state,
         users: update(state.users, action.payload),
       }
+    case 'DELETE':
+      return {
+        ...state,
+        users: deleteUser(state.users, action.payload),
+        total: state.total - 1,
+      }
     default:
       return state
   }
@@ -57,5 +58,14 @@ function update(
       return user
     }
     return item
+  })
+}
+
+function deleteUser(
+  users: AdminUserDetail[],
+  user: AdminUserDetail,
+): AdminUserDetail[] {
+  return users.filter((item) => {
+    return user.uuid !== item.uuid
   })
 }

@@ -12,7 +12,7 @@ type PasswordInputFieldProps<T> =
   UseControllerProps<T> & {
     label?: string
     id?: string
-    error: FieldError | undefined
+    error?: FieldError | undefined
     defaultValue: UnpackNestedValue<FieldPathValue<T, Path<T>>>
     textFieldProps?: TextFieldProps
 }
@@ -45,12 +45,12 @@ const PasswordInputField = <T extends { pwd: string }>({
       render={({ field }) => (
         <TextField
           error={Boolean(error)}
-          helperText={error?.message}
+          helperText={error?.message ?? ''}
           fullWidth
           label={label ?? 'Password'}
-          id={id ?? 'Password'}
+          id={id ?? 'password'}
           inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
-          autoComplete='new-password'
+          autoComplete='password'
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (

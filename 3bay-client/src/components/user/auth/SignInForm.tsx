@@ -8,7 +8,11 @@ import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
 import { Link as RouterLink } from 'react-router-dom'
 import * as React from 'react'
+import { SyntheticEvent, useState } from 'react'
 import { SubmitHandler } from 'react-hook-form'
+import { InputAdornment } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
+import { Visibility, VisibilityOff } from '@mui/icons-material'
 
 type SignInFormProps = {
   handleSubmit: SubmitHandler<{ email: string; pwd: string }>
@@ -30,6 +34,15 @@ const SignInForm = ({ handleSubmit }: SignInFormProps): JSX.Element => {
       pwd: (data.get('password') as string) || '',
     })
   }
+
+  const [showPassword, setShowPassword] = useState(false)
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword)
+  }
+  const handleMouseDownPassword = (event: SyntheticEvent) => {
+    event.preventDefault()
+  }
+
   return (
     <Box component='form' onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
       <TextField
@@ -49,10 +62,24 @@ const SignInForm = ({ handleSubmit }: SignInFormProps): JSX.Element => {
         fullWidth
         name='password'
         label='Password'
-        type='password'
         id='password'
         autoComplete='current-password'
         inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
+        type={showPassword ? 'text' : 'password'}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position='end'>
+              <IconButton
+                aria-label='toggle password visibility'
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+                edge='end'
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <FormControlLabel
         sx={{ display: 'none' }}

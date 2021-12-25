@@ -14,6 +14,7 @@ import '@fontsource/jetbrains-mono'
 import AdminUserService from '../../../services/admin-users.service'
 import { createRef } from 'react'
 import RefreshIcon from '@mui/icons-material/Refresh'
+import { useAuth } from '../../../contexts/user/AuthContext'
 
 type UserTableProps = {
   onLoadingData?: () => void
@@ -36,6 +37,8 @@ const UserTable = ({
     ADMINISTRATOR: 'ADMIN',
   }
 
+  const { user: authData } = useAuth()
+
   const columns: Column<AdminUserDetail>[] = [
     {
       title: 'Profile',
@@ -49,17 +52,17 @@ const UserTable = ({
     {
       title: 'Name',
       field: 'name',
-      editable: 'never',
+      editable: 'onAdd',
     },
     {
       title: 'Email',
       field: 'email',
-      editable: 'never',
+      editable: 'onAdd',
     },
     {
       title: 'DOB',
       field: 'dob',
-      editable: 'never',
+      editable: 'onAdd',
       render: (data) => {
         return moment(data.dob).format('L')
       },
@@ -67,7 +70,7 @@ const UserTable = ({
     {
       title: 'Address',
       field: 'address',
-      editable: 'never',
+      editable: 'onAdd',
     },
     {
       title: 'Role',
@@ -118,6 +121,12 @@ const UserTable = ({
   ]
 
   const editable: MaterialTableProps<AdminUserDetail>['editable'] = {
+    isEditable: (rowData) => {
+      return !!authData && rowData.uuid !== authData.user
+    },
+    isDeletable: (rowData) => {
+      return !!authData && rowData.uuid !== authData.user
+    },
     onRowUpdate: (newData /*, oldData */) =>
       new Promise((resolve, reject) => {
         ;(async () => {
@@ -135,6 +144,27 @@ const UserTable = ({
                   : newData.isDisabled,
             }
             const userResponse = await AdminUserService.updateUser(data)
+            dispatch({ type: 'UPDATE', payload: userResponse })
+
+            resolve({
+              data: userState.users,
+              page: userState.page - 1,
+              totalCount: userState.total,
+            })
+            onDataLoaded && onDataLoaded()
+          } catch (e) {
+            onError && onError(e)
+            reject(e)
+          }
+        })()
+      }),
+    onRowDelete: (oldData) =>
+      new Promise((resolve, reject) => {
+        ;(async () => {
+          try {
+            onLoadingData && onLoadingData()
+
+            const userResponse = await AdminUserService.deleteUser(oldData)
             dispatch({ type: 'UPDATE', payload: userResponse })
 
             resolve({

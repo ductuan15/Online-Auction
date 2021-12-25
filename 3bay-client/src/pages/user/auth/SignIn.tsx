@@ -13,6 +13,7 @@ import SignInForm from '../../../components/user/auth/SignInForm'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import axios, { AxiosError } from 'axios'
+import {setErrorTextMsg} from '../../../utils/error'
 
 const SignIn: () => JSX.Element = () => {
   const navigate = useNavigate()
@@ -20,11 +21,11 @@ const SignIn: () => JSX.Element = () => {
   const from = location.state?.from?.pathname || '/'
 
   const { signIn } = useAuth()
-  const [isError, setError] = useState(false)
+  const [errorText, setErrorText] = useState<string | null>(null)
 
   const handleSubmit = async (data: { email: string; pwd: string }) => {
     const { email, pwd } = data
-    setError(false)
+    setErrorText(null)
     //console.log(data)
     try {
       await signIn(email, pwd, () => {
@@ -51,7 +52,14 @@ const SignIn: () => JSX.Element = () => {
         }
       }
       // console.log(e)
-      setError(true)
+      setErrorTextMsg(e, (msg) => {
+        if (!msg) {
+          setErrorText('Wrong email or password')
+        }
+        else {
+          setErrorText(msg)
+        }
+      })
     }
   }
 
@@ -83,7 +91,7 @@ const SignIn: () => JSX.Element = () => {
           </Typography>
         </Box>
 
-        {isError && <Alert severity='error'>Wrong email or password</Alert>}
+        {errorText && <Alert severity='error'>{errorText}</Alert>}
 
         <SignInForm handleSubmit={handleSubmit} />
       </Box>
