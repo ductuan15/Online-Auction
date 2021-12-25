@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import * as React from 'react'
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -11,13 +11,18 @@ import AddUserForm from './AddUserForm'
 import { SubmitHandler } from 'react-hook-form'
 import { AddUserFormInputs } from '../../../data/sign-up'
 import { useAdminUsersContext } from '../../../contexts/admin/UsersContext'
+import { Alert } from '@mui/material'
 
 type AddUserDialogProps = {
-  onSuccess: () => void
+  errorText: string | null
+  onSubmit: SubmitHandler<AddUserFormInputs>
 }
 
+const dialogName = 'dialog-add-user'
+
 export default function AddUserDialog({
-  onSuccess,
+  errorText,
+  onSubmit,
 }: AddUserDialogProps): JSX.Element {
   const {
     state: { isAddUserDialogOpened },
@@ -27,19 +32,12 @@ export default function AddUserDialog({
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
   const progressRef = useRef<HTMLDivElement>(null)
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
     if (progressRef.current && progressRef.current.style) {
       progressRef.current.style.display = 'none'
     }
     dispatch({ type: 'CLOSE_ADD_USER_DIALOG' })
-  }
-
-  const onSubmit: SubmitHandler<AddUserFormInputs> = (data) => {
-    alert(JSON.stringify(data, null, 2))
-    onClose()
-  }
-
-  const dialogName = 'dialog-add-user'
+  }, [dispatch])
 
   return (
     <Dialog
@@ -50,6 +48,8 @@ export default function AddUserDialog({
     >
       <DialogTitle id={dialogName}>Register new user</DialogTitle>
       <DialogContent>
+        {errorText && <Alert severity='error'>{errorText}</Alert>}
+
         <AddUserForm onSubmit={onSubmit} />
       </DialogContent>
 

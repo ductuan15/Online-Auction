@@ -11,12 +11,31 @@ import UserTable from '../../components/admin/users/UserTable'
 import { setErrorTextMsg } from '../../utils/error'
 import AddUserDialog from '../../components/admin/users/AddUserDialog'
 import { useAdminUsersContext } from '../../contexts/admin/UsersContext'
+import AdminUserService from '../../services/admin-users.service'
+import { SubmitHandler } from 'react-hook-form'
+import { AddUserFormInputs } from '../../data/sign-up'
 
 const UsersManagement = (): JSX.Element => {
   const [isLoading, setLoading] = useState(false)
   const [errorText, setErrorText] = useState<string | null>(null)
+  const [dialogErrorText, setDialogErrorText] = useState<string | null>(null)
   const isMounted = useIsMounted()
   const { dispatch } = useAdminUsersContext()
+
+  const onDialogSubmit: SubmitHandler<AddUserFormInputs> = async (data) => {
+    try {
+      await AdminUserService.addUser(data)
+      dispatch({ type: 'NEW_USER_ADDED' })
+      dispatch({ type: 'CLOSE_ADD_USER_DIALOG' })
+    } catch (e) {
+      setErrorTextMsg(e, (msg) => {
+        if (isMounted()) {
+          setDialogErrorText(msg)
+        }
+      })
+    }
+  }
+
   return (
     <>
       <Grid
@@ -88,11 +107,7 @@ const UsersManagement = (): JSX.Element => {
         </Grid>
       </Grid>
 
-      <AddUserDialog
-        onSuccess={() => {
-          //
-        }}
-      />
+      <AddUserDialog onSubmit={onDialogSubmit} errorText={dialogErrorText} />
     </>
   )
 }

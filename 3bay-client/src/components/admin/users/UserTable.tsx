@@ -12,7 +12,7 @@ import moment from 'moment/moment'
 import { Typography } from '@mui/material'
 import '@fontsource/jetbrains-mono'
 import AdminUserService from '../../../services/admin-users.service'
-import { createRef } from 'react'
+import { createRef, useCallback, useEffect, useMemo } from 'react'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { useAuth } from '../../../contexts/user/AuthContext'
 
@@ -20,6 +20,82 @@ type UserTableProps = {
   onLoadingData?: () => void
   onDataLoaded?: () => void
   onError?: (e: unknown) => void
+}
+
+const lookup = { true: 'Yes', false: 'No' }
+const roleLookup = {
+  BIDDER: 'BIDDER',
+  SELLER: 'SELLER',
+  ADMINISTRATOR: 'ADMIN',
+}
+
+const columns: Column<AdminUserDetail>[] = [
+  {
+    title: 'Profile',
+    field: 'profile',
+    render: (data) => {
+      return <BackgroundLetterAvatars name={data.name} />
+    },
+    sorting: false,
+    editable: 'never',
+  },
+  {
+    title: 'Name',
+    field: 'name',
+    editable: 'onAdd',
+  },
+  {
+    title: 'Email',
+    field: 'email',
+    editable: 'onAdd',
+  },
+  {
+    title: 'DOB',
+    field: 'dob',
+    editable: 'onAdd',
+    render: (data) => {
+      return moment(data.dob).format('L')
+    },
+  },
+  {
+    title: 'Address',
+    field: 'address',
+    editable: 'onAdd',
+  },
+  {
+    title: 'Role',
+    field: 'role',
+    lookup: roleLookup,
+  },
+  {
+    title: 'Verified',
+    field: 'verified',
+    // type: 'boolean',
+    lookup,
+  },
+  {
+    title: 'Disabled',
+    field: 'isDisabled',
+    // type: 'boolean',
+    lookup,
+  },
+]
+
+const detailPanel = ({ rowData }: { rowData: AdminUserDetail }) => {
+  return (
+    <Typography
+      variant='body1'
+      fontFamily='Jetbrains Mono'
+      mx={2}
+      color='text.main'
+      aria-multiline='true'
+      sx={{
+        whiteSpace: 'pre',
+      }}
+    >
+      {JSON.stringify(rowData, null, 2)}
+    </Typography>
+  )
 }
 
 const UserTable = ({
@@ -30,104 +106,32 @@ const UserTable = ({
   const { state: userState, dispatch } = useAdminUsersContext()
   const tableRef = createRef<MaterialTableProps<AdminUserDetail>>()
 
-  const lookup = { true: 'Yes', false: 'No' }
-  const roleLookup = {
-    BIDDER: 'BIDDER',
-    SELLER: 'SELLER',
-    ADMINISTRATOR: 'ADMIN',
-  }
-
   const { user: authData } = useAuth()
 
-  const columns: Column<AdminUserDetail>[] = [
-    {
-      title: 'Profile',
-      field: 'profile',
-      render: (data) => {
-        return <BackgroundLetterAvatars name={data.name} />
+  useEffect(() => {
+    if (userState.newUserAdded) {
+      tableRef.current?.onQueryChange && tableRef.current?.onQueryChange()
+      dispatch({ type: 'HANDLED_NEW_USER_ADDED' })
+    }
+  }, [dispatch, tableRef, userState.newUserAdded])
+
+  const actions = useMemo<Action<AdminUserDetail>[]>(
+    () => [
+      {
+        icon: () => <RefreshIcon />,
+        tooltip: 'Refresh Data',
+        isFreeAction: true,
+        onClick: () =>
+          tableRef.current &&
+          tableRef.current.onQueryChange &&
+          tableRef.current?.onQueryChange(),
       },
-      sorting: false,
-      editable: 'never',
-    },
-    {
-      title: 'Name',
-      field: 'name',
-      editable: 'onAdd',
-    },
-    {
-      title: 'Email',
-      field: 'email',
-      editable: 'onAdd',
-    },
-    {
-      title: 'DOB',
-      field: 'dob',
-      editable: 'onAdd',
-      render: (data) => {
-        return moment(data.dob).format('L')
-      },
-    },
-    {
-      title: 'Address',
-      field: 'address',
-      editable: 'onAdd',
-    },
-    {
-      title: 'Role',
-      field: 'role',
-      lookup: roleLookup,
-    },
-    {
-      title: 'Verified',
-      field: 'verified',
-      // type: 'boolean',
-      lookup,
-    },
-    {
-      title: 'Disabled',
-      field: 'isDisabled',
-      // type: 'boolean',
-      lookup,
-    },
-  ]
+    ],
+    [tableRef],
+  )
 
-  const detailPanel = ({ rowData }: { rowData: AdminUserDetail }) => {
-    return (
-      <Typography
-        variant='body1'
-        fontFamily='Jetbrains Mono'
-        mx={2}
-        color='text.main'
-        aria-multiline='true'
-        sx={{
-          whiteSpace: 'pre',
-        }}
-      >
-        {JSON.stringify(rowData, null, 2)}
-      </Typography>
-    )
-  }
-
-  const actions: Action<AdminUserDetail>[] = [
-    {
-      icon: () => <RefreshIcon />,
-      tooltip: 'Refresh Data',
-      isFreeAction: true,
-      onClick: () =>
-        tableRef.current &&
-        tableRef.current.onQueryChange &&
-        tableRef.current?.onQueryChange(),
-    },
-  ]
-
-  const editable: MaterialTableProps<AdminUserDetail>['editable'] = {
-    isEditable: (rowData) => {
-      return !!authData && rowData.uuid !== authData.user
-    },
-    isDeletable: (rowData) => {
-      return !!authData && rowData.uuid !== authData.user
-    },
-    onRowUpdate: (newData /*, oldData */) =>
+  const onRowUpdate = useCallback(
+    (newData: AdminUserDetail /*, oldData */) =>
       new Promise((resolve, reject) => {
         ;(async () => {
           try {
@@ -158,8 +162,20 @@ const UserTable = ({
           }
         })()
       }),
-    onRowDelete: (oldData) =>
-      new Promise((resolve, reject) => {
+    [
+      dispatch,
+      onDataLoaded,
+      onError,
+      onLoadingData,
+      userState.page,
+      userState.total,
+      userState.users,
+    ],
+  )
+
+  const onRowDelete = useCallback(
+    (oldData: AdminUserDetail) => {
+      return new Promise((resolve, reject) => {
         ;(async () => {
           try {
             onLoadingData && onLoadingData()
@@ -178,34 +194,60 @@ const UserTable = ({
             reject(e)
           }
         })()
-      }),
-  }
+      })
+    },
+    [
+      dispatch,
+      onDataLoaded,
+      onError,
+      onLoadingData,
+      userState.page,
+      userState.total,
+      userState.users,
+    ],
+  )
 
-  const fetchData = (
-    query: Query<AdminUserDetail>,
-  ): Promise<QueryResult<AdminUserDetail>> => {
-    return new Promise((resolve, reject) => {
-      ;(async () => {
-        try {
-          onLoadingData && onLoadingData()
-          const userResponse = await AdminUserService.getUserList(
-            query.page + 1,
-            query.pageSize,
-          )
-          dispatch({ type: 'ADD_ALL', payload: userResponse })
-          resolve({
-            data: userResponse.users,
-            page: userResponse.page - 1,
-            totalCount: userResponse.total,
-          })
-          onDataLoaded && onDataLoaded()
-        } catch (e) {
-          onError && onError(e)
-          reject(e)
-        }
-      })()
-    })
-  }
+  const editable = useMemo<
+    MaterialTableProps<AdminUserDetail>['editable']
+  >(() => {
+    return {
+      isEditable: (rowData) => {
+        return !!authData && rowData.uuid !== authData.user
+      },
+      isDeletable: (rowData) => {
+        return !!authData && rowData.uuid !== authData.user
+      },
+      onRowUpdate: onRowUpdate,
+      onRowDelete: onRowDelete,
+    }
+  }, [authData, onRowDelete, onRowUpdate])
+
+  const fetchData = useCallback(
+    (query: Query<AdminUserDetail>): Promise<QueryResult<AdminUserDetail>> => {
+      return new Promise((resolve, reject) => {
+        ;(async () => {
+          try {
+            onLoadingData && onLoadingData()
+            const userResponse = await AdminUserService.getUserList(
+              query.page + 1,
+              query.pageSize,
+            )
+            dispatch({ type: 'ADD_ALL', payload: userResponse })
+            resolve({
+              data: userResponse.users,
+              page: userResponse.page - 1,
+              totalCount: userResponse.total,
+            })
+            onDataLoaded && onDataLoaded()
+          } catch (e) {
+            onError && onError(e)
+            reject(e)
+          }
+        })()
+      })
+    },
+    [dispatch, onDataLoaded, onError, onLoadingData],
+  )
 
   return (
     <MaterialTable

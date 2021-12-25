@@ -5,6 +5,7 @@ export type UsersState = {
   page: number
   total: number
   isAddUserDialogOpened: boolean
+  newUserAdded: boolean
 }
 
 export type UsersAction =
@@ -13,12 +14,15 @@ export type UsersAction =
   | { type: 'DELETE'; payload: AdminUserDetail }
   | { type: 'OPEN_ADD_USER_DIALOG' }
   | { type: 'CLOSE_ADD_USER_DIALOG' }
+  | { type: 'NEW_USER_ADDED' }
+  | { type: 'HANDLED_NEW_USER_ADDED' }
 
 export const initialUsersState: UsersState = {
   users: [],
   page: 0,
   total: 0,
-  isAddUserDialogOpened: false
+  isAddUserDialogOpened: false,
+  newUserAdded: false,
   // limit: 25,
 }
 
@@ -48,12 +52,22 @@ export const usersReducer = (
     case 'OPEN_ADD_USER_DIALOG':
       return {
         ...state,
-        isAddUserDialogOpened: true
+        isAddUserDialogOpened: true,
       }
     case 'CLOSE_ADD_USER_DIALOG':
       return {
         ...state,
-        isAddUserDialogOpened: false
+        isAddUserDialogOpened: false,
+      }
+    case 'NEW_USER_ADDED':
+      return {
+        ...state,
+        newUserAdded: true,
+      }
+    case 'HANDLED_NEW_USER_ADDED':
+      return {
+        ...state,
+        newUserAdded: false,
       }
     default:
       return state

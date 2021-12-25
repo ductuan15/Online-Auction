@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Grid from '@mui/material/Grid'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Button from '@mui/material/Button'
@@ -13,20 +13,44 @@ import ConfirmPasswordInputField from '../../common/form/ConfirmPasswordInputFie
 import LinearProgress from '@mui/material/LinearProgress'
 import SelectField from '../../common/form/SelectField'
 import Role from '../../../data/role'
+import { useAdminUsersContext } from '../../../contexts/admin/UsersContext'
 
 type AddUserFormProps = {
   onSubmit: SubmitHandler<AddUserFormInputs>
 }
 
 const AddUserForm = ({ onSubmit }: AddUserFormProps): JSX.Element => {
-  const { control, handleSubmit, watch, formState } =
-    useForm<AddUserFormInputs>()
-  const { errors } = formState
+  const {
+    state: { isAddUserDialogOpened },
+  } = useAdminUsersContext()
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    reset,
+  } = useForm<AddUserFormInputs>()
 
   const [disableAllElement, setDisableAllElement] = useState(false)
 
   const password = useRef<string | null>(null)
   password.current = watch('pwd', '')
+
+  useEffect(() => {
+    if (!isAddUserDialogOpened) {
+      reset({
+        name: '',
+        email: '',
+        dob: null,
+        address: '',
+        pwd: '',
+        pwd2: '',
+        role: Role.BIDDER,
+        verified: false,
+      })
+    }
+  }, [isAddUserDialogOpened, reset])
 
   const onSubmitCb: SubmitHandler<AddUserFormInputs> = async (data, event) => {
     event?.preventDefault()
@@ -40,7 +64,7 @@ const AddUserForm = ({ onSubmit }: AddUserFormProps): JSX.Element => {
     }
   }
 
-  console.log(watch())
+  // console.log(watch())
 
   return (
     <Box

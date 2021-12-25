@@ -1,5 +1,6 @@
 import axiosApiInstance from './api'
 import { AdminUserDetail, AdminUserListResponse } from '../data/admin-user'
+import { AddUserFormInputs } from '../data/sign-up'
 
 async function getUserList(
   page: number,
@@ -21,6 +22,11 @@ async function updateUser(user: AdminUserDetail): Promise<AdminUserDetail> {
   return userResponse.data as AdminUserDetail
 }
 
+async function addUser(user: AddUserFormInputs): Promise<{ uuid: string }> {
+  const userResponse = await axiosApiInstance.post(`/api/admin/users/`, user)
+  return userResponse.data as { uuid: string }
+}
+
 async function deleteUser(user: AdminUserDetail): Promise<AdminUserDetail> {
   const userResponse = await axiosApiInstance.delete(
     `/api/admin/users/${user.uuid}`,
@@ -30,6 +36,7 @@ async function deleteUser(user: AdminUserDetail): Promise<AdminUserDetail> {
 
 const AdminUserService = {
   getUserList,
+  addUser,
   updateUser,
   deleteUser,
 }
