@@ -41,7 +41,7 @@ const VerifyAccount = (): JSX.Element => {
         setLoading(false)
       }
     })()
-  }, [])
+  }, [id, navigate])
 
   function handleError(error: unknown) {
     setErrorTextMsg(error, setErrorText)

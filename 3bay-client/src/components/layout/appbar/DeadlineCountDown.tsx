@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import {useCallback, useEffect, useRef, useState} from 'react'
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
@@ -16,26 +16,26 @@ const DeadlineCountDown = ({ date, sx }: Props): JSX.Element => {
 
   const endDate = moment(date)
 
-  let timer: NodeJS.Timeout
+  const timer = useRef<NodeJS.Timeout>()
 
-  const showRemaining = () => {
+  const showRemaining = useCallback(() => {
     const now = moment()
 
     if (!endDate.isAfter(now)) {
-      if (timer) {
-        clearInterval(timer)
+      if (timer.current) {
+        clearInterval(timer.current)
       }
       setCountDownText('NOW')
       return
     }
 
     setCountDownText(now.to(endDate))
-  }
+  }, [endDate])
 
   useEffect(() => {
     showRemaining()
-    timer = setInterval(showRemaining, 1000)
-  }, [])
+    timer.current = setInterval(showRemaining, 1000)
+  }, [showRemaining])
 
   return (
     <Box sx={sx}>

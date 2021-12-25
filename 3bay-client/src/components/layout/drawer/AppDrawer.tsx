@@ -29,7 +29,7 @@ const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
       const data = response.data as Array<Category>
       addAllCategories(data)
     })
-  }, [])
+  }, [addAllCategories])
 
   return (
     <Drawer
