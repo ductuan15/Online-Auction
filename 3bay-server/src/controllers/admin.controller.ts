@@ -37,7 +37,36 @@ export async function getUsers(
         take: limit,
       }),
     ])
-    return res.json({ total, page, users })
+    return res.json({ total, page, limit, users })
+  } catch (e) {
+    return next(e)
+  }
+}
+
+export async function getRequestSellerUsers(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const page = +(req.query?.page || '/') || 1
+    const limit = +(req.query?.limit || '/') || config.USER_PAGE_LIMIT
+
+    const [total, users] = await prisma.$transaction([
+      prisma.upgradeToSellerRequest.count(),
+      prisma.user.findMany({
+        // select: { user: { select: userDefaultSelection } },
+        select: userDefaultSelection,
+        where: {
+          upgradeToSellerRequest: {
+            is: {}
+          }
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ])
+    return res.json({ total, page, limit, users })
   } catch (e) {
     return next(e)
   }

@@ -3,6 +3,7 @@ import passport from '../auth/passport.js'
 import { hashPassword, requireAdminRole } from '../middlewares/auth.mdw.js'
 import {
   deleteUser,
+  getRequestSellerUsers,
   getUsers,
   updateUser,
 } from '../controllers/admin.controller.js'
@@ -22,5 +23,7 @@ router
   .post(validate(addUserSchema), hashPassword, signUp)
 
 router.route('/users/:id').delete(deleteUser)
+
+router.route('/users/request-seller').get(getRequestSellerUsers)
 
 export default router
