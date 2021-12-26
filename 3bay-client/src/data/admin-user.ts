@@ -13,5 +13,6 @@ export type AdminUserDetail = {
 export type AdminUserListResponse = {
   total: number,
   page: number,
+  limit: number,
   users: AdminUserDetail[]
 }

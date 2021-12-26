@@ -12,11 +12,11 @@ import moment from 'moment/moment'
 import { Typography } from '@mui/material'
 import '@fontsource/jetbrains-mono'
 import AdminUserService from '../../../services/admin-users.service'
-import { createRef, useCallback, useEffect, useMemo } from 'react'
+import { createRef, useCallback, useMemo } from 'react'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { useAuth } from '../../../contexts/user/AuthContext'
 
-type UserTableProps = {
+type UpgradeToSellerRequestTableProps = {
   onLoadingData?: () => void
   onDataLoaded?: () => void
   onError?: (e: unknown) => void
@@ -43,12 +43,12 @@ const columns: Column<AdminUserDetail>[] = [
   {
     title: 'Name',
     field: 'name',
-    editable: 'onAdd',
+    editable: 'never',
   },
   {
     title: 'Email',
     field: 'email',
-    editable: 'onAdd',
+    editable: 'never',
   },
   {
     title: 'DOB',
@@ -61,24 +61,27 @@ const columns: Column<AdminUserDetail>[] = [
   {
     title: 'Address',
     field: 'address',
-    editable: 'onAdd',
+    editable: 'never',
   },
   {
     title: 'Role',
     field: 'role',
     lookup: roleLookup,
+    editable: 'never',
   },
   {
     title: 'Verified',
     field: 'verified',
-    // lookup,
     type: 'boolean',
+    // lookup,
+    editable: 'never',
   },
   {
     title: 'Disabled',
     field: 'isDisabled',
-    // lookup,
     type: 'boolean',
+    editable: 'never',
+    // lookup,
   },
 ]
 
@@ -99,23 +102,16 @@ const detailPanel = ({ rowData }: { rowData: AdminUserDetail }) => {
   )
 }
 
-const UserTable = ({
+const UpgradeToSellerRequestTable = ({
   onLoadingData,
   onDataLoaded,
   onError,
   tab,
-}: UserTableProps): JSX.Element => {
+}: UpgradeToSellerRequestTableProps): JSX.Element => {
   const { state: userState, dispatch } = useAdminUsersContext()
   const tableRef = createRef<MaterialTableProps<AdminUserDetail>>()
 
   const { user: authData } = useAuth()
-
-  useEffect(() => {
-    if (userState.newUserAdded) {
-      tableRef.current?.onQueryChange && tableRef.current?.onQueryChange()
-      dispatch({ type: 'HANDLED_NEW_USER_ADDED' })
-    }
-  }, [dispatch, tableRef, userState.newUserAdded])
 
   const actions = useMemo<Action<AdminUserDetail>[]>(
     () => [
@@ -132,73 +128,42 @@ const UserTable = ({
     [tableRef],
   )
 
-  const onRowUpdate = useCallback(
-    (newData: AdminUserDetail /*, oldData */) =>
-      new Promise((resolve, reject) => {
-        ;(async () => {
-          try {
-            onLoadingData && onLoadingData()
-            const data = {
-              ...newData,
-            }
-            const userResponse = await AdminUserService.updateUser(data)
-            dispatch({ type: 'UPDATE', payload: userResponse })
-
-            resolve({
-              data: userState.users,
-              page: userState.usersTable.page - 1,
-              totalCount: userState.usersTable.total,
-            })
-            onDataLoaded && onDataLoaded()
-          } catch (e) {
-            onError && onError(e)
-            reject(e)
-          }
-        })()
-      }),
-    [
-      dispatch,
-      onDataLoaded,
-      onError,
-      onLoadingData,
-      userState.users,
-      userState.usersTable.page,
-      userState.usersTable.total,
-    ],
-  )
-
-  const onRowDelete = useCallback(
-    (oldData: AdminUserDetail) => {
-      return new Promise((resolve, reject) => {
-        ;(async () => {
-          try {
-            onLoadingData && onLoadingData()
-
-            await AdminUserService.deleteUser(oldData)
-            // dispatch({ type: 'DELETE', payload: userResponse })
-
-            resolve({
-              data: userState.users,
-              page: userState.usersTable.page - 1,
-              totalCount: userState.usersTable.total,
-            })
-            onDataLoaded && onDataLoaded()
-          } catch (e) {
-            onError && onError(e)
-            reject(e)
-          }
-        })()
-      })
-    },
-    [
-      onDataLoaded,
-      onError,
-      onLoadingData,
-      userState.users,
-      userState.usersTable.page,
-      userState.usersTable.total,
-    ],
-  )
+  // const onRowDelete = useCallback(
+  //   (oldData: AdminUserDetail) => {
+  //     return new Promise((resolve, reject) => {
+  //       ;(async () => {
+  //         try {
+  //           onLoadingData && onLoadingData()
+  //
+  //           const userResponse = await AdminUserService.updateUser({
+  //             ...oldData,
+  //             role: 'SELLER',
+  //           })
+  //           dispatch({type: 'UPDATE', payload: userResponse})
+  //
+  //           resolve({
+  //             data: userState.requestToSellerUsers,
+  //             page: userState.requestSellerTable.page - 1,
+  //             totalCount: userState.requestSellerTable.total,
+  //           })
+  //           onDataLoaded && onDataLoaded()
+  //         } catch (e) {
+  //           onError && onError(e)
+  //           reject(e)
+  //         }
+  //       })()
+  //     })
+  //   },
+  //   [
+  //     dispatch,
+  //     onDataLoaded,
+  //     onError,
+  //     onLoadingData,
+  //     userState.requestSellerTable.page,
+  //     userState.requestSellerTable.total,
+  //     userState.requestSellerUsers,
+  //   ],
+  // )
 
   const editable = useMemo<
     MaterialTableProps<AdminUserDetail>['editable']
@@ -210,10 +175,9 @@ const UserTable = ({
       isDeletable: (rowData) => {
         return !!authData && rowData.uuid !== authData.user
       },
-      onRowUpdate: onRowUpdate,
-      onRowDelete: onRowDelete,
+      // onRowDelete: onRowDelete,
     }
-  }, [authData, onRowDelete, onRowUpdate])
+  }, [authData])
 
   const fetchData = useCallback(
     (query: Query<AdminUserDetail>): Promise<QueryResult<AdminUserDetail>> => {
@@ -221,20 +185,24 @@ const UserTable = ({
         ;(async () => {
           try {
             if (userState.currentTab !== tab) {
-              dispatch({ type: 'SET_CURRENT_TAB', payload: tab })
               resolve({
-                data: userState.users,
-                page: userState.usersTable.page - 1,
-                totalCount: userState.usersTable.total,
+                data: userState.requestSellerUsers,
+                page: userState.requestSellerTable.page - 1,
+                totalCount: userState.requestSellerTable.total,
               })
+              dispatch({ type: 'SET_CURRENT_TAB', payload: tab })
               return
             }
             onLoadingData && onLoadingData()
-            const userResponse = await AdminUserService.getUserList(
-              query.page + 1,
-              query.pageSize,
-            )
-            dispatch({ type: 'ADD_ALL', payload: userResponse })
+            const userResponse =
+              await AdminUserService.getRequestSellerUserList(
+                query.page + 1,
+                query.pageSize,
+              )
+            dispatch({
+              type: 'ADD_ALL_REQUEST_ADMIN_USERS',
+              payload: userResponse,
+            })
             resolve({
               data: userResponse.users,
               page: userResponse.page - 1,
@@ -255,15 +223,15 @@ const UserTable = ({
       onLoadingData,
       tab,
       userState.currentTab,
-      userState.users,
-      userState.usersTable.page,
-      userState.usersTable.total,
+      userState.requestSellerTable.page,
+      userState.requestSellerTable.total,
+      userState.requestSellerUsers,
     ],
   )
 
   return (
     <MaterialTable
-      title={'Users'}
+      title={'Upgrade to SELLER request'}
       tableRef={tableRef}
       columns={columns}
       data={fetchData}
@@ -274,4 +242,4 @@ const UserTable = ({
   )
 }
 
-export default UserTable
+export default UpgradeToSellerRequestTable

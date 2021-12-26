@@ -15,6 +15,19 @@ async function getUserList(
   return userResponse.data as AdminUserListResponse
 }
 
+async function getRequestSellerUserList(
+  page: number,
+  limit: number,
+): Promise<AdminUserListResponse> {
+  const userResponse = await axiosApiInstance.get(`/api/admin//users/request-seller/`, {
+    params: {
+      page,
+      limit,
+    },
+  })
+  return userResponse.data as AdminUserListResponse
+}
+
 async function updateUser(user: AdminUserDetail): Promise<AdminUserDetail> {
   const userResponse = await axiosApiInstance.patch(`/api/admin/users/`, {
     ...user,
@@ -39,6 +52,7 @@ const AdminUserService = {
   addUser,
   updateUser,
   deleteUser,
+  getRequestSellerUserList,
 }
 
 export default AdminUserService

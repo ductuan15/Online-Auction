@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import Box from '@mui/material/Box'
 import GroupIcon from '@mui/icons-material/Group'
-import { useIsMounted } from 'usehooks-ts'
+import {useEffectOnce, useIsMounted} from 'usehooks-ts'
 import UserTable from '../../components/admin/users/UserTable'
 import { setErrorTextMsg } from '../../utils/error'
 import { useAdminUsersContext } from '../../contexts/admin/UsersContext'
@@ -16,6 +16,7 @@ import { AddUserFormInputs } from '../../data/sign-up'
 import useTitle from '../../hooks/use-title'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import AddUserDialog from '../../components/admin/users/AddUserDialog'
+import UpgradeToSellerRequestTable from '../../components/admin/users/UpgradeToSellerRequestTable'
 
 const UsersManagement = (): JSX.Element => {
   useTitle('3bay | Manage users')
@@ -24,7 +25,7 @@ const UsersManagement = (): JSX.Element => {
   const [dialogErrorText, setDialogErrorText] = useState<string | null>(null)
   const [tabValue, setTabValue] = useState('1')
   const isMounted = useIsMounted()
-  const { /*state: usersState,*/ dispatch } = useAdminUsersContext()
+  const { state: usersState, dispatch } = useAdminUsersContext()
 
   const onDialogSubmit: SubmitHandler<AddUserFormInputs> = async (data) => {
     try {
@@ -58,21 +59,21 @@ const UsersManagement = (): JSX.Element => {
     }
   }
 
-  // useEffectOnce(() => {
-  //   ;(async () => {
-  //     try {
-  //       onLoadingData()
-  //       const userResponse = await AdminUserService.getUserList(
-  //         usersState.page,
-  //         usersState.limit,
-  //       )
-  //       dispatch({ type: 'ADD_ALL', payload: userResponse })
-  //       onDataLoaded && onDataLoaded()
-  //     } catch (e) {
-  //       onTableError(e)
-  //     }
-  //   })()
-  // })
+  useEffectOnce(() => {
+    ;(async () => {
+      try {
+        // onLoadingData()
+        const userResponse = await AdminUserService.getRequestSellerUserList(
+          usersState.requestSellerTable.page,
+          usersState.requestSellerTable.limit,
+        )
+        dispatch({ type: 'ADD_ALL_REQUEST_ADMIN_USERS', payload: userResponse })
+        // onDataLoaded && onDataLoaded()
+      } catch (e) {
+        onTableError(e)
+      }
+    })()
+  })
 
   const onTabChanged = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue)
@@ -150,7 +151,7 @@ const UsersManagement = (): JSX.Element => {
                 />
               </TabPanel>
               <TabPanel value='2'>
-                <UserTable
+                <UpgradeToSellerRequestTable
                   tab='2'
                   onLoadingData={onLoadingData}
                   onDataLoaded={onDataLoaded}

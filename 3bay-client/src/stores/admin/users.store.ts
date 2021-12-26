@@ -2,9 +2,17 @@ import { AdminUserDetail, AdminUserListResponse } from '../../data/admin-user'
 
 export type UsersState = {
   users: AdminUserDetail[]
-  page: number // count from 1
-  limit: number
-  total: number
+  requestSellerUsers: AdminUserDetail[]
+  usersTable: {
+    page: number // count from 1
+    limit: number
+    total: number
+  }
+  requestSellerTable: {
+    page: number // count from 1
+    limit: number
+    total: number
+  }
   isAddUserDialogOpened: boolean
   newUserAdded: boolean
   currentTab: string
@@ -12,7 +20,9 @@ export type UsersState = {
 
 export type UsersAction =
   | { type: 'ADD_ALL'; payload: AdminUserListResponse }
+  | { type: 'ADD_ALL_REQUEST_ADMIN_USERS'; payload: AdminUserListResponse }
   | { type: 'UPDATE'; payload: AdminUserDetail }
+  // | { type: 'UPDATE_REQUEST_ADMIN_USER'; payload: AdminUserDetail }
   | { type: 'DELETE'; payload: AdminUserDetail }
   | { type: 'SET_CURRENT_TAB'; payload: string }
   | { type: 'OPEN_ADD_USER_DIALOG' }
@@ -22,12 +32,20 @@ export type UsersAction =
 
 export const initialUsersState: UsersState = {
   users: [],
-  page: 1,
-  limit: 5,
-  total: 0,
+  requestSellerUsers: [],
+  usersTable: {
+    page: 1,
+    limit: 5,
+    total: 0,
+  },
+  requestSellerTable: {
+    page: 1,
+    limit: 5,
+    total: 0,
+  },
   isAddUserDialogOpened: false,
   newUserAdded: false,
-  currentTab: '1'
+  currentTab: '1',
   // limit: 25,
 }
 
@@ -36,23 +54,43 @@ export const usersReducer = (
   action: UsersAction,
 ): UsersState => {
   switch (action.type) {
-    case 'ADD_ALL':
+    case 'ADD_ALL': {
+      const { users, ...tableData } = action.payload
       return {
         ...state,
-        users: action.payload.users,
-        total: action.payload.total,
-        page: action.payload.page,
+        users: users,
+        usersTable: tableData,
       }
+    }
+    case 'ADD_ALL_REQUEST_ADMIN_USERS': {
+      const { users, ...tableData } = action.payload
+      return {
+        ...state,
+        requestSellerUsers: users,
+        requestSellerTable: tableData,
+      }
+    }
     case 'UPDATE':
       return {
         ...state,
         users: update(state.users, action.payload),
+        requestSellerUsers: updateRequestToSellerUsers(
+          state.requestSellerUsers,
+          action.payload,
+        ),
       }
     case 'DELETE':
       return {
         ...state,
         users: deleteUser(state.users, action.payload),
-        total: state.total - 1,
+        requestSellerUsers: deleteUser(
+          state.requestSellerUsers,
+          action.payload,
+        ),
+        usersTable: {
+          ...state.usersTable,
+          total: state.usersTable.total - 1,
+        },
       }
     case 'OPEN_ADD_USER_DIALOG':
       return {
@@ -77,7 +115,7 @@ export const usersReducer = (
     case 'SET_CURRENT_TAB':
       return {
         ...state,
-        currentTab: action.payload
+        currentTab: action.payload,
       }
     default:
       return state
@@ -103,4 +141,14 @@ function deleteUser(
   return users.filter((item) => {
     return user.uuid !== item.uuid
   })
+}
+
+function updateRequestToSellerUsers(
+  users: AdminUserDetail[],
+  user: AdminUserDetail,
+) {
+  if (user.role === 'SELLER') {
+    return deleteUser(users, user)
+  }
+  return update(users, user)
 }
