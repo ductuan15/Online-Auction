@@ -241,14 +241,14 @@ const ProductList = (): JSX.Element => {
   // following the API or data you're working with.
   const [itemOffset, setItemOffset] = useState(0)
 
-  useEffect(() => {
-    // Fetch items from another resources.
-    const endOffset = itemOffset + itemsPerPage
-    console.log(`Loading items from ${itemOffset} to ${endOffset}`)
-    const products = _.slice(data as Product[], itemOffset, endOffset)
-    setCurrentItems(products)
-    setPageCount(Math.ceil(data.length / itemsPerPage))
-  }, [itemOffset, itemsPerPage])
+  // useEffect(() => {
+  //   // Fetch items from another resources.
+  //   const endOffset = itemOffset + itemsPerPage
+  //   console.log(`Loading items from ${itemOffset} to ${endOffset}`)
+  //   const products = _.slice(data as Product[], itemOffset, endOffset)
+  //   setCurrentItems(products)
+  //   setPageCount(Math.ceil(data.length / itemsPerPage))
+  // }, [itemOffset, itemsPerPage])
 
   // Invoke when user click to request another page.
   const handlePageClick = (event: any, value: any) => {

@@ -12,7 +12,7 @@ import SignInLayout from './components/layout/SignInLayout'
 import ForgotPassword from './pages/user/auth/ForgotPassword'
 import VerifyAccount from './pages/user/auth/VerifyAccount'
 import RequireAdminRole from './components/user/auth/RequireAdminRole'
-import ProductList from './pages/common/productList/productList'
+import ProductList from './pages/common/productList/ProductList'
 import UserLayout from './components/layout/user/UserLayout'
 import Account from './pages/user/profile/Account'
 import Password from './pages/user/profile/Password'
@@ -24,6 +24,7 @@ import ScrollToTop from './components/layout/ScrollToTop'
 import { UserProvider } from './contexts/user/UserContext'
 import UsersManagement from './pages/admin/UsersManagement'
 import { AdminUsersProvider } from './contexts/admin/UsersContext'
+import SearchPage from './pages/common/search/SearchPage'
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -39,8 +40,8 @@ function GlobalRouter(): JSX.Element {
           </Route>
 
           <Route path='product/:id' element={<ProductDetail />} />
-          <Route path='products/' element={<ProductList />} />
-
+          {/* <Route path='products/' element={<ProductList items={[]}/>} /> */}
+          <Route path='products/search' element={<SearchPage />}></Route>
           <Route element={<RequireLogin />}>
             <Route path='user/view' element={<Profile />} />
 

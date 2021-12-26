@@ -7,19 +7,26 @@ import './ProductDetail.css'
 type productDetailProps = {
   product: Product | undefined
 }
+// fix later
 const ProductImage = ({ product }: productDetailProps): JSX.Element => {
-  const [Images, setImages] = useState([])
+  const [images, setImages] = useState<any[]>([])
   useEffect(() => {
     // console.log(product?.detail)    //log ra undefined => ch có product => làm sao để gọi api xong mới render mn và vì sao Info có product còn bên đây thì ko dù cả 2 render cùng lúc?
-    const images = [] as any
-    product?.detail.forEach((image) => {
-      images.push({
-        original: image,
-        thumbnail: image,
-      })
+    const productsImage: any[] = []
+    productsImage.push({
+      original: product?.thumbnails.original,
+      thumbnail: product?.thumbnails.original,
     })
+    if (product?.detail) {
+      product?.detail.forEach((image) => {
+        productsImage.push({
+          original: image,
+          thumbnail: image,
+        })
+      })
+    }
     // console.log(images)
-    setImages(images)
+    setImages(productsImage)
   }, [product])
 
   return (
@@ -30,7 +37,7 @@ const ProductImage = ({ product }: productDetailProps): JSX.Element => {
       showThumbnails
       showPlayButton={false}
       showFullscreenButton
-      items={Images}
+      items={images}
     />
   )
 }
