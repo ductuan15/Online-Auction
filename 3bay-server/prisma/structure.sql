@@ -110,7 +110,7 @@ DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories`
 (
     `id`         int(11)                                 NOT NULL AUTO_INCREMENT,
-    `title`      varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '''',
+    `title`      varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
     `parent_id`  int(11)                                          DEFAULT NULL,
     `created_at` datetime                                         DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
@@ -199,16 +199,16 @@ CREATE TABLE `products`
     `categoryId`   int(11)                                 NOT NULL,
     `sellerId`     varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `createdAt`    datetime                                NOT NULL DEFAULT current_timestamp(),
-    `deletedAt`    datetime
-    `lastestAuctionId` int DEFAULT NULL,
+    `deletedAt`    datetime,
+    `latestAuctionId` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `lastestAuctionId_UNIQUE` (`lastestAuctionId`),
+  UNIQUE KEY `latestAuctionId_UNIQUE` (`latestAuctionId`),
   KEY `products_fk0` (`categoryId`),
   KEY `products_fk1` (`sellerId`),
   FULLTEXT KEY `name` (`name`),
   CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE,
-  CONSTRAINT `products_fk2` FOREIGN KEY (`lastestAuctionId`) REFERENCES `auctions` (`id`)
+  CONSTRAINT `products_fk2` FOREIGN KEY (`latestAuctionId`) REFERENCES `auctions` (`id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4

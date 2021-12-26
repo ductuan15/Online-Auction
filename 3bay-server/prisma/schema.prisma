@@ -22,20 +22,20 @@ model Category {
 }
 
 model Auction {
-  id                                           Int       @id @default(autoincrement())
-  startTime                                    DateTime  @default(now()) @db.DateTime(0)
-  closeTime                                    DateTime? @db.DateTime(0)
-  openPrice                                    Decimal   @db.Decimal(19, 4)
-  incrementPrice                               Decimal   @db.Decimal(19, 4)
-  buyoutPrice                                  Decimal?  @db.Decimal(19, 4)
-  productId                                    Int
-  winningBidId                                 Int?
-  autoExtendAuctionTiming                      Boolean
-  currentPrice                                 Decimal   @default(0.0000) @db.Decimal(19, 4)
-  product                                      Product   @relation("auctionsToproducts", fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auctions_fk0")
-  winningBid                                   Bid?      @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auctions_fk1")
-  bids                                         Bid[]     @relation("auctionsTobids_auctionId")
-  products_auctionsToproducts_lastestAuctionId Product?  @relation("auctionsToproducts_lastestAuctionId")
+  id                                          Int       @id @default(autoincrement())
+  startTime                                   DateTime  @default(now()) @db.DateTime(0)
+  closeTime                                   DateTime? @db.DateTime(0)
+  openPrice                                   Decimal   @db.Decimal(19, 4)
+  incrementPrice                              Decimal   @db.Decimal(19, 4)
+  buyoutPrice                                 Decimal?  @db.Decimal(19, 4)
+  productId                                   Int
+  winningBidId                                Int?
+  autoExtendAuctionTiming                     Boolean
+  currentPrice                                Decimal   @default(0.0000) @db.Decimal(19, 4)
+  product                                     Product   @relation("auctionsToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "auctions_fk0")
+  winningBid                                  Bid?      @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auctions_fk1")
+  bids                                        Bid[]     @relation("auctionsTobids_auctionId")
+  products_auctionsToproducts_latestAuctionId Product?  @relation("auctionsToproducts_latestAuctionId")
 
   @@index([productId], map: "auctions_fk0")
   @@index([winningBidId], map: "auctions_fk1")
@@ -87,10 +87,10 @@ model Product {
   sellerId                  String                      @db.VarChar(255)
   createdAt                 DateTime                    @default(now()) @db.DateTime(0)
   deletedAt                 DateTime?                   @db.DateTime(0)
-  lastestAuctionId          Int?                        @unique(map: "lastestAuctionId_UNIQUE")
-  category                  Category                    @relation("categoriesToproducts", fields: [categoryId], references: [id], onDelete: NoAction, map: "products_fk0")
-  lastestAuction            Auction?                    @relation("auctionsToproducts_lastestAuctionId", fields: [lastestAuctionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "products_fk2")
-  seller                    User                        @relation("productsTousers", fields: [sellerId], references: [uuid], onDelete: NoAction, map: "products_fk1")
+  latestAuctionId           Int?                        @unique(map: "latestAuctionId_UNIQUE")
+  category                  Category                    @relation("categoriesToproducts", fields: [categoryId], references: [id], map: "products_fk0")
+  latestAuction             Auction?                    @relation("auctionsToproducts_latestAuctionId", fields: [latestAuctionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "products_fk2")
+  seller                    User                        @relation("productsTousers", fields: [sellerId], references: [uuid], map: "products_fk1")
   auctions                  Auction[]                   @relation("auctionsToproducts")
   productDescriptionHistory ProductDescriptionHistory[] @relation("product_des_historyToproducts")
   productImages             ProductImage[]              @relation("product_imagesToproducts")

@@ -187,14 +187,14 @@ export const getProductByCategoryId = async (
       products = await prisma.product.findMany({
         where: {
           categoryId: categoryId,
-          lastestAuction: {
+          latestAuction: {
             closeTime: {
               gt: new Date(),
             },
           },
         },
         include: {
-          lastestAuction: {
+          latestAuction: {
             include: {
               winningBid: {
                 include: {
@@ -299,7 +299,7 @@ export const search = async (
     const queryResultRows = await prisma.$queryRaw<any[]>(Prisma.Prisma
       .sql`SELECT products.id
   FROM products
-  JOIN auctions on auctions.id = products.lastestAuctionId
+  JOIN auctions on auctions.id = products.latestAuctionId
   WHERE MATCH (products.name) AGAINST (${key})
   ${
     categoryId !== 0
@@ -330,7 +330,7 @@ export const search = async (
         seller: {
           select: userShortenSelection,
         },
-        lastestAuction: {
+        latestAuction: {
           include: {
             winningBid: {
               include: {
@@ -367,21 +367,21 @@ export const getTopPrice = async (
     const products: ProductRes[] = await prisma.product.findMany({
       where: {
         deletedAt: null,
-        lastestAuction: {
+        latestAuction: {
           closeTime: {
             gte: new Date(),
           },
         },
       },
       orderBy: {
-        lastestAuction: {
+        latestAuction: {
           winningBid: {
             bidPrice: 'desc',
           },
         },
       },
       include: {
-        lastestAuction: {
+        latestAuction: {
           include: {
             winningBid: {
               include: {
