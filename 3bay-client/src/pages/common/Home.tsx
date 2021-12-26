@@ -5,6 +5,7 @@ import CarouselCard from '../../components/common/Carousel'
 import Link from '@mui/material/Link'
 import { Link as RouterLink } from 'react-router-dom'
 import AdminMenu from '../../components/admin/home/AdminMenu'
+import { getTop } from '../../services/product.service'
 
 const Home = (): JSX.Element => {
   const banner = {
@@ -42,7 +43,7 @@ const Home = (): JSX.Element => {
           👁️👄👁️
         </Typography>
 
-        <CarouselCard name={'Tìm kiếm phổ biến'} />
+        <CarouselCard name={'Tìm kiếm phổ biến'} fetchFunction={getTop.getTopPrice} />
 
         <Link
           component={RouterLink}

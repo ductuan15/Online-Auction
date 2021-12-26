@@ -45,14 +45,6 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
         buyoutPrice: req.body.buyoutPrice,
       },
     })
-    await prisma.product.update({
-      data: {
-        currentPrice: auction.openPrice,
-      },
-      where: {
-        id: auction.productId,
-      },
-    })
     res.json(auction)
   } catch (error) {
     if (error instanceof Error) {

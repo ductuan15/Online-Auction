@@ -1,53 +1,34 @@
-import {UserDetails} from "./user";
+import { Auction } from './auctions'
+import { ProductDescriptionHistory } from './productDescriptionHistory'
+import { UserDetails } from './user'
 
-class Product {
+export interface Product {
   id?: number
-  name = ''
-  categoryId = 0
-  sellerId = ''
-  createdAt: Date | null = null
-  deletedAt: Date | null = null
-  currentPrice = 0
-  auctions: Array<any> = []
-  productDescriptionHistory: Array<any> = []
+  name: string
+  categoryId: number
+  sellerId: number
+  createdAt: Date
+  deletedAt: Date
+  lastestAuctionId?: number
+  lastestAuction?: Auction
+  productDescriptionHistory: ProductDescriptionHistory[],
 
   thumbnails: {
     sm: string
     md: string
     lg: string
     original: string
-  } = {
-    sm: '',
-    md: '',
-    lg: '',
-    original: '',
   }
 
-  seller: UserDetails | null = null
+  seller: UserDetails
   category: {
-    id: string,
-    title: string,
-    parentId: string,
+    id: string
+    title: string
+    parentId: string
     createdAt: string
-  } = {
-    id: '',
-    title: '',
-    parentId: '',
-    createdAt: ''
   }
 
-  detail: Array<string> = []
-
-  image = ''
-  rate = 0
-  buy_now_price?: number
-  number_bidder = 0
-  date = ''
-  time = ''
-
-  constructor(data: Partial<Product> = {}) {
-    Object.assign(this, data)
-  }
+  detail?: Array<string>
 }
 
 export default Product
