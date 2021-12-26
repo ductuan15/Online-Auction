@@ -37,7 +37,7 @@ async function changePassword(
   return await axiosApiInstance.post(`api/user/password/${user.uuid}`, data)
 }
 
-async function upgradeToBidder() {
+async function upgradeToSeller(): Promise<UpgradeToSellerRequest> {
   const response = await axiosApiInstance.post(`api/user/request-to-seller`)
   return response.data as UpgradeToSellerRequest
 }
@@ -46,7 +46,7 @@ const UserService = {
   getUserInfo,
   updateUserInfo,
   changePassword,
-  upgradeToSeller: upgradeToBidder,
+  upgradeToSeller,
 }
 
 export default UserService

@@ -2,16 +2,19 @@ import { AdminUserDetail, AdminUserListResponse } from '../../data/admin-user'
 
 export type UsersState = {
   users: AdminUserDetail[]
-  page: number
+  page: number // count from 1
+  limit: number
   total: number
   isAddUserDialogOpened: boolean
   newUserAdded: boolean
+  currentTab: string
 }
 
 export type UsersAction =
   | { type: 'ADD_ALL'; payload: AdminUserListResponse }
   | { type: 'UPDATE'; payload: AdminUserDetail }
   | { type: 'DELETE'; payload: AdminUserDetail }
+  | { type: 'SET_CURRENT_TAB'; payload: string }
   | { type: 'OPEN_ADD_USER_DIALOG' }
   | { type: 'CLOSE_ADD_USER_DIALOG' }
   | { type: 'NEW_USER_ADDED' }
@@ -19,10 +22,12 @@ export type UsersAction =
 
 export const initialUsersState: UsersState = {
   users: [],
-  page: 0,
+  page: 1,
+  limit: 5,
   total: 0,
   isAddUserDialogOpened: false,
   newUserAdded: false,
+  currentTab: '1'
   // limit: 25,
 }
 
@@ -68,6 +73,11 @@ export const usersReducer = (
       return {
         ...state,
         newUserAdded: false,
+      }
+    case 'SET_CURRENT_TAB':
+      return {
+        ...state,
+        currentTab: action.payload
       }
     default:
       return state

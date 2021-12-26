@@ -20,6 +20,7 @@ type UserTableProps = {
   onLoadingData?: () => void
   onDataLoaded?: () => void
   onError?: (e: unknown) => void
+  tab: string
 }
 
 const lookup = { true: 'Yes', false: 'No' }
@@ -102,6 +103,7 @@ const UserTable = ({
   onLoadingData,
   onDataLoaded,
   onError,
+  tab,
 }: UserTableProps): JSX.Element => {
   const { state: userState, dispatch } = useAdminUsersContext()
   const tableRef = createRef<MaterialTableProps<AdminUserDetail>>()
@@ -227,6 +229,15 @@ const UserTable = ({
       return new Promise((resolve, reject) => {
         ;(async () => {
           try {
+            if (userState.currentTab !== tab) {
+              dispatch({ type: 'SET_CURRENT_TAB', payload: tab })
+              resolve({
+                data: userState.users,
+                page: userState.page - 1,
+                totalCount: userState.total,
+              })
+              return
+            }
             onLoadingData && onLoadingData()
             const userResponse = await AdminUserService.getUserList(
               query.page + 1,
@@ -246,7 +257,17 @@ const UserTable = ({
         })()
       })
     },
-    [dispatch, onDataLoaded, onError, onLoadingData],
+    [
+      dispatch,
+      onDataLoaded,
+      onError,
+      onLoadingData,
+      tab,
+      userState.currentTab,
+      userState.page,
+      userState.total,
+      userState.users,
+    ],
   )
 
   return (
