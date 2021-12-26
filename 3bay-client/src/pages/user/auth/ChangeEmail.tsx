@@ -15,6 +15,7 @@ import { useIsMounted } from 'usehooks-ts'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import { setErrorTextMsg } from '../../../utils/error'
+import useTitle from '../../../hooks/use-title'
 
 export type ChangeEmailForm = {
   email: string
@@ -22,6 +23,7 @@ export type ChangeEmailForm = {
 }
 
 const ChangeEmail = (): JSX.Element => {
+  useTitle('3bay | Change my email address')
   const [error, setErrorText] = useState<string | null>(null)
   const [emailOK, setEmailOK] = useState(false)
   const [verifying, setVerifying] = useState(false)
@@ -120,7 +122,7 @@ const ChangeEmail = (): JSX.Element => {
       </Typography>
 
       {!emailOK && (
-        <Typography variant='body1' color='text.primary'>
+        <Typography variant='body1' color='text.primary' textAlign='center'>
           Enter the email address associated with your account.
         </Typography>
       )}

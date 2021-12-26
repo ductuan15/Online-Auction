@@ -14,8 +14,10 @@ import { useAdminUsersContext } from '../../contexts/admin/UsersContext'
 import AdminUserService from '../../services/admin-users.service'
 import { SubmitHandler } from 'react-hook-form'
 import { AddUserFormInputs } from '../../data/sign-up'
+import useTitle from '../../hooks/use-title'
 
 const UsersManagement = (): JSX.Element => {
+  useTitle('3bay | Manage users')
   const [isLoading, setLoading] = useState(false)
   const [errorText, setErrorText] = useState<string | null>(null)
   const [dialogErrorText, setDialogErrorText] = useState<string | null>(null)

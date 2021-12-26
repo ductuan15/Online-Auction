@@ -13,8 +13,10 @@ import SignInForm from '../../../components/user/auth/SignInForm'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import axios, { AxiosError } from 'axios'
+import useTitle from '../../../hooks/use-title'
 
 const SignIn: () => JSX.Element = () => {
+  useTitle('3bay | Sign in')
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from?.pathname || '/'

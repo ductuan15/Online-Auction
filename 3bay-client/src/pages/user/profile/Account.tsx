@@ -2,7 +2,7 @@ import { Button, Grid, Typography } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import EmailTextField from '../../../components/common/form/EmailTextField'
 import * as React from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import DateInputField from '../../../components/common/form/DateInputField'
 import { UserDetails } from '../../../data/user'
@@ -13,12 +13,10 @@ import { useAuth } from '../../../contexts/user/AuthContext'
 import { useIsMounted } from 'usehooks-ts'
 import { Link as RouterLink } from 'react-router-dom'
 import { setErrorTextMsg } from '../../../utils/error'
-
-// type AccountProps = {
-//   foo?: string
-// }
+import useTitle from '../../../hooks/use-title'
 
 const Account = (): JSX.Element => {
+  useTitle('3bay | Account settings')
   const {
     state: { userDetails: user },
     dispatch,
@@ -34,7 +32,7 @@ const Account = (): JSX.Element => {
   const [errorText, setErrorText] = useState<string | null>(null)
   const [save, setSave] = useState(false)
 
-  useMemo(() => {
+  useEffect(() => {
     reset({
       uuid: user?.uuid || '',
       email: user?.email || '',

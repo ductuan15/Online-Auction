@@ -8,8 +8,10 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import moment from 'moment'
 import RoleLabel from '../../../components/user/profile/RoleLabel'
 import { Link as RouterLink } from 'react-router-dom'
+import useTitle from '../../../hooks/use-title'
 
 const Profile = (): JSX.Element => {
+  useTitle('3bay | My profile')
   const {
     state: { userDetails: user },
   } = useUserContext()

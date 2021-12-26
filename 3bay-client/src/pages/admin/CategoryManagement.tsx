@@ -9,8 +9,10 @@ import CategoryTree from '../../components/admin/category/CategoryTree'
 import { CreateCategoryDialog } from '../../components/admin/category/CreateCategoryDialog'
 import { EditCategoryDialog } from '../../components/admin/category/EditCategoryDialog'
 import { useCategoryContext } from '../../contexts/admin/CategoryContext'
+import useTitle from '../../hooks/use-title'
 
 const CategoryManagement = (): JSX.Element => {
+  useTitle('3bay | Manage categories')
   const { dispatch } = useCategoryContext()
 
   const openDialog = () => {

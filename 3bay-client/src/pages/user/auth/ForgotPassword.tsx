@@ -14,8 +14,10 @@ import AuthService from '../../../services/auth.service'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { setErrorTextMsg } from '../../../utils/error'
+import useTitle from '../../../hooks/use-title'
 
 const ForgotPassword = (): JSX.Element => {
+  useTitle('3bay | Forgot password')
   const [errorText, setErrorText] = useState<string | null>(null)
   const [emailOK, setEmailOK] = useState(false)
   const [verifying, setVerifying] = useState(false)
@@ -121,7 +123,7 @@ const ForgotPassword = (): JSX.Element => {
       </Typography>
 
       {!emailOK && (
-        <Typography variant='body1' color='text.primary'>
+        <Typography variant='body1' color='text.primary' textAlign='center'>
           Enter the email address associated with your account.
         </Typography>
       )}
