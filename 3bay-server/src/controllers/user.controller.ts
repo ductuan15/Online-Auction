@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import Prisma from '@prisma/client'
-import { AuthError } from '../error/error-exception.js'
-import { AuthErrorCode } from '../error/error-code.js'
+import { AuthError, ErrorException } from '../error/error-exception.js'
+import { AuthErrorCode, ErrorCode } from '../error/error-code.js'
 import prisma from '../db/prisma.js'
 import { verifyPassword } from '../auth/passport.js'
 
@@ -92,5 +92,24 @@ export async function updatePassword(
     return res.json()
   } catch (e) {
     return next(e)
+  }
+}
+
+export async function requestToSeller(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const user: Prisma.User = req.user as Prisma.User
+  try {
+    const data = { userId: user.uuid }
+    const response = await prisma.upgradeToSellerRequest.upsert({
+      create: { ...data },
+      update: { ...data },
+      where: { ...data },
+    })
+    return res.json(response)
+  } catch (e) {
+    return next(new ErrorException({ code: ErrorCode.UnknownError }))
   }
 }

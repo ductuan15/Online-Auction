@@ -31,8 +31,10 @@ async function verifyUser(
 ): Promise<Prisma.User | undefined> {
   const user = await prisma.user.findUnique({
     where: { uuid: uuid },
+    include: { upgradeToSellerRequest: true }
   })
-  if (user && role === user?.role && !user.isDisabled && user.verified) {
+  if (user && role === user?.role && !user.isDisabled) {
+    // unverified users will be checked at auth controller
     return user
   }
   return undefined
