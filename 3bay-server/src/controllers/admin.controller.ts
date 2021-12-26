@@ -58,9 +58,10 @@ export async function getRequestSellerUsers(
         // select: { user: { select: userDefaultSelection } },
         select: userDefaultSelection,
         where: {
+          role: Prisma.Role.BIDDER,
           upgradeToSellerRequest: {
-            is: {}
-          }
+            is: {},
+          },
         },
         skip: (page - 1) * limit,
         take: limit,
@@ -78,8 +79,8 @@ export async function updateUser(
   next: NextFunction,
 ) {
   try {
-    const { uuid, ...data } = req.body
-    if (data.role === Prisma.Role.SELLER) {
+    const { uuid, cancelUpgradeToSellerRequest, ...data } = req.body
+    if (data.role === Prisma.Role.SELLER || cancelUpgradeToSellerRequest) {
       const hasSellerRequest = await prisma.upgradeToSellerRequest.findUnique({
         where: { userId: uuid },
       })

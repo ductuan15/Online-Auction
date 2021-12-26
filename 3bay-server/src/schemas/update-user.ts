@@ -6,6 +6,7 @@ const schema = {
     isDisabled: { type: 'boolean', nullable: false },
     role: { type: 'string', format: 'user-role', nullable: false },
     verified: { type: 'boolean', nullable: false },
+    cancelUpgradeToSellerRequest: { type: 'boolean', nullable: false },
   },
   additionalProperties: false,
 
