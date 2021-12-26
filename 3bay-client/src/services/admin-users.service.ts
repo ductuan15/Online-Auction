@@ -19,7 +19,7 @@ async function getRequestSellerUserList(
   page: number,
   limit: number,
 ): Promise<AdminUserListResponse> {
-  const userResponse = await axiosApiInstance.get(`/api/admin//users/request-seller/`, {
+  const userResponse = await axiosApiInstance.get(`/api/admin/users/request-seller/`, {
     params: {
       page,
       limit,
@@ -28,7 +28,9 @@ async function getRequestSellerUserList(
   return userResponse.data as AdminUserListResponse
 }
 
-async function updateUser(user: AdminUserDetail): Promise<AdminUserDetail> {
+async function updateUser(user: AdminUserDetail & {
+  cancelUpgradeToSellerRequest?: boolean
+}): Promise<AdminUserDetail> {
   const userResponse = await axiosApiInstance.patch(`/api/admin/users/`, {
     ...user,
   })

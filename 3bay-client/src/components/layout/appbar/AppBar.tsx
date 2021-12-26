@@ -144,7 +144,7 @@ export default function SearchAppBar(): JSX.Element {
             {/*Hide app name when the size is xs*/}
             <AppName sx={{ display: { xs: 'none', sm: 'block' } }} />
 
-            {user?.role === 'ADMINISTRATOR' && (
+            {user?.role !== 'BIDDER' && (
               <RoleLabel sx={{ mx: 1, display: { xs: 'none', sm: 'flex' } }} />
             )}
 

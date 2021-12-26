@@ -12,9 +12,11 @@ import moment from 'moment/moment'
 import { Typography } from '@mui/material'
 import '@fontsource/jetbrains-mono'
 import AdminUserService from '../../../services/admin-users.service'
-import { createRef, useCallback, useMemo } from 'react'
+import { createRef, useCallback, useEffect, useMemo, useState } from 'react'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { useAuth } from '../../../contexts/user/AuthContext'
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
 
 type UpgradeToSellerRequestTableProps = {
   onLoadingData?: () => void
@@ -110,60 +112,71 @@ const UpgradeToSellerRequestTable = ({
 }: UpgradeToSellerRequestTableProps): JSX.Element => {
   const { state: userState, dispatch } = useAdminUsersContext()
   const tableRef = createRef<MaterialTableProps<AdminUserDetail>>()
+  const [refresh, setRefresh] = useState(false)
 
   const { user: authData } = useAuth()
 
-  const actions = useMemo<Action<AdminUserDetail>[]>(
-    () => [
-      {
-        icon: () => <RefreshIcon />,
-        tooltip: 'Refresh Data',
-        isFreeAction: true,
-        onClick: () =>
-          tableRef.current &&
-          tableRef.current.onQueryChange &&
-          tableRef.current?.onQueryChange(),
-      },
-    ],
-    [tableRef],
-  )
+  useEffect(() => {
+    if (tableRef.current && refresh) {
+      tableRef.current?.onQueryChange && tableRef.current?.onQueryChange()
+      setRefresh(false)
+    }
+  }, [tableRef, refresh])
 
-  // const onRowDelete = useCallback(
-  //   (oldData: AdminUserDetail) => {
-  //     return new Promise((resolve, reject) => {
-  //       ;(async () => {
-  //         try {
-  //           onLoadingData && onLoadingData()
-  //
-  //           const userResponse = await AdminUserService.updateUser({
-  //             ...oldData,
-  //             role: 'SELLER',
-  //           })
-  //           dispatch({type: 'UPDATE', payload: userResponse})
-  //
-  //           resolve({
-  //             data: userState.requestToSellerUsers,
-  //             page: userState.requestSellerTable.page - 1,
-  //             totalCount: userState.requestSellerTable.total,
-  //           })
-  //           onDataLoaded && onDataLoaded()
-  //         } catch (e) {
-  //           onError && onError(e)
-  //           reject(e)
-  //         }
-  //       })()
-  //     })
-  //   },
-  //   [
-  //     dispatch,
-  //     onDataLoaded,
-  //     onError,
-  //     onLoadingData,
-  //     userState.requestSellerTable.page,
-  //     userState.requestSellerTable.total,
-  //     userState.requestSellerUsers,
-  //   ],
-  // )
+  const onRowDelete = async (oldData: AdminUserDetail, accept = true) => {
+    try {
+      onLoadingData && onLoadingData()
+      let data: AdminUserDetail & {
+        cancelUpgradeToSellerRequest?: boolean
+      }
+      if (accept && oldData.role === 'BIDDER') {
+        data = {
+          ...oldData,
+          role: 'SELLER',
+        }
+      } else {
+        data = {
+          ...oldData,
+          cancelUpgradeToSellerRequest: true,
+        }
+      }
+
+      const userResponse = await AdminUserService.updateUser(data)
+      dispatch({ type: 'UPDATE', payload: userResponse })
+
+      setRefresh(true)
+
+      onDataLoaded && onDataLoaded()
+    } catch (e) {
+      onError && onError(e)
+    }
+  }
+
+  const actions: Action<AdminUserDetail>[] = [
+    {
+      icon: () => <RefreshIcon />,
+      tooltip: 'Refresh Data',
+      isFreeAction: true,
+      onClick: () =>
+        tableRef.current &&
+        tableRef.current.onQueryChange &&
+        tableRef.current?.onQueryChange(),
+    },
+    {
+      icon: () => <CheckIcon />,
+      tooltip: 'Accept request',
+      onClick: async (event, rowData) => {
+        await onRowDelete(rowData as AdminUserDetail, true)
+      },
+    },
+    {
+      icon: () => <CloseIcon />,
+      tooltip: 'Cancel request',
+      onClick: async (event, rowData) => {
+        await onRowDelete(rowData as AdminUserDetail, false)
+      },
+    },
+  ]
 
   const editable = useMemo<
     MaterialTableProps<AdminUserDetail>['editable']
