@@ -213,17 +213,17 @@ CREATE TABLE `products`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `upgrade_to_bidder_requests`
+-- Table structure for table `upgrade_to_seller_requests`
 --
-
-DROP TABLE IF EXISTS `upgrade_to_bidder_requests`;
+DROP TABLE IF EXISTS upgrade_to_bidder_requests;
+DROP TABLE IF EXISTS upgrade_to_seller_requests;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `upgrade_to_bidder_requests`
+CREATE TABLE `upgrade_to_seller_requests`
 (
     `userId` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     PRIMARY KEY (`userId`),
-    CONSTRAINT `upgrade_to_bidder_requests_fk0` FOREIGN KEY (`userId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE
+    CONSTRAINT `upgrade_to_seller_requests_fk0` FOREIGN KEY (`userId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;

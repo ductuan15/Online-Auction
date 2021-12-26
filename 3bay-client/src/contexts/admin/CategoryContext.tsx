@@ -2,6 +2,7 @@ import {
   createContext,
   Dispatch,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -55,19 +56,34 @@ export const CategoryProvider = ({
 }: CategoryProviderProps): JSX.Element => {
   const [state, dispatch] = useReducer(categoryReducer, initialCategoryState)
 
-  const addAllCategories = (categories: Array<Category>) => {
-    //console.log(categories)
-    dispatch({ type: 'ADD_ALL', payload: categories })
-  }
-  const addCategory = (category: Category) => {
-    dispatch({ type: 'ADD', payload: category })
-  }
-  const removeCategory = (category: Category) => {
-    dispatch({ type: 'REMOVE', payload: category })
-  }
-  const updateCategory = (current: Category, updated: Category) => {
-    dispatch({ type: 'UPDATE', payload: { current, updated } })
-  }
+  const addAllCategories = useCallback(
+    (categories: Array<Category>) => {
+      //console.log(categories)
+      dispatch({ type: 'ADD_ALL', payload: categories })
+    },
+    [dispatch],
+  )
+
+  const addCategory = useCallback(
+    (category: Category) => {
+      dispatch({ type: 'ADD', payload: category })
+    },
+    [dispatch],
+  )
+
+  const removeCategory = useCallback(
+    (category: Category) => {
+      dispatch({ type: 'REMOVE', payload: category })
+    },
+    [dispatch],
+  )
+
+  const updateCategory = useCallback(
+    (current: Category, updated: Category) => {
+      dispatch({ type: 'UPDATE', payload: { current, updated } })
+    },
+    [dispatch],
+  )
 
   useEffect(() => {
     ;(async () => {
@@ -78,7 +94,7 @@ export const CategoryProvider = ({
         console.log(e)
       }
     })()
-  }, [])
+  }, [addAllCategories])
 
   const contextValue = useMemo(
     () => ({
@@ -89,7 +105,7 @@ export const CategoryProvider = ({
       removeCategory,
       updateCategory,
     }),
-    [state, dispatch],
+    [addAllCategories, addCategory, removeCategory, state, updateCategory],
   )
 
   return (

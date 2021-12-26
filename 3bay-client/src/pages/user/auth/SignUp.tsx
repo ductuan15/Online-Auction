@@ -14,8 +14,10 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { Alert } from '@mui/material'
 import AuthService from '../../../services/auth.service'
 import { setErrorTextMsg } from '../../../utils/error'
+import useTitle from '../../../hooks/use-title'
 
 const SignUp: () => JSX.Element = () => {
+  useTitle('3bay | Sign up')
   const [errorText, setErrorText] = useState<string | null>(null)
   const navigate = useNavigate()
 

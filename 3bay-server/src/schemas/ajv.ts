@@ -9,6 +9,8 @@ import accountSchema from './user-account.js'
 import passwordSchema from './user-password.js'
 import changeEmailSchema from './change-email.js'
 import updateUserSchema from './update-user.js'
+import addUserSchema from '../schemas/add-user.js'
+
 import Prisma from '@prisma/client'
 
 const ajv = new Ajv({ removeAdditional: true, allErrors: true })
@@ -38,5 +40,6 @@ export type SchemaTypes =
   | typeof passwordSchema
   | typeof changeEmailSchema
   | typeof updateUserSchema
+  | typeof addUserSchema
 
 export default ajv

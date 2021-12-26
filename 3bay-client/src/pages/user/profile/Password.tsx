@@ -7,10 +7,7 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 import UserService from '../../../services/user.service'
 import { Alert } from '@mui/lab'
 import { setErrorTextMsg } from '../../../utils/error'
-
-// type AccountProps = {
-//   foo?: string
-// }
+import useTitle from '../../../hooks/use-title'
 
 export type PasswordFormType = {
   pwd: string
@@ -18,6 +15,7 @@ export type PasswordFormType = {
 }
 
 const Password = (): JSX.Element => {
+  useTitle('3bay | Password')
   const {
     state: { userDetails: user },
   } = useUserContext()

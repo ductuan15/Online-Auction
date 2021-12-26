@@ -4,7 +4,7 @@ import { Controller, FieldError } from 'react-hook-form'
 import { DatePicker, LocalizationProvider } from '@mui/lab'
 import TextField from '@mui/material/TextField'
 import * as React from 'react'
-import {TextFieldProps} from '@mui/material'
+import { TextFieldProps } from '@mui/material'
 
 type DateInputFieldProps<T> = {
   label: string

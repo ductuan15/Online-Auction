@@ -1,3 +1,7 @@
+export type UpgradeToSellerRequest = {
+  userId: string
+}
+
 export type UserDetails = {
   uuid: string
   name: string
@@ -5,4 +9,5 @@ export type UserDetails = {
   dob: string | null
   address: string
   role: string
+  upgradeToSellerRequest?: UpgradeToSellerRequest
 }

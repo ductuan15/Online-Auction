@@ -7,8 +7,10 @@ import axiosApiInstance from '../../../services/api'
 // type CreateCategoryDialogProps = {}
 
 export function CreateCategoryDialog(): JSX.Element {
-  const { state, addCategory } = useCategoryContext()
-  const { openCreateDialog } = state
+  const {
+    state: { openCreateDialog },
+    addCategory,
+  } = useCategoryContext()
 
   return (
     <BaseCategoryDialog

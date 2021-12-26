@@ -12,8 +12,10 @@ import Button from '@mui/material/Button'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import AuthService from '../../../services/auth.service'
 import { setErrorTextMsg } from '../../../utils/error'
+import useTitle from '../../../hooks/use-title'
 
 const VerifyAccount = (): JSX.Element => {
+  useTitle('3bay | Verify account')
   const [loading, setLoading] = useState(true)
   const [verifying, setVerifying] = useState(false)
   const [resendButtonDisabled, setResendButtonDisabled] = useState(false)
@@ -41,7 +43,7 @@ const VerifyAccount = (): JSX.Element => {
         setLoading(false)
       }
     })()
-  }, [])
+  }, [id, navigate])
 
   function handleError(error: unknown) {
     setErrorTextMsg(error, setErrorText)

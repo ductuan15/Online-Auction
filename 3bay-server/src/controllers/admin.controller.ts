@@ -4,6 +4,7 @@ import config from '../config/config.js'
 import { ErrorException, UserError } from '../error/error-exception.js'
 import { ErrorCode, UserErrorCode } from '../error/error-code.js'
 import Prisma from '@prisma/client'
+import { generateRefreshToken } from './auth.controller.js'
 
 const userDefaultSelection = {
   uuid: true,
@@ -36,7 +37,37 @@ export async function getUsers(
         take: limit,
       }),
     ])
-    return res.json({ total, page, users })
+    return res.json({ total, page, limit, users })
+  } catch (e) {
+    return next(e)
+  }
+}
+
+export async function getRequestSellerUsers(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const page = +(req.query?.page || '/') || 1
+    const limit = +(req.query?.limit || '/') || config.USER_PAGE_LIMIT
+
+    const [total, users] = await prisma.$transaction([
+      prisma.upgradeToSellerRequest.count(),
+      prisma.user.findMany({
+        // select: { user: { select: userDefaultSelection } },
+        select: userDefaultSelection,
+        where: {
+          role: Prisma.Role.BIDDER,
+          upgradeToSellerRequest: {
+            is: {},
+          },
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ])
+    return res.json({ total, page, limit, users })
   } catch (e) {
     return next(e)
   }
@@ -48,10 +79,23 @@ export async function updateUser(
   next: NextFunction,
 ) {
   try {
-    const { uuid, ...data } = req.body
+    const { uuid, cancelUpgradeToSellerRequest, ...data } = req.body
+    if (data.role === Prisma.Role.SELLER || cancelUpgradeToSellerRequest) {
+      const hasSellerRequest = await prisma.upgradeToSellerRequest.findUnique({
+        where: { userId: uuid },
+      })
+      if (hasSellerRequest) {
+        await prisma.upgradeToSellerRequest.delete({
+          where: {
+            userId: uuid,
+          },
+        })
+      }
+    }
+
     const user = await prisma.user.update({
       where: { uuid: uuid },
-      data: { ...data },
+      data: { ...data, refreshToken: generateRefreshToken() },
       select: userDefaultSelection,
     })
     return res.json(user)

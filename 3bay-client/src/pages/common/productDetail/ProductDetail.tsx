@@ -44,7 +44,7 @@ const ProductDetailContent = (): JSX.Element | null => {
         console.log(e)
       }
     })()
-  }, [])
+  }, [updateCurrentProduct])
 
   return (
     <Grid container display='flex' alignItems='center' flexDirection='column'>

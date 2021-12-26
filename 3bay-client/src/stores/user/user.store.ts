@@ -1,10 +1,12 @@
-import { UserDetails } from '../../data/user'
+import { UpgradeToSellerRequest, UserDetails } from '../../data/user'
 
 export type UserState = {
   userDetails?: UserDetails
 }
 
-export type UserAction = { type: 'GET_ACCOUNT_INFO'; payload: UserDetails }
+export type UserAction =
+  | { type: 'GET_ACCOUNT_INFO'; payload: UserDetails | undefined }
+  | { type: 'UPGRADE_TO_SELLER_REQUEST'; payload: UpgradeToSellerRequest }
 
 export const initialUserState = {
   //
@@ -20,6 +22,19 @@ export const userReducer = (
         ...state,
         userDetails: action.payload,
       }
+    case 'UPGRADE_TO_SELLER_REQUEST': {
+      let newData = state.userDetails
+      if (state.userDetails) {
+        newData = {
+          ...state.userDetails,
+          upgradeToSellerRequest: action.payload,
+        }
+      }
+      return {
+        ...state,
+        userDetails: newData,
+      }
+    }
     default:
       return state
   }

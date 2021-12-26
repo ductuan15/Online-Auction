@@ -2,7 +2,7 @@ import { Button, Grid, Typography } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import EmailTextField from '../../../components/common/form/EmailTextField'
 import * as React from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import DateInputField from '../../../components/common/form/DateInputField'
 import { UserDetails } from '../../../data/user'
@@ -13,12 +13,14 @@ import { useAuth } from '../../../contexts/user/AuthContext'
 import { useIsMounted } from 'usehooks-ts'
 import { Link as RouterLink } from 'react-router-dom'
 import { setErrorTextMsg } from '../../../utils/error'
-
-// type AccountProps = {
-//   foo?: string
-// }
+import useTitle from '../../../hooks/use-title'
+import RoleLabel from '../../../components/user/profile/RoleLabel'
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 
 const Account = (): JSX.Element => {
+  useTitle('3bay | Account settings')
   const {
     state: { userDetails: user },
     dispatch,
@@ -31,10 +33,10 @@ const Account = (): JSX.Element => {
     mode: 'onBlur',
   })
 
-  const [errorText, setErrorText] = useState<string | null>('hvem er jeg')
+  const [errorText, setErrorText] = useState<string | null>(null)
   const [save, setSave] = useState(false)
 
-  useMemo(() => {
+  useEffect(() => {
     reset({
       uuid: user?.uuid || '',
       email: user?.email || '',
@@ -42,13 +44,13 @@ const Account = (): JSX.Element => {
       dob: user?.dob || null,
       address: user?.address || '',
     })
-  }, [user])
+  }, [reset, user])
 
   const { errors } = formState
 
   const gridRowProps = {
     rowSpacing: 2,
-    columnSpacing: 3,
+    columnSpacing: 2,
     mt: 1,
     alignItems: 'center',
   }
@@ -76,6 +78,23 @@ const Account = (): JSX.Element => {
     }
   }
 
+  const requestToBidder = async () => {
+    try {
+      setSave(false)
+      setErrorText(null)
+      const data = await UserService.upgradeToSeller()
+      dispatch({ type: 'UPGRADE_TO_SELLER_REQUEST', payload: data })
+
+      if (isMounted()) {
+        setSave(true)
+      }
+    } catch (e) {
+      if (isMounted()) {
+        setErrorText('Cannot upgrade to seller')
+      }
+    }
+  }
+
   return (
     <Grid
       container
@@ -98,10 +117,24 @@ const Account = (): JSX.Element => {
           Account Settings
         </Typography>
 
-        <Button variant='contained' type='submit'>
+        <Button
+          variant='contained'
+          type='submit'
+          startIcon={<SaveOutlinedIcon />}
+        >
           Save changes
         </Button>
       </Grid>
+
+      {user?.upgradeToSellerRequest && (
+        <Grid container {...gridRowProps} justifyContent='flex-end'>
+          <Grid item {...inputGridProps}>
+            <Alert severity='info'>
+              Request to become seller will be verified by 3bay Administrators!
+            </Alert>
+          </Grid>
+        </Grid>
+      )}
 
       {errorText && (
         <Grid container {...gridRowProps} mt={1} justifyContent='flex-end'>
@@ -111,13 +144,39 @@ const Account = (): JSX.Element => {
         </Grid>
       )}
 
-      {save && (
+      {save && !errorText && (
         <Grid container {...gridRowProps} justifyContent='flex-end'>
           <Grid item {...inputGridProps}>
             <Alert severity='success'>Changes saved!</Alert>
           </Grid>
         </Grid>
       )}
+
+      <Grid container {...gridRowProps} mt={2}>
+        <Grid item {...labelGridProps}>
+          <Typography align='right' color='text.secondary'>
+            Role
+          </Typography>
+        </Grid>
+
+        <Grid item {...inputGridProps} xs={5} sm={6}>
+          <RoleLabel sx={{ mb: 1 }} />
+        </Grid>
+
+        {user?.role === 'BIDDER' && (
+          <Grid item container xs={5} sm={3} justifyContent='flex-end'>
+            <Button
+              fullWidth
+              variant='outlined'
+              disabled={!!user?.upgradeToSellerRequest}
+              onClick={requestToBidder}
+              startIcon={<StorefrontOutlinedIcon />}
+            >
+              Become a Seller
+            </Button>
+          </Grid>
+        )}
+      </Grid>
 
       <Grid container {...gridRowProps} mt={2}>
         <Grid item {...labelGridProps}>
@@ -139,8 +198,10 @@ const Account = (): JSX.Element => {
 
         <Grid item container xs={3} sm={3} justifyContent='flex-end'>
           <Button
+            fullWidth
             variant='outlined'
             color='error'
+            startIcon={<EmailOutlinedIcon />}
             component={RouterLink}
             to={'/change-email'}
           >

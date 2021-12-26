@@ -13,9 +13,10 @@ import SignInForm from '../../../components/user/auth/SignInForm'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import axios, { AxiosError } from 'axios'
-import {setErrorTextMsg} from '../../../utils/error'
+import useTitle from '../../../hooks/use-title'
 
 const SignIn: () => JSX.Element = () => {
+  useTitle('3bay | Sign in')
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from?.pathname || '/'
@@ -38,28 +39,28 @@ const SignIn: () => JSX.Element = () => {
         navigate(from, { replace: true })
       })
     } catch (e) {
-      if (
-        axios.isAxiosError(e) &&
-        (e as AxiosError) &&
-        e.response?.data.name === 'AuthEmailNotConfirmed'
-      ) {
-        try {
-          const uuid = e.response?.data.metaData.uuid || ''
-          navigate(`/verify/${uuid}`, { replace: true })
-          return
-        } catch (parseError) {
-          console.log(parseError)
+      if (axios.isAxiosError(e) && (e as AxiosError)) {
+        switch (e.response?.data.name) {
+          case 'AuthEmailNotConfirmed':
+            {
+              try {
+                const uuid = e.response?.data.metaData.uuid || ''
+                navigate(`/verify/${uuid}`, { replace: true })
+                return
+              } catch (parseError) {
+                console.log(parseError)
+              }
+            }
+            break
+          case 'AuthAccountDisabled':
+            {
+              setErrorText(e.response?.data.message)
+            }
+            break
         }
+      } else {
+        setErrorText('Wrong email or password')
       }
-      // console.log(e)
-      setErrorTextMsg(e, (msg) => {
-        if (!msg) {
-          setErrorText('Wrong email or password')
-        }
-        else {
-          setErrorText(msg)
-        }
-      })
     }
   }
 

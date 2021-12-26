@@ -100,8 +100,8 @@ export function isAuthorized(role: keyof typeof Prisma.Role) {
     if (req.user?.role) {
       const roleNeedLevel = Object.keys(Prisma.Role).indexOf(role)
       const userRoleLevel = Object.keys(Prisma.Role).indexOf(req.user?.role)
-      console.log(roleNeedLevel, userRoleLevel);
-      
+      // console.log(roleNeedLevel, userRoleLevel)
+
       if (userRoleLevel >= roleNeedLevel) {
         return next()
       }
@@ -115,10 +115,37 @@ export function isAuthorized(role: keyof typeof Prisma.Role) {
   }
 }
 
+export function requireExactRole(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  whichRole: Prisma.Role,
+) {
+  if (req.user?.role) {
+    if (req.user?.role === whichRole) {
+      return next()
+    }
+  }
+  return next(
+    new AuthError({
+      code: AuthErrorCode.NotHavePermission,
+      message: `This action is only for ${whichRole}`,
+    }),
+  )
+}
+
 export function requireAdminRole(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  return isAuthorized(Prisma.Role.ADMINISTRATOR)(req, res, next)
+  return requireExactRole(req, res, next, Prisma.Role.ADMINISTRATOR)
+}
+
+export function requireBidderRole(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  return requireExactRole(req, res, next, Prisma.Role.BIDDER)
 }

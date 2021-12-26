@@ -53,9 +53,14 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
             type: 'GET_ACCOUNT_INFO',
             payload: user,
           })
+        } else {
+          dispatch({
+            type: 'GET_ACCOUNT_INFO',
+            payload: undefined,
+          })
         }
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
     })()
   }, [authData])

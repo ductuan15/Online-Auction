@@ -2,15 +2,16 @@ import {
   createContext,
   Dispatch,
   ReactNode,
+  useCallback,
   useContext,
   useMemo,
   useReducer,
 } from 'react'
 import {
+  initialProductState,
   ProductAction,
   ProductReducer,
   ProductState,
-  initialProductState,
 } from '../../stores/product/product.store'
 import Product from '../../data/product'
 
@@ -70,9 +71,13 @@ export const ProductProvider = ({
   // const updateProduct = (current: ProductDetail, updated: ProductDetail) => {
   //     dispatch({ type: 'UPDATE', payload: { current, updated } })
   // }
-  const updateCurrentProduct = (current: Product) => {
-    dispatch({ type: 'UPDATE_CURRENT_PRODUCT', payload: current })
-  }
+  const updateCurrentProduct = useCallback(
+    (current: Product) => {
+      dispatch({ type: 'UPDATE_CURRENT_PRODUCT', payload: current })
+    },
+    [dispatch],
+  )
+
   const contextValue = useMemo(
     () => ({
       state,
@@ -83,7 +88,7 @@ export const ProductProvider = ({
       // updateProduct,
       updateCurrentProduct,
     }),
-    [state, dispatch],
+    [state, updateCurrentProduct],
   )
 
   return (

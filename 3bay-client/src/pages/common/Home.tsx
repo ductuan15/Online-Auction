@@ -1,9 +1,9 @@
 import * as React from 'react'
 import MainBanner from '../../components/common/home/MainBanner'
-import {Grid, Typography} from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import CarouselCard from '../../components/common/Carousel'
 import Link from '@mui/material/Link'
-import {Link as RouterLink} from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import AdminMenu from '../../components/admin/home/AdminMenu'
 
 const Home = (): JSX.Element => {
@@ -21,7 +21,7 @@ const Home = (): JSX.Element => {
     <>
       <MainBanner {...banner} />
 
-      <AdminMenu/>
+      <AdminMenu />
 
       <Grid container display='flex' alignItems='center' flexDirection='column'>
         <Typography
@@ -42,9 +42,15 @@ const Home = (): JSX.Element => {
           👁️👄👁️
         </Typography>
 
-        <CarouselCard name={'Tìm kiếm phổ biến'}/>
+        <CarouselCard name={'Tìm kiếm phổ biến'} />
 
-        <Link component={RouterLink} variant='h6' to='/admin/cat' gutterBottom p={4}>
+        <Link
+          component={RouterLink}
+          variant='h6'
+          to='/admin/cat'
+          gutterBottom
+          p={4}
+        >
           Test link (category management)
         </Link>
       </Grid>

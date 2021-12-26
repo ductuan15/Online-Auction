@@ -50,17 +50,17 @@ export function BaseCategoryDialog(
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const onClose = () => {
-    setImage(null)
-    setErrorMsg(null)
-
     if (progressRef.current && progressRef.current.style) {
       progressRef.current.style.display = 'none'
     }
 
     dispatch({ type: 'CLOSE_ALL_DIALOGS' })
+
+    setImage(null)
+    setErrorMsg(null)
   }
 
-  // TODO: refactor me -.-
+  // TODO: refactor me -.- // の
   const onSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
 
