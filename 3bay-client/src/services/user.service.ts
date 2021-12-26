@@ -1,5 +1,5 @@
 import { AuthData } from './auth.service'
-import { UserDetails } from '../data/user'
+import { UpgradeToSellerRequest, UserDetails } from '../data/user'
 import axiosApiInstance from './api'
 import { Dispatch } from 'react'
 import { UserAction } from '../stores/user/user.store'
@@ -37,10 +37,16 @@ async function changePassword(
   return await axiosApiInstance.post(`api/user/password/${user.uuid}`, data)
 }
 
+async function upgradeToBidder() {
+  const response = await axiosApiInstance.post(`api/user/request-to-seller`)
+  return response.data as UpgradeToSellerRequest
+}
+
 const UserService = {
   getUserInfo,
   updateUserInfo,
   changePassword,
+  upgradeToSeller: upgradeToBidder,
 }
 
 export default UserService

@@ -7,7 +7,7 @@ export function setErrorTextMsg(error: unknown, setErrorMsg: (errorText: string 
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       msg = error.response.data?.message || null
-      if (!msg && error.response.status === 401 || error.response.status === 403) {
+      if (!msg && (error.response.status === 401 || error.response.status === 403)) {
         msg = 'Error occurred: Unauthorized'
       }
       else if (!msg) {
