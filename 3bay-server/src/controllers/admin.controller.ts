@@ -4,6 +4,7 @@ import config from '../config/config.js'
 import { ErrorException, UserError } from '../error/error-exception.js'
 import { ErrorCode, UserErrorCode } from '../error/error-code.js'
 import Prisma from '@prisma/client'
+import { generateRefreshToken } from './auth.controller.js'
 
 const userDefaultSelection = {
   uuid: true,
@@ -49,9 +50,22 @@ export async function updateUser(
 ) {
   try {
     const { uuid, ...data } = req.body
+    if (data.role === Prisma.Role.SELLER) {
+      const hasSellerRequest = await prisma.upgradeToSellerRequest.findUnique({
+        where: { userId: uuid },
+      })
+      if (hasSellerRequest) {
+        await prisma.upgradeToSellerRequest.delete({
+          where: {
+            userId: uuid,
+          },
+        })
+      }
+    }
+
     const user = await prisma.user.update({
       where: { uuid: uuid },
-      data: { ...data },
+      data: { ...data, refreshToken: generateRefreshToken() },
       select: userDefaultSelection,
     })
     return res.json(user)

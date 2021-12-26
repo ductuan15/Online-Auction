@@ -5,7 +5,6 @@ import { AuthErrorCode, ErrorCode } from '../error/error-code.js'
 import Prisma from '@prisma/client'
 import jwt from 'jsonwebtoken'
 import config from '../config/config.js'
-import crypto from 'crypto'
 import {
   sendChangeEmailOTP,
   sendResetPasswordOTP,
@@ -13,6 +12,7 @@ import {
   verifyOTP,
 } from '../auth/otp.js'
 import { getAccountInfo } from './user.controller.js'
+import crypto from 'crypto'
 
 async function hasEmailAlreadyExisted(email: string) {
   const user = await prisma.user.findUnique({
@@ -20,6 +20,10 @@ async function hasEmailAlreadyExisted(email: string) {
   })
 
   if (user) return true
+}
+
+export function generateRefreshToken() {
+  return crypto.randomBytes(256).toString('hex')
 }
 
 export async function signUp(req: Request, res: Response, next: NextFunction) {
@@ -32,7 +36,7 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
       const result = await prisma.user.create({
         data: {
           ...req.body,
-          refreshToken: crypto.randomBytes(256).toString('hex'),
+          refreshToken: generateRefreshToken(),
         },
         select: { uuid: true },
       })
