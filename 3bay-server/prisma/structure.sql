@@ -200,12 +200,14 @@ CREATE TABLE `products`
     `createdAt`    datetime                                NOT NULL DEFAULT current_timestamp(),
     `deletedAt`    datetime                                         DEFAULT NULL,
     `currentPrice` decimal(19, 4)                          NOT NULL,
+    `lastestAuctionId` int DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `products_fk0` (`categoryId`),
     KEY `products_fk1` (`sellerId`),
     FULLTEXT KEY `name` (`name`),
     CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
     CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE
+    CONSTRAINT `products_fk2` FOREIGN KEY (`lastestAuctionId`) REFERENCES `auctions` (`id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4
