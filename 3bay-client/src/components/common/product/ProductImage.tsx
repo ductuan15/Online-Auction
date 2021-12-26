@@ -7,7 +7,7 @@ import './ProductDetail.css'
 type productDetailProps = {
   product: Product | undefined
 }
-// fix later
+// TODO fix later
 const ProductImage = ({ product }: productDetailProps): JSX.Element => {
   const [images, setImages] = useState<any[]>([])
   useEffect(() => {

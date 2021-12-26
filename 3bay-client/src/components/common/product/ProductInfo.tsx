@@ -22,7 +22,7 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
         Category: {product.category.title}
       </Typography>
       <Typography variant='body1' color='text.secondary'>
-        Current price: {product.lastestAuction?.currentPrice}
+        Current price: {product.latestAuction?.currentPrice}
       </Typography>
       {/*/!*Giá mua ngay (nếu có)*!/*/}
       {/*<Typography variant='body1' color='text.secondary'>*/}

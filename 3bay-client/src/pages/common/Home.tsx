@@ -31,7 +31,7 @@ const Home = (): JSX.Element => {
           gutterBottom
           color='primary.main'
         >
-          💎 Top sale gì gì đó
+          💎 Best selling items
         </Typography>
 
         <Typography
@@ -43,7 +43,7 @@ const Home = (): JSX.Element => {
           👁️👄👁️
         </Typography>
 
-        <CarouselCard name={'Tìm kiếm phổ biến'} fetchFunction={getTop.getTopPrice} />
+        <CarouselCard name={'🔎 Popular items'} fetchFunction={getTop.getTopPrice} />
 
         <Link
           component={RouterLink}

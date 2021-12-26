@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import CardProduct from './product/CardProduct'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
@@ -7,10 +7,11 @@ import { Container, Divider } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Product from '../../data/product'
 import { AxiosResponse } from 'axios'
+import { useEffectOnce } from 'usehooks-ts'
 
 type CarouselProps = {
   name: string
-  fetchFunction: () => Promise<AxiosResponse<Product[], any>>
+  fetchFunction: () => Promise<AxiosResponse<Product[]>>
 }
 
 const CarouselCard = (props: CarouselProps): JSX.Element => {
@@ -37,16 +38,15 @@ const CarouselCard = (props: CarouselProps): JSX.Element => {
     },
   }
   const [products, setProducts] = useState<Product[]>([])
-  const fetchData = async () => {
-    const response = await props.fetchFunction()
-    setProducts(response.data)
-    console.log(response.data)
-  }
-  useEffect(() => {
-    fetchData()
-    console.log("hello")
 
-  }, [])
+  useEffectOnce(() => {
+    ;(async () => {
+      const response = await props.fetchFunction()
+      setProducts(response.data)
+      console.log(response.data)
+    })()
+  })
+
   return (
     <Container>
       <Divider />
