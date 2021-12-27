@@ -20,7 +20,7 @@ type UserTableProps = {
   onLoadingData?: () => void
   onDataLoaded?: () => void
   onError?: (e: unknown) => void
-  tab: string
+  tab?: string
 }
 
 // const lookup = { true: 'Yes', false: 'No' }
@@ -220,7 +220,7 @@ const UserTable = ({
       return new Promise((resolve, reject) => {
         ;(async () => {
           try {
-            if (userState.currentTab !== tab) {
+            if (tab && userState.currentTab !== tab) {
               dispatch({ type: 'SET_CURRENT_TAB', payload: tab })
               resolve({
                 data: userState.users,

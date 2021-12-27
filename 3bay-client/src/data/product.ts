@@ -1,6 +1,7 @@
 import { Auction } from './auctions'
 import { ProductDescriptionHistory } from './productDescriptionHistory'
 import { UserDetails } from './user'
+import {AdminUserDetail} from './admin-user'
 
 export interface Product {
   id?: number
@@ -29,6 +30,13 @@ export interface Product {
   }
 
   detail?: Array<string>
+}
+
+export type AdminProductistResponse = {
+  total: number,
+  page: number,
+  limit: number,
+  products: Product[]
 }
 
 export default Product

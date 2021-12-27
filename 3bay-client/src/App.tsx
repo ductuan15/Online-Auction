@@ -24,6 +24,8 @@ import { UserProvider } from './contexts/user/UserContext'
 import UsersManagement from './pages/admin/UsersManagement'
 import { AdminUsersProvider } from './contexts/admin/UsersContext'
 import SearchPage from './pages/common/search/SearchPage'
+import { AdminProductsProvider } from './contexts/admin/ProductsContext'
+import ProductsManagement from './pages/admin/ProductsManagement'
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -40,7 +42,7 @@ function GlobalRouter(): JSX.Element {
 
           <Route path='product/:id' element={<ProductDetail />} />
           {/* <Route path='products/' element={<ProductList items={[]}/>} /> */}
-          <Route path='products/search' element={<SearchPage />}/>
+          <Route path='products/search' element={<SearchPage />} />
           <Route element={<RequireLogin />}>
             <Route path='user/view' element={<Profile />} />
 
@@ -60,6 +62,14 @@ function GlobalRouter(): JSX.Element {
                 <AdminUsersProvider>
                   <UsersManagement />
                 </AdminUsersProvider>
+              }
+            />
+            <Route
+              path='products'
+              element={
+                <AdminProductsProvider>
+                  <ProductsManagement />
+                </AdminProductsProvider>
               }
             />
           </Route>

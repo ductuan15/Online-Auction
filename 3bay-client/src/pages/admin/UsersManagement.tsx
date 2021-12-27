@@ -84,7 +84,7 @@ const UsersManagement = (): JSX.Element => {
       <Grid
         container
         marginTop={1}
-        marginBottom={4}
+        marginBottom={1}
         spacing={4}
         justifyContent='between'
       >
