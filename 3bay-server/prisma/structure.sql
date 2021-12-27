@@ -33,6 +33,7 @@ CREATE TABLE `auctions`
     `productId`               int(11)        NOT NULL,
     `winningBidId`            int(11)                 DEFAULT NULL,
     `autoExtendAuctionTiming` tinyint(1)     NOT NULL,
+    `currentPrice`            decimal(19,4)  NOT NULL DEFAULT '0.0000',
     PRIMARY KEY (`id`),
     KEY `auctions_fk0` (`productId`),
     KEY `auctions_fk1` (`winningBidId`),
@@ -109,7 +110,7 @@ DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories`
 (
     `id`         int(11)                                 NOT NULL AUTO_INCREMENT,
-    `title`      varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '''',
+    `title`      varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
     `parent_id`  int(11)                                          DEFAULT NULL,
     `created_at` datetime                                         DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
@@ -198,16 +199,16 @@ CREATE TABLE `products`
     `categoryId`   int(11)                                 NOT NULL,
     `sellerId`     varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `createdAt`    datetime                                NOT NULL DEFAULT current_timestamp(),
-    `deletedAt`    datetime                                         DEFAULT NULL,
-    `currentPrice` decimal(19, 4)                          NOT NULL,
-    `lastestAuctionId` int DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    KEY `products_fk0` (`categoryId`),
-    KEY `products_fk1` (`sellerId`),
-    FULLTEXT KEY `name` (`name`),
-    CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
-    CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE
-    CONSTRAINT `products_fk2` FOREIGN KEY (`lastestAuctionId`) REFERENCES `auctions` (`id`)
+    `deletedAt`    datetime,
+    `latestAuctionId` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `latestAuctionId_UNIQUE` (`latestAuctionId`),
+  KEY `products_fk0` (`categoryId`),
+  KEY `products_fk1` (`sellerId`),
+  FULLTEXT KEY `name` (`name`),
+  CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE,
+  CONSTRAINT `products_fk2` FOREIGN KEY (`latestAuctionId`) REFERENCES `auctions` (`id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4

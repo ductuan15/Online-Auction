@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
@@ -15,9 +15,10 @@ const CardProduct = ({ product }: CardProps): JSX.Element => {
   const [hours, setHours] = useState(1)
   const [minutes, setMinutes] = useState(0)
   const [seconds, setSeconds] = useState(0)
-  let interval: NodeJS.Timer
+  const interval = useRef<NodeJS.Timer>()
+
   useEffect(() => {
-    interval = setInterval(() => {
+    interval.current = setInterval(() => {
       if (seconds > 0) {
         setSeconds(seconds - 1)
       }
@@ -26,8 +27,8 @@ const CardProduct = ({ product }: CardProps): JSX.Element => {
           setSeconds(59)
           setMinutes(59)
           setHours(hours - 1)
-          if (hours === 0) {
-            clearInterval(interval)
+          if (hours === 0 && interval.current) {
+            clearInterval(interval.current)
           }
         } else {
           setMinutes(minutes - 1)
@@ -36,9 +37,12 @@ const CardProduct = ({ product }: CardProps): JSX.Element => {
       }
     }, 1000)
     return () => {
-      clearInterval(interval)
+      if (interval.current) {
+        clearInterval(interval.current)
+      }
     }
-  })
+  }, [hours, minutes, seconds])
+
   return (
     <Link
       color='inherit'
@@ -77,19 +81,19 @@ const CardProduct = ({ product }: CardProps): JSX.Element => {
                 {product.name}
               </Typography>
             }
-          ></CardHeader>
+          />
           <CardContent>
             <Typography variant='body2' color='text.secondary'>
-              {product.lastestAuction?._count.bids || ''}
+              {product.latestAuction?._count.bids || ''}
             </Typography>
             <Typography variant='body2' color='text.secondary'>
-              {product.lastestAuction?.currentPrice || ''} VND
-              {product.lastestAuction?.buyoutPrice ?? (
-                <span> to {product.lastestAuction?.buyoutPrice} VND</span>
+              {product.latestAuction?.currentPrice || ''} VND
+              {product.latestAuction?.buyoutPrice ?? (
+                <span> to {product.latestAuction?.buyoutPrice} VND</span>
               )}
             </Typography>
             <Typography variant='body2' color='text.secondary'>
-              from {product.lastestAuction?.startTime || ''}
+              from {product.latestAuction?.startTime || ''}
             </Typography>
             <Typography variant='body2' color='text.secondary'>
               {minutes === 0 && seconds === 0 ? null : (

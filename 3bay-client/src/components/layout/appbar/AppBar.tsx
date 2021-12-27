@@ -159,6 +159,10 @@ export default function SearchAppBar(): JSX.Element {
               />
             </Search>
 
+            {/*<Box sx={{ display: { xs: 'none', sm: 'block' } }} ml={1}>*/}
+            {/*  <Button onClick={toggleDrawer(true)}>🏷 Categories</Button>*/}
+            {/*</Box>*/}
+
             <Box sx={{ flexGrow: 1 }} />
 
             {/*Notifications*/}

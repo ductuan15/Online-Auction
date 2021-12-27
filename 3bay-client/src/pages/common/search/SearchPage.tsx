@@ -3,22 +3,20 @@ import {
   FormControl,
   Grid,
   InputLabel,
-  List,
   MenuItem,
   Pagination,
   PaginationItem,
   Select,
   SelectChangeEvent,
-  Stack,
   Typography,
 } from '@mui/material'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import HomeLayout from '../../../components/layout/HomeLayout'
 import Product from '../../../data/product'
 import { searchProduct, SORT_TYPE } from '../../../services/product.service'
 import ProductList from '../productList/ProductList'
 
-const SearchPage = () => {
+const SearchPage = (): JSX.Element => {
   const [pageCount, setPageCount] = useState(3)
   const [products, setProducts] = useState<Product[]>([])
   const [priceSort, setPriceSort] = useState(SORT_TYPE.DESC)
@@ -26,30 +24,38 @@ const SearchPage = () => {
   const { items } = usePagination({
     count: pageCount,
   })
+
   console.log(items)
-  const fetchData = async (key: string, page: number) => {
-    const res = await searchProduct(
-      key,
-      page,
-      priceSort as keyof typeof SORT_TYPE,
-      closeTimeSort as keyof typeof SORT_TYPE,
-    )
-    console.log(res)
-    setProducts([...res.data])
-  }
-  const handlePriceSortChange = (event: SelectChangeEvent<string>) => {
+
+  const fetchData = useCallback(
+    async (key: string, page: number) => {
+      const res = await searchProduct(
+        key,
+        page,
+        priceSort as keyof typeof SORT_TYPE,
+        closeTimeSort as keyof typeof SORT_TYPE,
+      )
+      console.log(res)
+      setProducts([...res.data])
+    },
+    [closeTimeSort, priceSort],
+  )
+
+  const handlePriceSortChange = (event: SelectChangeEvent) => {
     setPriceSort(event.target.value)
   }
-  const handleCloseTimeSortChange = (event: SelectChangeEvent<string>) => {
+  const handleCloseTimeSortChange = (event: SelectChangeEvent) => {
     setCloseTimeSort(event.target.value)
   }
-  useEffect(() => {
-    fetchData('samsung', 1)
-  }, [])
+  // useEffect(() => {
+  //   fetchData('samsung', 1)
+  // }, [])
 
   useEffect(() => {
-    fetchData('samsung', 1)
-  }, [closeTimeSort, priceSort])
+    ;(async () => {
+      await fetchData('samsung', 1)
+    })()
+  }, [closeTimeSort, fetchData, priceSort])
 
   const handlePageChange = (
     event: ChangeEvent<unknown>,
@@ -108,16 +114,14 @@ const SearchPage = () => {
           <MenuItem value={'asc'}>Low to high</MenuItem>
         </Select>
       </FormControl> */}
-      <ProductList items={products}></ProductList>
+      <ProductList items={products} />
       <Grid container justifyContent='center'>
         <Pagination
           count={pageCount}
           onChange={handlePageChange}
           renderItem={(item) => {
             if (item.page === pageCount && item.type === 'page') {
-              return (
-                <PaginationItem type='end-ellipsis' disabled></PaginationItem>
-              )
+              return <PaginationItem type='end-ellipsis' disabled />
             }
             return <PaginationItem {...item} />
           }}

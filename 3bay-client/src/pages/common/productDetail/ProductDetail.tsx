@@ -1,20 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Divider, Grid, Paper, Typography } from '@mui/material'
-import CarouselCard from '../../../components/common/Carousel'
 
 import ProductImage from '../../../components/common/product/ProductImage'
 import ProductInfo from '../../../components/common/product/ProductInfo'
 
-import {
-  ProductProvider,
-  useProductContext,
-} from '../../../contexts/product/ProductContext'
-import axiosApiInstance from '../../../services/api'
+import { ProductProvider } from '../../../contexts/product/ProductContext'
 import Product from '../../../data/product'
 import EditIcon from '@mui/icons-material/Edit'
 import moment from 'moment'
 import { getProductById } from '../../../services/product.service'
 import { useParams } from 'react-router-dom'
+import { useEffectOnce } from 'usehooks-ts'
 
 const ProductDetail = (): JSX.Element => {
   return (
@@ -26,22 +22,21 @@ const ProductDetail = (): JSX.Element => {
 export default ProductDetail
 
 const ProductDetailContent = (): JSX.Element | null => {
-  // const productId = props.match.params.productId                                               //get productId
 
   const [product, setProducts] = useState<Product>()
   const { id } = useParams()
-  const fetchProduct = async () => {
-    console.log(id)
 
-    if (id && +id) {
-      const response = await getProductById(+id)
-      setProducts(response.data)
-    }
-  }
+  useEffectOnce(() => {
+    ;(async () => {
+      console.log(id)
 
-  useEffect(() => {
-    fetchProduct()
-  }, [])
+      if (id && +id) {
+        const response = await getProductById(+id)
+        setProducts(response.data)
+      }
+    })()
+  })
+
   return (
     <Grid container display='flex' alignItems='center' flexDirection='column'>
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -64,26 +59,27 @@ const ProductDetailContent = (): JSX.Element | null => {
       >
         <Divider />
         <Typography gutterBottom variant='h4' component='h5'>
-          Mô tả sản phẩm
+          About the product
         </Typography>
-        {product ?
-          product.productDescriptionHistory.map(function (des) {
-            return (
-              <Grid key={des.id}>
-                <Typography variant='body1' color='text.primary'>
-                  <EditIcon />
-                  <span>{moment(des.createdAt).format('DD/MM/YYYY')}</span>
-                </Typography>
-                <Typography
-                  variant='body1'
-                  color='text.primary'
-                  component={'div'}
-                >
-                  - {des.description}
-                </Typography>
-              </Grid>
-            )
-          }) : null}
+        {product
+          ? product.productDescriptionHistory.map(function (des) {
+              return (
+                <Grid key={des.id}>
+                  <Typography variant='body1' color='text.primary'>
+                    <EditIcon />
+                    <span>{moment(des.createdAt).format('L')}</span>
+                  </Typography>
+                  <Typography
+                    variant='body1'
+                    color='text.primary'
+                    component={'div'}
+                  >
+                    {des.description}
+                  </Typography>
+                </Grid>
+              )
+            })
+          : null}
       </Paper>
     </Grid>
   )

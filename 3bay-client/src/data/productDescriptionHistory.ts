@@ -1,5 +1,5 @@
 export interface ProductDescriptionHistory {
-    id:number,
-    description:string,
-    createdAt:Date
+  id: number
+  description: string
+  createdAt: Date
 }

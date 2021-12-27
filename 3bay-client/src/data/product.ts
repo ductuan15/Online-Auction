@@ -9,8 +9,8 @@ export interface Product {
   sellerId: number
   createdAt: Date
   deletedAt: Date
-  lastestAuctionId?: number
-  lastestAuction?: Auction
+  latestAuctionId?: number
+  latestAuction?: Auction
   productDescriptionHistory: ProductDescriptionHistory[],
 
   thumbnails: {
