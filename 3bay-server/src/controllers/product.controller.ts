@@ -320,11 +320,11 @@ export const search = async (
     console.log(productsId)
 
     const products:ProductRes[] = await prisma.product.findMany({
-      where: {
-        id: {
-          in: productsId,
-        },
-      },
+      // where: {
+      //   id: {
+      //     in: productsId,
+      //   },
+      // },
       include: {
         category: true,
         seller: {

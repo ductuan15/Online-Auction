@@ -125,3 +125,63 @@ export async function deleteUser(
     return next(new ErrorException({ code: ErrorCode.UnknownError }))
   }
 }
+
+export async function getProducts(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const page = +(req.query?.page || '/') || 1
+    const limit = +(req.query?.limit || '/') || config.PAGE_LIMIT
+    const includeDeleted = req.query?.includeDeleted === 'true'
+
+    let where = {}
+    if (!includeDeleted) {
+      where = { deletedAt: null }
+    }
+
+    const [total, products] = await prisma.$transaction([
+      prisma.product.count({
+        where: where,
+      }),
+
+      prisma.product.findMany({
+        include: {
+          seller: {
+            select: {
+              uuid: true,
+              name: true,
+            },
+          },
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+        where: where,
+      }),
+    ])
+    return res.json({ total, page, limit, products })
+  } catch (e) {
+    return next(e)
+  }
+}
+
+export async function removeProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const id = +(req.params.id || NaN)
+    if (isNaN(id)) {
+      return next(new ErrorException({ code: ErrorCode.BadRequest }))
+    }
+    const product = await prisma.product.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    })
+    return res.json(product)
+  } catch (e) {
+    return next(new ErrorException({ code: ErrorCode.BadRequest }))
+  }
+}
