@@ -1,4 +1,4 @@
-import Product, { AdminProductistResponse } from '../../data/product'
+import Product, { AdminProductListResponse } from '../../data/product'
 
 export type ProductsState = {
   products: Product[]
@@ -9,7 +9,7 @@ export type ProductsState = {
   }
 }
 
-export type ProductsAction = { type: 'ADD_ALL'; payload: AdminProductistResponse }
+export type ProductsAction = { type: 'ADD_ALL'; payload: AdminProductListResponse }
 
 export const initialProductsState: ProductsState = {
   products: [],

@@ -31,7 +31,7 @@ const AdminProductsContext = createContext<ProductsContextType>(
   productsContextInitialState,
 )
 
-export const useAdminUsersContext = (): ProductsContextType => {
+export const useAdminProductsContext = (): ProductsContextType => {
   return useContext(AdminProductsContext)
 }
 

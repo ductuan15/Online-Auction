@@ -1,15 +1,37 @@
 import * as React from 'react'
-import { useState } from 'react'
+import {useCallback, useState} from 'react'
 import { Alert, Grid, LinearProgress } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import useTitle from '../../hooks/use-title'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
+import { setErrorTextMsg } from '../../utils/error'
+import { useIsMounted } from 'usehooks-ts'
+import ProductTable from '../../components/admin/products/ProductTable'
 
 const UsersManagement = (): JSX.Element => {
   useTitle('3bay | Manage products')
   const [isLoading, setLoading] = useState(false)
   const [errorText, setErrorText] = useState<string | null>(null)
+  const isMounted = useIsMounted()
+
+  const onLoadingData = useCallback(() => {
+    if (isMounted()) setLoading(true)
+  }, [isMounted])
+
+  const onDataLoaded = useCallback(() => {
+    if (isMounted()) {
+      setErrorText(null)
+      setLoading(false)
+    }
+  }, [isMounted])
+
+  const onTableError = useCallback((e: unknown) => {
+    if (isMounted()) {
+      setErrorTextMsg(e, setErrorText)
+      setLoading(false)
+    }
+  }, [isMounted])
 
   return (
     <Grid
@@ -49,6 +71,12 @@ const UsersManagement = (): JSX.Element => {
           </Alert>
         )}
         {isLoading && <LinearProgress variant='indeterminate' />}
+
+        <ProductTable
+          onLoadingData={onLoadingData}
+          onDataLoaded={onDataLoaded}
+          onError={onTableError}
+        />
       </Grid>
     </Grid>
   )

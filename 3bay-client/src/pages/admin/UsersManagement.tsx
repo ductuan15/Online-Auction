@@ -1,16 +1,16 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Alert, Grid, LinearProgress, Tab } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import Box from '@mui/material/Box'
 import GroupIcon from '@mui/icons-material/Group'
-import {useEffectOnce, useIsMounted} from 'usehooks-ts'
+import { useEffectOnce, useIsMounted } from 'usehooks-ts'
 import UserTable from '../../components/admin/users/UserTable'
 import { setErrorTextMsg } from '../../utils/error'
 import { useAdminUsersContext } from '../../contexts/admin/UsersContext'
-import AdminUserService from '../../services/admin-users.service'
+import AdminService from '../../services/admin.service'
 import { SubmitHandler } from 'react-hook-form'
 import { AddUserFormInputs } from '../../data/sign-up'
 import useTitle from '../../hooks/use-title'
@@ -29,7 +29,7 @@ const UsersManagement = (): JSX.Element => {
 
   const onDialogSubmit: SubmitHandler<AddUserFormInputs> = async (data) => {
     try {
-      await AdminUserService.addUser(data)
+      await AdminService.addUser(data)
       dispatch({ type: 'NEW_USER_ADDED' })
       dispatch({ type: 'CLOSE_ADD_USER_DIALOG' })
     } catch (e) {
@@ -40,30 +40,34 @@ const UsersManagement = (): JSX.Element => {
       })
     }
   }
+  const onLoadingData = useCallback(() => {
+    if (isMounted()) {
+      setLoading(true)
+    }
+  }, [isMounted])
 
-  const onLoadingData = () => {
-    if (isMounted()) setLoading(true)
-  }
-
-  const onDataLoaded = () => {
+  const onDataLoaded = useCallback(() => {
     if (isMounted()) {
       setErrorText(null)
       setLoading(false)
     }
-  }
+  }, [isMounted])
 
-  const onTableError = (e: unknown) => {
-    if (isMounted()) {
-      setErrorTextMsg(e, setErrorText)
-      setLoading(false)
-    }
-  }
+  const onTableError = useCallback(
+    (e: unknown) => {
+      if (isMounted()) {
+        setErrorTextMsg(e, setErrorText)
+        setLoading(false)
+      }
+    },
+    [isMounted],
+  )
 
   useEffectOnce(() => {
     ;(async () => {
       try {
         // onLoadingData()
-        const userResponse = await AdminUserService.getRequestSellerUserList(
+        const userResponse = await AdminService.getRequestSellerUserList(
           usersState.requestSellerTable.page,
           usersState.requestSellerTable.limit,
         )

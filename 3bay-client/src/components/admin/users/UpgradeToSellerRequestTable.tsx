@@ -11,7 +11,7 @@ import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import moment from 'moment/moment'
 import { Typography } from '@mui/material'
 import '@fontsource/jetbrains-mono'
-import AdminUserService from '../../../services/admin-users.service'
+import AdminService from '../../../services/admin.service'
 import { createRef, useCallback, useEffect, useMemo, useState } from 'react'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { useAuth } from '../../../contexts/user/AuthContext'
@@ -141,7 +141,7 @@ const UpgradeToSellerRequestTable = ({
         }
       }
 
-      const userResponse = await AdminUserService.updateUser(data)
+      const userResponse = await AdminService.updateUser(data)
       dispatch({ type: 'UPDATE', payload: userResponse })
 
       setRefresh(true)
@@ -208,7 +208,7 @@ const UpgradeToSellerRequestTable = ({
             }
             onLoadingData && onLoadingData()
             const userResponse =
-              await AdminUserService.getRequestSellerUserList(
+              await AdminService.getRequestSellerUserList(
                 query.page + 1,
                 query.pageSize,
               )

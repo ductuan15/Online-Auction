@@ -11,7 +11,7 @@ import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import moment from 'moment/moment'
 import { Typography } from '@mui/material'
 import '@fontsource/jetbrains-mono'
-import AdminUserService from '../../../services/admin-users.service'
+import AdminService from '../../../services/admin.service'
 import { createRef, useCallback, useEffect, useMemo } from 'react'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { useAuth } from '../../../contexts/user/AuthContext'
@@ -88,6 +88,7 @@ const detailPanel = ({ rowData }: { rowData: AdminUserDetail }) => {
       variant='body1'
       fontFamily='Jetbrains Mono'
       mx={2}
+      p={1}
       color='text.main'
       aria-multiline='true'
       sx={{
@@ -141,7 +142,7 @@ const UserTable = ({
             const data = {
               ...newData,
             }
-            const userResponse = await AdminUserService.updateUser(data)
+            const userResponse = await AdminService.updateUser(data)
             dispatch({ type: 'UPDATE', payload: userResponse })
 
             resolve({
@@ -174,7 +175,7 @@ const UserTable = ({
           try {
             onLoadingData && onLoadingData()
 
-            await AdminUserService.deleteUser(oldData)
+            await AdminService.deleteUser(oldData)
             // dispatch({ type: 'DELETE', payload: userResponse })
 
             resolve({
@@ -230,7 +231,7 @@ const UserTable = ({
               return
             }
             onLoadingData && onLoadingData()
-            const userResponse = await AdminUserService.getUserList(
+            const userResponse = await AdminService.getUserList(
               query.page + 1,
               query.pageSize,
             )
