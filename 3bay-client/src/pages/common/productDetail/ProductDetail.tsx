@@ -4,7 +4,7 @@ import { Divider, Grid, Paper, Typography } from '@mui/material'
 import ProductImage from '../../../components/common/product/ProductImage'
 import ProductInfo from '../../../components/common/product/ProductInfo'
 
-import { ProductProvider } from '../../../contexts/product/ProductContext'
+import ProductProvider from '../../../contexts/product/ProductContext'
 import Product from '../../../data/product'
 import EditIcon from '@mui/icons-material/Edit'
 import moment from 'moment'
