@@ -207,11 +207,10 @@ const UpgradeToSellerRequestTable = ({
               return
             }
             onLoadingData && onLoadingData()
-            const userResponse =
-              await AdminService.getRequestSellerUserList(
-                query.page + 1,
-                query.pageSize,
-              )
+            const userResponse = await AdminService.getRequestSellerUserList(
+              query.page + 1,
+              query.pageSize,
+            )
             dispatch({
               type: 'ADD_ALL_REQUEST_ADMIN_USERS',
               payload: userResponse,
@@ -244,13 +243,20 @@ const UpgradeToSellerRequestTable = ({
 
   return (
     <MaterialTable
-      title={'Upgrade to SELLER request'}
+      title={
+        <Typography variant='h5' padding={2} paddingTop={5}>
+          Upgrade to SELLER request
+        </Typography>
+      }
       tableRef={tableRef}
       columns={columns}
       data={fetchData}
       detailPanel={detailPanel}
       actions={actions}
       editable={editable}
+      options={{
+        searchFieldVariant: 'outlined',
+      }}
     />
   )
 }

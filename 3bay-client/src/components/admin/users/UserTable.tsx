@@ -38,21 +38,25 @@ const columns: Column<AdminUserDetail>[] = [
       return <BackgroundLetterAvatars name={data.name} />
     },
     sorting: false,
+    filtering: false,
     editable: 'never',
   },
   {
     title: 'Name',
     field: 'name',
+    filtering: false,
     editable: 'onAdd',
   },
   {
     title: 'Email',
     field: 'email',
+    filtering: false,
     editable: 'onAdd',
   },
   {
     title: 'DOB',
     field: 'dob',
+    filtering: false,
     editable: 'onAdd',
     render: (data) => {
       return moment(data.dob).format('L')
@@ -61,6 +65,7 @@ const columns: Column<AdminUserDetail>[] = [
   {
     title: 'Address',
     field: 'address',
+    filtering: false,
     editable: 'onAdd',
   },
   {
@@ -264,13 +269,22 @@ const UserTable = ({
 
   return (
     <MaterialTable
-      title={'Users'}
+      title={
+        <Typography variant='h5' padding={2} paddingTop={5}>
+          Users
+        </Typography>
+      }
       tableRef={tableRef}
       columns={columns}
       data={fetchData}
       detailPanel={detailPanel}
       actions={actions}
       editable={editable}
+      options={{
+        searchFieldVariant: 'outlined',
+        // filtering: true,
+        // debounceInterval: 500,
+      }}
     />
   )
 }

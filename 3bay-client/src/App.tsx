@@ -36,10 +36,6 @@ function GlobalRouter(): JSX.Element {
         <Route path='/' element={<HomeLayout />}>
           <Route index element={<Home />} />
 
-          <Route element={<RequireAdminRole />}>
-            <Route path='cat' element={<CategoryManagement />} />
-          </Route>
-
           <Route path='product/:id' element={<ProductDetail />} />
           {/* <Route path='products/' element={<ProductList items={[]}/>} /> */}
           <Route path='products/search' element={<SearchPage />} />

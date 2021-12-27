@@ -15,6 +15,7 @@ import Product from '../../../data/product'
 import { useAdminProductsContext } from '../../../contexts/admin/ProductsContext'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import moment from 'moment/moment'
+import LaunchOutlinedIcon from '@mui/icons-material/LaunchOutlined'
 
 type ProductsTableProps = {
   onLoadingData?: () => void
@@ -101,6 +102,14 @@ const ProductTable = ({
           tableRef.current.onQueryChange &&
           tableRef.current?.onQueryChange(),
       },
+      {
+        icon: () => <LaunchOutlinedIcon />,
+        tooltip: 'View product',
+        isFreeAction: false,
+        onClick: (event, data) => {
+          window.open(`/product/${(data as Product).id}`)
+        },
+      },
     ],
     [tableRef],
   )
@@ -175,7 +184,11 @@ const ProductTable = ({
 
   return (
     <MaterialTable
-      title={'Products'}
+      title={
+        <Typography variant='h5' padding={2} paddingTop={5}>
+          Products
+        </Typography>
+      }
       tableRef={tableRef}
       columns={columns}
       data={fetchData}
@@ -183,6 +196,7 @@ const ProductTable = ({
       actions={actions}
       editable={editable}
       options={{
+        searchFieldVariant: 'outlined',
         columnResizable: true,
         tableLayout: 'auto',
       }}
