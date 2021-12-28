@@ -2,7 +2,7 @@ import { Button, Grid, MenuList, Typography } from '@mui/material'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { Link as RouterLink, Outlet } from 'react-router-dom'
 import { useUserContext } from '../../../contexts/user/UserContext'
-import StyledMenuItem from '../../common/StyledMenuItem'
+import StyledMenuItem from '../menu/StyledMenuItem'
 
 // type UserLayoutProps = {
 //   children?: ReactNode

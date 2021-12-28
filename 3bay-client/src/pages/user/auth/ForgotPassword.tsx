@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { SyntheticEvent, useState } from 'react'
 import Box from '@mui/material/Box'
-import { AppName } from '../../../components/layout/AppName'
+import AppName from '../../../components/common/appname/AppName'
 import { Alert, Avatar, InputAdornment } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'

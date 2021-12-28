@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../../contexts/user/AuthContext'
-import Error404 from '../../../pages/common/Error404'
+import Error404 from '../../../pages/common/error/Error404'
 
 function RequireAdminRole(): JSX.Element {
   const auth = useAuth()

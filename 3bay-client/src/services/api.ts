@@ -1,5 +1,5 @@
 import axios from 'axios'
-import config from '../config/config'
+import config from '../config'
 import TokenService from './token.service'
 
 const axiosApiInstance = axios.create({

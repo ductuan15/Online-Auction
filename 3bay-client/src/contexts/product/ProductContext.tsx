@@ -13,7 +13,7 @@ import {
   ProductReducer,
   ProductState,
 } from '../../stores/product/product.store'
-import Product from '../../data/product'
+import Product from '../../models/product'
 
 type ProductProviderProps = {
   children: ReactNode

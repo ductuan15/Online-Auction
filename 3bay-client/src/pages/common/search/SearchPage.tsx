@@ -11,8 +11,8 @@ import {
   Typography,
 } from '@mui/material'
 import { ChangeEvent, useCallback, useEffect, useState } from 'react'
-import HomeLayout from '../../../components/layout/HomeLayout'
-import Product from '../../../data/product'
+import HomeLayout from '../../../components/common/layout/HomeLayout'
+import Product from '../../../models/product'
 import { searchProduct, SORT_TYPE } from '../../../services/product.service'
 import ProductList from '../productList/ProductList'
 

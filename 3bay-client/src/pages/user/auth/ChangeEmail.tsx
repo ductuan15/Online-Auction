@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState } from 'react'
 import Box from '@mui/material/Box'
-import { AppName } from '../../../components/layout/AppName'
+import AppName from '../../../components/common/appname/AppName'
 import { Alert, Avatar } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'

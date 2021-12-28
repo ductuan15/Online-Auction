@@ -1,7 +1,7 @@
 import axiosApiInstance from './api'
-import { AdminUserDetail, AdminUserListResponse } from '../data/admin-user'
-import { AddUserFormInputs } from '../data/sign-up'
-import Product, { AdminProductListResponse } from '../data/product'
+import { AdminUserDetail, AdminUserListResponse } from '../models/admin-user'
+import { AddUserFormInputs } from '../models/sign-up'
+import Product, { AdminProductListResponse } from '../models/product'
 
 async function getUserList(
   page: number,

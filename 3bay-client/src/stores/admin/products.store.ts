@@ -1,4 +1,4 @@
-import Product, { AdminProductListResponse } from '../../data/product'
+import Product, { AdminProductListResponse } from '../../models/product'
 
 export type ProductsState = {
   products: Product[]

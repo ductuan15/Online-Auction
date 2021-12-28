@@ -7,7 +7,7 @@ import {
 } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 import AuthService, { AuthData } from '../../services/auth.service'
-import { UserDetails } from '../../data/user'
+import { UserDetails } from '../../models/user'
 
 type AuthProviderProps = {
   children: ReactNode

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link, Paper, Rating } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import Product from '../../../data/product'
+import Product from '../../../models/product'
 import moment from 'moment'
 
 type productDetailProps = {

@@ -1,7 +1,7 @@
 import React from 'react'
-import StyledDiv from '../common/StyledDiv'
+import StyledDiv from '../StyledDiv'
 import { Container } from '@mui/material'
-import { Copyright } from '../common/Copyright'
+import { Copyright } from '../footer/Copyright'
 import { Outlet } from 'react-router-dom'
 
 interface Props {

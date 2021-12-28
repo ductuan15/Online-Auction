@@ -1,4 +1,4 @@
-import {Navigate, Outlet, useLocation} from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../../contexts/user/AuthContext'
 
 function RequireAuth(): JSX.Element {
@@ -13,7 +13,7 @@ function RequireAuth(): JSX.Element {
     return <Navigate to='/signin' state={{ from: location }} />
   }
 
-  return <Outlet/>
+  return <Outlet />
 }
 
 export default RequireAuth

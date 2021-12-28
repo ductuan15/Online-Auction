@@ -6,7 +6,7 @@ import MaterialTable, {
   Query,
   QueryResult,
 } from '@material-table/core'
-import { AdminUserDetail } from '../../../data/admin-user'
+import { AdminUserDetail } from '../../../models/admin-user'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import moment from 'moment/moment'
 import { Typography } from '@mui/material'

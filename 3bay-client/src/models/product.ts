@@ -1,5 +1,5 @@
 import { Auction } from './auctions'
-import { ProductDescriptionHistory } from './productDescriptionHistory'
+import { ProductDescriptionHistory } from './product-description-history'
 import { UserDetails } from './user'
 
 export interface Product {

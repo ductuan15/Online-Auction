@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { BaseCategoryDialog } from './BaseCategoryDialog'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
-import Category from '../../../data/category'
+import Category from '../../../models/category'
 import axiosApiInstance from '../../../services/api'
 
 // export type EditCategoryDialogProps = {}

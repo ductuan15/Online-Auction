@@ -16,7 +16,7 @@ type AppNameProps = {
   sx?: SxProps
 }
 
-export function AppName({ bigSize, sx }: AppNameProps): JSX.Element {
+function AppName({ bigSize, sx }: AppNameProps): JSX.Element {
   return (
     <Link underline='none' component={RouterLink} to='/'>
       <Box display='flex' alignItems='center'>
@@ -40,3 +40,5 @@ export function AppName({ bigSize, sx }: AppNameProps): JSX.Element {
     </Link>
   )
 }
+
+export default AppName

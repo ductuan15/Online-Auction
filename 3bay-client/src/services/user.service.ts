@@ -1,5 +1,5 @@
 import { AuthData } from './auth.service'
-import { UpgradeToSellerRequest, UserDetails } from '../data/user'
+import { UpgradeToSellerRequest, UserDetails } from '../models/user'
 import axiosApiInstance from './api'
 import { Dispatch } from 'react'
 import { UserAction } from '../stores/user/user.store'

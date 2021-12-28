@@ -1,4 +1,4 @@
-import { UpgradeToSellerRequest, UserDetails } from '../../data/user'
+import { UpgradeToSellerRequest, UserDetails } from '../../models/user'
 
 export type UserState = {
   userDetails?: UserDetails
