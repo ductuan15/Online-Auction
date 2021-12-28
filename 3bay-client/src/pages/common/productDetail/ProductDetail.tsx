@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import moment from 'moment'
 import { getProductById } from '../../../services/product.service'
 import { useParams } from 'react-router-dom'
-import { useEffectOnce } from 'usehooks-ts'
+import { useEffectOnce } from '../../../hooks'
 
 const ProductDetail = (): JSX.Element => {
   return (

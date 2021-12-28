@@ -6,7 +6,7 @@ import Brightness2OutlinedIcon from '@mui/icons-material/Brightness2Outlined'
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import { useTheme } from '@mui/material'
 import { SxProps } from '@mui/system'
-import { useDarkMode } from 'usehooks-ts'
+import { useDarkMode } from '../../../hooks'
 
 export const ThemeChangeButton = ({ sx }: { sx: SxProps }): JSX.Element => {
   const { toggle } = useDarkMode()

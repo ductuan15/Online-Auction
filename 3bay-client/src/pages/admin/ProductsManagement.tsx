@@ -1,13 +1,13 @@
 import * as React from 'react'
-import {useCallback, useState} from 'react'
+import { useCallback, useState } from 'react'
 import { Alert, Grid, LinearProgress } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import useTitle from '../../hooks/use-title'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import { setErrorTextMsg } from '../../utils/error'
-import { useIsMounted } from 'usehooks-ts'
 import ProductTable from '../../components/admin/products/ProductTable'
+import { useIsMounted } from '../../hooks'
 
 const UsersManagement = (): JSX.Element => {
   useTitle('3bay | Manage products')
@@ -26,12 +26,15 @@ const UsersManagement = (): JSX.Element => {
     }
   }, [isMounted])
 
-  const onTableError = useCallback((e: unknown) => {
-    if (isMounted()) {
-      setErrorTextMsg(e, setErrorText)
-      setLoading(false)
-    }
-  }, [isMounted])
+  const onTableError = useCallback(
+    (e: unknown) => {
+      if (isMounted()) {
+        setErrorTextMsg(e, setErrorText)
+        setLoading(false)
+      }
+    },
+    [isMounted],
+  )
 
   return (
     <Grid

@@ -8,9 +8,9 @@ import * as React from 'react'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
-import { useDarkMode } from 'usehooks-ts'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
+import { useDarkMode } from '../../../hooks'
 
 const profileMenu = {
   elevation: 0,

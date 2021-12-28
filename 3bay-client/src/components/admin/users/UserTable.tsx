@@ -3,8 +3,7 @@ import MaterialTable, {
   Action,
   Column,
   MaterialTableProps,
-  Query,
-  QueryResult,
+  Query, QueryResult,
 } from '@material-table/core'
 import { AdminUserDetail } from '../../../models/admin-user'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'

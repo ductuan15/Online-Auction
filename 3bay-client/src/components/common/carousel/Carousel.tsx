@@ -7,7 +7,7 @@ import { Container, Divider } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Product from '../../../models/product'
 import { AxiosResponse } from 'axios'
-import { useEffectOnce } from 'usehooks-ts'
+import { useEffectOnce } from '../../../hooks'
 
 type CarouselProps = {
   name: string
