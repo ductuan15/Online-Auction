@@ -1,5 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
+import {getAllThumbnailLink} from "./images-product.controller.js";
+import {ProductRes} from "../types/ProductRes.js";
+
+const userShortenSelection = {
+  uuid: true,
+  name: true,
+  address: true,
+  email: true,
+}
 
 export const getWatchListByUser = async (
   req: Request,
@@ -7,15 +16,76 @@ export const getWatchListByUser = async (
   next: NextFunction,
 ) => {
   try {
-    let watchlist = await prisma.userWatchlist.findMany({
-      where: {
-        userId: req.user?.uuid || '',
+    const products:ProductRes[] = await  prisma.product.findMany({
+      where:{
+        userWatchlist:{
+          some:{
+            userId:{
+              equals:req.user?.uuid
+            }
+          }
+        }
       },
-      include: {
-        products: true,
-      },
+      include:{
+        seller:{
+          select:userShortenSelection,
+        },
+        category:true,
+        latestAuction:{
+          include:{
+            winningBid:{
+              include:{
+                bidder:{
+                  select: userShortenSelection
+                }
+              }
+            }
+          }
+        }
+      }
     })
-    return res.json(watchlist)
+    // const watchlist =await prisma.userWatchlist.findMany({
+    //   where:{
+    //     userId: req.user?.uuid
+    //   },
+    //   select:{
+    //     productId:true,
+    //   }
+    // })
+
+    // const productsId: number[] = []
+    // watchlist.forEach(fav => {
+    //   productsId.push(fav.productId)
+    // })
+    // const products: ProductRes[] = await prisma.product.findMany({
+    //   where: {
+    //     id: {
+    //       in: productsId,
+    //     },
+    //   },
+    //   include: {
+    //     seller: { select: userShortenSelection }, // de loi pass word ra thay ghe qua
+    //     category: true,
+    //     latestAuction: {
+    //       include: {
+    //         winningBid: {
+    //           include: {
+    //             bidder: {
+    //               select: userShortenSelection,
+    //             },
+    //           },
+    //         },
+    //         _count: {
+    //           select: {
+    //             bids: true,
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    // })
+    products.forEach(product => {product.thumbnails = getAllThumbnailLink((product.id))})
+    return res.json(products)
   } catch (error) {
     if (error instanceof Error) {
       next(error)
