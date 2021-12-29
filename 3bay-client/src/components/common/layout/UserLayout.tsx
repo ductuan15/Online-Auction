@@ -85,6 +85,7 @@ const UserLayout = (): JSX.Element => {
               component='h2'
               px={1}
               color='text.primary'
+              fontStyle='bold'
               noWrap
             >
               {user?.name || ''}

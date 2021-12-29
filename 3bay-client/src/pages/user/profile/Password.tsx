@@ -8,6 +8,7 @@ import UserService from '../../../services/user.service'
 import { Alert } from '@mui/lab'
 import { setErrorTextMsg } from '../../../utils/error'
 import useTitle from '../../../hooks/use-title'
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 
 export type PasswordFormType = {
   pwd: string
@@ -79,7 +80,12 @@ const Password = (): JSX.Element => {
           Password Settings
         </Typography>
 
-        <Button variant='contained' type='submit'>
+        <Button
+          variant='contained'
+          type='submit'
+          size='large'
+          startIcon={<SaveOutlinedIcon />}
+        >
           Save changes
         </Button>
       </Grid>

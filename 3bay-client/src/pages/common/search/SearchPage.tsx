@@ -9,14 +9,17 @@ import {
   PaginationItem,
   Select,
   SelectChangeEvent,
-  Typography,
 } from '@mui/material'
 import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 import Category from '../../../models/category'
 import Product from '../../../models/product'
-import { searchProduct, SORT_BY, SORT_TYPE } from '../../../services/product.service'
+import {
+  searchProduct,
+  SORT_BY,
+  SORT_TYPE,
+} from '../../../services/product.service'
 import ProductList from '../productList/ProductList'
 
 const SearchPage = (): JSX.Element => {
@@ -66,7 +69,7 @@ const SearchPage = (): JSX.Element => {
       // set is error
       setIsLoading(false)
     }
-  }, [currentPage, sortBy, sortType, categoryId])
+  }, [key, currentPage, categoryId, sortBy, sortType])
 
   useEffect(() => {
     if (isNeedRedirect) {

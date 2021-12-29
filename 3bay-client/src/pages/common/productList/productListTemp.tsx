@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import CardProduct from '../../../components/common/product/CardProduct'
+import ProductCard from '../../../components/common/product/ProductCard'
 import Product from '../../../models/product'
 import { useEffect, useState } from 'react'
 import _ from 'lodash'
@@ -223,7 +223,7 @@ function renderProducts(currentProducts: Product[]): JSX.Element {
         currentProducts.map((product, index) => {
           return (
             <Grid item xs={2} sm={4} md={4} key={index}>
-              <CardProduct product={product as Product} />
+              <ProductCard product={product as Product} />
             </Grid>
           )
         })}
