@@ -39,51 +39,16 @@ export const getWatchListByUser = async (
                   select: userShortenSelection
                 }
               }
+            },
+            _count:{
+              select:{
+                bids:true
+              }
             }
           }
         }
       }
     })
-    // const watchlist =await prisma.userWatchlist.findMany({
-    //   where:{
-    //     userId: req.user?.uuid
-    //   },
-    //   select:{
-    //     productId:true,
-    //   }
-    // })
-
-    // const productsId: number[] = []
-    // watchlist.forEach(fav => {
-    //   productsId.push(fav.productId)
-    // })
-    // const products: ProductRes[] = await prisma.product.findMany({
-    //   where: {
-    //     id: {
-    //       in: productsId,
-    //     },
-    //   },
-    //   include: {
-    //     seller: { select: userShortenSelection }, // de loi pass word ra thay ghe qua
-    //     category: true,
-    //     latestAuction: {
-    //       include: {
-    //         winningBid: {
-    //           include: {
-    //             bidder: {
-    //               select: userShortenSelection,
-    //             },
-    //           },
-    //         },
-    //         _count: {
-    //           select: {
-    //             bids: true,
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    // })
     products.forEach(product => {product.thumbnails = getAllThumbnailLink((product.id))})
     return res.json(products)
   } catch (error) {

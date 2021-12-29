@@ -17,6 +17,7 @@ import { NotifyMenu } from './NotifyMenu'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import RoleLabel from '../../user/profile/RoleLabel'
+import WatchListButton from "./WatchListButton";
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -122,7 +123,7 @@ export default function SearchAppBar(): JSX.Element {
 
   const { toggleDrawer } = useAppBarContext()
 
-  const { user } = useAuth()
+  const { isAuth, user } = useAuth()
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -172,6 +173,11 @@ export default function SearchAppBar(): JSX.Element {
             <ThemeChangeButton
               sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, ml: 2 }}
             />
+
+            {/*WatchList Button*/}
+            {
+              isAuth ? <WatchListButton /> : null
+            }
 
             {/* Profile */}
             <AppBarProfileMenu menuId={menuId} mobileMenuId={mobileMenuId} />

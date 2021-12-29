@@ -6,6 +6,7 @@ import { UserAction } from '../stores/user/user.store'
 import { AuthContextType } from '../contexts/user/AuthContext'
 import { PasswordFormType } from '../pages/user/profile/Password'
 import { AxiosResponse } from 'axios'
+import Product from "../models/product";
 
 async function getUserInfo(authData?: AuthData): Promise<UserDetails> {
   const response = await axiosApiInstance.get(
@@ -42,11 +43,17 @@ async function upgradeToSeller(): Promise<UpgradeToSellerRequest> {
   return response.data as UpgradeToSellerRequest
 }
 
+async function getUserWatchList(): Promise<Product[]> {
+  const response = await axiosApiInstance.get(`api/watchlist/byUser`)
+  return response.data as Product[]
+}
+
 const UserService = {
   getUserInfo,
   updateUserInfo,
   changePassword,
   upgradeToSeller,
+  getUserWatchList
 }
 
 export default UserService
