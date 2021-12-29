@@ -1,3 +1,5 @@
+import { Bidder } from './user'
+
 export interface Auction {
   id: number
   startTime: Date
@@ -10,7 +12,7 @@ export interface Auction {
   _count: {
     bids: number
   }
-  // Add later
-  winningBid: any
+  // TODO Add later
+  winningBid?: Bidder
   bid: any
 }

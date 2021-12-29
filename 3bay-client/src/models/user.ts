@@ -11,3 +11,8 @@ export type UserDetails = {
   role: string
   upgradeToSellerRequest?: UpgradeToSellerRequest
 }
+
+export type Bidder = {
+  uuid: string,
+  name: string
+}

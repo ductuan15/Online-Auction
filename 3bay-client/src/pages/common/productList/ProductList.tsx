@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import CardProduct from '../../../components/common/product/CardProduct'
+import ProductCard from '../../../components/common/product/ProductCard'
 import Product from '../../../models/product'
 interface ProductListProps {
   items: Product[]
@@ -13,7 +13,7 @@ const ProductList = (props: ProductListProps): JSX.Element => {
         {props.items.map((product) => {
           return (
             <Grid item xs={4} key={product.id}>
-              <CardProduct product={product} />
+              <ProductCard product={product} />
             </Grid>
           )
         })}

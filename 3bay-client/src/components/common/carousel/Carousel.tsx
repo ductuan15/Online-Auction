@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import CardProduct from '../product/CardProduct'
+import ProductCard from '../product/ProductCard'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import './Carousel.css'
@@ -76,7 +76,7 @@ const CarouselCard = (props: CarouselProps): JSX.Element => {
         itemClass='carousel-item-padding-20-px'
       >
         {products.map((product) => {
-          return <CardProduct key={product.id} product={product} />
+          return <ProductCard key={product.id} product={product} />
         })}
       </Carousel>
     </Container>
