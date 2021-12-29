@@ -8,9 +8,10 @@ import ProductProvider from '../../../contexts/product/ProductContext'
 import Product from '../../../models/product'
 import EditIcon from '@mui/icons-material/Edit'
 import moment from 'moment'
-import { getProductById } from '../../../services/product.service'
+import {getProductById, getTop} from '../../../services/product.service'
 import { useParams } from 'react-router-dom'
 import { useEffectOnce } from '../../../hooks'
+import CarouselCard from '../../../components/common/carousel/Carousel'
 
 const ProductDetail = (): JSX.Element => {
   return (
@@ -48,7 +49,7 @@ const ProductDetailContent = (): JSX.Element | null => {
         </Grid>
       </Grid>
 
-      {/* <CarouselCard name={'Sản phẩm tương tự'} fetchFunction={getTop.getTopPrice}/> */}
+       <CarouselCard name={'Sản phẩm tương tự'} fetchFunction={getTop.getTopPrice}/>
 
       <Paper
         elevation={0}
