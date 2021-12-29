@@ -1,13 +1,13 @@
 import { Container } from '@mui/material'
 import React from 'react'
 
-import SearchAppBar, { StyledToolbar } from './appbar/AppBar'
-import AppFooter from './footer/AppFooter'
-import StyledDiv from '../common/StyledDiv'
-import { AppBarCtxProvider } from '../../contexts/layout/AppBarContext'
-import AppDrawer from './drawer/AppDrawer'
+import AppFooter from '../footer/AppFooter'
+import StyledDiv from '../StyledDiv'
+import { AppBarCtxProvider } from '../../../contexts/layout/AppBarContext'
+import { AppDrawer } from '../drawer'
 import { Outlet } from 'react-router-dom'
-import { CategoryProvider } from '../../contexts/admin/CategoryContext'
+import { CategoryProvider } from '../../../contexts/admin/CategoryContext'
+import { AppBar, StyledToolbar } from '../appbar'
 
 interface Props {
   children?: React.ReactNode
@@ -19,7 +19,7 @@ export default function HomeLayout({ children }: Props): JSX.Element {
       <CategoryProvider>
         {/* app bar */}
         <AppBarCtxProvider>
-          <SearchAppBar />
+          <AppBar />
           <AppDrawer />
         </AppBarCtxProvider>
 

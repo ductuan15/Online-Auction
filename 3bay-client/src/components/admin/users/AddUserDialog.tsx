@@ -9,7 +9,7 @@ import Button from '@mui/material/Button'
 import DialogActions from '@mui/material/DialogActions'
 import AddUserForm from './AddUserForm'
 import { SubmitHandler } from 'react-hook-form'
-import { AddUserFormInputs } from '../../../data/sign-up'
+import { AddUserFormInputs } from '../../../models/sign-up'
 import { useAdminUsersContext } from '../../../contexts/admin/UsersContext'
 import { Alert } from '@mui/material'
 

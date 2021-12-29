@@ -4,7 +4,7 @@ import EmailSubscriber from './EmailSubscriber'
 import IconButton from '@mui/material/IconButton'
 import RedditIcon from '@mui/icons-material/Reddit'
 import GitHubIcon from '@mui/icons-material/GitHub'
-import { AppName } from '../AppName'
+import AppName from '../appname/AppName'
 
 const footerLinks = [
   {

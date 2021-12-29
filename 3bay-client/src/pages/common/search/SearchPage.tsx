@@ -3,7 +3,6 @@ import {
   FormControl,
   Grid,
   InputLabel,
-  LinearProgress,
   ListSubheader,
   MenuItem,
   Pagination,
@@ -12,24 +11,12 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material'
-import {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import HomeLayout from '../../../components/layout/HomeLayout'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
-import Category from '../../../data/category'
-import Product from '../../../data/product'
-import {
-  PAGE_LIMIT,
-  searchProduct,
-  SORT_BY,
-  SORT_TYPE,
-} from '../../../services/product.service'
+import Category from '../../../models/category'
+import Product from '../../../models/product'
+import { searchProduct, SORT_BY, SORT_TYPE } from '../../../services/product.service'
 import ProductList from '../productList/ProductList'
 
 const SearchPage = (): JSX.Element => {

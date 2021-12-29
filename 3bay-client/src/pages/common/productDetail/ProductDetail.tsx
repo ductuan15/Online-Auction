@@ -4,13 +4,13 @@ import { Divider, Grid, Paper, Typography } from '@mui/material'
 import ProductImage from '../../../components/common/product/ProductImage'
 import ProductInfo from '../../../components/common/product/ProductInfo'
 
-import { ProductProvider } from '../../../contexts/product/ProductContext'
-import Product from '../../../data/product'
+import ProductProvider from '../../../contexts/product/ProductContext'
+import Product from '../../../models/product'
 import EditIcon from '@mui/icons-material/Edit'
 import moment from 'moment'
 import { getProductById } from '../../../services/product.service'
 import { useParams } from 'react-router-dom'
-import { useEffectOnce } from 'usehooks-ts'
+import { useEffectOnce } from '../../../hooks'
 
 const ProductDetail = (): JSX.Element => {
   return (

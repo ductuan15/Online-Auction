@@ -1,8 +1,8 @@
 import axiosApiInstance from './api'
-import { SignUpFormInputs } from '../data/sign-up'
+import { SignUpFormInputs } from '../models/sign-up'
 import TokenService from './token.service'
 import {ChangeEmailForm} from '../pages/user/auth/ChangeEmail'
-import {UserDetails} from '../data/user'
+import {UserDetails} from '../models/user'
 
 export type AuthData = {
   user: string

@@ -8,7 +8,7 @@ import { TransitionProps } from '@mui/material/transitions'
 import { animated, useSpring } from 'react-spring'
 import Collapse from '@mui/material/Collapse'
 import { SvgIconProps } from '@mui/material'
-import Category from '../../../data/category'
+import Category from '../../../models/category'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 
 declare module 'react' {

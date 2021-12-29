@@ -6,12 +6,12 @@ import MaterialTable, {
   Query,
   QueryResult,
 } from '@material-table/core'
-import { AdminUserDetail } from '../../../data/admin-user'
+import { AdminUserDetail } from '../../../models/admin-user'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import moment from 'moment/moment'
 import { Typography } from '@mui/material'
 import '@fontsource/jetbrains-mono'
-import AdminUserService from '../../../services/admin-users.service'
+import AdminService from '../../../services/admin.service'
 import { createRef, useCallback, useEffect, useMemo, useState } from 'react'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { useAuth } from '../../../contexts/user/AuthContext'
@@ -141,7 +141,7 @@ const UpgradeToSellerRequestTable = ({
         }
       }
 
-      const userResponse = await AdminUserService.updateUser(data)
+      const userResponse = await AdminService.updateUser(data)
       dispatch({ type: 'UPDATE', payload: userResponse })
 
       setRefresh(true)
@@ -207,11 +207,10 @@ const UpgradeToSellerRequestTable = ({
               return
             }
             onLoadingData && onLoadingData()
-            const userResponse =
-              await AdminUserService.getRequestSellerUserList(
-                query.page + 1,
-                query.pageSize,
-              )
+            const userResponse = await AdminService.getRequestSellerUserList(
+              query.page + 1,
+              query.pageSize,
+            )
             dispatch({
               type: 'ADD_ALL_REQUEST_ADMIN_USERS',
               payload: userResponse,
@@ -244,13 +243,20 @@ const UpgradeToSellerRequestTable = ({
 
   return (
     <MaterialTable
-      title={'Upgrade to SELLER request'}
+      title={
+        <Typography variant='h5' padding={2} paddingTop={5}>
+          Upgrade to SELLER request
+        </Typography>
+      }
       tableRef={tableRef}
       columns={columns}
       data={fetchData}
       detailPanel={detailPanel}
       actions={actions}
       editable={editable}
+      options={{
+        searchFieldVariant: 'outlined',
+      }}
     />
   )
 }

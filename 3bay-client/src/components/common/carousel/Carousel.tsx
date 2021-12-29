@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import CardProduct from './product/CardProduct'
+import CardProduct from '../product/CardProduct'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import './Carousel.css'
 import { Container, Divider } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import Product from '../../data/product'
+import Product from '../../../models/product'
 import { AxiosResponse } from 'axios'
-import { useEffectOnce } from 'usehooks-ts'
+import { useEffectOnce } from '../../../hooks'
 
 type CarouselProps = {
   name: string

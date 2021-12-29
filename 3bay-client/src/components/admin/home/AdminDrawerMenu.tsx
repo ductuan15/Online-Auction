@@ -2,7 +2,7 @@ import { useAuth } from '../../../contexts/user/AuthContext'
 import { Divider, List, ListSubheader } from '@mui/material'
 import * as React from 'react'
 import { ADMIN_MENU_ITEMS } from './AdminMenu'
-import StyledMenuItem from '../../common/StyledMenuItem'
+import StyledMenuItem from '../../common/menu/StyledMenuItem'
 
 const AdminDrawerMenu = (): JSX.Element | null => {
   const { user } = useAuth()

@@ -5,9 +5,9 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { useLocalStorage } from 'usehooks-ts'
 import AuthService, { AuthData } from '../../services/auth.service'
-import { UserDetails } from '../../data/user'
+import { UserDetails } from '../../models/user'
+import useLocalStorage from '../../hooks/use-local-storage'
 
 type AuthProviderProps = {
   children: ReactNode

@@ -6,7 +6,7 @@ import {
 } from '@mui/material/styles'
 import { darkPalette, palette } from './palette'
 import { CssBaseline, PaletteMode } from '@mui/material'
-import { useDarkMode } from 'usehooks-ts'
+import { useDarkMode } from '../hooks'
 
 // import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect'
 

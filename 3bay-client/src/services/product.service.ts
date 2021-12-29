@@ -1,4 +1,4 @@
-import Product from '../data/product'
+import Product from '../models/product'
 import axiosApiInstance from './api'
 import { AxiosResponse } from 'axios'
 
