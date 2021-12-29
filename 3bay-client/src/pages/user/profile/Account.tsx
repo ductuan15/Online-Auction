@@ -2,7 +2,7 @@ import { Button, Grid, Typography } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import EmailTextField from '../../../components/common/form/EmailTextField'
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import DateInputField from '../../../components/common/form/DateInputField'
 import { UserDetails } from '../../../models/user'
@@ -30,20 +30,26 @@ const Account = (): JSX.Element => {
   const isMounted = useIsMounted()
 
   const { control, reset, handleSubmit, formState } = useForm<UserDetails>({
-    mode: 'onBlur',
+    defaultValues: useMemo((): UserDetails => {
+      if (!user) {
+        return {
+          address: '',
+          dob: null,
+          uuid: '',
+          name: '',
+          email: '',
+          role: ''
+        }
+      }
+      return user
+    }, [user]),
   })
 
   const [errorText, setErrorText] = useState<string | null>(null)
   const [save, setSave] = useState(false)
 
   useEffect(() => {
-    reset({
-      uuid: user?.uuid || '',
-      email: user?.email || '',
-      name: user?.name || '',
-      dob: user?.dob || null,
-      address: user?.address || '',
-    })
+    reset(user)
   }, [reset, user])
 
   const { errors } = formState
