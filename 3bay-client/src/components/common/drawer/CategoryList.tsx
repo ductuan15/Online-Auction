@@ -8,7 +8,6 @@ import {
   List,
   ListItemButton,
   ListItemText,
-  ListSubheader,
 } from '@mui/material'
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
@@ -17,6 +16,7 @@ import {
   useNavigate,
   useResolvedPath,
 } from 'react-router-dom'
+import StyledListSubheader from './StyledListSubheader'
 
 type CategoryItemProps = {
   navigate: NavigateFunction
@@ -49,8 +49,7 @@ const CategoryItem = ({ navigate, category }: CategoryItemProps) => {
         <ListItemText
           primary={category.title}
           primaryTypographyProps={{
-            color: 'text.secondary',
-            typography: 'subtitle',
+            typography: 'button',
             letterSpacing: 0,
           }}
         />
@@ -104,9 +103,9 @@ function CategoryList(): JSX.Element {
     <List
       aria-labelledby='nested-list-subheader'
       subheader={
-        <ListSubheader component='div' id='nested-list-subheader'>
+        <StyledListSubheader id='nested-list-subheader'>
           🏷️ Categories
-        </ListSubheader>
+        </StyledListSubheader>
       }
     >
       <Divider variant='middle' />

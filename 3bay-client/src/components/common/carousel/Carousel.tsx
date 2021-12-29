@@ -14,36 +14,37 @@ type CarouselProps = {
   fetchFunction: () => Promise<AxiosResponse<Product[]>>
 }
 
+const responsive = {
+  xl: {
+    breakpoint: { min: 1536, max: 4000 },
+    items: 4,
+  },
+  lg: {
+    breakpoint: { min: 1201, max: 1535 },
+    items: 4,
+  },
+  md: {
+    breakpoint: { min: 901, max: 1200 },
+    items: 3,
+  },
+  sm: {
+    breakpoint: { min: 600, max: 899 },
+    items: 2,
+  },
+  xs: {
+    breakpoint: { min: 0, max: 599 },
+    items: 1,
+  },
+}
+
 const CarouselCard = (props: CarouselProps): JSX.Element => {
-  const responsive = {
-    xl: {
-      breakpoint: { min: 1536, max: 4000 },
-      items: 4,
-    },
-    lg: {
-      breakpoint: { min: 1200, max: 1535 },
-      items: 4,
-    },
-    md: {
-      breakpoint: { min: 900, max: 1999 },
-      items: 3,
-    },
-    sm: {
-      breakpoint: { min: 600, max: 799 },
-      items: 2,
-    },
-    xs: {
-      breakpoint: { min: 0, max: 599 },
-      items: 1,
-    },
-  }
   const [products, setProducts] = useState<Product[]>([])
 
   useEffectOnce(() => {
     ;(async () => {
       const response = await props.fetchFunction()
       setProducts(response.data)
-      console.log(response.data)
+      // console.log(response.data)
     })()
   })
 
@@ -60,12 +61,12 @@ const CarouselCard = (props: CarouselProps): JSX.Element => {
       >
         {props.name}
       </Typography>
+
       <Carousel
         renderButtonGroupOutside={true}
         draggable={false}
         showDots
         responsive={responsive} //Numbers of slides to show at each breakpoint
-        // ssr={true} // means to render carousel on server-side.
         infinite
         autoPlay
         autoPlaySpeed={3000}

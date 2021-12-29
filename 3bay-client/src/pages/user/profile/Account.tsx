@@ -119,6 +119,7 @@ const Account = (): JSX.Element => {
 
         <Button
           variant='contained'
+          size='large'
           type='submit'
           startIcon={<SaveOutlinedIcon />}
         >

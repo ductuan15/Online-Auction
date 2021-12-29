@@ -1,8 +1,9 @@
 .container-with-dots {
-    margin-top: 20px;
-    padding-bottom: 30px;
+  margin-top: 20px;
+  padding-bottom: 30px;
 }
 
 .carousel-item-padding-20-px {
-    padding-right: 20px;
+  padding-right: 10px;
+  align-items: stretch;
 }

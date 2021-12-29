@@ -1,6 +1,6 @@
 import { NavLink, To, useMatch, useResolvedPath } from 'react-router-dom'
 import { MenuItem, Typography } from '@mui/material'
-import {SxProps} from '@mui/system'
+import { SxProps } from '@mui/system'
 
 type StyledMenuItemProps = {
   to: To
@@ -19,12 +19,18 @@ const StyledMenuItem = ({ to, text, sx }: StyledMenuItemProps): JSX.Element => {
       sx={{
         py: 1,
         borderRadius: '8px',
-        ...sx
+        ...sx,
       }}
       to={to}
       selected={!!match}
     >
-      <Typography variant='button' color={match ? 'primary' : 'text.primary'}>
+      <Typography
+        variant='button'
+        color={match ? 'primary' : 'text.primary'}
+        style={{
+          fontWeight: 600, fontStyle: 'bold'
+        }}
+      >
         {text}
       </Typography>
     </MenuItem>
