@@ -290,3 +290,18 @@ CREATE TABLE `users`
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
 -- Dump completed on 2021-12-21 16:59:40
+
+
+DELIMITER $$
+
+CREATE TRIGGER update_lastest_auctions
+	AFTER INSERT
+	on auctions
+    FOR EACH ROW
+BEGIN
+    UPDATE products
+    SET products.latestAuctionId = new.id
+    WHERE products.id = new.productId;
+END$$
+ 
+DELIMITER ;
