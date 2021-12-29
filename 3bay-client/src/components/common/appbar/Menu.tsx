@@ -11,6 +11,7 @@ import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 import { useDarkMode } from '../../../hooks'
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 
 const profileMenu = {
   elevation: 0,
@@ -101,6 +102,17 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
 
       <Divider />
 
+      {isAuth && (
+        <MenuItem component={RouterLink} to='/user/watchlist'>
+          <ListItemIcon>
+            <FavoriteBorderOutlinedIcon />
+          </ListItemIcon>
+          My watchlist
+        </MenuItem>
+      )}
+
+      {isAuth && <Divider />}
+
       <MenuItem onClick={toggle}>
         <ListItemIcon>
           <Brightness4OutlinedIcon />
@@ -180,6 +192,17 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       )}
 
       <Divider />
+
+      {isAuth && (
+        <MenuItem component={RouterLink} to='/user/watchlist'>
+          <ListItemIcon>
+            <FavoriteBorderOutlinedIcon />
+          </ListItemIcon>
+          My watchlist
+        </MenuItem>
+      )}
+
+      {isAuth && <Divider />}
 
       {isAuth && (
         <MenuItem onClick={() => onSignOutButtonClicked()}>

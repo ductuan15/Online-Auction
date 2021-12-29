@@ -8,13 +8,13 @@ import { useTheme } from '@mui/material'
 import { SxProps } from '@mui/system'
 import { useDarkMode } from '../../../hooks'
 
-export const ThemeChangeButton = ({ sx }: { sx: SxProps }): JSX.Element => {
+export const ThemeChangeButton = ({ sx }: { sx?: SxProps }): JSX.Element => {
   const { toggle } = useDarkMode()
   const theme = useTheme()
 
   return (
     <Box sx={sx}>
-      <IconButton size='large' color='inherit' onClick={toggle}>
+      <IconButton size='large' color='inherit' edge='end' onClick={toggle}>
         <Tooltip title='Change theme'>
           {theme.palette.mode === 'light' ? (
             <Brightness2OutlinedIcon />

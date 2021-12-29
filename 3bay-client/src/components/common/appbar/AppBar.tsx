@@ -17,7 +17,9 @@ import { NotifyMenu } from './NotifyMenu'
 import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import RoleLabel from '../../user/profile/RoleLabel'
-import WatchListButton from "./WatchListButton";
+import WatchListButton from './WatchListButton'
+import { Stack } from '@mui/material'
+import AppBarButton from './AppBarButton'
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -160,24 +162,29 @@ export default function SearchAppBar(): JSX.Element {
               />
             </Search>
 
-            {/*<Box sx={{ display: { xs: 'none', sm: 'block' } }} ml={1}>*/}
-            {/*  <Button onClick={toggleDrawer(true)}>🏷 Categories</Button>*/}
-            {/*</Box>*/}
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }} ml={1}>
+              <AppBarButton onClick={toggleDrawer(true)}>
+                🏷️ Categories
+              </AppBarButton>
+            </Box>
 
             <Box sx={{ flexGrow: 1 }} />
 
-            {/*Notifications*/}
-            <NotifyMenuButton notifyMenuId={notifyMenuId} />
-
-            {/*Theme button*/}
-            <ThemeChangeButton
+            <Stack
+              direction='row'
               sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, ml: 2 }}
-            />
+              alignItems='center'
+              spacing={2}
+            >
+              {/*Notifications*/}
+              <NotifyMenuButton notifyMenuId={notifyMenuId} />
 
-            {/*WatchList Button*/}
-            {
-              isAuth ? <WatchListButton /> : null
-            }
+              {/*Theme button*/}
+              <ThemeChangeButton />
+
+              {/*WatchList Button*/}
+              {isAuth ? <WatchListButton /> : null}
+            </Stack>
 
             {/* Profile */}
             <AppBarProfileMenu menuId={menuId} mobileMenuId={mobileMenuId} />
