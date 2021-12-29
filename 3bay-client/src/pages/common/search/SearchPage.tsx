@@ -1,8 +1,9 @@
-import { usePagination } from '@mui/lab'
 import {
+  CircularProgress,
   FormControl,
   Grid,
   InputLabel,
+  ListSubheader,
   MenuItem,
   Pagination,
   PaginationItem,
@@ -11,123 +12,187 @@ import {
   Typography,
 } from '@mui/material'
 import { ChangeEvent, useCallback, useEffect, useState } from 'react'
-import HomeLayout from '../../../components/layout/HomeLayout'
-import Product from '../../../data/product'
-import { searchProduct, SORT_TYPE } from '../../../services/product.service'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import Category from '../../../models/category'
+import Product from '../../../models/product'
+import { searchProduct, SORT_BY, SORT_TYPE } from '../../../services/product.service'
 import ProductList from '../productList/ProductList'
 
 const SearchPage = (): JSX.Element => {
-  const [pageCount, setPageCount] = useState(3)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const key = searchParams.get('key') || ''
+  const page = +(searchParams.get('page') || 1)
+  const [categoryId, setCategoryId] = useState(
+    searchParams.get('categoryId') || '',
+  )
+  const [sortBy, setSortBy] = useState(
+    searchParams.get('sortBy') === SORT_BY.currentPrice
+      ? SORT_BY.currentPrice
+      : SORT_BY.closeTime,
+  )
+  const [sortType, setSortType] = useState(
+    searchParams.get('sortType') === SORT_TYPE.asc
+      ? SORT_TYPE.asc
+      : SORT_TYPE.desc,
+  )
+  const [hasNextPage, setHasNextPage] = useState(false)
+  const [currentPage, setCurrentPage] = useState(page)
+  const [isNeedRedirect, setIsNeedRedirect] = useState(false)
+  const navigate = useNavigate()
   const [products, setProducts] = useState<Product[]>([])
-  const [priceSort, setPriceSort] = useState(SORT_TYPE.DESC)
-  const [closeTimeSort, setCloseTimeSort] = useState(SORT_TYPE.DESC)
-  const { items } = usePagination({
-    count: pageCount,
-  })
+  const [isLoading, setIsLoading] = useState(false)
+  const { state } = useCategoryContext()
+  const { allCategories } = state
 
-  console.log(items)
-
-  const fetchData = useCallback(
-    async (key: string, page: number) => {
+  const fetchData = useCallback(async () => {
+    try {
+      setIsLoading(true)
       const res = await searchProduct(
         key,
-        page,
-        priceSort as keyof typeof SORT_TYPE,
-        closeTimeSort as keyof typeof SORT_TYPE,
+        currentPage,
+        categoryId,
+        sortBy as keyof typeof SORT_BY,
+        sortType as keyof typeof SORT_TYPE,
       )
-      console.log(res)
-      setProducts([...res.data])
-    },
-    [closeTimeSort, priceSort],
-  )
-
-  const handlePriceSortChange = (event: SelectChangeEvent) => {
-    setPriceSort(event.target.value)
-  }
-  const handleCloseTimeSortChange = (event: SelectChangeEvent) => {
-    setCloseTimeSort(event.target.value)
-  }
-  // useEffect(() => {
-  //   fetchData('samsung', 1)
-  // }, [])
+      setHasNextPage(res.data.hasNextPage)
+      setProducts([...res.data.items])
+      console.log(res.data.hasNextPage)
+      //test is loading
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 1000)
+    } catch (e) {
+      // set is error
+      setIsLoading(false)
+    }
+  }, [currentPage, sortBy, sortType, categoryId])
 
   useEffect(() => {
+    if (isNeedRedirect) {
+      searchParams.set('categoryId', categoryId)
+      searchParams.set('sortBy', sortBy)
+      searchParams.set('sortType', sortType)
+      searchParams.set('key', key)
+      searchParams.set('page', currentPage + '')
+      setSearchParams({
+        ...searchParams,
+      })
+      navigate(`/products/search/?${searchParams.toString()}`)
+      setIsNeedRedirect(false)
+    }
+  }, [isNeedRedirect])
+
+  useEffect(() => {
+    setIsNeedRedirect(true)
     ;(async () => {
-      await fetchData('samsung', 1)
+      await fetchData()
     })()
-  }, [closeTimeSort, fetchData, priceSort])
+  }, [currentPage, sortBy, sortType, categoryId])
+
+  const renderCategorySelection = (categories: Category[]): JSX.Element[] => {
+    const components: JSX.Element[] = []
+
+    categories.forEach((category) => {
+      if (category.otherCategories) {
+        components.push(<ListSubheader>{category.title}</ListSubheader>)
+        components.push(...renderCategorySelection(category.otherCategories))
+      } else {
+        components.push(
+          <MenuItem value={category.id}>{category.title}</MenuItem>,
+        )
+      }
+    })
+
+    return components
+  }
+  const handlePriceSortChange = (event: SelectChangeEvent) => {
+    const [sortBy, sortType] = event.target.value.split('-')
+    setSortBy(sortBy)
+    setSortType(sortType)
+  }
+  const handleCategoryChange = (event: SelectChangeEvent) => {
+    searchParams.set('categoryId', event.target.value)
+    setCurrentPage(1)
+    setCategoryId(event.target.value || '')
+  }
 
   const handlePageChange = (
     event: ChangeEvent<unknown>,
     pageNumber: number,
   ) => {
-    setPageCount(pageNumber + 1)
+    setCurrentPage(pageNumber)
   }
+
   return (
-    <HomeLayout>
-      <Typography>Sort by</Typography>
+    <>
       <FormControl sx={{ minWidth: 240 }}>
-        <InputLabel id='sort-price-label'>Price</InputLabel>
+        <InputLabel id='sort-price-label'>Sort</InputLabel>
         <Select
           labelId='sort-price-label'
           id='demo-simple-select'
-          value={priceSort}
+          value={`${sortBy}-${sortType}`}
           label='Price'
           onChange={handlePriceSortChange}
         >
-          <MenuItem disabled value=''>
-            Price
+          <ListSubheader>Close time</ListSubheader>
+          <MenuItem value={`${SORT_BY.closeTime}-${SORT_TYPE.desc}`}>
+            Close time: ↓
           </MenuItem>
-          <MenuItem value={SORT_TYPE.DESC}>High to Low</MenuItem>
-          <MenuItem value={SORT_TYPE.ASC}>Low to high</MenuItem>
+          <MenuItem value={`${SORT_BY.closeTime}-${SORT_TYPE.asc}`}>
+            Close time: ↑
+          </MenuItem>
+          <ListSubheader>Price</ListSubheader>
+          <MenuItem value={`${SORT_BY.currentPrice}-${SORT_TYPE.desc}`}>
+            Price: ↓
+          </MenuItem>
+          <MenuItem value={`${SORT_BY.currentPrice}-${SORT_TYPE.asc}`}>
+            Price: ↑
+          </MenuItem>
         </Select>
       </FormControl>
       <FormControl sx={{ minWidth: 240 }}>
-        <InputLabel id='sort-close-time-label'>Close time</InputLabel>
+        <InputLabel id='category-select-label'>Category</InputLabel>
         <Select
-          labelId='sort-close-time-label'
-          id='sort-close-time-select'
-          value={closeTimeSort}
-          label='Close time'
-          onChange={handleCloseTimeSortChange}
+          labelId='category-select-labell'
+          id='category-select'
+          value={categoryId + ''}
+          label='Category'
+          onChange={handleCategoryChange}
         >
-          <MenuItem disabled value=''>
-            Close time
+          <MenuItem value=''>
+            <em>None</em>
           </MenuItem>
-          <MenuItem value={SORT_TYPE.DESC}>High to Low</MenuItem>
-          <MenuItem value={SORT_TYPE.ASC}>Low to high</MenuItem>
+          {renderCategorySelection(allCategories)}
         </Select>
       </FormControl>
-      {/* <FormControl sx={{ minWidth: 240 }}>
-        <InputLabel id='sort-price-label'>Price</InputLabel>
-        <Select
-          labelId='sort-price-label'
-          id='demo-simple-select'
-          value={''}
-          label='Age'
-          // onChange={handleChange}
-        >
-          <MenuItem disabled value=''>
-            Price
-          </MenuItem>
-          <MenuItem value={'des'}>High to Low</MenuItem>
-          <MenuItem value={'asc'}>Low to high</MenuItem>
-        </Select>
-      </FormControl> */}
-      <ProductList items={products} />
-      <Grid container justifyContent='center'>
-        <Pagination
-          count={pageCount}
-          onChange={handlePageChange}
-          renderItem={(item) => {
-            if (item.page === pageCount && item.type === 'page') {
-              return <PaginationItem type='end-ellipsis' disabled />
-            }
-            return <PaginationItem {...item} />
-          }}
-        />
-      </Grid>
-    </HomeLayout>
+      {isLoading ? (
+        <Grid container justifyContent='center'>
+          <CircularProgress color='secondary' />
+        </Grid>
+      ) : (
+        <>
+          <ProductList items={products} />
+          <Grid container justifyContent='center'>
+            <Pagination
+              page={currentPage}
+              count={currentPage + (hasNextPage ? 1 : 0)}
+              onChange={handlePageChange}
+              renderItem={(item) => {
+                if (
+                  item.page === currentPage + (hasNextPage ? 1 : 0) &&
+                  item.type === 'page' &&
+                  hasNextPage
+                ) {
+                  return <PaginationItem type='end-ellipsis' disabled />
+                }
+                return <PaginationItem {...item} />
+              }}
+            />
+          </Grid>
+        </>
+      )}
+    </>
   )
 }
 

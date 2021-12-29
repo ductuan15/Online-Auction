@@ -292,37 +292,68 @@ export const search = async (
   next: NextFunction,
 ) => {
   try {
-    const { key, timeOrder, priceOrder } = req.query
+    const SORT_BY = {
+      closeTime: 'closeTime',
+      currentPrice: 'currentPrice',
+    }
+    const { key } = req.query
+    const sortBy =
+      req.query.sortBy === SORT_BY.closeTime
+        ? SORT_BY.closeTime
+        : SORT_BY.currentPrice
+    const sortType: 'desc' | 'asc' =
+      req.query.sortType === 'desc' ? 'desc' : 'asc'
     const page = +(req.query?.page || '/')
     const categoryId = +(req.query?.categoryId || '')
+    const limit = +(req.query?.limit || '')
     // get all searched ProductsId,
     const queryResultRows = await prisma.$queryRaw<any[]>(Prisma.Prisma
       .sql`SELECT products.id
   FROM products
   JOIN auctions on auctions.id = products.latestAuctionId
-  WHERE MATCH (products.name) AGAINST (${key})
+  ${
+    key !== '' && key !== undefined
+      ? Prisma.Prisma.sql`WHERE MATCH (products.name) AGAINST (${key})`
+      : Prisma.Prisma.empty
+  }
+ 
   ${
     categoryId !== 0
       ? Prisma.Prisma.sql`AND products.categoryId = ${categoryId}`
       : Prisma.Prisma.empty
   }
-  Order by 
-  auctions.closeTime ${
-    timeOrder === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
-  }, 
-    auctions.currentPrice ${
-      priceOrder === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
-    } 
-  LIMIT ${config.PAGE_LIMIT * (page - 1)}, ${config.PAGE_LIMIT * page};`)
+  ORDER BY 
+  ${
+    sortBy === SORT_BY.currentPrice
+      ? Prisma.Prisma.sql`auctions.currentPrice ${
+          sortType === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
+        }`
+      : Prisma.Prisma.empty
+  }
+
+  ${
+    sortBy === SORT_BY.closeTime
+      ? Prisma.Prisma.sql`auctions.closeTime ${
+          sortType === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
+        }`
+      : Prisma.Prisma.empty
+  }
+   LIMIT ${limit + 1} OFFSET ${(page - 1) * limit};`)
 
     // get all info for products
     const productsId = queryResultRows.map((row) => row.id as number)
-    console.log(productsId)
+    productsId.slice(0, limit)
 
-    const products:ProductRes[] = await prisma.product.findMany({
+    const products: ProductRes[] = await prisma.product.findMany({
       where: {
         id: {
           in: productsId,
+        },
+      },
+      orderBy: {
+        latestAuction: {
+          currentPrice: sortBy === SORT_BY.currentPrice ? sortType : undefined,
+          closeTime: sortBy === SORT_BY.closeTime ? sortType : undefined,
         },
       },
       include: {
@@ -348,10 +379,14 @@ export const search = async (
         },
       },
     })
-    products.forEach(product => {
+    products.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
     })
-    res.json(products)
+    res.json({
+      items: products.slice(0, limit),
+      hasNextPage: products.length > limit,
+      cursor: 1,
+    })
   } catch (error) {
     if (error instanceof Error) {
       next(error)

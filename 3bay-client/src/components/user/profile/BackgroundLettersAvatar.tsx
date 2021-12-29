@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Avatar, { AvatarProps } from '@mui/material/Avatar'
-import { useDarkMode } from 'usehooks-ts'
 import { Typography } from '@mui/material'
+import { useDarkMode } from '../../../hooks'
 
 function adjust(color: string, amount: number) {
   return `#${color

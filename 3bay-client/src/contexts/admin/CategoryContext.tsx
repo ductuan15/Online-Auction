@@ -14,7 +14,7 @@ import {
   CategoryState,
   initialCategoryState,
 } from '../../stores/admin/category.store'
-import Category from '../../data/category'
+import Category from '../../models/category'
 import axiosApiInstance from '../../services/api'
 
 type CategoryProviderProps = {

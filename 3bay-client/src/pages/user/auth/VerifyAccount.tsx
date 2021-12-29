@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import { AppName } from '../../../components/layout/AppName'
+import AppName from '../../../components/common/appname/AppName'
 import Avatar from '@mui/material/Avatar'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'

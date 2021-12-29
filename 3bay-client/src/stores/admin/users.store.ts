@@ -1,4 +1,4 @@
-import { AdminUserDetail, AdminUserListResponse } from '../../data/admin-user'
+import { AdminUserDetail, AdminUserListResponse } from '../../models/admin-user'
 
 export type UsersState = {
   users: AdminUserDetail[]

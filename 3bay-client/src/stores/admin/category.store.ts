@@ -1,4 +1,4 @@
-import Category from '../../data/category'
+import Category from '../../models/category'
 import _ from 'lodash'
 
 export type CategoryState = {

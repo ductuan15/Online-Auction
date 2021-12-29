@@ -3,15 +3,14 @@ import MaterialTable, {
   Action,
   Column,
   MaterialTableProps,
-  Query,
-  QueryResult,
+  Query, QueryResult,
 } from '@material-table/core'
-import { AdminUserDetail } from '../../../data/admin-user'
+import { AdminUserDetail } from '../../../models/admin-user'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import moment from 'moment/moment'
 import { Typography } from '@mui/material'
 import '@fontsource/jetbrains-mono'
-import AdminUserService from '../../../services/admin-users.service'
+import AdminService from '../../../services/admin.service'
 import { createRef, useCallback, useEffect, useMemo } from 'react'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { useAuth } from '../../../contexts/user/AuthContext'
@@ -20,7 +19,7 @@ type UserTableProps = {
   onLoadingData?: () => void
   onDataLoaded?: () => void
   onError?: (e: unknown) => void
-  tab: string
+  tab?: string
 }
 
 // const lookup = { true: 'Yes', false: 'No' }
@@ -38,21 +37,25 @@ const columns: Column<AdminUserDetail>[] = [
       return <BackgroundLetterAvatars name={data.name} />
     },
     sorting: false,
+    filtering: false,
     editable: 'never',
   },
   {
     title: 'Name',
     field: 'name',
+    filtering: false,
     editable: 'onAdd',
   },
   {
     title: 'Email',
     field: 'email',
+    filtering: false,
     editable: 'onAdd',
   },
   {
     title: 'DOB',
     field: 'dob',
+    filtering: false,
     editable: 'onAdd',
     render: (data) => {
       return moment(data.dob).format('L')
@@ -61,6 +64,7 @@ const columns: Column<AdminUserDetail>[] = [
   {
     title: 'Address',
     field: 'address',
+    filtering: false,
     editable: 'onAdd',
   },
   {
@@ -88,6 +92,7 @@ const detailPanel = ({ rowData }: { rowData: AdminUserDetail }) => {
       variant='body1'
       fontFamily='Jetbrains Mono'
       mx={2}
+      p={1}
       color='text.main'
       aria-multiline='true'
       sx={{
@@ -141,7 +146,7 @@ const UserTable = ({
             const data = {
               ...newData,
             }
-            const userResponse = await AdminUserService.updateUser(data)
+            const userResponse = await AdminService.updateUser(data)
             dispatch({ type: 'UPDATE', payload: userResponse })
 
             resolve({
@@ -174,7 +179,7 @@ const UserTable = ({
           try {
             onLoadingData && onLoadingData()
 
-            await AdminUserService.deleteUser(oldData)
+            await AdminService.deleteUser(oldData)
             // dispatch({ type: 'DELETE', payload: userResponse })
 
             resolve({
@@ -220,7 +225,7 @@ const UserTable = ({
       return new Promise((resolve, reject) => {
         ;(async () => {
           try {
-            if (userState.currentTab !== tab) {
+            if (tab && userState.currentTab !== tab) {
               dispatch({ type: 'SET_CURRENT_TAB', payload: tab })
               resolve({
                 data: userState.users,
@@ -230,7 +235,7 @@ const UserTable = ({
               return
             }
             onLoadingData && onLoadingData()
-            const userResponse = await AdminUserService.getUserList(
+            const userResponse = await AdminService.getUserList(
               query.page + 1,
               query.pageSize,
             )
@@ -263,13 +268,22 @@ const UserTable = ({
 
   return (
     <MaterialTable
-      title={'Users'}
+      title={
+        <Typography variant='h5' padding={2} paddingTop={5}>
+          Users
+        </Typography>
+      }
       tableRef={tableRef}
       columns={columns}
       data={fetchData}
       detailPanel={detailPanel}
       actions={actions}
       editable={editable}
+      options={{
+        searchFieldVariant: 'outlined',
+        // filtering: true,
+        // debounceInterval: 500,
+      }}
     />
   )
 }

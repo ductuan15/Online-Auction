@@ -5,7 +5,7 @@ import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import { CardActionArea, CardHeader, Link } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
-import Product from '../../../data/product'
+import Product from '../../../models/product'
 
 type CardProps = {
   product: Product

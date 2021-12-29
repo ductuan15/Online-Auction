@@ -3,8 +3,10 @@ import passport from '../auth/passport.js'
 import { hashPassword, requireAdminRole } from '../middlewares/auth.mdw.js'
 import {
   deleteUser,
+  getProducts,
   getRequestSellerUsers,
   getUsers,
+  removeProduct,
   updateUser,
 } from '../controllers/admin.controller.js'
 import validate from '../middlewares/ajv-validate.js'
@@ -25,5 +27,9 @@ router
 router.route('/users/:id').delete(deleteUser)
 
 router.route('/users/request-seller').get(getRequestSellerUsers)
+
+router.route('/products/').get(getProducts)
+
+router.route('/products/:id').delete(removeProduct)
 
 export default router

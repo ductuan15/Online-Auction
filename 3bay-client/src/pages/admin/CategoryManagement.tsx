@@ -24,7 +24,7 @@ const CategoryManagement = (): JSX.Element => {
       <Grid
         container
         marginTop={1}
-        marginBottom={4}
+        marginBottom={2}
         spacing={4}
         justifyContent='between'
       >
