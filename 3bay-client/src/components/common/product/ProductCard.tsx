@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { MouseEventHandler, SyntheticEvent, useEffect, useState } from 'react'
 import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import {
   Box,
   CardActionArea,
+  CardHeader,
   Link,
+  Menu,
+  MenuItem,
   Tooltip,
   TypographyStyle,
 } from '@mui/material'
@@ -14,8 +16,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import Product from '../../../models/product'
 import { SxProps } from '@mui/system'
 import { Theme, useTheme } from '@mui/material/styles'
-import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
-import moment from 'moment'
+import ProductCardContent from './ProductCardContent'
 
 type CardProps = {
   product: Product
@@ -53,12 +54,36 @@ const imageSx: SxProps<Theme> = (theme) => ({
 
 // TODO: reactor me
 // TODO: extract the countdown logic
+// TODO: handle 'watchlist' logic
 const ProductCard = ({ product }: CardProps): JSX.Element => {
   const theme = useTheme()
   const [scale, setScale] = useState(1.0)
   const [color, setColor] = useState<string>(theme.palette.text.primary)
   // const interval = useRef<NodeJS.Timer>()
-  const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number
+    mouseY: number
+  } | null>(null)
+
+  const handleContextMenu: MouseEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault()
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX - 2,
+            mouseY: event.clientY - 4,
+          }
+        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+          // Other native context menus might behave different.
+          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+          null,
+    )
+  }
+
+  const handleClose = (e: SyntheticEvent) => {
+    e.stopPropagation()
+    setContextMenu(null)
+  }
 
   useEffect(() => {
     setColor(theme.palette.text.primary)
@@ -73,168 +98,100 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
     setScale(1.0)
   }
 
-  const totalBidder = product.latestAuction?._count.bids || 0
-
-  const dateCreated = product.createdAt
-    ? moment(new Date(product.createdAt))
-    : null
-
-  const dateCreatedText = dateCreated
-    ? `${dateCreated.fromNow()} (${dateCreated.format('L')})`
-    : null
-
-  const closeTimeStr = product.latestAuction?.closeTime || null
-  const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
-  const closeTimeFormattedStr = closeTime ? `${closeTime.format('L')} ${closeTime.format('LT')}` : null
-
-  const timer = useRef<NodeJS.Timeout>()
-
-  const showRemaining = useCallback(() => {
-    if (!closeTime) return
-    const now = moment()
-
-    if (!closeTime.isAfter(now)) {
-      if (timer.current) {
-        clearInterval(timer.current)
-      }
-      setEndTimeCountDownText('ENDED')
-      return
-    }
-    // TODO: countdown when the time is less than 24h
-
-    setEndTimeCountDownText(`${now.to(closeTime)} (${closeTimeFormattedStr})`)
-  }, [closeTime, closeTimeFormattedStr])
-
-  useEffect(() => {
-    showRemaining()
-    timer.current = setInterval(showRemaining, 1000)
-  }, [showRemaining])
-
   return (
-    <Link
-      color='inherit'
-      underline='none'
-      component={RouterLink}
-      to={`/product/${product.id}`}
-    >
-      <Tooltip title={product.name}>
-        <Card
-          variant='outlined'
-          onMouseOver={onMouseOver}
-          onMouseOut={onMouseOut}
-          sx={(theme) => ({
-            '&:hover': {
-              borderColor: theme.palette.primary.dark,
-            },
-            borderWidth: `2px`,
-          })}
-        >
-          <CardActionArea
-            sx={{
-              '.MuiCardActionArea-focusHighlight': {
-                bgcolor: 'transparent',
+    <div onContextMenu={handleContextMenu}>
+      <Link
+        color='inherit'
+        underline='none'
+        component={RouterLink}
+        to={`/product/${product.id}`}
+        style={{ cursor: 'context-menu' }}
+      >
+        <Tooltip title={product.name}>
+          <Card
+            variant='outlined'
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
+            sx={(theme) => ({
+              '&:hover': {
+                borderColor: theme.palette.primary.dark,
               },
-            }}
+              borderWidth: `2px`,
+            })}
           >
-            <Box sx={imageSx}>
-              <CardMedia
-                component='img'
-                image={product.thumbnails.lg || ''}
-                sx={{
-                  width: '100%',
-                  height: '100%',
-                  transition: `transform .3s`,
-                  transform: `scale(${scale})`,
-                }}
-              />
-            </Box>
-
-            <CardContent component={Box} display='flex' flexDirection='column'>
-              {/* Product name */}
-              <Box
-                sx={(theme) => ({
-                  height: `${+(theme.typography.h6.lineHeight || 0) * 2.5}rem`,
-                })}
-              >
-                <Typography
-                  variant='h6'
-                  style={titleStyle}
-                  color={color}
-                  sx={{ ...titleSx }}
-                >
-                  {product.name}
-                </Typography>
-              </Box>
-
-              {/* Current price */}
-              <Typography
-                variant='button'
-                fontSize={`${theme.typography.body1.fontSize}`}
-              >
-                💵 {product.latestAuction?.currentPrice || '0,000,000'} VND
-              </Typography>
-
-              {/* Buy out price */}
-              {product.latestAuction?.buyoutPrice && (
-                <Typography
-                  variant='caption'
-                  color='text.secondary'
-                  fontStyle='italic'
-                >
-                  Instant buy with
-                  <b> {product.latestAuction?.buyoutPrice} </b> VND
-                </Typography>
-              )}
-
-              <Box
-                display='flex'
-                alignItems='center'
-                flexDirection='row'
-                my={1}
-              >
-                <Typography variant='body1'>Bid by</Typography>
-
-                {/*Bidder with highest price*/}
-                <BackgroundLetterAvatars
-                  name={product.latestAuction?.winningBid?.name || 'Tuan Cuong'}
-                  fontSize={`${theme.typography.caption.fontSize}`}
+            <CardActionArea
+              sx={{
+                '.MuiCardActionArea-focusHighlight': {
+                  bgcolor: 'transparent',
+                },
+              }}
+            >
+              <Box sx={imageSx}>
+                <CardMedia
+                  component='img'
+                  image={product.thumbnails.lg || ''}
                   sx={{
-                    ml: 1,
-                    width: `25px`,
-                    height: `25px`,
+                    width: '100%',
+                    height: '100%',
+                    transition: `transform .3s`,
+                    transform: `scale(${scale})`,
                   }}
                 />
-
-                <Box flexGrow={1} />
-
-                {/*Display total number of people (excluding 1 person) are currently bidding */}
-                {totalBidder >= 0 && (
-                  <Typography variant='body2' color='text.secondary'>
-                    & <b>{product.latestAuction?._count.bids || 0}</b> other
-                    people
-                  </Typography>
-                )}
               </Box>
 
-              {dateCreated && (
-                <Typography variant='body2' color='text.secondary'>
-                  {dateCreatedText}
-                </Typography>
-              )}
+              <CardHeader
+                title={
+                  <Box
+                    sx={(theme) => ({
+                      height: `${
+                        +(theme.typography.h6.lineHeight || 0) * 2.5
+                      }rem`,
+                    })}
+                  >
+                    <Typography
+                      variant='h6'
+                      style={titleStyle}
+                      color={color}
+                      sx={{ ...titleSx }}
+                    >
+                      {product.name}
+                    </Typography>
+                  </Box>
+                }
+                sx={{ pb: 0 }}
+              />
 
-              {
-                endTimeCountDownText && (
-                  <Typography variant='body2' color='text.secondary'>
-                    {endTimeCountDownText}
-                  </Typography>
-                )
-              }
+              <ProductCardContent product={product} sx={{ pt: 1 }} />
 
-            </CardContent>
-          </CardActionArea>
-        </Card>
-      </Tooltip>
-    </Link>
+              {/*<CardActions*/}
+              {/*  disableSpacing*/}
+              {/*  sx={{*/}
+              {/*    pt: 0,*/}
+              {/*  }}*/}
+              {/*>*/}
+              {/*  <IconButton aria-label='add to watchlist'>*/}
+              {/*    <FavoriteIcon />*/}
+              {/*  </IconButton>*/}
+              {/*</CardActions>*/}
+            </CardActionArea>
+          </Card>
+        </Tooltip>
+
+        <Menu
+          open={contextMenu !== null}
+          onClose={handleClose}
+          anchorReference='anchorPosition'
+          anchorPosition={
+            contextMenu !== null
+              ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+              : undefined
+          }
+        >
+          <MenuItem onClick={handleClose}>Add to watchlist</MenuItem>
+          {/*<MenuItem onClick={handleClose}>Remove from watchlist</MenuItem>*/}
+        </Menu>
+      </Link>
+    </div>
   )
 }
 

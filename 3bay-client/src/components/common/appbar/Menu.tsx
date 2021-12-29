@@ -194,17 +194,6 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       <Divider />
 
       {isAuth && (
-        <MenuItem component={RouterLink} to='/user/watchlist'>
-          <ListItemIcon>
-            <FavoriteBorderOutlinedIcon />
-          </ListItemIcon>
-          My watchlist
-        </MenuItem>
-      )}
-
-      {isAuth && <Divider />}
-
-      {isAuth && (
         <MenuItem onClick={() => onSignOutButtonClicked()}>
           <ListItemIcon>
             <Logout fontSize='small' />
