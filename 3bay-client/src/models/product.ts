@@ -40,16 +40,16 @@ export type AdminProductListResponse = {
 
 export type ProductFormInput = {
   name: string
-  thumbnail: FileList,
-  detail: FileList,
-  description: string,
+  thumbnail: FileList
+  detail: FileList
+  description: string
   categoryId: number
 
-  incrementPrice: number,
-  autoExtendAuctionTiming: boolean,
-  openPrice: number,
-  buyoutPrice: number | null,
-  closeTime: Date | null,
+  incrementPrice: number
+  autoExtendAuctionTiming: boolean
+  openPrice: number
+  buyoutPrice?: number
+  closeTime: Date | null
 }
 
 export default Product
