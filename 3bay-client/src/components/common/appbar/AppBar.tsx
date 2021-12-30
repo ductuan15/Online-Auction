@@ -18,8 +18,9 @@ import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import RoleLabel from '../../user/profile/RoleLabel'
 import WatchListButton from './WatchListButton'
-import { Stack } from '@mui/material'
+import { Link, Stack } from '@mui/material'
 import AppBarButton from './AppBarButton'
+import { Link as RouterLink, useMatch, useResolvedPath } from 'react-router-dom'
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -123,6 +124,10 @@ export default function SearchAppBar(): JSX.Element {
   const mobileMenuId = 'primary-search-account-menu-mobile'
   const notifyMenuId = 'primary-search-account-menu-Notify'
 
+  const createProductPath = '/product/create'
+  const resolved = useResolvedPath(createProductPath)
+  const match = useMatch({ path: resolved.pathname, end: true })
+
   const { toggleDrawer } = useAppBarContext()
 
   const { isAuth, user } = useAuth()
@@ -162,11 +167,26 @@ export default function SearchAppBar(): JSX.Element {
               />
             </Search>
 
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }} ml={1}>
-              <AppBarButton onClick={toggleDrawer(true)}>
-                🏷️ Categories
-              </AppBarButton>
-            </Box>
+            {user?.role !== 'SELLER' && (
+              <Box sx={{ display: { xs: 'none', lg: 'block' } }} ml={1}>
+                <AppBarButton onClick={toggleDrawer(true)}>
+                  🏷️ Categories
+                </AppBarButton>
+              </Box>
+            )}
+
+            {user?.role === 'SELLER' && (
+              <Link
+                sx={{ display: { xs: 'none', lg: 'block' } }}
+                ml={1}
+                component={RouterLink}
+                to={createProductPath}
+                color='inherit'
+                underline='none'
+              >
+                <AppBarButton disabled={!!match}>📦 New product</AppBarButton>
+              </Link>
+            )}
 
             <Box sx={{ flexGrow: 1 }} />
 

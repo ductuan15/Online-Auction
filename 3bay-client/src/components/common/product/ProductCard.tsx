@@ -110,7 +110,7 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
 
   const onMouseOver = () => {
     setColor(theme.palette.primary.dark)
-    setScale(1.2)
+    setScale(1.1)
   }
   const onMouseOut = () => {
     setColor(theme.palette.text.primary)

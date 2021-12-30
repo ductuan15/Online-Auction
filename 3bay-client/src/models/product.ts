@@ -38,4 +38,18 @@ export type AdminProductListResponse = {
   products: Product[]
 }
 
+export type ProductFormInput = {
+  name: string
+  thumbnail: FileList,
+  detail: FileList,
+  description: string,
+  categoryId: number
+
+  incrementPrice: number,
+  autoExtendAuctionTiming: boolean,
+  openPrice: number,
+  buyoutPrice: number | null,
+  closeTime: Date | null,
+}
+
 export default Product

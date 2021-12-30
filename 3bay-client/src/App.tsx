@@ -26,7 +26,8 @@ import { AdminUsersProvider } from './contexts/admin/UsersContext'
 import SearchPage from './pages/common/search/SearchPage'
 import { AdminProductsProvider } from './contexts/admin/ProductsContext'
 import ProductsManagement from './pages/admin/ProductsManagement'
-import WatchList from "./pages/user/watchlist/WatchList";
+import WatchList from './pages/user/watchlist/WatchList'
+import CreateProduct from './pages/user/seller/CreateProduct'
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -37,17 +38,19 @@ function GlobalRouter(): JSX.Element {
         <Route path='/' element={<HomeLayout />}>
           <Route index element={<Home />} />
 
+          <Route path='product/create' element={<CreateProduct />} />
           <Route path='product/:id' element={<ProductDetail />} />
           {/* <Route path='products/' element={<ProductList items={[]}/>} /> */}
           <Route path='products/search' element={<SearchPage />} />
+
           <Route element={<RequireLogin />}>
             <Route path='user/view' element={<Profile />} />
+            <Route path='user/watchlist' element={<WatchList />} />
 
             <Route path='user/' element={<UserLayout />}>
               <Route index element={<Home />} />
               <Route path='account' element={<Account />} />
               <Route path='password' element={<Password />} />
-              <Route path='watchlist' element={<WatchList />} />
               <Route path='*' />
             </Route>
           </Route>
