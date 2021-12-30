@@ -1,0 +1,25 @@
+.rdw-editor-toolbar-light {
+  padding: 8px;
+  border-radius: 2px;
+  border: 1px solid #F1F1F1;
+  display: flex;
+  justify-content: flex-start;
+  background: #fefefe;
+  flex-wrap: wrap;
+  font-size: 15px;
+  margin-bottom: 5px;
+  user-select: none;
+}
+
+.rdw-editor-toolbar-dark {
+  padding: 8px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  justify-content: flex-start;
+  background: #121212;
+  flex-wrap: wrap;
+  font-size: 15px;
+  margin-bottom: 5px;
+  user-select: none;
+}
