@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography'
 import {
   Box,
   CardActionArea,
+  IconButton,
+  CardActions,
   CardHeader,
   Link,
   Menu,
@@ -17,6 +19,10 @@ import Product from '../../../models/product'
 import { SxProps } from '@mui/system'
 import { Theme, useTheme } from '@mui/material/styles'
 import ProductCardContent from './ProductCardContent'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import {addToWatchList, deleteProdWatchList} from "../../../services/product.service";
+import UserService from "../../../services/user.service";
+import _ from 'lodash'
 
 type CardProps = {
   product: Product
@@ -65,18 +71,31 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
     mouseY: number
   } | null>(null)
 
+  const addToWatchList_Clicked = async (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    const response = await UserService.getUserWatchList()
+    const prod = _.findIndex(response, function(p) { return p.id === product.id; });
+    console.log(prod)
+    if(prod === 0) {
+      await deleteProdWatchList(product.id)
+    }
+    else {
+      await addToWatchList(product.id);
+    }
+
+  }
   const handleContextMenu: MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault()
     setContextMenu(
       contextMenu === null
         ? {
-            mouseX: event.clientX - 2,
-            mouseY: event.clientY - 4,
-          }
+          mouseX: event.clientX - 2,
+          mouseY: event.clientY - 4,
+        }
         : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
           // Other native context menus might behave different.
           // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-          null,
+        null,
     )
   }
 
@@ -100,24 +119,24 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
 
   return (
     <div onContextMenu={handleContextMenu}>
-      <Link
-        color='inherit'
-        underline='none'
-        component={RouterLink}
-        to={`/product/${product.id}`}
-        style={{ cursor: 'context-menu' }}
-      >
-        <Tooltip title={product.name}>
-          <Card
-            variant='outlined'
-            onMouseOver={onMouseOver}
-            onMouseOut={onMouseOut}
-            sx={(theme) => ({
-              '&:hover': {
-                borderColor: theme.palette.primary.dark,
-              },
-              borderWidth: `2px`,
-            })}
+      <Tooltip title={product.name}>
+        <Card
+          variant='outlined'
+          onMouseOver={onMouseOver}
+          onMouseOut={onMouseOut}
+          sx={(theme) => ({
+            '&:hover': {
+              borderColor: theme.palette.primary.dark,
+            },
+            borderWidth: `2px`,
+          })}
+        >
+          <Link
+            color='inherit'
+            underline='none'
+            component={RouterLink}
+            to={`/product/${product.id}`}
+            style={{ cursor: 'context-menu' }}
           >
             <CardActionArea
               sx={{
@@ -162,35 +181,34 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
               />
 
               <ProductCardContent product={product} sx={{ pt: 1 }} />
-
-              {/*<CardActions*/}
-              {/*  disableSpacing*/}
-              {/*  sx={{*/}
-              {/*    pt: 0,*/}
-              {/*  }}*/}
-              {/*>*/}
-              {/*  <IconButton aria-label='add to watchlist'>*/}
-              {/*    <FavoriteIcon />*/}
-              {/*  </IconButton>*/}
-              {/*</CardActions>*/}
             </CardActionArea>
-          </Card>
-        </Tooltip>
+          </Link>
+          <CardActions
+            disableSpacing
+            sx={{
+              pt: 0,
+            }}
+          >
+            <IconButton aria-label='add to watchlist' onClick={addToWatchList_Clicked}>
+              <FavoriteIcon />
+            </IconButton>
+          </CardActions>
+        </Card>
+      </Tooltip>
 
-        <Menu
-          open={contextMenu !== null}
-          onClose={handleClose}
-          anchorReference='anchorPosition'
-          anchorPosition={
-            contextMenu !== null
-              ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-              : undefined
-          }
-        >
-          <MenuItem onClick={handleClose}>Add to watchlist</MenuItem>
-          {/*<MenuItem onClick={handleClose}>Remove from watchlist</MenuItem>*/}
-        </Menu>
-      </Link>
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleClose}
+        anchorReference='anchorPosition'
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={handleClose}>Add to watchlist</MenuItem>
+        {/*<MenuItem onClick={handleClose}>Remove from watchlist</MenuItem>*/}
+      </Menu>
     </div>
   )
 }

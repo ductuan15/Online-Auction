@@ -3,7 +3,7 @@ import { ProductDescriptionHistory } from './product-description-history'
 import { UserDetails } from './user'
 
 export interface Product {
-  id?: number
+  id: number
   name: string
   categoryId: number
   sellerId: number
