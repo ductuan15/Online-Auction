@@ -45,12 +45,12 @@ function GlobalRouter(): JSX.Element {
 
           <Route element={<RequireLogin />}>
             <Route path='user/view' element={<Profile />} />
+            <Route path='user/watchlist' element={<WatchList />} />
 
             <Route path='user/' element={<UserLayout />}>
               <Route index element={<Home />} />
               <Route path='account' element={<Account />} />
               <Route path='password' element={<Password />} />
-              <Route path='watchlist' element={<WatchList />} />
               <Route path='*' />
             </Route>
           </Route>
