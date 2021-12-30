@@ -74,9 +74,9 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
   const addToWatchList_Clicked = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     const response = await UserService.getUserWatchList()
-    const prod = _.findIndex(response, function(p) { return p.id === product.id; });
-    console.log(prod)
-    if(prod === 0) {
+    const prodIndex = _.findIndex(response, function(p) { return p.id === product.id; });
+    console.log(prodIndex)
+    if(prodIndex !== -1) {
       await deleteProdWatchList(product.id)
     }
     else {
