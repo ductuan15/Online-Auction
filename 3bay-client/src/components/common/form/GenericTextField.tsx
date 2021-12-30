@@ -5,9 +5,10 @@ import { TextField, TextFieldProps } from '@mui/material'
 
 type GenericTextFieldProps<T> = {
   error: FieldError | undefined
-  label: string
+  label?: string
   id: string
   textFieldProps?: TextFieldProps
+  normalHelperText?: string
 } & UseControllerProps<T>
 
 const GenericTextField = <T,>({
@@ -15,6 +16,7 @@ const GenericTextField = <T,>({
   label,
   id,
   textFieldProps,
+  normalHelperText,
   ...controllerProps
 }: GenericTextFieldProps<T>): JSX.Element => {
   return (
@@ -24,7 +26,7 @@ const GenericTextField = <T,>({
         <TextField
           fullWidth
           inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
-          helperText={error?.message}
+          helperText={error?.message || normalHelperText || ''}
           {...textFieldProps}
           error={!!error}
           id={id}
