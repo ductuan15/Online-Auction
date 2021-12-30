@@ -402,11 +402,11 @@ export const getTopPrice = async (
     const products: ProductRes[] = await prisma.product.findMany({
       where: {
         deletedAt: null,
-        latestAuction: {
-          closeTime: {
-            gte: new Date(),
-          },
-        },
+        // latestAuction: {
+        //   closeTime: {
+        //     gte: new Date(),
+        //   },
+        // },
       },
       orderBy: {
         latestAuction: {

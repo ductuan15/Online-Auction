@@ -149,3 +149,11 @@ export function requireBidderRole(
 ) {
   return requireExactRole(req, res, next, Prisma.Role.BIDDER)
 }
+
+export function requireSellerRole(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  return requireExactRole(req, res, next, Prisma.Role.SELLER)
+}
