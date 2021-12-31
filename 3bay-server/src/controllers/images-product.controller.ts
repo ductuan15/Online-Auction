@@ -44,11 +44,12 @@ export const saveProductDetailImage = async (
   productId: Number,
 ) => {
   if (files) {
-    files.forEach(async (file, index) => {
+    for (const file of files) {
+      const index = files.indexOf(file)
       await sharp(file.buffer)
         .resize(2048)
         .toFile(getDetailImageUrl.getPath(productId, index))
-    })
+    }
   }
 }
 

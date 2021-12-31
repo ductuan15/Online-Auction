@@ -42,6 +42,7 @@ export const productById = async (
         seller: {
           select: userShortenSelection,
         },
+        latestAuction: true
       },
       rejectOnNotFound: true,
     })
@@ -95,6 +96,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     })
 
     let auction: AuctionRes
+
     try {
       const auctionData = {
         incrementPrice: req.body.incrementPrice,
@@ -102,9 +104,11 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
         openPrice: +req.body.openPrice,
         productId: product.id,
         closeTime: new Date(req.body.closeTime),
+        // optional
         buyoutPrice: isNaN(+req.body.buyoutPrice)
           ? undefined
           : +req.body.buyoutPrice,
+        currentPrice: +req.body.openPrice,
       }
 
       auction = await prisma.auction.create({
@@ -242,9 +246,9 @@ export const getProductByCategoryId = async (
         take: config.PAGE_LIMIT,
       })
     }
-    products.forEach(async (product) => {
+    for (const product of products) {
       product.thumbnails = getAllThumbnailLink(product.id)
-    })
+    }
     res.json(products)
   } catch (error) {
     if (error instanceof Error) {
@@ -428,11 +432,11 @@ export const getTopPrice = async (
     const products: ProductRes[] = await prisma.product.findMany({
       where: {
         deletedAt: null,
-        // latestAuction: {
-        //   closeTime: {
-        //     gte: new Date(),
-        //   },
-        // },
+        latestAuction: {
+          closeTime: {
+            gte: new Date(),
+          },
+        },
       },
       orderBy: {
         latestAuction: {
