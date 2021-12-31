@@ -13,11 +13,12 @@ import Button from '@mui/material/Button'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import DialogActions from '@mui/material/DialogActions'
 import Category from '../../../models/category'
-import axios, { AxiosPromise } from 'axios'
+import { AxiosPromise } from 'axios'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 import axiosApiInstance from '../../../services/api'
 import { setErrorTextMsg } from '../../../utils/error'
+import LocalService from '../../../services/local.service'
 
 const Input = styled('input')({
   display: 'none',
@@ -85,7 +86,7 @@ export function BaseCategoryDialog(
 
     try {
       if (image != null) {
-        const blobResponse = await axios.get(image, { responseType: 'blob' })
+        const blobResponse = await LocalService.getImage(image)
         formData.append('thumbnail', blobResponse.data)
       }
 

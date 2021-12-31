@@ -1,11 +1,19 @@
 import * as React from 'react'
-import { Container, Grid, Paper } from '@mui/material'
+import {useState} from 'react'
+import {Alert, Container, Grid, Paper} from '@mui/material'
 import CreateProductForm from '../../../components/seller/product/CreateProductForm'
 import Typography from '@mui/material/Typography'
+import {setErrorTextMsg} from '../../../utils/error'
 
 export default function CreateProduct(): JSX.Element {
+  const [errorText, setErrorText] = useState<string | null>(null)
+
+  const onError = (e: unknown) => {
+    setErrorTextMsg(e, setErrorText)
+  }
+
   return (
-    <Container maxWidth='lg' sx={{ my: 2 }}>
+    <Container maxWidth='lg' sx={{my: 2}}>
       <Typography
         color='text.primary'
         fontWeight={600}
@@ -20,6 +28,8 @@ export default function CreateProduct(): JSX.Element {
         📦 Create a Product
       </Typography>
 
+      {errorText && <Alert severity='error'>{errorText}</Alert>}
+
       <Container
         component={Paper}
         variant='outlined'
@@ -32,7 +42,7 @@ export default function CreateProduct(): JSX.Element {
         }}
       >
         <Grid container maxWidth='md'>
-          <CreateProductForm />
+          <CreateProductForm onError={onError}/>
         </Grid>
       </Container>
     </Container>

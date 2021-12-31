@@ -32,21 +32,23 @@ const Label = styled('label')({})
 
 const MIN_THUMBNAIL_FILE = 1
 const MIN_DETAILS_FILE = 2
+const MAX_DETAILS_FILE = 6
 
 type CreateProductFormProps = {
   onSubmit?: (formData: FormData) => void
+  onError?: (e: unknown) => void
 }
 
 // TODO refactor me
 export default function CreateProductForm({
   onSubmit,
+  onError,
 }: CreateProductFormProps): JSX.Element {
   const {
     control,
     register,
     handleSubmit,
     watch,
-    setError,
     formState: { errors, isValid },
   } = useForm<ProductFormInput>({
     mode: 'all',
@@ -81,8 +83,39 @@ export default function CreateProductForm({
     }
   }, [detailFiles, isMounted])
 
-  const submitHandler: SubmitHandler<ProductFormInput> = (data) => {
-    console.log(data)
+  const submitHandler: SubmitHandler<ProductFormInput> = async (data) => {
+    // console.log(data)
+    const formData = new FormData()
+    const { thumbnail: thumbnailFileList, detail, ...jsonData } = data
+    for (const [key, value] of Object.entries(jsonData)) {
+      formData.set(key, value)
+    }
+    try {
+      formData.set('thumbnail', thumbnailFileList[0])
+
+      for (let i = 0; i < detail.length && i < MAX_DETAILS_FILE; i++) {
+        formData.append('detail', detail[i])
+      }
+    } catch (e) {
+      onError && onError(e)
+      return
+    }
+
+    // console.log(data)
+    // formData.forEach((value, key) => {
+    //   console.log(key + ' ' + value)
+    // })
+    setDisableAllElement(true)
+    try {
+      if (onSubmit) {
+        await onSubmit(formData)
+      }
+    }
+    finally {
+      if (isMounted()) {
+        setDisableAllElement(false)
+      }
+    }
   }
 
   return (
@@ -137,7 +170,6 @@ export default function CreateProductForm({
             },
           }}
           textFieldProps={{
-            autoFocus: true,
             disabled: disableAllElement,
             margin: 'normal',
           }}
@@ -157,6 +189,7 @@ export default function CreateProductForm({
           id={'categoryId'}
           name={'categoryId'}
           control={control}
+          defaultValue={''}
           selectFieldProps={{
             disabled: disableAllElement,
           }}
@@ -268,7 +301,7 @@ export default function CreateProductForm({
                 id='button-detail-file'
                 type='file'
                 multiple={true}
-                max={6}
+                max={MAX_DETAILS_FILE}
                 disabled={disableAllElement}
                 style={{
                   display: 'none',
