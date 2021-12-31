@@ -169,7 +169,7 @@ export async function verifyAccount(
 
         return res.json(getUserCredential(user))
       } else {
-        console.log(user)
+        // console.log(user)
         return next(new AuthError({ code: AuthErrorCode.WrongOTP }))
       }
     } catch (e) {
@@ -259,11 +259,11 @@ export async function resetPassword(
 
       return res.json(getUserCredential(user))
     } else {
-      console.log(user)
+      // console.log(user)
       return next(new AuthError({ code: AuthErrorCode.WrongOTP }))
     }
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     if (e instanceof AuthError) return next(e)
     return next(new ErrorException({ code: ErrorCode.UnknownError }))
   }
@@ -370,7 +370,7 @@ export async function verifyNewEmail(
     }
     return next(new AuthError({ code: AuthErrorCode.WrongOTP }))
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     if (e instanceof AuthError) {
       return next(e)
     }

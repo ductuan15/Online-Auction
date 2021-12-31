@@ -13,6 +13,7 @@ import {
 import config from '../config/config.js'
 import { ProductRes } from '../types/ProductRes.js'
 import Prisma from '@prisma/client'
+import { AuctionRes } from '../types/AuctionRes.js'
 
 const userShortenSelection = {
   uuid: true,
@@ -78,18 +79,46 @@ export const checkProductExist = async (
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.body
-    const product: ProductRes = await prisma.product.create({
-      data: {
-        name: data.name,
-        sellerId: req.user?.uuid || '',
-        categoryId: +data.categoryId,
-        productDescriptionHistory: {
-          create: {
-            description: data.description,
-          },
+    const productData = {
+      name: data.name,
+      sellerId: req.user?.uuid || '',
+      categoryId: +data.categoryId,
+      productDescriptionHistory: {
+        create: {
+          description: data.description,
         },
       },
+    }
+
+    const product: ProductRes = await prisma.product.create({
+      data: productData,
     })
+
+    let auction: AuctionRes
+    try {
+      const auctionData = {
+        incrementPrice: req.body.incrementPrice,
+        autoExtendAuctionTiming: req.body.autoExtendAuctionTiming === 'true',
+        openPrice: +req.body.openPrice,
+        productId: product.id,
+        closeTime: new Date(req.body.closeTime),
+        buyoutPrice: isNaN(+req.body.buyoutPrice)
+          ? undefined
+          : +req.body.buyoutPrice,
+      }
+
+      auction = await prisma.auction.create({
+        data: auctionData,
+      })
+    } catch (e) {
+      await prisma.product.delete({
+        where: {
+          id: product.id,
+        },
+      })
+      return next(e)
+    }
+
     await ensureProductImagePath(product.id)
     const files = req.files as { [fieldname: string]: Express.Multer.File[] }
     if (req.files) {
@@ -102,11 +131,9 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
         product.id,
       )
     }
-    return res.status(201).json(product)
+    return res.status(201).json({ product, auction })
   } catch (error) {
-    if (error instanceof Error) {
-      next(error)
-    }
+    return next(error)
   }
 }
 
@@ -309,36 +336,35 @@ export const search = async (
     // get all searched ProductsId,
     const queryResultRows = await prisma.$queryRaw<any[]>(Prisma.Prisma
       .sql`SELECT products.id
-  FROM products
-  JOIN auctions on auctions.id = products.latestAuctionId
-  ${
-    key !== '' && key !== undefined
-      ? Prisma.Prisma.sql`WHERE MATCH (products.name) AGAINST (${key})`
-      : Prisma.Prisma.empty
-  }
- 
-  ${
-    categoryId !== 0
-      ? Prisma.Prisma.sql`AND products.categoryId = ${categoryId}`
-      : Prisma.Prisma.empty
-  }
-  ORDER BY 
-  ${
-    sortBy === SORT_BY.currentPrice
-      ? Prisma.Prisma.sql`auctions.currentPrice ${
-          sortType === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
-        }`
-      : Prisma.Prisma.empty
-  }
-
-  ${
-    sortBy === SORT_BY.closeTime
-      ? Prisma.Prisma.sql`auctions.closeTime ${
-          sortType === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
-        }`
-      : Prisma.Prisma.empty
-  }
-   LIMIT ${limit + 1} OFFSET ${(page - 1) * limit};`)
+           FROM products
+                    JOIN auctions on auctions.id = products.latestAuctionId
+               ${
+                 key !== '' && key !== undefined
+                   ? Prisma.Prisma
+                       .sql`WHERE MATCH (products.name) AGAINST (${key})`
+                   : Prisma.Prisma.empty
+               } ${
+      categoryId !== 0
+        ? Prisma.Prisma.sql`AND products.categoryId = ${categoryId}`
+        : Prisma.Prisma.empty
+    }
+           ORDER BY ${
+             sortBy === SORT_BY.currentPrice
+               ? Prisma.Prisma.sql`auctions.currentPrice ${
+                   sortType === 'desc'
+                     ? Prisma.Prisma.sql`desc`
+                     : Prisma.Prisma.empty
+                 }`
+               : Prisma.Prisma.empty
+           } ${
+      sortBy === SORT_BY.closeTime
+        ? Prisma.Prisma.sql`auctions.closeTime ${
+            sortType === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
+          }`
+        : Prisma.Prisma.empty
+    }
+               LIMIT ${limit + 1}
+           OFFSET ${(page - 1) * limit};`)
 
     // get all info for products
     const productsId = queryResultRows.map((row) => row.id as number)

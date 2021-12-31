@@ -6,7 +6,7 @@ export const uploadProductImages = multer({
     if (file.mimetype !== 'image/jpg' && file.mimetype !== 'image/jpeg') {
       return callback(null, false)
     }
-    console.log(file)
+    // console.log(file)
     return callback(null, true)
   },
   limits: { files: 7, fileSize: 2048 * 2048 * 7 },

@@ -115,7 +115,7 @@ export const ensureProductImagePath = async (productId: number) => {
 }
 export const getAllThumbnailLink = (productId: Number) => {
   const link = `${ImageURLPrefixType.LINK}/${productId}/`
-  console.log(link)
+  // console.log(link)
   return {
     sm: `${link}?type=sm`,
     md: `${link}?type=md`,
@@ -138,7 +138,7 @@ export const getAllDetailImageLinks = async (productId: Number) => {
 }
 export const findProductThumbnail = (req: Request, res: Response) => {
   const thumnailSizeType = req.query.type as keyof typeof ProductImageSize
-  console.log(thumnailSizeType)
+  // console.log(thumnailSizeType)
 
   const productId = +req.params.productId
   let fileOutPath
@@ -154,7 +154,7 @@ export const findProductThumbnail = (req: Request, res: Response) => {
 export const findProductDetailImage = (req: Request, res: Response) => {
   const index = +req.params.index
   const productId = +req.params.productId
-  console.log(req.params.index, req.params.productId)
+  // console.log(req.params.index, req.params.productId)
 
   let fileOutPath
   if (!isNaN(index) && !isNaN(productId)) {
