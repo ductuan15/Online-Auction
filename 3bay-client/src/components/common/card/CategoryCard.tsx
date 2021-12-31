@@ -24,7 +24,6 @@ export default function CategoryCard(prop: Props): JSX.Element {
       sx={{ borderRadius: 4 }}
     >
       <CardActionArea>
-        {/*TODO extract jss styles*/}
         <Box sx={{ position: 'relative' }}>
           <CardMedia
             height='240'

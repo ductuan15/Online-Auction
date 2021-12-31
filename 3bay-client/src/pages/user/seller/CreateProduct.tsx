@@ -15,6 +15,7 @@ export default function CreateProduct(): JSX.Element {
           },
           typography: 'h3',
         })}
+        gutterBottom
       >
         📦 Create a Product
       </Typography>
