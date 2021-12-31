@@ -22,6 +22,7 @@ import { GREY } from '../../../theme/palette'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 import DateTimeInputField from '../../common/form/DateTimeInputField'
 import moment from 'moment'
+import CategoryChooser from '../../common/form/CategoryChooser'
 
 const Input = styled('input')({
   display: 'none',
@@ -55,7 +56,6 @@ export default function CreateProductForm({
   const [disableAllElement, setDisableAllElement] = useState(false)
 
   const openPrice = watch('openPrice')
-  // console.log(errors)
 
   const [thumbnail, setThumbnail] = useState<string>('')
   const thumbnailFile = watch('thumbnail')
@@ -82,27 +82,6 @@ export default function CreateProductForm({
   }, [detailFiles, isMounted])
 
   const submitHandler: SubmitHandler<ProductFormInput> = (data) => {
-    if (thumbnailFile.length < MIN_THUMBNAIL_FILE) {
-      setError(
-        'thumbnail',
-        {
-          type: 'manual',
-          message: 'You must choose a thumbnail for your product',
-        },
-        { shouldFocus: true },
-      )
-    }
-    if (detailFiles.length < MIN_DETAILS_FILE) {
-      setError(
-        'detail',
-        {
-          type: 'manual',
-          message: 'You must choose at least 2 more photos',
-        },
-        { shouldFocus: true },
-      )
-    }
-
     console.log(data)
   }
 
@@ -165,6 +144,25 @@ export default function CreateProductForm({
         />
       </Grid>
 
+      <Grid item container xs={12} flexDirection='column' rowSpacing={3}>
+        <Typography color='text.primary' variant='h6'>
+          Category
+        </Typography>
+
+        <CategoryChooser
+          rules={{
+            required: 'This field is required',
+          }}
+          error={errors.categoryId}
+          id={'categoryId'}
+          name={'categoryId'}
+          control={control}
+          selectFieldProps={{
+            disabled: disableAllElement,
+          }}
+        />
+      </Grid>
+
       <Grid item xs={12}>
         <Divider />
       </Grid>
@@ -199,7 +197,17 @@ export default function CreateProductForm({
                 disabled={disableAllElement}
                 // onChange={onImageChange}
                 {...register('thumbnail', {
-                  required: 'This field is required'
+                  required: 'This field is required',
+                  validate: {
+                    minFile: (value) => {
+                      if (
+                        value instanceof FileList &&
+                        value.length < MIN_THUMBNAIL_FILE
+                      ) {
+                        return 'You must choose a thumbnail for your product'
+                      }
+                    },
+                  },
                 })}
               />
 
@@ -267,7 +275,17 @@ export default function CreateProductForm({
                 }}
                 // onChange={onImageChange}
                 {...register('detail', {
-                  required: 'This field is required'
+                  required: 'This field is required',
+                  validate: {
+                    minFile: (value) => {
+                      if (
+                        value instanceof FileList &&
+                        value.length < MIN_DETAILS_FILE
+                      ) {
+                        return 'You must choose at least 2 photos'
+                      }
+                    },
+                  },
                 })}
               />
 
@@ -344,6 +362,8 @@ export default function CreateProductForm({
                 onChange={field.onChange}
                 editorStyle={{
                   minHeight: 256,
+                  paddingLeft: 15,
+                  paddingRight: 15,
                 }}
                 readOnly={disableAllElement}
               />
