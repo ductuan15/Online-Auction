@@ -19,10 +19,12 @@ import Product from '../../../models/product'
 import { SxProps } from '@mui/system'
 import { Theme, useTheme } from '@mui/material/styles'
 import ProductCardContent from './ProductCardContent'
-import FavoriteIcon from '@mui/icons-material/Favorite'
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import {addToWatchList, deleteProdWatchList} from "../../../services/product.service";
 import UserService from "../../../services/user.service";
 import _ from 'lodash'
+import {useUserContext} from "../../../contexts/user/UserContext";
 
 type CardProps = {
   product: Product
@@ -70,19 +72,26 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
     mouseX: number
     mouseY: number
   } | null>(null)
+  const { dispatch } = useUserContext()
 
   const addToWatchList_Clicked = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     const response = await UserService.getUserWatchList()
     const prodIndex = _.findIndex(response, function(p) { return p.id === product.id; });
-    console.log(prodIndex)
     if(prodIndex !== -1) {
-      await deleteProdWatchList(product.id)
+      const res = await deleteProdWatchList(product.id)
+      dispatch({
+        type: 'DELETE_WATCH_LIST',
+        payload: res.data.productId,
+      })
     }
     else {
       await addToWatchList(product.id);
+      dispatch({
+        type: 'ADD_WATCH_LIST',
+        payload: product,
+      })
     }
-
   }
   const handleContextMenu: MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault()
@@ -116,6 +125,10 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
     setColor(theme.palette.text.primary)
     setScale(1.0)
   }
+
+  const {
+    state: { watchlist },
+  } = useUserContext()
 
   return (
     <div onContextMenu={handleContextMenu}>
@@ -190,7 +203,9 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
             }}
           >
             <IconButton aria-label='add to watchlist' onClick={addToWatchList_Clicked}>
-              <FavoriteIcon />
+              {
+                _.findIndex(watchlist, function(p) { return p.id === product.id; }) > -1 ? <FavoriteOutlinedIcon/> : <FavoriteBorderOutlinedIcon/>
+              }
             </IconButton>
           </CardActions>
         </Card>

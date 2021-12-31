@@ -16,3 +16,8 @@ export type Bidder = {
   uuid: string,
   name: string
 }
+
+export type Watchlist = {
+  userId: string
+  productId: number
+}

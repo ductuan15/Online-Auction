@@ -27,10 +27,10 @@ export const getWatchListByUser = async (
         }
       },
       include:{
-        seller:{
-          select:userShortenSelection,
-        },
-        category:true,
+        // seller:{
+        //   select:userShortenSelection,
+        // },
+        // category:true,
         latestAuction:{
           include:{
             winningBid:{

@@ -22,12 +22,12 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
         Category: {product.category.title}
       </Typography>
       <Typography variant='body1' color='text.secondary'>
-        Current price: {product.latestAuction?.currentPrice}
+        Current price: {product.latestAuction?.currentPrice} VND
       </Typography>
       {/*/!*Giá mua ngay (nếu có)*!/*/}
-      {/*<Typography variant='body1' color='text.secondary'>*/}
-      {/*    Giá mua ngay:*/}
-      {/*</Typography>*/}
+      <Typography variant='body1' color='text.secondary'>
+          Buyout price: <span> {product.latestAuction?.buyoutPrice} </span> VND
+      </Typography>
       <Typography variant='body1' color='text.secondary'>
         Seller: <Link href='#'>{product.seller.name}</Link> (
         <Rating

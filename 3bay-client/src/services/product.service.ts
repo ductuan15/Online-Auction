@@ -1,6 +1,7 @@
 import Product from '../models/product'
 import axiosApiInstance from './api'
 import { AxiosResponse } from 'axios'
+import {Watchlist} from "../models/user";
 
 export const SORT_TYPE = {
   desc: 'desc',
@@ -58,19 +59,17 @@ export const getTop: { getTopPrice(): Promise<AxiosResponse<Product[]>> } = {
 
 export async function addToWatchList(
   id: number,
-): Promise<AxiosResponse<Product>> {
-  const response = await axiosApiInstance.post<Product>(
+): Promise<AxiosResponse<Watchlist>> {
+  return await axiosApiInstance.post<Watchlist>(
     `api/watchlist/byUser/${id}`,
   )
-  return response
 }
 
 export async function deleteProdWatchList(
   id: number,
-): Promise<AxiosResponse<Product>> {
-  const response = await axiosApiInstance.delete<Product>(
+): Promise<AxiosResponse<Watchlist>> {
+  return await axiosApiInstance.delete<Watchlist>(
     `api/watchlist/byUser/${id}`,
   )
-  console.log(response.data)
-  return response
+
 }
