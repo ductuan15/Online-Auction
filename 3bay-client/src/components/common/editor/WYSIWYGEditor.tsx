@@ -22,7 +22,6 @@ const TOOLBAR_OPTIONS: EditorProps['toolbar'] = {
     'fontFamily',
     'list',
     'textAlign',
-    'colorPicker',
     'emoji',
     'remove',
     'history',

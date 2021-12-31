@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { useState } from 'react'
 import { Alert, Container, Grid, LinearProgress, Paper } from '@mui/material'
-import CreateProductForm from '../../../components/seller/product/CreateProductForm'
+import CreateProductForm from '../../components/seller/product/CreateProductForm'
 import Typography from '@mui/material/Typography'
-import { setErrorTextMsg } from '../../../utils/error'
+import { setErrorTextMsg } from '../../utils/error'
 import { useNavigate } from 'react-router-dom'
-import SellerService from '../../../services/seller.service'
-import { useIsMounted } from '../../../hooks'
+import SellerService from '../../services/seller.service'
+import { useIsMounted } from '../../hooks'
 
 export default function CreateProduct(): JSX.Element {
   const [errorText, setErrorText] = useState<string | null>(null)

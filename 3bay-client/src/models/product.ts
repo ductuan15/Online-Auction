@@ -6,7 +6,7 @@ export interface Product {
   id: number
   name: string
   categoryId: number
-  sellerId: number
+  sellerId: string
   createdAt: Date
   deletedAt: Date
   latestAuctionId?: number
@@ -55,6 +55,10 @@ export type ProductFormInput = {
 export type CreateProductResponse = {
   product: Product
   auction: Auction
+}
+
+export type EditProductFormInput = {
+  description: string
 }
 
 export default Product

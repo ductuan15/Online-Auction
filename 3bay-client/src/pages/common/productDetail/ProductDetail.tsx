@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Divider, Grid, Paper, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Link,
+  Paper,
+  Typography,
+} from '@mui/material'
 
 import ProductImage from '../../../components/common/product/ProductImage'
 import ProductInfo from '../../../components/common/product/ProductInfo'
@@ -9,7 +17,7 @@ import Product from '../../../models/product'
 import EditIcon from '@mui/icons-material/Edit'
 import moment from 'moment'
 import { getProductById, getTop } from '../../../services/product.service'
-import { useParams } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router-dom'
 import CarouselCard from '../../../components/common/carousel/Carousel'
 import DOMPurify from 'dompurify'
 
@@ -73,9 +81,22 @@ const ProductDetailContent = (): JSX.Element | null => {
         }}
       >
         <Divider />
-        <Typography gutterBottom variant='h4' component='h5'>
-          About the product
-        </Typography>
+        <Grid container xs={12}>
+          <Typography gutterBottom variant='h4' component='h5'>
+            About the product
+          </Typography>
+
+          <Box flexGrow={1} />
+
+          <Link
+            component={RouterLink}
+            to={`/product/${product?.id}/edit`}
+            underline='none'
+            color='inherit'
+          >
+            <Button>✏️ Add more description</Button>
+          </Link>
+        </Grid>
         {product
           ? product.productDescriptionHistory.map(function (des) {
               return (
