@@ -1,8 +1,8 @@
 import { UpgradeToSellerRequest, UserDetails } from '../../models/user'
-import Product from "../../models/product";
+import Product from '../../models/product'
 
 export type UserState = {
-  userDetails?: UserDetails,
+  userDetails?: UserDetails
   watchlist: Product[]
 }
 
@@ -12,9 +12,10 @@ export type UserAction =
   | { type: 'UPDATE_WATCH_LIST'; payload: Product[] }
   | { type: 'ADD_WATCH_LIST'; payload: Product }
   | { type: 'DELETE_WATCH_LIST'; payload: number }
+
 export const initialUserState = {
   //
-  watchlist: []
+  watchlist: [],
 }
 
 export const userReducer = (
@@ -54,14 +55,10 @@ export const userReducer = (
       return {
         ...state,
         watchlist: state.watchlist.filter((product: Product) => {
-          if (product.id === action.payload) {
-            return false
-          } else return true
+          return product.id !== action.payload
         }),
       }
     default:
       return state
   }
 }
-
-

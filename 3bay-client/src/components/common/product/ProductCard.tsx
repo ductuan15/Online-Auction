@@ -1,13 +1,19 @@
-import { MouseEventHandler, SyntheticEvent, useEffect, useState } from 'react'
+import {
+  MouseEventHandler,
+  SyntheticEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import Card from '@mui/material/Card'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import {
   Box,
   CardActionArea,
-  IconButton,
   CardActions,
   CardHeader,
+  IconButton,
   Link,
   Menu,
   MenuItem,
@@ -19,12 +25,14 @@ import Product from '../../../models/product'
 import { SxProps } from '@mui/system'
 import { Theme, useTheme } from '@mui/material/styles'
 import ProductCardContent from './ProductCardContent'
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import {addToWatchList, deleteProdWatchList} from "../../../services/product.service";
-import UserService from "../../../services/user.service";
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined'
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
+import {
+  addToWatchList,
+  deleteProdWatchList,
+} from '../../../services/product.service'
 import _ from 'lodash'
-import {useUserContext} from "../../../contexts/user/UserContext";
+import { useUserContext } from '../../../contexts/user/UserContext'
 
 type CardProps = {
   product: Product
@@ -62,7 +70,6 @@ const imageSx: SxProps<Theme> = (theme) => ({
 
 // TODO: reactor me
 // TODO: extract the countdown logic
-// TODO: handle 'watchlist' logic
 const ProductCard = ({ product }: CardProps): JSX.Element => {
   const theme = useTheme()
   const [scale, setScale] = useState(1.0)
@@ -74,19 +81,29 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
   } | null>(null)
   const { dispatch } = useUserContext()
 
-  const addToWatchList_Clicked = async (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    const response = await UserService.getUserWatchList()
-    const prodIndex = _.findIndex(response, function(p) { return p.id === product.id; });
-    if(prodIndex !== -1) {
+  const {
+    state: { watchlist },
+  } = useUserContext()
+
+  const isInWatchlist = useMemo(() => {
+    const prodIndex = _.findIndex(watchlist, function (p) {
+      return p.id === product.id
+    })
+    return prodIndex !== -1
+  }, [product.id, watchlist])
+
+  const toggleWatchlistButton = async (e: SyntheticEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (isInWatchlist) {
       const res = await deleteProdWatchList(product.id)
       dispatch({
         type: 'DELETE_WATCH_LIST',
         payload: res.data.productId,
       })
-    }
-    else {
-      await addToWatchList(product.id);
+    } else {
+      await addToWatchList(product.id)
       dispatch({
         type: 'ADD_WATCH_LIST',
         payload: product,
@@ -98,18 +115,19 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
     setContextMenu(
       contextMenu === null
         ? {
-          mouseX: event.clientX - 2,
-          mouseY: event.clientY - 4,
-        }
+            mouseX: event.clientX - 2,
+            mouseY: event.clientY - 4,
+          }
         : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
           // Other native context menus might behave different.
           // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-        null,
+          null,
     )
   }
 
-  const handleClose = (e: SyntheticEvent) => {
+  const handleContextMenuClose = async (e: SyntheticEvent) => {
     e.stopPropagation()
+    await toggleWatchlistButton(e)
     setContextMenu(null)
   }
 
@@ -125,10 +143,6 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
     setColor(theme.palette.text.primary)
     setScale(1.0)
   }
-
-  const {
-    state: { watchlist },
-  } = useUserContext()
 
   return (
     <div onContextMenu={handleContextMenu}>
@@ -157,6 +171,7 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
                   bgcolor: 'transparent',
                 },
               }}
+              component='div'
             >
               <Box sx={imageSx}>
                 <CardMedia
@@ -186,7 +201,7 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
                       color={color}
                       sx={{ ...titleSx }}
                     >
-                      {product.name}
+                      {product.name || ' '}
                     </Typography>
                   </Box>
                 }
@@ -194,26 +209,32 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
               />
 
               <ProductCardContent product={product} sx={{ pt: 1 }} />
+              <CardActions
+                disableSpacing
+                sx={{
+                  pt: 0,
+                }}
+              >
+                <IconButton
+                  aria-label='add to watchlist'
+                  color='inherit'
+                  onClick={toggleWatchlistButton}
+                >
+                  {isInWatchlist ? (
+                    <FavoriteOutlinedIcon />
+                  ) : (
+                    <FavoriteBorderOutlinedIcon />
+                  )}
+                </IconButton>
+              </CardActions>
             </CardActionArea>
           </Link>
-          <CardActions
-            disableSpacing
-            sx={{
-              pt: 0,
-            }}
-          >
-            <IconButton aria-label='add to watchlist' onClick={addToWatchList_Clicked}>
-              {
-                _.findIndex(watchlist, function(p) { return p.id === product.id; }) > -1 ? <FavoriteOutlinedIcon/> : <FavoriteBorderOutlinedIcon/>
-              }
-            </IconButton>
-          </CardActions>
         </Card>
       </Tooltip>
 
       <Menu
         open={contextMenu !== null}
-        onClose={handleClose}
+        onClose={handleContextMenuClose}
         anchorReference='anchorPosition'
         anchorPosition={
           contextMenu !== null
@@ -221,8 +242,10 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
             : undefined
         }
       >
-        <MenuItem onClick={handleClose}>Add to watchlist</MenuItem>
-        {/*<MenuItem onClick={handleClose}>Remove from watchlist</MenuItem>*/}
+        {
+          !isInWatchlist ? <MenuItem onClick={handleContextMenuClose}>Add to watchlist</MenuItem>
+           : <MenuItem onClick={handleContextMenuClose}>Remove from watchlist</MenuItem>
+        }
       </Menu>
     </div>
   )
