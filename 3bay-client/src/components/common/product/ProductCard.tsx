@@ -242,10 +242,13 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
             : undefined
         }
       >
-        {
-          !isInWatchlist ? <MenuItem onClick={handleContextMenuClose}>Add to watchlist</MenuItem>
-           : <MenuItem onClick={handleContextMenuClose}>Remove from watchlist</MenuItem>
-        }
+        {!isInWatchlist ? (
+          <MenuItem onClick={handleContextMenuClose}>Add to watchlist</MenuItem>
+        ) : (
+          <MenuItem onClick={handleContextMenuClose}>
+            Remove from watchlist
+          </MenuItem>
+        )}
       </Menu>
     </div>
   )

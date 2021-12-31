@@ -52,4 +52,9 @@ export type ProductFormInput = {
   closeTime: Date | null
 }
 
+export type CreateProductResponse = {
+  product: Product
+  auction: Auction
+}
+
 export default Product

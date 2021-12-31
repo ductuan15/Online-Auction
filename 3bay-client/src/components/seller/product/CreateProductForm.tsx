@@ -35,8 +35,8 @@ const MIN_DETAILS_FILE = 2
 const MAX_DETAILS_FILE = 6
 
 type CreateProductFormProps = {
-  onSubmit?: (formData: FormData) => void
-  onError?: (e: unknown) => void
+  onSubmit: (formData: FormData) => void
+  onError: (e: unknown) => void
 }
 
 // TODO refactor me
@@ -87,6 +87,7 @@ export default function CreateProductForm({
     // console.log(data)
     const formData = new FormData()
     const { thumbnail: thumbnailFileList, detail, ...jsonData } = data
+
     for (const [key, value] of Object.entries(jsonData)) {
       formData.set(key, value)
     }
@@ -96,8 +97,13 @@ export default function CreateProductForm({
       for (let i = 0; i < detail.length && i < MAX_DETAILS_FILE; i++) {
         formData.append('detail', detail[i])
       }
+
+      const buyoutPrice = formData.get('buyoutPrice')
+      if (typeof buyoutPrice === 'string' && buyoutPrice.length === 0) {
+        formData.set('buyoutPrice', 'undefined')
+      }
     } catch (e) {
-      onError && onError(e)
+      onError(e)
       return
     }
 
@@ -107,11 +113,8 @@ export default function CreateProductForm({
     // })
     setDisableAllElement(true)
     try {
-      if (onSubmit) {
-        await onSubmit(formData)
-      }
-    }
-    finally {
+      await onSubmit(formData)
+    } finally {
       if (isMounted()) {
         setDisableAllElement(false)
       }
