@@ -12,6 +12,7 @@ import {
 
 import config from '../config/config.js'
 import { ProductRes } from '../types/ProductRes.js'
+import { PaginationRes } from '../types/PaginationRes.js'
 import Prisma from '@prisma/client'
 
 const userShortenSelection = {
@@ -41,6 +42,17 @@ export const productById = async (
         seller: {
           select: userShortenSelection,
         },
+        latestAuction:{
+          include:{
+            winningBid:{
+              select:{
+                bidder:{
+                  select:userShortenSelection
+                }
+              }
+            }
+          }
+        }
       },
       rejectOnNotFound: true,
     })
@@ -127,7 +139,7 @@ export const update = async (
           },
         },
       },
-      where: { id: +(req.product?.id || '') },
+      where: { id: +(req.product?.id || 0) },
     })
     if (req.product) {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] }
@@ -182,15 +194,16 @@ export const getProductByCategoryId = async (
   try {
     const categoryId = +req.params.categoryId
     const page = +(req.query?.page || 1)
+    const limit = +(req.query?.limit || 0)
     let products: ProductRes[] = []
     if (page) {
       products = await prisma.product.findMany({
         where: {
           categoryId: categoryId,
           latestAuction: {
-            closeTime: {
-              gt: new Date(),
-            },
+            // closeTime: {
+            //   gt: new Date(),
+            // },
           },
         },
         include: {
@@ -211,80 +224,26 @@ export const getProductByCategoryId = async (
             },
           },
         },
-        skip: (page - 1) * config.PAGE_LIMIT,
-        take: config.PAGE_LIMIT,
+        skip: (page - 1) * limit,
+        take: limit + 1,
       })
     }
-    products.forEach(async (product) => {
+    const result: PaginationRes<ProductRes> = {
+      items: products.slice(0, limit),
+      hasNextPage: products.length > limit,
+      cursor: 1,
+    }
+
+    products.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
     })
-    res.json(products)
+    res.json(result)
   } catch (error) {
     if (error instanceof Error) {
       next(error)
     }
   }
 }
-
-// //http://localhost:3030/api/product/search/?key=iphone&page=1&timeOrder=desc&priceOrder=acs&categoryId=5
-// export const search = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     // https://www.prisma.io/docs/concepts/components/prisma-client/full-text-search
-//     // Prisma does not support MySQL FTS?  :<<
-//     const { key, timeOrder, priceOrder } = req.query
-//     const page = +(req.query?.page || '/')
-//     const categoryId = +(req.query?.categoryId || '')
-//     console.log(categoryId)
-//     let products: ProductRes[] = []
-//     if (page) {
-//       // TODO: Fix this query, not good :<
-//       // WTF is this :<
-//       // it's not that bad tbh. More readable than your `best-friend`'s code, obviously
-//       const searchResult = await prisma.$queryRaw<any[]>(
-//         Prisma.Prisma
-//           .sql`SELECT seller.uuid as sellerId, seller.name as sellerName , products.*, auctions.*, auctions.id as auctionId, bids.*, users.uuid,  users.name as usersName, users.email, categories.*, categories.id as categoryId
-//           FROM products
-//                     JOIN categories on products.categoryId = categories.id
-//                     JOIN auctions on auctions.productId = products.id
-//                     LEFT JOIN bids on auctions.winningBidId = bids.id
-//                     LEFT JOIN users on bids.bidderId = users.uuid
-//                     LEFT JOIN users as seller on products.sellerId = seller.uuid
-//                           WHERE MATCH (products.name) AGAINST (${key})
-//                             and
-//                               auctions.closeTime
-//                               > CURRENT_TIMESTAMP
-//                              ${
-//                                categoryId !== 0
-//                                  ? Prisma.Prisma
-//                                      .sql`and products.categoryId = ${categoryId}`
-//                                  : Prisma.Prisma.empty
-//                              }
-//                           Order by auctions.closeTime ${
-//                             timeOrder === 'desc'
-//                               ? Prisma.Prisma.sql`desc`
-//                               : Prisma.Prisma.empty
-//                           }, products.currentPrice ${
-//           priceOrder === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
-//         } LIMIT ${config.PAGE_LIMIT * (page - 1)}, ${
-//           config.PAGE_LIMIT * page
-//         };`,
-//       )
-//       // products = mappingSearchProduct(searchResult)
-//       products.forEach((product) => {
-//         product.thumbnails = getAllThumbnailLink(product.id)
-//       })
-//     }
-//     res..json(products)
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       next(error)
-//     }
-//   }
-// }
 
 export const search = async (
   req: Request,
@@ -303,9 +262,9 @@ export const search = async (
         : SORT_BY.currentPrice
     const sortType: 'desc' | 'asc' =
       req.query.sortType === 'desc' ? 'desc' : 'asc'
-    const page = +(req.query?.page || '/')
-    const categoryId = +(req.query?.categoryId || '')
-    const limit = +(req.query?.limit || '')
+    const page = +(req.query?.page || NaN)
+    const categoryId = +(req.query?.categoryId || 0)
+    const limit = +(req.query?.limit || 0)
     // get all searched ProductsId,
     const queryResultRows = await prisma.$queryRaw<any[]>(Prisma.Prisma
       .sql`SELECT products.id
@@ -382,11 +341,12 @@ export const search = async (
     products.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
     })
-    res.json({
+    const result: PaginationRes<ProductRes> = {
       items: products.slice(0, limit),
       hasNextPage: products.length > limit,
       cursor: 1,
-    })
+    }
+    res.json(result)
   } catch (error) {
     if (error instanceof Error) {
       next(error)

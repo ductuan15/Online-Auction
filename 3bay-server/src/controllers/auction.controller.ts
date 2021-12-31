@@ -53,7 +53,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-export const getOpenAuction = async (
+export const getLatestAuction = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -62,9 +62,6 @@ export const getOpenAuction = async (
     const auction = await prisma.auction.findFirst({
       where: {
         productId: +(req.product?.id || '/'),
-        closeTime: {
-          gte: new Date(),
-        },
       },
       include: {
         winningBid: {
@@ -72,6 +69,7 @@ export const getOpenAuction = async (
             bidder: true,
           },
         },
+        bids:true
       },
     })
     res.json(auction)
