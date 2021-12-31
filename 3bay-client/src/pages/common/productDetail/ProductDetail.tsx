@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Divider, Grid, Paper, Typography } from '@mui/material'
 
 import ProductImage from '../../../components/common/product/ProductImage'
@@ -8,10 +8,14 @@ import ProductProvider from '../../../contexts/product/ProductContext'
 import Product from '../../../models/product'
 import EditIcon from '@mui/icons-material/Edit'
 import moment from 'moment'
-import {getProductById, getTop} from '../../../services/product.service'
+import { getProductById, getTop } from '../../../services/product.service'
 import { useParams } from 'react-router-dom'
-import { useEffectOnce } from '../../../hooks'
 import CarouselCard from '../../../components/common/carousel/Carousel'
+import DOMPurify from 'dompurify'
+
+import './ProductDetail.css'
+// import StyledDiv from '../../../components/common/StyledDiv'
+import { styled } from '@mui/material/styles'
 
 const ProductDetail = (): JSX.Element => {
   return (
@@ -22,21 +26,28 @@ const ProductDetail = (): JSX.Element => {
 }
 export default ProductDetail
 
-const ProductDetailContent = (): JSX.Element | null => {
+const StyledDiv = styled('div')(({ theme }) => ({
+  background: theme.palette.background.default,
+  span: {
+    backgroundColor: 'inherit !important',
+    color: 'inherit !important',
+  },
+}))
 
+const ProductDetailContent = (): JSX.Element | null => {
   const [product, setProducts] = useState<Product>()
   const { id } = useParams()
 
-  useEffectOnce(() => {
+  useEffect(() => {
     ;(async () => {
-      console.log(id)
+      // console.log(id)
 
       if (id && +id) {
         const response = await getProductById(+id)
         setProducts(response.data)
       }
     })()
-  })
+  }, [id])
 
   return (
     <Grid container display='flex' alignItems='center' flexDirection='column'>
@@ -49,7 +60,10 @@ const ProductDetailContent = (): JSX.Element | null => {
         </Grid>
       </Grid>
 
-       <CarouselCard name={'Sản phẩm tương tự'} fetchFunction={getTop.getTopPrice}/>
+      <CarouselCard
+        name={'Related Products'}
+        fetchFunction={getTop.getTopPrice}
+      />
 
       <Paper
         elevation={0}
@@ -70,13 +84,12 @@ const ProductDetailContent = (): JSX.Element | null => {
                     <EditIcon />
                     <span>{moment(des.createdAt).format('L')}</span>
                   </Typography>
-                  <Typography
-                    variant='body1'
-                    color='text.primary'
-                    component={'div'}
-                  >
-                    {des.description}
-                  </Typography>
+
+                  <StyledDiv
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(des.description),
+                    }}
+                  />
                 </Grid>
               )
             })
