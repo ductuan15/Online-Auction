@@ -58,7 +58,7 @@ export const getTop: { getTopPrice(): Promise<AxiosResponse<Product[]>> } = {
 }
 
 export async function addToWatchList(
-  id: number,
+  id?: number,
 ): Promise<AxiosResponse<Watchlist>> {
   return await axiosApiInstance.post<Watchlist>(
     `api/watchlist/byUser/${id}`,
@@ -66,7 +66,7 @@ export async function addToWatchList(
 }
 
 export async function deleteProdWatchList(
-  id: number,
+  id?: number,
 ): Promise<AxiosResponse<Watchlist>> {
   return await axiosApiInstance.delete<Watchlist>(
     `api/watchlist/byUser/${id}`,
