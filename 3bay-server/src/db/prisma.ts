@@ -1,4 +1,5 @@
 import Prisma from '@prisma/client'
+import DOMPurify from 'isomorphic-dompurify'
 
 const prisma = new Prisma.PrismaClient({
   log: [
@@ -46,7 +47,7 @@ const prisma = new Prisma.PrismaClient({
 
 // prisma.$use(async (params, next) => {
 //   // check incoming query terms`
-//   if (params.model === 'users' || params.model === 'admins') {
+//   if (params.model === 'users') {
 //     const result = await next(params)
 //     if (result) {
 //       delete result['isDisabled']
@@ -56,8 +57,36 @@ const prisma = new Prisma.PrismaClient({
 //     }
 //     return result
 //   }
-//   return next(params)
+//   return await next(params)
 // })
+
+prisma.$use(async (params, next) => {
+  if (params.model === 'ProductDescriptionHistory') {
+    if (
+      params.action === 'update' ||
+      params.action === 'upsert' ||
+      params.action === 'create'
+    ) {
+      if (params.args.data.description) {
+        params.args.data.description = DOMPurify.sanitize(
+          params.args.data.description
+        )
+      }
+    } else if (
+      params.action === 'createMany' ||
+      params.action === 'updateMany'
+    ) {
+      if (params.args.data) {
+        params.args.data.forEach((row: Partial<{ description: string }>) => {
+          if (row.description) {
+            row.description = DOMPurify.sanitize(row.description)
+          }
+        })
+      }
+    }
+  }
+  return await next(params)
+})
 
 prisma.$on('query', (e) => {
   const color = '\u001B[38;5;33m'

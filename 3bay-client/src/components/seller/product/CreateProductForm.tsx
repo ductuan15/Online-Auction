@@ -22,6 +22,7 @@ import { GREY } from '../../../theme/palette'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 import DateTimeInputField from '../../common/form/DateTimeInputField'
 import moment from 'moment'
+import CategoryChooser from '../../common/form/CategoryChooser'
 
 const Input = styled('input')({
   display: 'none',
@@ -31,21 +32,23 @@ const Label = styled('label')({})
 
 const MIN_THUMBNAIL_FILE = 1
 const MIN_DETAILS_FILE = 2
+const MAX_DETAILS_FILE = 6
 
 type CreateProductFormProps = {
-  onSubmit?: (formData: FormData) => void
+  onSubmit: (formData: FormData) => void
+  onError: (e: unknown) => void
 }
 
 // TODO refactor me
 export default function CreateProductForm({
   onSubmit,
+  onError,
 }: CreateProductFormProps): JSX.Element {
   const {
     control,
     register,
     handleSubmit,
     watch,
-    setError,
     formState: { errors, isValid },
   } = useForm<ProductFormInput>({
     mode: 'all',
@@ -55,7 +58,6 @@ export default function CreateProductForm({
   const [disableAllElement, setDisableAllElement] = useState(false)
 
   const openPrice = watch('openPrice')
-  // console.log(errors)
 
   const [thumbnail, setThumbnail] = useState<string>('')
   const thumbnailFile = watch('thumbnail')
@@ -81,29 +83,42 @@ export default function CreateProductForm({
     }
   }, [detailFiles, isMounted])
 
-  const submitHandler: SubmitHandler<ProductFormInput> = (data) => {
-    if (thumbnailFile.length < MIN_THUMBNAIL_FILE) {
-      setError(
-        'thumbnail',
-        {
-          type: 'manual',
-          message: 'You must choose a thumbnail for your product',
-        },
-        { shouldFocus: true },
-      )
+  const submitHandler: SubmitHandler<ProductFormInput> = async (data) => {
+    // console.log(data)
+    const formData = new FormData()
+    const { thumbnail: thumbnailFileList, detail, ...jsonData } = data
+
+    for (const [key, value] of Object.entries(jsonData)) {
+      formData.set(key, value)
     }
-    if (detailFiles.length < MIN_DETAILS_FILE) {
-      setError(
-        'detail',
-        {
-          type: 'manual',
-          message: 'You must choose at least 2 more photos',
-        },
-        { shouldFocus: true },
-      )
+    try {
+      formData.set('thumbnail', thumbnailFileList[0])
+
+      for (let i = 0; i < detail.length && i < MAX_DETAILS_FILE; i++) {
+        formData.append('detail', detail[i])
+      }
+
+      const buyoutPrice = formData.get('buyoutPrice')
+      if (typeof buyoutPrice === 'string' && buyoutPrice.length === 0) {
+        formData.set('buyoutPrice', 'undefined')
+      }
+    } catch (e) {
+      onError(e)
+      return
     }
 
-    console.log(data)
+    // console.log(data)
+    // formData.forEach((value, key) => {
+    //   console.log(key + ' ' + value)
+    // })
+    setDisableAllElement(true)
+    try {
+      await onSubmit(formData)
+    } finally {
+      if (isMounted()) {
+        setDisableAllElement(false)
+      }
+    }
   }
 
   return (
@@ -158,9 +173,28 @@ export default function CreateProductForm({
             },
           }}
           textFieldProps={{
-            autoFocus: true,
             disabled: disableAllElement,
             margin: 'normal',
+          }}
+        />
+      </Grid>
+
+      <Grid item container xs={12} flexDirection='column' rowSpacing={3}>
+        <Typography color='text.primary' variant='h6'>
+          Category
+        </Typography>
+
+        <CategoryChooser
+          rules={{
+            required: 'This field is required',
+          }}
+          error={errors.categoryId}
+          id={'categoryId'}
+          name={'categoryId'}
+          control={control}
+          defaultValue={''}
+          selectFieldProps={{
+            disabled: disableAllElement,
           }}
         />
       </Grid>
@@ -199,7 +233,17 @@ export default function CreateProductForm({
                 disabled={disableAllElement}
                 // onChange={onImageChange}
                 {...register('thumbnail', {
-                  required: 'This field is required'
+                  required: 'This field is required',
+                  validate: {
+                    minFile: (value) => {
+                      if (
+                        value instanceof FileList &&
+                        value.length < MIN_THUMBNAIL_FILE
+                      ) {
+                        return 'You must choose a thumbnail for your product'
+                      }
+                    },
+                  },
                 })}
               />
 
@@ -260,14 +304,24 @@ export default function CreateProductForm({
                 id='button-detail-file'
                 type='file'
                 multiple={true}
-                max={6}
+                max={MAX_DETAILS_FILE}
                 disabled={disableAllElement}
                 style={{
                   display: 'none',
                 }}
                 // onChange={onImageChange}
                 {...register('detail', {
-                  required: 'This field is required'
+                  required: 'This field is required',
+                  validate: {
+                    minFile: (value) => {
+                      if (
+                        value instanceof FileList &&
+                        value.length < MIN_DETAILS_FILE
+                      ) {
+                        return 'You must choose at least 2 photos'
+                      }
+                    },
+                  },
                 })}
               />
 
@@ -344,6 +398,8 @@ export default function CreateProductForm({
                 onChange={field.onChange}
                 editorStyle={{
                   minHeight: 256,
+                  paddingLeft: 15,
+                  paddingRight: 15,
                 }}
                 readOnly={disableAllElement}
               />

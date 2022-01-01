@@ -33,7 +33,7 @@ CREATE TABLE `auctions`
     `productId`               int(11)        NOT NULL,
     `winningBidId`            int(11)                 DEFAULT NULL,
     `autoExtendAuctionTiming` tinyint(1)     NOT NULL,
-    `currentPrice`            decimal(19,4)  NOT NULL DEFAULT '0.0000',
+    `currentPrice`            decimal(19, 4) NOT NULL DEFAULT 0.0000,
     PRIMARY KEY (`id`),
     KEY `auctions_fk0` (`productId`),
     KEY `auctions_fk1` (`winningBidId`),
@@ -67,6 +67,30 @@ BEGIN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'One auction has been opened for this product';
     END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode = @saved_sql_mode */;
+/*!50003 SET character_set_client = @saved_cs_client */;
+/*!50003 SET character_set_results = @saved_cs_results */;
+/*!50003 SET collation_connection = @saved_col_connection */;
+/*!50003 SET @saved_cs_client = @@character_set_client */;
+/*!50003 SET @saved_cs_results = @@character_set_results */;
+/*!50003 SET @saved_col_connection = @@collation_connection */;
+/*!50003 SET character_set_client = utf8mb4 */;
+/*!50003 SET character_set_results = utf8mb4 */;
+/*!50003 SET collation_connection = utf8mb4_unicode_ci */;
+/*!50003 SET @saved_sql_mode = @@sql_mode */;
+/*!50003 SET sql_mode =
+        'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */;
+DELIMITER ;;
+/*!50003 CREATE */ /*!50017 DEFINER =`root`@`localhost`*/ /*!50003 TRIGGER update_latest_auctions
+    AFTER INSERT
+    on auctions
+    FOR EACH ROW
+BEGIN
+    UPDATE products
+    SET products.latestAuctionId = new.id
+    WHERE products.id = new.productId;
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode = @saved_sql_mode */;
@@ -152,15 +176,14 @@ DROP TABLE IF EXISTS `product_des_history`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `product_des_history`
 (
-    `id`          int(11)                                 NOT NULL AUTO_INCREMENT,
-    `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `productId`   int(11)                                 NOT NULL,
-    `createdAt`   datetime                                NOT NULL DEFAULT current_timestamp(),
+    `id`          int(11)                         NOT NULL AUTO_INCREMENT,
+    `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `productId`   int(11)                         NOT NULL,
+    `createdAt`   datetime                        NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
     KEY `product_des_history_fk0` (`productId`),
-    CONSTRAINT `product_des_history_fk0` FOREIGN KEY (`productId`) REFERENCES `products` (`id`)
+    CONSTRAINT `product_des_history_fk0` FOREIGN KEY (`productId`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -194,23 +217,22 @@ DROP TABLE IF EXISTS `products`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `products`
 (
-    `id`           int(11)                                 NOT NULL AUTO_INCREMENT,
-    `name`         varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `categoryId`   int(11)                                 NOT NULL,
-    `sellerId`     varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `createdAt`    datetime                                NOT NULL DEFAULT current_timestamp(),
-    `deletedAt`    datetime,
-    `latestAuctionId` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `latestAuctionId_UNIQUE` (`latestAuctionId`),
-  KEY `products_fk0` (`categoryId`),
-  KEY `products_fk1` (`sellerId`),
-  FULLTEXT KEY `name` (`name`),
-  CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE,
-  CONSTRAINT `products_fk2` FOREIGN KEY (`latestAuctionId`) REFERENCES `auctions` (`id`)
+    `id`              int(11)                                 NOT NULL AUTO_INCREMENT,
+    `name`            varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `categoryId`      int(11)                                 NOT NULL,
+    `sellerId`        varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `createdAt`       datetime                                NOT NULL DEFAULT current_timestamp(),
+    `deletedAt`       datetime                                         DEFAULT NULL,
+    `latestAuctionId` int(11)                                          DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `latestAuctionId_UNIQUE` (`latestAuctionId`),
+    KEY `products_fk0` (`categoryId`),
+    KEY `products_fk1` (`sellerId`),
+    FULLTEXT KEY `name` (`name`),
+    CONSTRAINT `products_fk0` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
+    CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE,
+    CONSTRAINT `products_fk2` FOREIGN KEY (`latestAuctionId`) REFERENCES `auctions` (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -218,8 +240,8 @@ CREATE TABLE `products`
 --
 -- Table structure for table `upgrade_to_seller_requests`
 --
-DROP TABLE IF EXISTS upgrade_to_bidder_requests;
-DROP TABLE IF EXISTS upgrade_to_seller_requests;
+
+DROP TABLE IF EXISTS `upgrade_to_seller_requests`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `upgrade_to_seller_requests`
@@ -289,19 +311,4 @@ CREATE TABLE `users`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-21 16:59:40
-
-
-DELIMITER $$
-
-CREATE TRIGGER update_lastest_auctions
-	AFTER INSERT
-	on auctions
-    FOR EACH ROW
-BEGIN
-    UPDATE products
-    SET products.latestAuctionId = new.id
-    WHERE products.id = new.productId;
-END$$
- 
-DELIMITER ;
+-- Dump completed on 2021-12-31 23:14:00

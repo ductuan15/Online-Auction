@@ -139,7 +139,7 @@ const read = (req: Request, res: Response, next: NextFunction) => {
 }
 
 const add = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.file)
+  // console.log(req.file)
   if (req.body) {
     const data = req.body
     if (data && data.title) {

@@ -1,7 +1,7 @@
-import Product from '../models/product'
+import Product, { EditProductFormInput } from '../models/product'
 import axiosApiInstance from './api'
 import { AxiosResponse } from 'axios'
-import {Watchlist} from "../models/user";
+import { Watchlist } from '../models/user'
 
 export const SORT_TYPE = {
   desc: 'desc',
@@ -44,11 +44,22 @@ export async function searchProduct(
 export async function getProductById(
   id: number,
 ): Promise<AxiosResponse<Product>> {
-  const response = await axiosApiInstance.get<Product>(
+  // console.log(response.data)
+  return await axiosApiInstance.get<Product>(
     `${productApi}/${id}?isWithDescription=true`,
   )
-  console.log(response.data)
-  return response
+}
+
+export async function updateProductById(
+  id: number,
+  data: EditProductFormInput
+): Promise<Product> {
+  const response = await axiosApiInstance.patch<Product>(
+    `${productApi}/${id}?isWithDescription=true`,
+    data
+  )
+  // console.log(response.data)
+  return response.data
 }
 
 export const getTop: { getTopPrice(): Promise<AxiosResponse<Product[]>> } = {

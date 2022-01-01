@@ -62,23 +62,26 @@ const CarouselCard = (props: CarouselProps): JSX.Element => {
         {props.name}
       </Typography>
 
-      <Carousel
-        renderButtonGroupOutside={true}
-        draggable={false}
-        showDots
-        responsive={responsive} //Numbers of slides to show at each breakpoint
-        infinite
-        autoPlay
-        autoPlaySpeed={3000}
-        customTransition='transform 300ms ease-in-out'
-        transitionDuration={300}
-        containerClass='container-with-dots'
-        itemClass='carousel-item-padding-20-px'
-      >
-        {products.map((product) => {
-          return <ProductCard key={product.id} product={product} />
-        })}
-      </Carousel>
+      <div style={{ position: 'relative' }}>
+        <Carousel
+          renderButtonGroupOutside
+          draggable={false}
+          showDots
+          responsive={responsive} //Numbers of slides to show at each breakpoint
+          infinite
+          // autoPlay
+          autoPlaySpeed={3000}
+          customTransition='transform 300ms ease-in-out'
+          transitionDuration={300}
+          containerClass='container-with-dots'
+          itemClass='carousel-item-padding-20-px'
+          removeArrowOnDeviceType={['sm', 'md']}
+        >
+          {products.map((product) => {
+            return <ProductCard key={product.id} product={product} />
+          })}
+        </Carousel>
+      </div>
     </Container>
   )
 }

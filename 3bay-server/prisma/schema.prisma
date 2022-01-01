@@ -61,7 +61,7 @@ model Bid {
 
 model ProductDescriptionHistory {
   id          Int      @id @default(autoincrement())
-  description String   @db.VarChar(255)
+  description String   @db.Text
   productId   Int
   createdAt   DateTime @default(now()) @db.DateTime(0)
   products    Product  @relation("product_des_historyToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "product_des_history_fk0")
