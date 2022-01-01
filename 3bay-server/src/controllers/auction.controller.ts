@@ -1,3 +1,4 @@
+import Prisma from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
 import { AuctionRes } from '../types/AuctionRes.js'
@@ -8,7 +9,7 @@ export const auctionById = async (
   next: NextFunction,
 ) => {
   try {
-    const auctionId = +(req.query.auctionId || NaN)
+    const auctionId = +(req.params.auctionId || NaN)
     req.auction = await prisma.auction.findUnique({
       where: {
         id: auctionId,
@@ -69,7 +70,7 @@ export const getLatestAuction = async (
             bidder: true,
           },
         },
-        bids:true
+        bids: true,
       },
     })
     res.json(auction)
@@ -102,6 +103,29 @@ export const auctionsByProductId = async (
   } catch (error) {
     if (error instanceof Error) {
       next(error)
+    }
+  }
+}
+
+export const update = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const auction = await prisma.auction.update({
+      where: {
+        id: req.auction?.id,
+      },
+      data: {
+        winningBidId: req.bid?.id || null,
+        currentPrice: req.bid?.bidPrice || 0,
+      },
+    })
+    res.json(auction)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
     }
   }
 }

@@ -15,10 +15,11 @@ import imagesRoute from './routes/images.routes.js'
 import imagesProductRoute from './routes/image-product.routes.js'
 import productRoute from './routes/product.routes.js'
 import auctionRoute from './routes/auctions.routes.js'
+import bidRoute from './routes/bid.routes.js'
 import authRoute from './routes/auth.routes.js'
 import userRoute from './routes/user.routes.js'
 import adminRoute from './routes/admin.route.js'
-import watchlistRoute from "./routes/watchlist.route.js";
+import watchlistRoute from './routes/watchlist.route.js'
 
 import { errorHandler } from './error/error-handler.js'
 import { ProductRes } from './types/ProductRes.js'
@@ -33,8 +34,9 @@ declare global {
   namespace Express {
     interface Request {
       category?: any | null
-      product?: ProductRes | null | undefined
-      auction?: AuctionRes | null | undefined
+      product?: ProductRes | null
+      auction?: AuctionRes | null
+      bid?: Prisma.Bid | null
       id?: string | number | null
     }
     interface User extends Prisma.User {}
@@ -61,8 +63,9 @@ function initializeMiddlewares() {
 function mountRoutes() {
   app.use('/', express.static(path.join(__dirname, '../public')))
   app.use('/api/product', productRoute)
-  app.use('/api/images/product', imagesProductRoute);
+  app.use('/api/images/product', imagesProductRoute)
   app.use('/api/auction', auctionRoute)
+  app.use('/api/bid', bidRoute)
   app.use('/api/category', categoryRoute)
   app.use('/api/images', imagesRoute)
   app.use('/api/user', userRoute)

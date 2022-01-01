@@ -1,5 +1,6 @@
 import {
   AuthErrorCode,
+  BidErrorCode,
   CategoryErrorCode,
   ErrorCode,
   UserErrorCode,
@@ -161,6 +162,34 @@ export class UserError extends ErrorException {
         break
       default:
         this.status = 500
+        break
+    }
+  }
+}
+
+export class BidError extends ErrorException {
+  constructor({ code, message, metaData }: ErrorParams) {
+    super({ code, metaData, message })
+    switch (code) {
+      case BidErrorCode.InvalidBidAmount:
+        this.message = 'Bid price is invalid'
+        this.status = 406
+        break
+      case BidErrorCode.InvalidScore:
+        this.message = 'Score is not enough'
+        this.status = 406
+        break
+      case BidErrorCode.InBlacklist:
+        this.message = 'User is in blacklist of this product'
+        this.status = 406
+        break
+      case BidErrorCode.HavingPendingBid:
+        this.message = 'User is having a pending bid in this auction'
+        this.status = 406
+        break
+      case BidErrorCode.ClosedAuction:
+        this.message = 'Auction has been closed'
+        this.status = 406
         break
     }
   }

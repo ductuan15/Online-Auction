@@ -37,3 +37,11 @@ export class AuthErrorCode {
 export class UserErrorCode {
   public static readonly CannotDeleteUser = 'UserErrorCannotDeleteUser'
 }
+
+export class BidErrorCode {
+  public static readonly InvalidBidAmount = 'InvalidBidAmount'
+  public static readonly InBlacklist = 'IsInBlacklist'
+  public static readonly InvalidScore = 'InvaidScore'
+  public static readonly HavingPendingBid = 'HavingPendingBid'
+  public static readonly ClosedAuction = 'AuctionHasBeenClosed'
+}

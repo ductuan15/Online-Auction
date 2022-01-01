@@ -17,8 +17,8 @@ route
   .get(auctionController.auctionsByProductId)
 
 route
-  .route('/byProduct/openingAuction/:productId')
-  .get(auctionController.getOpenAuction)
+  .route('/byProduct/latestAuction/:productId')
+  .get(auctionController.getLatestAuction)
 route.route('/:auctionId').get(auctionController.read)
 
 route.param('auctionId', auctionController.auctionById)

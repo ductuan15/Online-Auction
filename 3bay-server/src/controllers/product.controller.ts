@@ -42,17 +42,17 @@ export const productById = async (
         seller: {
           select: userShortenSelection,
         },
-        latestAuction:{
-          include:{
-            winningBid:{
-              select:{
-                bidder:{
-                  select:userShortenSelection
+        latestAuction: {
+          include: {
+            bids: {
+              where: {
+                bidPrice:{
+                  
                 }
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       },
       rejectOnNotFound: true,
     })
