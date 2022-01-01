@@ -17,7 +17,7 @@ import Account from './pages/user/profile/Account'
 import Password from './pages/user/profile/Password'
 import Profile from './pages/user/profile/Profile'
 import RequireLogin from './components/user/auth/RequireLogin'
-import ProductDetail from './pages/common/productDetail/ProductDetail'
+import ProductDetails from './pages/common/product-details/ProductDetails'
 import ChangeEmail from './pages/user/auth/ChangeEmail'
 import ScrollToTop from './components/common/layout/ScrollToTop'
 import { UserProvider } from './contexts/user/UserContext'
@@ -29,7 +29,8 @@ import ProductsManagement from './pages/admin/ProductsManagement'
 import WatchList from './pages/user/watchlist/WatchList'
 import CreateProduct from './pages/seller/CreateProduct'
 import EditProduct from './pages/seller/EditProduct'
-import PostAuctionList from "./pages/seller/PostAuctionList";
+import PostAuctionList from './pages/seller/PostAuctionList'
+import ProductProvider from './contexts/product/ProductContext'
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -41,7 +42,14 @@ function GlobalRouter(): JSX.Element {
           <Route index element={<Home />} />
 
           <Route path='product/create' element={<CreateProduct />} />
-          <Route path='product/:id' element={<ProductDetail />} />
+          <Route
+            path='product/:id'
+            element={
+              <ProductProvider>
+                <ProductDetails />
+              </ProductProvider>
+            }
+          />
           <Route path='product/:id/edit' element={<EditProduct />} />
           {/* <Route path='products/' element={<ProductList items={[]}/>} /> */}
           <Route path='products/search' element={<SearchPage />} />

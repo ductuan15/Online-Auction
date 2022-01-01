@@ -19,7 +19,7 @@ import {
   SORT_BY,
   SORT_TYPE,
 } from '../../../services/product.service'
-import ProductList from '../productList/ProductList'
+import ProductList from '../product-list/ProductList'
 import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
 
 const SearchPage = (): JSX.Element => {

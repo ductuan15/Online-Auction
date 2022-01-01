@@ -37,7 +37,7 @@ export const initialAppBarState = {
   menuId: '',
   mobileMenuId: '',
   notifyMenuId: '',
-  notifyBadgeContent: 0,
+  notifyBadgeContent: 2,
   openDrawer: false,
 }
 

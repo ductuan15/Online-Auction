@@ -116,7 +116,7 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
         ) : (
           <Typography variant='body2' color='text.secondary'>
             <b>
-              <i>Become the first person to bid the product</i>
+              <i>No one has bid this product</i>
             </b>
           </Typography>
         )}

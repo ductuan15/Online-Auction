@@ -6,11 +6,11 @@ import Product from '../../../models/product'
 type productDetailProps = {
   product: Product | undefined
 }
-// TODO fix later
+
 const ProductImage = ({ product }: productDetailProps): JSX.Element => {
   const [images, setImages] = useState<any[]>([])
   useEffect(() => {
-    // console.log(product?.detail)    //log ra undefined => ch có product => làm sao để gọi api xong mới render mn và vì sao Info có product còn bên đây thì ko dù cả 2 render cùng lúc?
+
     const productsImage: any[] = []
     productsImage.push({
       original: product?.thumbnails.original,
@@ -37,6 +37,7 @@ const ProductImage = ({ product }: productDetailProps): JSX.Element => {
       showPlayButton={false}
       showFullscreenButton
       items={images}
+      thumbnailPosition={'left'}
     />
   )
 }
