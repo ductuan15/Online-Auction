@@ -68,7 +68,7 @@ model ProductDescriptionHistory {
   description String   @db.Text
   productId   Int
   createdAt   DateTime @default(now()) @db.DateTime(0)
-  products    Product  @relation("product_des_historyToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "product_des_history_fk0")
+  products    Product  @relation("product_des_historyToproducts", fields: [productId], references: [id], onDelete: Cascade, map: "product_des_history_fk0")
 
   @@index([productId], map: "product_des_history_fk0")
   @@map("product_des_history")
