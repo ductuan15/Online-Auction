@@ -2,7 +2,6 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import ImageGallery from 'react-image-gallery'
 import Product from '../../../models/product'
-import './ProductDetail.css'
 
 type productDetailProps = {
   product: Product | undefined

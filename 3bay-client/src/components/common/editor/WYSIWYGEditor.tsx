@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material/styles'
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import './WYSIWYGEditor.css'
+import {GREY} from '../../../theme/palette'
 
 type WYSIWYGEditorProps = {
   // value?: string
@@ -21,7 +22,6 @@ const TOOLBAR_OPTIONS: EditorProps['toolbar'] = {
     'fontFamily',
     'list',
     'textAlign',
-    'colorPicker',
     'emoji',
     'remove',
     'history',
@@ -86,6 +86,10 @@ export default function WYSIWYGEditor({
         toolbarClassName={toolbarClasses}
         toolbarStyle={{
           color: 'black',
+          background: GREY[500_8],
+        }}
+        wrapperStyle={{
+          background: GREY[500_8],
         }}
         onEditorStateChange={onEditorStateChange}
         toolbar={TOOLBAR_OPTIONS}

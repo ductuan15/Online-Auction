@@ -51,7 +51,7 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
     () => ({
       state,
       dispatch,
-      updateCurrentProduct,
+        updateCurrentProduct,
     }),
     [state, updateCurrentProduct],
   )

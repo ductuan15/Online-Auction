@@ -3,6 +3,7 @@ import { ProductFormInput } from '../../../models/product'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import {
+  Alert,
   Divider,
   Grid,
   ImageList,
@@ -21,6 +22,7 @@ import { GREY } from '../../../theme/palette'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 import DateTimeInputField from '../../common/form/DateTimeInputField'
 import moment from 'moment'
+import CategoryChooser from '../../common/form/CategoryChooser'
 
 const Input = styled('input')({
   display: 'none',
@@ -28,28 +30,36 @@ const Input = styled('input')({
 
 const Label = styled('label')({})
 
+const MIN_THUMBNAIL_FILE = 1
+const MIN_DETAILS_FILE = 2
+const MAX_DETAILS_FILE = 6
+
 type CreateProductFormProps = {
-  onSubmit?: (formData: FormData) => void
+  onSubmit: (formData: FormData) => void
+  onError: (e: unknown) => void
 }
 
 // TODO refactor me
 export default function CreateProductForm({
   onSubmit,
+  onError,
 }: CreateProductFormProps): JSX.Element {
   const {
     control,
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<ProductFormInput>({
-    mode: 'onChange',
+    mode: 'all',
+    shouldFocusError: true,
   })
 
   const [disableAllElement, setDisableAllElement] = useState(false)
 
-  const [thumbnail, setThumbnail] = useState<string>('')
+  const openPrice = watch('openPrice')
 
+  const [thumbnail, setThumbnail] = useState<string>('')
   const thumbnailFile = watch('thumbnail')
   useEffect(() => {
     setThumbnail(
@@ -73,12 +83,41 @@ export default function CreateProductForm({
     }
   }, [detailFiles, isMounted])
 
-  const submitHandler: SubmitHandler<ProductFormInput> = (data) => {
-    console.log(data)
+  const submitHandler: SubmitHandler<ProductFormInput> = async (data) => {
+    // console.log(data)
+    const formData = new FormData()
+    const { thumbnail: thumbnailFileList, detail, ...jsonData } = data
+
+    for (const [key, value] of Object.entries(jsonData)) {
+      formData.set(key, value)
+    }
+    try {
+      formData.set('thumbnail', thumbnailFileList[0])
+
+      for (let i = 0; i < detail.length && i < MAX_DETAILS_FILE; i++) {
+        formData.append('detail', detail[i])
+      }
+
+      const buyoutPrice = formData.get('buyoutPrice')
+      if (typeof buyoutPrice === 'string' && buyoutPrice.length === 0) {
+        formData.set('buyoutPrice', 'undefined')
+      }
+    } catch (e) {
+      onError(e)
+      return
+    }
+
+    // console.log(data)
+    // formData.forEach((value, key) => {
+    //   console.log(key + ' ' + value)
+    // })
     setDisableAllElement(true)
-    if (onSubmit) {
-      setDisableAllElement(true)
-      //
+    try {
+      await onSubmit(formData)
+    } finally {
+      if (isMounted()) {
+        setDisableAllElement(false)
+      }
     }
   }
 
@@ -134,9 +173,28 @@ export default function CreateProductForm({
             },
           }}
           textFieldProps={{
-            autoFocus: true,
             disabled: disableAllElement,
             margin: 'normal',
+          }}
+        />
+      </Grid>
+
+      <Grid item container xs={12} flexDirection='column' rowSpacing={3}>
+        <Typography color='text.primary' variant='h6'>
+          Category
+        </Typography>
+
+        <CategoryChooser
+          rules={{
+            required: 'This field is required',
+          }}
+          error={errors.categoryId}
+          id={'categoryId'}
+          name={'categoryId'}
+          control={control}
+          defaultValue={''}
+          selectFieldProps={{
+            disabled: disableAllElement,
           }}
         />
       </Grid>
@@ -157,6 +215,12 @@ export default function CreateProductForm({
         </Grid>
 
         <Grid item container xs={12} md={6} px={2} rowSpacing={2}>
+          {errors.thumbnail && (
+            <Grid item xs={12}>
+              <Alert severity='error'>{errors.thumbnail.message}</Alert>
+            </Grid>
+          )}
+
           <Grid item xs={12}>
             <Label htmlFor='button-thumbnail-file'>
               <Input
@@ -166,8 +230,21 @@ export default function CreateProductForm({
                 style={{
                   display: 'none',
                 }}
+                disabled={disableAllElement}
                 // onChange={onImageChange}
-                {...register('thumbnail')}
+                {...register('thumbnail', {
+                  required: 'This field is required',
+                  validate: {
+                    minFile: (value) => {
+                      if (
+                        value instanceof FileList &&
+                        value.length < MIN_THUMBNAIL_FILE
+                      ) {
+                        return 'You must choose a thumbnail for your product'
+                      }
+                    },
+                  },
+                })}
               />
 
               <Button
@@ -214,6 +291,12 @@ export default function CreateProductForm({
         </Grid>
 
         <Grid item container xs={12} md={6} px={2} rowSpacing={2}>
+          {errors.detail && (
+            <Grid item xs={12}>
+              <Alert severity='error'>{errors.detail.message}</Alert>
+            </Grid>
+          )}
+
           <Grid item xs={12}>
             <Label htmlFor='button-detail-file'>
               <Input
@@ -221,12 +304,25 @@ export default function CreateProductForm({
                 id='button-detail-file'
                 type='file'
                 multiple={true}
-                max={6}
+                max={MAX_DETAILS_FILE}
+                disabled={disableAllElement}
                 style={{
                   display: 'none',
                 }}
                 // onChange={onImageChange}
-                {...register('detail')}
+                {...register('detail', {
+                  required: 'This field is required',
+                  validate: {
+                    minFile: (value) => {
+                      if (
+                        value instanceof FileList &&
+                        value.length < MIN_DETAILS_FILE
+                      ) {
+                        return 'You must choose at least 2 photos'
+                      }
+                    },
+                  },
+                })}
               />
 
               <Button
@@ -302,6 +398,8 @@ export default function CreateProductForm({
                 onChange={field.onChange}
                 editorStyle={{
                   minHeight: 256,
+                  paddingLeft: 15,
+                  paddingRight: 15,
                 }}
                 readOnly={disableAllElement}
               />
@@ -364,11 +462,16 @@ export default function CreateProductForm({
               id='openPrice'
               name='openPrice'
               control={control}
-              defaultValue={0}
+              defaultValue={10_000}
               rules={{
                 required: 'This field is required',
+                min: {
+                  value: 10_000,
+                  message: 'Minimum increment price is 10,000',
+                },
               }}
               textFieldProps={{
+                type: 'number',
                 disabled: disableAllElement,
                 margin: 'normal',
                 InputProps: {
@@ -406,6 +509,7 @@ export default function CreateProductForm({
                 required: 'This field is required',
               }}
               textFieldProps={{
+                type: 'number',
                 disabled: disableAllElement,
                 margin: 'normal',
                 InputProps: {
@@ -434,8 +538,36 @@ export default function CreateProductForm({
               id='buyoutPrice'
               name='buyoutPrice'
               control={control}
-              defaultValue={undefined}
+              defaultValue={''}
+              rules={{
+                validate: {
+                  number: (value) => {
+                    if (
+                      !value ||
+                      (typeof value === 'string' && value.length === 0)
+                    ) {
+                      return true
+                    }
+                    if (isNaN(+value)) {
+                      return 'Wrong number format'
+                    }
+                  },
+                  largerThanOpenPrice: (value) => {
+                    if (
+                      value &&
+                      !isNaN(+value) &&
+                      openPrice &&
+                      !isNaN(+openPrice) &&
+                      +value < +openPrice
+                    ) {
+                      return 'Instant buyout price should be larger than Starting Bid price'
+                    }
+                    return true
+                  },
+                },
+              }}
               textFieldProps={{
+                // type: 'number',
                 disabled: disableAllElement,
                 margin: 'normal',
                 InputProps: {
@@ -448,6 +580,7 @@ export default function CreateProductForm({
           </Grid>
         </Grid>
 
+        {/* closeTime */}
         <Grid item container xs={12} md={6} pr={1}>
           <Grid item xs={12} flexDirection='column'>
             <Typography
@@ -464,8 +597,23 @@ export default function CreateProductForm({
                 name='closeTime'
                 control={control}
                 defaultValue={null}
+                rules={{
+                  required: 'This field is required',
+                  validate: {
+                    afterNow: (date) => {
+                      if (
+                        moment.isMoment(date) &&
+                        !moment(date).subtract(1, 'day').isAfter()
+                      ) {
+                        console.log(moment(date).subtract(1, 'day'))
+                        return 'The auction should last at least 1 day from the current time'
+                      }
+                      return true
+                    },
+                  },
+                }}
                 dateTimePickerProps={{
-                  minDateTime: moment(),
+                  minDateTime: moment().add(1, 'day').add(1, 'hour'),
                   disabled: disableAllElement,
                 }}
                 textFieldProps={{
@@ -476,6 +624,7 @@ export default function CreateProductForm({
           </Grid>
         </Grid>
 
+        {/* autoExtendAuctionTiming */}
         <Grid item xs={12} md={6} pl={1} alignSelf='center'>
           <Grid item xs={12} flexDirection='column'>
             <Typography
@@ -506,6 +655,7 @@ export default function CreateProductForm({
             variant='contained'
             type='submit'
             size='large'
+            color={isValid ? 'primary' : 'error'}
             startIcon={<SaveOutlinedIcon />}
           >
             Save changes

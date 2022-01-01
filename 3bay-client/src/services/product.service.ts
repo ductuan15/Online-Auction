@@ -1,6 +1,7 @@
-import Product from '../models/product'
+import Product, { EditProductFormInput } from '../models/product'
 import axiosApiInstance from './api'
 import { AxiosResponse } from 'axios'
+import { Watchlist } from '../models/user'
 
 export const SORT_TYPE = {
   desc: 'desc',
@@ -43,11 +44,22 @@ export async function searchProduct(
 export async function getProductById(
   id: number,
 ): Promise<AxiosResponse<Product>> {
-  const response = await axiosApiInstance.get<Product>(
+  // console.log(response.data)
+  return await axiosApiInstance.get<Product>(
     `${productApi}/${id}?isWithDescription=true`,
   )
-  console.log(response.data)
-  return response
+}
+
+export async function updateProductById(
+  id: number,
+  data: EditProductFormInput
+): Promise<Product> {
+  const response = await axiosApiInstance.patch<Product>(
+    `${productApi}/${id}?isWithDescription=true`,
+    data
+  )
+  // console.log(response.data)
+  return response.data
 }
 
 export const getTop: { getTopPrice(): Promise<AxiosResponse<Product[]>> } = {
@@ -57,20 +69,18 @@ export const getTop: { getTopPrice(): Promise<AxiosResponse<Product[]>> } = {
 }
 
 export async function addToWatchList(
-  id: number,
-): Promise<AxiosResponse<Product>> {
-  const response = await axiosApiInstance.post<Product>(
+  id?: number,
+): Promise<AxiosResponse<Watchlist>> {
+  return await axiosApiInstance.post<Watchlist>(
     `api/watchlist/byUser/${id}`,
   )
-  return response
 }
 
 export async function deleteProdWatchList(
-  id: number,
-): Promise<AxiosResponse<Product>> {
-  const response = await axiosApiInstance.delete<Product>(
+  id?: number,
+): Promise<AxiosResponse<Watchlist>> {
+  return await axiosApiInstance.delete<Watchlist>(
     `api/watchlist/byUser/${id}`,
   )
-  console.log(response.data)
-  return response
+
 }

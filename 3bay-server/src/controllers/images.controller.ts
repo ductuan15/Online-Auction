@@ -76,7 +76,7 @@ const findCategoryThumbnail = async (
 
     return res.sendFile(fileOutName)
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return res.status(404).json({
       error: 'Could not found category',
     })

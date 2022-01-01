@@ -53,6 +53,11 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
             type: 'GET_ACCOUNT_INFO',
             payload: user,
           })
+          const watchList = await UserService.getUserWatchList()
+          dispatch({
+            type: 'UPDATE_WATCH_LIST',
+            payload: watchList,
+          })
         } else {
           dispatch({
             type: 'GET_ACCOUNT_INFO',

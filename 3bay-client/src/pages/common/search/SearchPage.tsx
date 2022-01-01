@@ -13,7 +13,6 @@ import {
 import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
-import Category from '../../../models/category'
 import Product from '../../../models/product'
 import {
   searchProduct,
@@ -21,6 +20,7 @@ import {
   SORT_TYPE,
 } from '../../../services/product.service'
 import ProductList from '../productList/ProductList'
+import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
 
 const SearchPage = (): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -92,23 +92,6 @@ const SearchPage = (): JSX.Element => {
       await fetchData()
     })()
   }, [currentPage, sortBy, sortType, categoryId])
-
-  const renderCategorySelection = (categories: Category[]): JSX.Element[] => {
-    const components: JSX.Element[] = []
-
-    categories.forEach((category) => {
-      if (category.otherCategories) {
-        components.push(<ListSubheader>{category.title}</ListSubheader>)
-        components.push(...renderCategorySelection(category.otherCategories))
-      } else {
-        components.push(
-          <MenuItem value={category.id}>{category.title}</MenuItem>,
-        )
-      }
-    })
-
-    return components
-  }
   const handlePriceSortChange = (event: SelectChangeEvent) => {
     const [sortBy, sortType] = event.target.value.split('-')
     setSortBy(sortBy)
@@ -157,7 +140,7 @@ const SearchPage = (): JSX.Element => {
       <FormControl sx={{ minWidth: 240 }}>
         <InputLabel id='category-select-label'>Category</InputLabel>
         <Select
-          labelId='category-select-labell'
+          labelId='category-select-label'
           id='category-select'
           value={categoryId + ''}
           label='Category'

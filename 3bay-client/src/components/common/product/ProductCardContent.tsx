@@ -1,10 +1,10 @@
 import Product from '../../../models/product'
-import {SxProps} from '@mui/system'
-import {useTheme} from '@mui/material/styles'
-import {useCallback, useEffect, useRef, useState} from 'react'
+import { SxProps } from '@mui/system'
+import { useTheme } from '@mui/material/styles'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import moment from 'moment'
 import CardContent from '@mui/material/CardContent'
-import {Box} from '@mui/material'
+import { Box } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 
@@ -43,12 +43,12 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
       if (timer.current) {
         clearInterval(timer.current)
       }
-      setEndTimeCountDownText('ENDED')
+      setEndTimeCountDownText('🔴 ENDED')
       return
     }
     // TODO: countdown when the time is less than 24h
 
-    setEndTimeCountDownText(`${now.to(closeTime)} (${closeTimeFormattedStr})`)
+    setEndTimeCountDownText(`🟢 ${now.to(closeTime)} (${closeTimeFormattedStr})`)
   }, [closeTime, closeTimeFormattedStr])
 
   useEffect(() => {
@@ -67,45 +67,82 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
       </Typography>
 
       {/* Buy out price */}
-      {product.latestAuction?.buyoutPrice && (
-        <Typography variant='caption' color='text.secondary' fontStyle='italic'>
-          Instant buy with
-          <b> {product.latestAuction?.buyoutPrice} </b> VND
-        </Typography>
-      )}
+      <Typography
+        variant='caption'
+        color='text.secondary'
+        fontStyle='italic'
+        minHeight={`${theme.typography.caption.lineHeight}em`}
+      >
+        {product.latestAuction?.buyoutPrice && (
+          <>
+            {' '}
+            Instant buy with
+            <b> {product.latestAuction?.buyoutPrice} </b> VND
+          </>
+        )}
+      </Typography>
 
-      <Box display='flex' alignItems='center' flexDirection='row' my={1}>
-        <Typography variant='body1'>Bid by</Typography>
+      <Box
+        display='flex'
+        alignItems='center'
+        flexDirection='row'
+        my={1}
+        minHeight={25}
+      >
+        {product.latestAuction?._count.bids ? (
+          <>
+            <Typography variant='body1'>Bid by</Typography>
 
-        {/*Bidder with highest price*/}
-        <BackgroundLetterAvatars
-          name={product.latestAuction?.winningBid?.name || 'Tuan Cuong'}
-          fontSize={`${theme.typography.caption.fontSize}`}
-          sx={{
-            ml: 1,
-            width: `25px`,
-            height: `25px`,
-          }}
-        />
+            {/*Bidder with highest price*/}
+            <BackgroundLetterAvatars
+              name={product.latestAuction?.winningBid?.name || 'Tuan Cuong'}
+              fontSize={`${theme.typography.caption.fontSize}`}
+              sx={{
+                ml: 1,
+                width: `25px`,
+                height: `25px`,
+              }}
+            />
 
-        <Box flexGrow={1} />
+            <Box flexGrow={1} />
 
-        {/*Display total number of people (excluding 1 person) are currently bidding */}
-        {totalBidder >= 0 && (
+            {/*Display total number of people (excluding 1 person) are currently bidding */}
+            {totalBidder >= 0 && (
+              <Typography variant='body2' color='text.secondary'>
+                & <b>{product.latestAuction?._count.bids || 0}</b> other people
+              </Typography>
+            )}
+          </>
+        ) : (
           <Typography variant='body2' color='text.secondary'>
-            & <b>{product.latestAuction?._count.bids || 0}</b> other people
+            <b>
+              <i>Become the first person to bid the product</i>
+            </b>
           </Typography>
         )}
       </Box>
 
       {dateCreated && (
-        <Typography variant='body2' color='text.secondary'>
+        <Typography
+          variant='body2'
+          color='text.secondary'
+          minHeight={`${theme.typography.body2.lineHeight}em`}
+        >
           {dateCreatedText}
         </Typography>
       )}
 
       {endTimeCountDownText && (
-        <Typography variant='body2' color='text.secondary'>
+        <Typography
+          variant='body2'
+          color='text.secondary'
+          height={`${theme.typography.body2.lineHeight}em`}
+          style={{
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+          }}
+        >
           {endTimeCountDownText}
         </Typography>
       )}
