@@ -2,18 +2,20 @@ import { useState } from 'react'
 import ProductCard from '../product/ProductCard'
 import Carousel, { DotProps } from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
-import './Carousel.css'
+import './ProductCarousel.css'
 import { Container, Divider } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Product from '../../../models/product'
 import { AxiosResponse } from 'axios'
 import { useEffectOnce } from '../../../hooks'
-import { Theme, useTheme } from '@mui/material/styles'
+import { styled, Theme, useTheme } from '@mui/material/styles'
 import { GREY } from '../../../theme/palette'
+import ProductCardSkeleton from '../product/ProductCardSkeleton'
 
 type CarouselProps = {
   name: string
   fetchFunction: () => Promise<AxiosResponse<Product[]>>
+  showLoading?: boolean
 }
 
 const responsive = {
@@ -39,6 +41,8 @@ const responsive = {
   },
 }
 
+const StyledButton = styled('button')({})
+
 const CustomDots = ({
   index,
   active,
@@ -49,12 +53,12 @@ const CustomDots = ({
   const totalItems = carouselState?.totalItems ?? 1
   const widthPercent = 100 / totalItems
   return (
-    <button
+    <StyledButton
       onClick={(e) => {
         onClick?.()
         e.preventDefault()
       }}
-      style={{
+      sx={{
         width: `${widthPercent}%`,
         marginLeft: index === 0 ? 0 : '4px',
         marginRight: index === totalItems - 1 ? 0 : '4px',
@@ -65,20 +69,33 @@ const CustomDots = ({
         outline: 'none',
         borderRadius: '8px',
         height: '6px',
+        '&:hover': {
+          backgroundColor: active
+            ? `${theme.palette.primary.main}`
+            : `${GREY[500_80]}`,
+          transform: 'scale(1, 2)',
+        },
       }}
     />
   )
 }
 
-const CarouselCard = (props: CarouselProps): JSX.Element => {
+const ProductCarousel = ({
+  name,
+  fetchFunction,
+  showLoading,
+}: CarouselProps): JSX.Element => {
   const [products, setProducts] = useState<Product[]>([])
-
+  const [isLoading, setLoading] = useState(true)
   const theme = useTheme()
 
   useEffectOnce(() => {
     ;(async () => {
-      const response = await props.fetchFunction()
-      setProducts(response.data)
+      setTimeout(async () => {
+        const response = await fetchFunction()
+        setProducts(response.data)
+        setLoading(false)
+      }, 5000)
       // console.log(response.data)
     })()
   })
@@ -94,7 +111,7 @@ const CarouselCard = (props: CarouselProps): JSX.Element => {
         color='text.primary'
         align='center'
       >
-        {props.name}
+        {name}
       </Typography>
 
       <Carousel
@@ -112,12 +129,16 @@ const CarouselCard = (props: CarouselProps): JSX.Element => {
         removeArrowOnDeviceType={['sm', 'md']}
         customDot={<CustomDots theme={theme} />}
       >
-        {products.map((product) => {
-          return <ProductCard key={product.id} product={product} />
-        })}
+        {isLoading && showLoading
+          ? [1, 2, 3, 4, 5].map((key) => {
+              return <ProductCardSkeleton key={key} />
+            })
+          : products.map((product) => {
+              return <ProductCard key={product.id} product={product} />
+            })}
       </Carousel>
     </Container>
   )
 }
 
-export default CarouselCard
+export default ProductCarousel

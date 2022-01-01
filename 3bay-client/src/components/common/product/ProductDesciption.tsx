@@ -71,7 +71,14 @@ const ProductDescription = ({
       {product
         ? product.productDescriptionHistory.map(function (des) {
             return (
-              <Grid item xs={12} key={des.id} mt={2} flexDirection='column'>
+              <Grid
+                item
+                container
+                xs={12}
+                key={des.id}
+                mt={2}
+                flexDirection='column'
+              >
                 <Typography variant='body1' color='text.primary'>
                   ✏️ {moment(des.createdAt).format('L')}
                 </Typography>

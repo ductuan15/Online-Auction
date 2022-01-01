@@ -5,7 +5,7 @@ import ProductImage from '../../../components/common/product/ProductImage'
 import ProductInfo from '../../../components/common/product/ProductInfo'
 import { getProductById, getTop } from '../../../services/product.service'
 import { useParams } from 'react-router-dom'
-import CarouselCard from '../../../components/common/carousel/Carousel'
+import ProductCarousel from '../../../components/common/carousel/ProductCarousel'
 
 import ProductDescription from '../../../components/common/product/ProductDesciption'
 import './ProductDetails.css'
@@ -58,9 +58,10 @@ const ProductDetails = (): JSX.Element | null => {
         <ProductDescription product={state.currentProduct} />
       </Grid>
 
-      <CarouselCard
+      <ProductCarousel
         name={'Related Products'}
         fetchFunction={getTop.getTopPrice}
+        showLoading={true}
       />
     </Grid>
   ) : null

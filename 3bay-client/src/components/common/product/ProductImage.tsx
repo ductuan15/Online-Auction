@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import ImageGallery from 'react-image-gallery'
+import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery'
 import Product from '../../../models/product'
 
 type productDetailProps = {
@@ -8,14 +8,15 @@ type productDetailProps = {
 }
 
 const ProductImage = ({ product }: productDetailProps): JSX.Element => {
-  const [images, setImages] = useState<any[]>([])
+  const [images, setImages] = useState<ReactImageGalleryItem[]>([])
   useEffect(() => {
-
-    const productsImage: any[] = []
+    const productsImage: ReactImageGalleryItem[] = []
+    console.log(product)
     productsImage.push({
-      original: product?.thumbnails.original,
-      thumbnail: product?.thumbnails.original,
+      original: product?.thumbnails.original || '',
+      thumbnail: product?.thumbnails.sm,
     })
+
     if (product?.detail) {
       product?.detail.forEach((image) => {
         productsImage.push({

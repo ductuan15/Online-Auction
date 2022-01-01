@@ -146,6 +146,9 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
   useEffect(() => {
     showRemaining()
     timer.current = setInterval(showRemaining, 1000)
+    return () => {
+      timer.current && clearInterval(timer.current)
+    }
   }, [showRemaining])
 
   return product ? (

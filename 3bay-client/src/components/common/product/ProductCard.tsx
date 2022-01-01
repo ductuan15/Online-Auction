@@ -69,7 +69,6 @@ const imageSx: SxProps<Theme> = (theme) => ({
 })
 
 // TODO: reactor me
-// TODO: extract the countdown logic
 const ProductCard = ({ product }: CardProps): JSX.Element => {
   const theme = useTheme()
   const [scale, setScale] = useState(1.0)

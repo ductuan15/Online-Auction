@@ -1,7 +1,7 @@
 import * as React from 'react'
 import MainBanner from '../../components/common/home/MainBanner'
 import { Grid, Typography } from '@mui/material'
-import CarouselCard from '../../components/common/carousel/Carousel'
+import ProductCarousel from '../../components/common/carousel/ProductCarousel'
 import Link from '@mui/material/Link'
 import { Link as RouterLink } from 'react-router-dom'
 import AdminMenu from '../../components/admin/home/AdminMenu'
@@ -43,7 +43,11 @@ const Home = (): JSX.Element => {
           👁️👄👁️
         </Typography>
 
-        <CarouselCard name={'🔎 Popular items'} fetchFunction={getTop.getTopPrice} />
+        <ProductCarousel
+          name={'🔎 Popular items'}
+          fetchFunction={getTop.getTopPrice}
+          showLoading={true}
+        />
 
         <Link
           component={RouterLink}
