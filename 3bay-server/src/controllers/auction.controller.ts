@@ -1,7 +1,13 @@
-import Prisma from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
 import { AuctionRes } from '../types/AuctionRes.js'
+
+const userShortenSelection = {
+  uuid: true,
+  name: true,
+  address: true,
+  email: true,
+}
 
 export const auctionById = async (
   req: Request,
@@ -13,6 +19,15 @@ export const auctionById = async (
     req.auction = await prisma.auction.findUnique({
       where: {
         id: auctionId,
+      },
+      include: {
+        winningBid: {
+          include: {
+            bidder: {
+              select: userShortenSelection,
+            },
+          },
+        },
       },
       rejectOnNotFound: true,
     })
@@ -26,7 +41,7 @@ export const auctionById = async (
 
 export const read = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.json(req.product)
+    res.json(req.auction)
   } catch (error) {
     if (error instanceof Error) {
       next(error)
@@ -67,7 +82,9 @@ export const getLatestAuction = async (
       include: {
         winningBid: {
           include: {
-            bidder: true,
+            bidder: {
+              select: userShortenSelection,
+            },
           },
         },
         bids: true,
@@ -94,7 +111,9 @@ export const auctionsByProductId = async (
       include: {
         winningBid: {
           include: {
-            bidder: true,
+            bidder: {
+              select: userShortenSelection,
+            },
           },
         },
       },
@@ -126,6 +145,25 @@ export const update = async (
   } catch (err) {
     if (err instanceof Error) {
       next(err)
+    }
+  }
+}
+
+export const checkAuctionExist = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    req.auction = await prisma.auction.findFirst({
+      where: {
+        id: +req.params.auctionId
+      },
+    })
+    next()
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
     }
   }
 }

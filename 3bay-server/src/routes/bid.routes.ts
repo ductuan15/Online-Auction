@@ -41,7 +41,7 @@ route.route('/setRejected/:auctionId/:bidId').patch(
   bidController.getPrevWinningBid,
   auctionController.update,
 )
-route.param('auctionId', auctionController.auctionById)
+route.param('auctionId', auctionController.checkAuctionExist)
 route.param('bidId', bidController.bidById)
 
 export default route
