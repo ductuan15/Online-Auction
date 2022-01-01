@@ -145,7 +145,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
   } = useAppBarContext()
 
   const navigate = useNavigate()
-  const { isAuth, signOut } = useAuth()
+  const { isAuth, signOut, user } = useAuth()
 
   function onSignOutButtonClicked() {
     signOut(() => {
@@ -188,6 +188,15 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
             <LoginOutlinedIcon fontSize='small' />
           </ListItemIcon>
           Sign in
+        </MenuItem>
+      )}
+
+      {user && user.role === 'SELLER' && (
+        <MenuItem component={RouterLink} to='/user/auctionlist'>
+          <ListItemIcon>
+            <LoginOutlinedIcon fontSize='small' />
+          </ListItemIcon>
+          Auction list
         </MenuItem>
       )}
 

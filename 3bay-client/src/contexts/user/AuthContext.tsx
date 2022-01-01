@@ -45,6 +45,7 @@ const AuthContext = createContext<AuthContextType>({
   updateUserInfo: (): never => {
     throw new Error('Forgot to wrap component in `AuthProvider`')
   },
+  user: undefined
 })
 
 export const useAuth = (): AuthContextType => {
