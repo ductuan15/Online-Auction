@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import {Grid, Paper} from '@mui/material'
+import { useEffect, useState } from 'react'
+import { Grid, Paper, Skeleton } from '@mui/material'
 
 import ProductImage from '../../../components/common/product/ProductImage'
 import ProductInfo from '../../../components/common/product/ProductInfo'
@@ -10,14 +10,17 @@ import ProductCarousel from '../../../components/common/carousel/ProductCarousel
 import ProductDescription from '../../../components/common/product/ProductDesciption'
 import './ProductDetails.css'
 import { useProductContext } from '../../../contexts/product/ProductContext'
+import ProductInfoSkeleton from '../../../components/common/product/ProductInfoSkeleton'
 
+// TODO fetch related products instead of `getTop.getTopPrice`
 const ProductDetails = (): JSX.Element | null => {
   const { state, dispatch } = useProductContext()
   const { id } = useParams()
+  const [isLoading, setLoading] = useState(true)
 
   useEffect(() => {
-    ;(async () => {
-
+    setLoading(true)
+    setTimeout(async () => {
       if (id && +id) {
         const response = await getProductById(+id)
         dispatch({
@@ -25,10 +28,11 @@ const ProductDetails = (): JSX.Element | null => {
           payload: response.data,
         })
       }
-    })()
+      setLoading(false)
+    }, 3000)
   }, [dispatch, id])
 
-  return state.currentProduct ? (
+  return (
     <Grid
       container
       xs={12}
@@ -38,24 +42,62 @@ const ProductDetails = (): JSX.Element | null => {
       flexDirection='column'
       rowSpacing={2}
     >
-      <Grid
-        container
-        item
-        xs={12}
-        alignItems='flex-start'
-        rowSpacing={2}
-      >
+      <Grid container item xs={12} alignItems='flex-start' rowSpacing={2}>
         <Grid item xs={12} md={6} component={Paper} variant='outlined' p={2}>
-          <ProductImage product={state.currentProduct} />
+          {isLoading ? (
+            <Skeleton
+              variant='rectangular'
+              sx={{
+                height: '435px',
+                width: 1,
+              }}
+            />
+          ) : (
+            <ProductImage product={state.currentProduct} />
+          )}
         </Grid>
 
         <Grid container item xs={12} md={6} p={2}>
-          <ProductInfo product={state.currentProduct} />
+          {isLoading ? (
+            <ProductInfoSkeleton />
+          ) : (
+            <>
+              {state.currentProduct && (
+                <ProductInfo product={state.currentProduct} />
+              )}
+            </>
+          )}
         </Grid>
       </Grid>
 
       <Grid item container xs={12}>
-        <ProductDescription product={state.currentProduct} />
+        {isLoading ? (
+          <Paper
+            elevation={0}
+            component={Grid}
+            container
+            item
+            variant='outlined'
+            flexDirection='row'
+            xs={12}
+            p={2}
+            px={3}
+          >
+            <Skeleton
+              variant='rectangular'
+              sx={{
+                height: '435px',
+                width: 1,
+              }}
+            />
+          </Paper>
+        ) : (
+          <>
+            {state.currentProduct && (
+              <ProductDescription product={state.currentProduct} />
+            )}
+          </>
+        )}
       </Grid>
 
       <ProductCarousel
@@ -64,6 +106,6 @@ const ProductDetails = (): JSX.Element | null => {
         showLoading={true}
       />
     </Grid>
-  ) : null
+  )
 }
 export default ProductDetails

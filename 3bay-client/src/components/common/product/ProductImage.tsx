@@ -11,7 +11,7 @@ const ProductImage = ({ product }: productDetailProps): JSX.Element => {
   const [images, setImages] = useState<ReactImageGalleryItem[]>([])
   useEffect(() => {
     const productsImage: ReactImageGalleryItem[] = []
-    console.log(product)
+    // console.log(product)
     productsImage.push({
       original: product?.thumbnails.original || '',
       thumbnail: product?.thumbnails.sm,

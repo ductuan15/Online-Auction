@@ -39,6 +39,7 @@ const ProductDescription = ({
       elevation={0}
       component={Grid}
       container
+      item
       variant='outlined'
       flexDirection='row'
       xs={12}

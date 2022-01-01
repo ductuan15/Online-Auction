@@ -91,11 +91,12 @@ const ProductCarousel = ({
 
   useEffectOnce(() => {
     ;(async () => {
+      setLoading(true)
       setTimeout(async () => {
         const response = await fetchFunction()
         setProducts(response.data)
         setLoading(false)
-      }, 5000)
+      }, 1000)
       // console.log(response.data)
     })()
   })

@@ -605,7 +605,7 @@ export default function CreateProductForm({
                         moment.isMoment(date) &&
                         !moment(date).subtract(1, 'day').isAfter()
                       ) {
-                        console.log(moment(date).subtract(1, 'day'))
+                        // console.log(moment(date).subtract(1, 'day'))
                         return 'The auction should last at least 1 day from the current time'
                       }
                       return true
