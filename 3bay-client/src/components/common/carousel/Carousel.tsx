@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import ProductCard from '../product/ProductCard'
-import Carousel from 'react-multi-carousel'
+import Carousel, { DotProps } from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import './Carousel.css'
 import { Container, Divider } from '@mui/material'
@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography'
 import Product from '../../../models/product'
 import { AxiosResponse } from 'axios'
 import { useEffectOnce } from '../../../hooks'
+import { Theme, useTheme } from '@mui/material/styles'
+import { GREY } from '../../../theme/palette'
 
 type CarouselProps = {
   name: string
@@ -37,8 +39,41 @@ const responsive = {
   },
 }
 
+const CustomDots = ({
+  index,
+  active,
+  onClick,
+  carouselState,
+  theme,
+}: DotProps & { theme: Theme }) => {
+  const totalItems = carouselState?.totalItems ?? 1
+  const widthPercent = 100 / totalItems
+  return (
+    <button
+      onClick={(e) => {
+        onClick?.()
+        e.preventDefault()
+      }}
+      style={{
+        width: `${widthPercent}%`,
+        marginLeft: index === 0 ? 0 : '4px',
+        marginRight: index === totalItems - 1 ? 0 : '4px',
+        backgroundColor: active
+          ? `${theme.palette.primary.main}`
+          : `${GREY[500_48]}`,
+        border: 'none',
+        outline: 'none',
+        borderRadius: '8px',
+        height: '6px',
+      }}
+    />
+  )
+}
+
 const CarouselCard = (props: CarouselProps): JSX.Element => {
   const [products, setProducts] = useState<Product[]>([])
+
+  const theme = useTheme()
 
   useEffectOnce(() => {
     ;(async () => {
@@ -49,7 +84,7 @@ const CarouselCard = (props: CarouselProps): JSX.Element => {
   })
 
   return (
-    <Container>
+    <Container sx={{ pb: 2 }}>
       <Divider />
       <Typography
         pt={2}
@@ -62,26 +97,25 @@ const CarouselCard = (props: CarouselProps): JSX.Element => {
         {props.name}
       </Typography>
 
-      <div style={{ position: 'relative' }}>
-        <Carousel
-          renderButtonGroupOutside
-          draggable={false}
-          showDots
-          responsive={responsive} //Numbers of slides to show at each breakpoint
-          infinite
-          // autoPlay
-          autoPlaySpeed={3000}
-          customTransition='transform 300ms ease-in-out'
-          transitionDuration={300}
-          containerClass='container-with-dots'
-          itemClass='carousel-item-padding-20-px'
-          removeArrowOnDeviceType={['sm', 'md']}
-        >
-          {products.map((product) => {
-            return <ProductCard key={product.id} product={product} />
-          })}
-        </Carousel>
-      </div>
+      <Carousel
+        renderButtonGroupOutside
+        draggable={false}
+        showDots
+        responsive={responsive} //Numbers of slides to show at each breakpoint
+        infinite
+        // autoPlay
+        autoPlaySpeed={3000}
+        customTransition='transform 300ms ease-in-out'
+        transitionDuration={300}
+        containerClass='container-with-dots'
+        itemClass='carousel-item-padding-20-px'
+        removeArrowOnDeviceType={['sm', 'md']}
+        customDot={<CustomDots theme={theme} />}
+      >
+        {products.map((product) => {
+          return <ProductCard key={product.id} product={product} />
+        })}
+      </Carousel>
     </Container>
   )
 }
