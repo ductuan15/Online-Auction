@@ -32,6 +32,10 @@ model Auction {
   winningBidId                                Int?
   autoExtendAuctionTiming                     Boolean
   currentPrice                                Decimal   @default(0.0000) @db.Decimal(19, 4)
+  sellerComment                               String?   @db.VarChar(255)
+  sellerReview                                Boolean?
+  bidderComment                               String?   @db.VarChar(255)
+  bidderReview                                Boolean?
   product                                     Product   @relation("auctionsToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "auctions_fk0")
   winningBid                                  Bid?      @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auctions_fk1")
   bids                                        Bid[]     @relation("auctionsTobids_auctionId")
@@ -43,16 +47,16 @@ model Auction {
 }
 
 model Bid {
-  id             Int       @id
-  bidPrice       Decimal   @default(0.0000) @db.Decimal(19, 4)
-  bidTime        DateTime  @default(now()) @db.DateTime(0)
-  bidComment     String?   @db.VarChar(255)
-  isAccepted     Boolean   @default(true)
-  bidderId       String    @db.VarChar(255)
+  id             Int        @id @default(autoincrement())
+  bidPrice       Decimal    @default(0.0000) @db.Decimal(19, 4)
+  bidTime        DateTime   @default(now()) @db.DateTime(0)
+  bidComment     String?    @db.VarChar(255)
+  bidderId       String     @db.VarChar(255)
   auctionId      Int
-  auction        Auction   @relation("auctionsTobids_auctionId", fields: [auctionId], references: [id], onUpdate: Restrict, map: "bids_fk1")
-  bidder         User      @relation("bidsTousers", fields: [bidderId], references: [uuid], onUpdate: Restrict, map: "bids_fk0")
-  winningAuction Auction[] @relation("auctions_winningBidIdTobids")
+  status         BidsStatus @default(PENDING)
+  auction        Auction    @relation("auctionsTobids_auctionId", fields: [auctionId], references: [id], onUpdate: Restrict, map: "bids_fk1")
+  bidder         User       @relation("bidsTousers", fields: [bidderId], references: [uuid], onUpdate: Restrict, map: "bids_fk0")
+  winningAuction Auction[]  @relation("auctions_winningBidIdTobids")
 
   @@index([bidderId], map: "bids_fk0")
   @@index([auctionId], map: "bids_fk1")
@@ -165,4 +169,10 @@ enum OtpType {
   CHANGE_EMAIL
 
   @@map("otp_type")
+}
+
+enum BidsStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

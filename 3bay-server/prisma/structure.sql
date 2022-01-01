@@ -34,6 +34,10 @@ CREATE TABLE `auctions`
     `winningBidId`            int(11)                 DEFAULT NULL,
     `autoExtendAuctionTiming` tinyint(1)     NOT NULL,
     `currentPrice`            decimal(19,4)  NOT NULL DEFAULT '0.0000',
+    `sellerComment`           varchar(255)  COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `sellerReview`            tinyint(1)    DEFAULT NULL,
+    `bidderComment`           varchar(255)  COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `bidderReview`            tinyint(1)    DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `auctions_fk0` (`productId`),
     KEY `auctions_fk1` (`winningBidId`),
@@ -83,13 +87,13 @@ DROP TABLE IF EXISTS `bids`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `bids`
 (
-    `id`         int(11)                                 NOT NULL,
+    `id`         int(11)                                 NOT NULL,AUTO_INCREMENT,
     `bidPrice`   decimal(19, 4)                          NOT NULL DEFAULT 0.0000,
     `bidTime`    datetime                                NOT NULL DEFAULT current_timestamp(),
     `bidComment` varchar(255) COLLATE utf8mb4_unicode_ci          DEFAULT NULL,
-    `isAccepted` tinyint(1)                              NOT NULL DEFAULT 1,
     `bidderId`   varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-    `auctionId`  int(11)                                 NOT NULL,
+    `auctionId`  int(11)   
+    `status`     enum('PENDING','ACCEPTED','REJECTED')   COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDING',                              NOT NULL,
     PRIMARY KEY (`id`),
     KEY `bids_fk0` (`bidderId`),
     KEY `bids_fk1` (`auctionId`),
@@ -160,7 +164,6 @@ CREATE TABLE `product_des_history`
     KEY `product_des_history_fk0` (`productId`),
     CONSTRAINT `product_des_history_fk0` FOREIGN KEY (`productId`) REFERENCES `products` (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -210,7 +213,6 @@ CREATE TABLE `products`
   CONSTRAINT `products_fk1` FOREIGN KEY (`sellerId`) REFERENCES `users` (`uuid`) ON UPDATE CASCADE,
   CONSTRAINT `products_fk2` FOREIGN KEY (`latestAuctionId`) REFERENCES `auctions` (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
