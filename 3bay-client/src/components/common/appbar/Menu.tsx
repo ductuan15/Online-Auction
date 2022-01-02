@@ -192,11 +192,11 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       )}
 
       {user && user.role === 'SELLER' && (
-        <MenuItem component={RouterLink} to='/user/auctionlist'>
+        <MenuItem component={RouterLink} to='/user/postedproductlist'>
           <ListItemIcon>
             <LoginOutlinedIcon fontSize='small' />
           </ListItemIcon>
-          Auction list
+          Posted product list
         </MenuItem>
       )}
 
