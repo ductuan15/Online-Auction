@@ -12,9 +12,8 @@ import {
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   NavigateFunction,
-  useMatch,
   useNavigate,
-  useResolvedPath,
+  useSearchParams,
 } from 'react-router-dom'
 import StyledListSubheader from './StyledListSubheader'
 
@@ -27,13 +26,13 @@ const CategoryItem = ({ navigate, category }: CategoryItemProps) => {
   const [open, setOpen] = useState(true)
 
   const categoryLink = `/products/search/?categoryId=${category.id}`
-  const resolved = useResolvedPath(categoryLink)
-  const match = useMatch({ path: resolved.pathname, end: true })
+
+  const [searchParams] = useSearchParams()
+  const categoryIdParam = searchParams.get('categoryId')
 
   const onCategoryClicked = (e: SyntheticEvent) => {
     e.stopPropagation()
     navigate(categoryLink)
-    window.location.reload();
   }
 
   const handleExpand = (e: SyntheticEvent) => {
@@ -46,7 +45,10 @@ const CategoryItem = ({ navigate, category }: CategoryItemProps) => {
 
   return (
     <React.Fragment key={category.id}>
-      <ListItemButton onClick={onCategoryClicked} selected={!!match}>
+      <ListItemButton
+        onClick={onCategoryClicked}
+        selected={categoryIdParam === `${category.id}`}
+      >
         <ListItemText
           primary={category.title}
           primaryTypographyProps={{

@@ -48,6 +48,13 @@ const SearchPage = (): JSX.Element => {
   const { state } = useCategoryContext()
   const { allCategories } = state
 
+  useEffect(() => {
+    const newCategoryId = searchParams.get('categoryId')
+    if (newCategoryId && newCategoryId !== categoryId) {
+      setCategoryId(newCategoryId)
+    }
+  }, [categoryId, searchParams])
+
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true)

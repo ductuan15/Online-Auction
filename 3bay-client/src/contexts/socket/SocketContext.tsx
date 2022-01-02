@@ -31,6 +31,8 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
           extraHeaders: {
             Authorization: `Bearer ${user.token}`,
           },
+          reconnection: !!user,
+          reconnectionAttempts: 5,
         })
       } catch (e) {
         console.log(e)

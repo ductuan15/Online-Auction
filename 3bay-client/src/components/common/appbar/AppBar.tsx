@@ -215,7 +215,7 @@ export default function SearchAppBar(): JSX.Element {
 
             <Stack
               direction='row'
-              sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, ml: 2 }}
+              sx={{ display: { xs: 'none', md: 'flex' }, mx: 2 }}
               alignItems='center'
               spacing={2}
             >
