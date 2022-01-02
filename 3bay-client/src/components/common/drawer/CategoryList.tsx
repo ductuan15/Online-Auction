@@ -26,13 +26,14 @@ type CategoryItemProps = {
 const CategoryItem = ({ navigate, category }: CategoryItemProps) => {
   const [open, setOpen] = useState(true)
 
-  const categoryLink = `/product/cat/${category.id}`
+  const categoryLink = `/products/search/?categoryId=${category.id}`
   const resolved = useResolvedPath(categoryLink)
   const match = useMatch({ path: resolved.pathname, end: true })
 
   const onCategoryClicked = (e: SyntheticEvent) => {
     e.stopPropagation()
     navigate(categoryLink)
+    window.location.reload();
   }
 
   const handleExpand = (e: SyntheticEvent) => {

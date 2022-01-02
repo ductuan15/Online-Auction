@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -21,8 +21,8 @@ import RoleLabel from '../../user/profile/RoleLabel'
 import WatchListButton from './WatchListButton'
 import { Link, Stack, useTheme } from '@mui/material'
 import BorderButton from '../button/BorderButton'
-import { Link as RouterLink, useMatch, useResolvedPath } from 'react-router-dom'
-import {GREY} from '../../../theme/palette'
+import {Link as RouterLink, useMatch, useNavigate, useResolvedPath} from 'react-router-dom'
+import { GREY } from '../../../theme/palette'
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -138,6 +138,20 @@ export default function SearchAppBar(): JSX.Element {
     dispatch({ type: 'CLOSE_PROFILE_MENU' })
   }, [dispatch, theme])
 
+  const [searchKey, setSearchKey] = useState('')
+  const navigate = useNavigate()
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key == 'Enter') {
+      navigate(`/products/search/?key='${searchKey}'`)
+      window.location.reload();
+    }
+  }
+
+  const searchKey_Changed = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKey(e.currentTarget.value)
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <HideOnScroll>
@@ -170,6 +184,9 @@ export default function SearchAppBar(): JSX.Element {
               <StyledInputBase
                 placeholder='Search…'
                 inputProps={{ 'aria-label': 'search' }}
+                onKeyPress={handleKeyPress}
+                value={searchKey}
+                onChange={searchKey_Changed}
               />
             </Search>
 
