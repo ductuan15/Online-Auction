@@ -16,8 +16,6 @@ router
     productController.add,
   )
 
-
-
 router.route('/postedProducts')
     .get(
         passport.authenticate('jwt', { session: false }),
@@ -49,9 +47,6 @@ router
     productController.isProductOwner,
     productController.deleteProduct,
   )
-
-
-
 
 router.param('productId', productController.productById)
 

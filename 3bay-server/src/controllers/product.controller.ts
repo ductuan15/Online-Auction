@@ -485,8 +485,6 @@ export const getPostedProductList = async (
     next: NextFunction,
 ) => {
   try {
-    // sao nó ko chạy vô đây ra .-
-    console.log("I am here")
     const products: ProductRes[] = await prisma.product.findMany({
       where: {
         deletedAt: null,
