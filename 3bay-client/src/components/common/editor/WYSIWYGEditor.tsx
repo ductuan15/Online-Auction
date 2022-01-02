@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles'
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import './WYSIWYGEditor.css'
-import {GREY} from '../../../theme/palette'
+import { GREY } from '../../../theme/palette'
 
 type WYSIWYGEditorProps = {
   // value?: string
@@ -75,10 +75,7 @@ export default function WYSIWYGEditor({
   }
 
   return (
-    <div
-      className='editor'
-
-    >
+    <div className='editor'>
       <Editor
         // editorState={editorState}
         wrapperClassName='wrapper-class'

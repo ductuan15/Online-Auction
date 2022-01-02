@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Button, Grid, Link, Rating } from '@mui/material'
+import { Grid, Link, Rating, Tooltip } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Product from '../../../models/product'
 import moment from 'moment'
@@ -16,6 +16,7 @@ import {
 import { Link as RouterLink } from 'react-router-dom'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useTheme } from '@mui/material/styles'
+import BorderIconButton from '../button/BorderIconButton'
 
 type productDetailProps = {
   product: Product
@@ -84,7 +85,6 @@ const UserWithRating = ({
 }
 
 const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
-
   const { dispatch } = useUserContext()
   const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
   const timer = useRef<NodeJS.Timeout>()
@@ -152,7 +152,7 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
   }, [showRemaining])
 
   return product ? (
-    <Grid container xs={12} flexDirection='row'>
+    <Grid container flexDirection='row'>
       <Grid item xs={12}>
         <Typography
           gutterBottom
@@ -251,27 +251,17 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
       </Grid>
 
       <Grid item container xs={12} justifyContent='flex-end' mt={1}>
-        {_.findIndex(watchlist, function (p) {
-          return p.id === product.id
-        }) > -1 ? (
-          <Button
-            variant='outlined'
-            fullWidth={false}
-            startIcon={<FavoriteOutlinedIcon />}
-            onClick={onWatchlistButtonClicked}
-          >
-            Remove from WatchList
-          </Button>
-        ) : (
-          <Button
-            variant='outlined'
-            fullWidth={false}
-            startIcon={<FavoriteBorderOutlinedIcon />}
-            onClick={onWatchlistButtonClicked}
-          >
-            Add to WatchList
-          </Button>
-        )}
+        <BorderIconButton size='large' onClick={onWatchlistButtonClicked}>
+          <Tooltip title='Add to watchlist'>
+            {_.findIndex(watchlist, function (p) {
+              return p.id === product.id
+            }) > -1 ? (
+              <FavoriteOutlinedIcon color='inherit' />
+            ) : (
+              <FavoriteBorderOutlinedIcon color='inherit' />
+            )}
+          </Tooltip>
+        </BorderIconButton>
       </Grid>
     </Grid>
   ) : null

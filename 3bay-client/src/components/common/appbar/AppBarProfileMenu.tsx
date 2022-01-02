@@ -8,7 +8,7 @@ import MoreIcon from '@mui/icons-material/MoreVert'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { Link as RouterLink } from 'react-router-dom'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
-import AppBarButton from './AppBarButton'
+import BorderButton from '../button/BorderButton'
 
 type AppBarProfileMenuProps = {
   menuId: string
@@ -60,7 +60,7 @@ export const AppBarProfileMenu = ({
             color='inherit'
             sx={{ ml: 1 }}
           >
-            <AppBarButton>Sign in</AppBarButton>
+            <BorderButton>Sign in</BorderButton>
           </Link>
         )}
       </Box>

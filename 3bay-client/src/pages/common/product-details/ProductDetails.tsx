@@ -19,8 +19,8 @@ const ProductDetails = (): JSX.Element | null => {
   const [isLoading, setLoading] = useState(true)
 
   useEffect(() => {
-    setLoading(true)
-    setTimeout(async () => {
+    ;(async () => {
+      setLoading(true)
       if (id && +id) {
         const response = await getProductById(+id)
         dispatch({
@@ -29,13 +29,12 @@ const ProductDetails = (): JSX.Element | null => {
         })
       }
       setLoading(false)
-    }, 3000)
+    })()
   }, [dispatch, id])
 
   return (
     <Grid
       container
-      xs={12}
       my={1}
       display='flex'
       alignItems='center'

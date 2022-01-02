@@ -1,7 +1,8 @@
 import { Button, ButtonProps } from '@mui/material'
 import { styled } from '@mui/material/styles'
+import {GREY} from '../../../theme/palette'
 
-const AppBarButton = styled((props : ButtonProps) => (
+const BorderButton = styled((props : ButtonProps) => (
   <Button
     variant='outlined'
     size='large'
@@ -13,11 +14,11 @@ const AppBarButton = styled((props : ButtonProps) => (
   return {
     border:
       theme.palette.mode === 'light'
-        ? `1.5px solid ${theme.palette.grey[300]}`
-        : '1.5px solid white',
+        ? `1.75px solid ${GREY[500_48]}`
+        : `1.75px solid ${GREY[500_24]}`,
     borderRadius: 8,
-    padding: theme.spacing(1.5 - letterSpacing, 2, 1.25 - letterSpacing, 1.5),
+    padding: theme.spacing(1.5 - letterSpacing, 2, 1.25 - letterSpacing, 2),
   }
 })
 
-export default AppBarButton
+export default BorderButton

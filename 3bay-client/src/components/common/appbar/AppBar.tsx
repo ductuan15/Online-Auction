@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useEffect } from 'react'
 import { styled } from '@mui/material/styles'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -18,9 +19,10 @@ import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import RoleLabel from '../../user/profile/RoleLabel'
 import WatchListButton from './WatchListButton'
-import { Link, Stack } from '@mui/material'
-import AppBarButton from './AppBarButton'
+import { Link, Stack, useTheme } from '@mui/material'
+import BorderButton from '../button/BorderButton'
 import { Link as RouterLink, useMatch, useResolvedPath } from 'react-router-dom'
+import {GREY} from '../../../theme/palette'
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -74,8 +76,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     [theme.breakpoints.up('sm')]: {
       border:
         theme.palette.mode === 'light'
-          ? `1.5px solid ${theme.palette.grey[300]}`
-          : '1.5px solid white',
+          ? `1.75px solid ${GREY[500_48]}`
+          : `1.75px solid ${GREY[500_24]}`,
       borderRadius: '8px',
     },
   },
@@ -128,9 +130,13 @@ export default function SearchAppBar(): JSX.Element {
   const resolved = useResolvedPath(createProductPath)
   const match = useMatch({ path: resolved.pathname, end: true })
 
-  const { toggleDrawer } = useAppBarContext()
+  const { toggleDrawer, dispatch } = useAppBarContext()
 
   const { isAuth, user } = useAuth()
+  const theme = useTheme()
+  useEffect(() => {
+    dispatch({ type: 'CLOSE_PROFILE_MENU' })
+  }, [dispatch, theme])
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -169,9 +175,9 @@ export default function SearchAppBar(): JSX.Element {
 
             {user?.role !== 'SELLER' && (
               <Box sx={{ display: { xs: 'none', lg: 'block' } }} ml={1}>
-                <AppBarButton onClick={toggleDrawer(true)}>
+                <BorderButton onClick={toggleDrawer(true)}>
                   🏷️ Categories
-                </AppBarButton>
+                </BorderButton>
               </Box>
             )}
 
@@ -184,7 +190,7 @@ export default function SearchAppBar(): JSX.Element {
                 color='inherit'
                 underline='none'
               >
-                <AppBarButton disabled={!!match}>📦 New product</AppBarButton>
+                <BorderButton disabled={!!match}>📦 New product</BorderButton>
               </Link>
             )}
 

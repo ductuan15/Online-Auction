@@ -49,7 +49,7 @@ const ProductInfoSkeleton = (): JSX.Element | null => {
   const theme = useTheme()
 
   return (
-    <Grid container xs={12} flexDirection='row'>
+    <Grid container flexDirection='row'>
       <Grid item xs={12}>
         <Skeleton
           variant='text'
