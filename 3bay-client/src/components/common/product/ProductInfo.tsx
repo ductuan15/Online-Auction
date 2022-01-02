@@ -16,7 +16,9 @@ import { Link as RouterLink } from 'react-router-dom'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useTheme } from '@mui/material/styles'
 import BorderIconButton from '../button/BorderIconButton'
+import BorderButton from '../button/BorderButton'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
+import ProductBidButton from './ProductBidButton'
 
 type UserWithRatingProps = {
   name: string
@@ -84,9 +86,8 @@ const ProductInfo = (): JSX.Element | null => {
   const { dispatch } = useUserContext()
   const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
   const timer = useRef<NodeJS.Timeout>()
-
   const {
-    state: { watchlist, userDetails },
+    state: { watchlist },
   } = useUserContext()
 
   const {
@@ -100,10 +101,6 @@ const ProductInfo = (): JSX.Element | null => {
       }) > -1
     )
   }, [product?.id, watchlist])
-
-  const canBidThis = useMemo(() => {
-    return userDetails && product?.sellerId !== userDetails?.uuid
-  }, [product?.sellerId, userDetails])
 
   const closeTimeStr = product?.latestAuction?.closeTime || null
   const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
@@ -187,7 +184,7 @@ const ProductInfo = (): JSX.Element | null => {
       <Grid item xs={12}>
         <Link
           component={RouterLink}
-          to={`products/search/?categoryId=${product.categoryId}`}
+          to={`/products/search/?categoryId=${product.categoryId}`}
           underline='none'
           color='primary.main'
         >
@@ -264,8 +261,22 @@ const ProductInfo = (): JSX.Element | null => {
         )}
       </Grid>
 
-      <Grid item container xs={12} justifyContent='flex-end' mt={1}>
-        <BorderIconButton size='large' onClick={onWatchlistButtonClicked}>
+      <Grid
+        item
+        container
+        xs={12}
+        justifyContent='space-between'
+        alignItems='center'
+      >
+        <ProductBidButton/>
+
+        <BorderIconButton
+          size='large'
+          onClick={onWatchlistButtonClicked}
+          isSelected={isInWatchlist}
+          color='error'
+          sx={{ mt: 1 }}
+        >
           <Tooltip title='Add to watchlist'>
             {isInWatchlist ? (
               <FavoriteOutlinedIcon color='inherit' />

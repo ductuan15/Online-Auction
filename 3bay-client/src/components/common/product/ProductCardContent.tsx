@@ -7,6 +7,7 @@ import CardContent from '@mui/material/CardContent'
 import { Box } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
+import { useIsMounted } from '../../../hooks'
 
 type CardContentProps = {
   product: Product
@@ -15,6 +16,7 @@ type CardContentProps = {
 
 function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
   const theme = useTheme()
+  const isMounted = useIsMounted()
   const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
 
   const totalBidder = product.latestAuction?._count.bids || 0
@@ -46,14 +48,20 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
       setEndTimeCountDownText('🔴 ENDED')
       return
     }
-    // TODO: countdown when the time is less than 24h
-
-    setEndTimeCountDownText(`🟢 ${now.to(closeTime)} (${closeTimeFormattedStr})`)
-  }, [closeTime, closeTimeFormattedStr])
+    // TODO: countdown when the time is less than 24h // NOT URGENT
+    if (isMounted()) {
+      setEndTimeCountDownText(
+        `🟢 ${now.to(closeTime)} (${closeTimeFormattedStr})`,
+      )
+    }
+  }, [closeTime, closeTimeFormattedStr, isMounted])
 
   useEffect(() => {
     showRemaining()
     timer.current = setInterval(showRemaining, 1000)
+    return () => {
+      timer.current && clearInterval(timer.current)
+    }
   }, [showRemaining])
 
   return (

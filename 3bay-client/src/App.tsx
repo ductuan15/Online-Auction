@@ -11,7 +11,7 @@ import HomeLayout from './components/common/layout/HomeLayout'
 import SignInLayout from './components/common/layout/SignInLayout'
 import ForgotPassword from './pages/user/auth/ForgotPassword'
 import VerifyAccount from './pages/user/auth/VerifyAccount'
-import RequireAdminRole from './components/user/auth/RequireAdminRole'
+import RequireRole from './components/user/auth/RequireRole'
 import UserLayout from './components/common/layout/UserLayout'
 import Account from './pages/user/profile/Account'
 import Password from './pages/user/profile/Password'
@@ -29,7 +29,7 @@ import ProductsManagement from './pages/admin/ProductsManagement'
 import WatchList from './pages/user/watchlist/WatchList'
 import CreateProduct from './pages/seller/CreateProduct'
 import EditProduct from './pages/seller/EditProduct'
-import ProductProvider from './contexts/product/ProductContext'
+import ProductProvider from './contexts/product/ProductDetailsContext'
 import PostedProductList from './pages/seller/PostedProductList'
 import { SocketProvider } from './contexts/socket/SocketContext'
 
@@ -42,7 +42,10 @@ function GlobalRouter(): JSX.Element {
         <Route path='/' element={<HomeLayout />}>
           <Route index element={<Home />} />
 
-          <Route path='product/create' element={<CreateProduct />} />
+          <Route path='product/create' element={<RequireRole role={'SELLER'}/>}>
+            <Route index element={<CreateProduct/>}/>
+          </Route>
+
           <Route
             path='product/:id'
             element={
@@ -51,8 +54,8 @@ function GlobalRouter(): JSX.Element {
               </ProductProvider>
             }
           />
+
           <Route path='product/:id/edit' element={<EditProduct />} />
-          {/* <Route path='products/' element={<ProductList items={[]}/>} /> */}
           <Route path='products/search' element={<SearchPage />} />
 
           <Route element={<RequireLogin />}>
@@ -71,7 +74,7 @@ function GlobalRouter(): JSX.Element {
             </Route>
           </Route>
 
-          <Route path='admin/' element={<RequireAdminRole />}>
+          <Route path='admin/' element={<RequireRole role='ADMINISTRATOR' />}>
             <Route path='cat' element={<CategoryManagement />} />
             <Route
               path='users'

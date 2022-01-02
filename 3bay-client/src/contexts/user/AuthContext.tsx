@@ -57,7 +57,6 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     'auth',
     undefined,
   )
-  const isAuth = !!user
 
   const signIn = useCallback(
     async (email: string, pwd: string, cb: VoidFunction) => {
@@ -114,7 +113,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
 
   const contextValue = useMemo(() => {
     return {
-      isAuth,
+      isAuth: !!user,
       user,
       signIn,
       signOut,
@@ -122,7 +121,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
       resetPassword,
       updateUserInfo,
     }
-  }, [isAuth, resetPassword, signIn, signOut, updateUserInfo, user, verify])
+  }, [resetPassword, signIn, signOut, updateUserInfo, user, verify])
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

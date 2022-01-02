@@ -15,6 +15,8 @@ import {
   ProductState,
 } from '../../stores/product/product.store'
 import Product from '../../models/product'
+import BidderService from '../../services/bidder.service'
+import { useAuth } from '../user/AuthContext'
 
 type ProductProviderProps = {
   children: ReactNode
@@ -40,6 +42,7 @@ export const useProductContext = (): ProductContextType => {
 
 const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
   const [state, dispatch] = useReducer(ProductReducer, initialProductState)
+  const { user } = useAuth()
 
   const updateCurrentProduct = useCallback(
     (current: Product) => {
@@ -47,6 +50,25 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
     },
     [dispatch],
   )
+
+  useEffect(() => {
+    ;(async () => {
+      if (user && state.currentProduct?.latestAuctionId) {
+        try {
+          const response = await BidderService.getAuctionStatus(
+            user.user,
+            state.currentProduct.latestAuctionId,
+          )
+          dispatch({ type: 'UPDATE_BID_STATUS', payload: response })
+        } catch (e) {
+          console.log('Cannot update bid status')
+          dispatch({ type: 'UPDATE_BID_STATUS' })
+        }
+      } else {
+        dispatch({ type: 'UPDATE_BID_STATUS' })
+      }
+    })()
+  }, [state.currentProduct, user])
 
   const contextValue = useMemo(
     () => ({

@@ -11,12 +11,15 @@ import ProductDescription from '../../../components/common/product/ProductDescip
 import './ProductDetails.css'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import ProductInfoSkeleton from '../../../components/common/product/ProductInfoSkeleton'
+import {useTitle} from '../../../hooks'
 
 // TODO fetch related products instead of `getTop.getTopPrice`
 const ProductDetails = (): JSX.Element | null => {
   const { state, dispatch } = useProductContext()
   const { id } = useParams()
   const [isLoading, setLoading] = useState(true)
+
+  useTitle(`3bay | ${state.currentProduct?.name || ''}`)
 
   useEffect(() => {
     ;(async () => {
