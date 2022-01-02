@@ -4,8 +4,6 @@ node_modules/
 dist/
 # ignore local database configuration
 .env
-# ignore auto cropped images
-public/images/category/output/
 
 # Visual Code Folder
 .vscode
