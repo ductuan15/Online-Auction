@@ -22,24 +22,25 @@ model Category {
 }
 
 model Auction {
-  id                                          Int       @id @default(autoincrement())
-  startTime                                   DateTime  @default(now()) @db.DateTime(0)
-  closeTime                                   DateTime? @db.DateTime(0)
-  openPrice                                   Decimal   @db.Decimal(19, 4)
-  incrementPrice                              Decimal   @db.Decimal(19, 4)
-  buyoutPrice                                 Decimal?  @db.Decimal(19, 4)
+  id                                          Int               @id @default(autoincrement())
+  startTime                                   DateTime          @default(now()) @db.DateTime(0)
+  closeTime                                   DateTime?         @db.DateTime(0)
+  openPrice                                   Decimal           @db.Decimal(19, 4)
+  incrementPrice                              Decimal           @db.Decimal(19, 4)
+  buyoutPrice                                 Decimal?          @db.Decimal(19, 4)
   productId                                   Int
   winningBidId                                Int?
   autoExtendAuctionTiming                     Boolean
-  currentPrice                                Decimal   @default(0.0000) @db.Decimal(19, 4)
-  sellerComment                               String?   @db.VarChar(255)
+  currentPrice                                Decimal           @default(0.0000) @db.Decimal(19, 4)
+  sellerComment                               String?           @db.VarChar(255)
   sellerReview                                Boolean?
-  bidderComment                               String?   @db.VarChar(255)
+  bidderComment                               String?           @db.VarChar(255)
   bidderReview                                Boolean?
-  product                                     Product   @relation("auctionsToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "auctions_fk0")
-  winningBid                                  Bid?      @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auctions_fk1")
-  bids                                        Bid[]     @relation("auctionsTobids_auctionId")
-  products_auctionsToproducts_latestAuctionId Product?  @relation("auctionsToproducts_latestAuctionId")
+  product                                     Product           @relation("auctionsToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "auctions_fk0")
+  winningBid                                  Bid?              @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auctions_fk1")
+  bids                                        Bid[]             @relation("auctionsTobids_auctionId")
+  products_auctionsToproducts_latestAuctionId Product?          @relation("auctionsToproducts_latestAuctionId")
+  UserBidStatus                               UserBidStatus[]     @relation("auctionsTouser_bid_status")
 
   @@index([productId], map: "auctions_fk0")
   @@index([winningBidId], map: "auctions_fk1")
@@ -47,13 +48,11 @@ model Auction {
 }
 
 model Bid {
-  id             Int        @id @default(autoincrement())
-  bidPrice       Decimal    @default(0.0000) @db.Decimal(19, 4)
-  bidTime        DateTime   @default(now()) @db.DateTime(0)
-  bidComment     String?    @db.VarChar(255)
-  bidderId       String     @db.VarChar(255)
+  id             Int       @id @default(autoincrement())
+  bidPrice       Decimal   @default(0.0000) @db.Decimal(19, 4)
+  bidTime        DateTime  @default(now()) @db.DateTime(0)
+  bidderId       String    @db.VarChar(255)
   auctionId      Int
-  status         BidsStatus @default(PENDING)
   auction        Auction    @relation("auctionsTobids_auctionId", fields: [auctionId], references: [id], onUpdate: Restrict, map: "bids_fk1")
   bidder         User       @relation("bidsTousers", fields: [bidderId], references: [uuid], onUpdate: Restrict, map: "bids_fk0")
   winningAuction Auction[]  @relation("auctions_winningBidIdTobids")
@@ -140,6 +139,7 @@ model User {
   bids                   Bid[]                   @relation("bidsTousers")
   products               Product[]               @relation("productsTousers")
   upgradeToSellerRequest UpgradeToSellerRequest? @relation("upgrade_to_seller_requestsTousers")
+  userBidStatus          UserBidStatus[]       @relation("user_bid_statusTousers")
   userWatchlist          UserWatchlist[]         @relation("user_watchlistTousers")
 
   @@map("users")
@@ -153,6 +153,18 @@ model otp {
   data       String?  @db.VarChar(255)
 
   @@id([id, type])
+}
+
+model UserBidStatus {
+  auctionId Int
+  userId    String                  @db.VarChar(255)
+  status    BidStatus?
+  auctions  Auction                 @relation("auctionsTouser_bid_status", fields: [auctionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_bid_status_fk0")
+  users     User                    @relation("user_bid_statusTousers", fields: [userId], references: [uuid], onUpdate: Restrict, map: "user_bid_status_fk1")
+
+  @@id([auctionId, userId])
+  @@index([userId], map: "user_bid_status_fk1")
+  @@map("user_bid_status")
 }
 
 enum Role {
@@ -171,7 +183,7 @@ enum OtpType {
   @@map("otp_type")
 }
 
-enum BidsStatus {
+enum BidStatus {
   PENDING
   ACCEPTED
   REJECTED
