@@ -9,6 +9,7 @@ import { Link } from '@mui/material'
 function ProductBidButton(): JSX.Element | null {
   const {
     state: { currentProduct: product, bidStatus },
+    dispatch
   } = useProductContext()
 
   const {
@@ -27,7 +28,13 @@ function ProductBidButton(): JSX.Element | null {
   switch (bidStatus?.status) {
     case 'NOT_BID':
       button = (
-        <BorderButton color='success' sx={{ mt: 1 }}>
+        <BorderButton
+          color='success'
+          sx={{ mt: 1 }}
+          onClick={() => {
+            dispatch({ type: 'OPEN_BID_DIALOG' })
+          }}
+        >
           💰 Bid this product
         </BorderButton>
       )

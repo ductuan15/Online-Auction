@@ -5,6 +5,7 @@ export type ProductState = {
   currentProduct?: Product
   isBidDialogOpened: boolean
   bidStatus?: BidStatus
+  score: number
 }
 
 export type ProductAction =
@@ -15,6 +16,7 @@ export type ProductAction =
 
 export const initialProductState: ProductState = {
   isBidDialogOpened: false,
+  score: 0
 }
 
 export const ProductReducer = (
