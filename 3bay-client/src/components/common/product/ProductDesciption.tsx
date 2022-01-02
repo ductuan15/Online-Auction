@@ -7,13 +7,13 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import Product from '../../../models/product'
 import moment from 'moment'
 import { Link as RouterLink } from 'react-router-dom'
 import DOMPurify from 'dompurify'
 
 import { styled } from '@mui/material/styles'
 import { useUserContext } from '../../../contexts/user/UserContext'
+import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 
 const StyledDiv = styled('div')(({ theme }) => ({
   background: theme.palette.background.default,
@@ -23,17 +23,16 @@ const StyledDiv = styled('div')(({ theme }) => ({
   },
 }))
 
-type ProductDescriptionProps = {
-  product: Product
-}
-
-const ProductDescription = ({
-  product,
-}: ProductDescriptionProps): JSX.Element => {
+const ProductDescription = (): JSX.Element | null => {
   const {
     state: { userDetails },
   } = useUserContext()
 
+  const {
+    state: { currentProduct: product },
+  } = useProductContext()
+
+  if (!product) return null
   return (
     <Paper
       elevation={0}

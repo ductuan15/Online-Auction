@@ -4,6 +4,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useReducer,
 } from 'react'
@@ -25,7 +26,7 @@ type ProductContextType = {
   updateCurrentProduct: (current: Product) => void
 }
 
-const ProductContext = createContext<ProductContextType>({
+const ProductDetailsContext = createContext<ProductContextType>({
   state: initialProductState,
   dispatch: () => null,
   updateCurrentProduct(): never {
@@ -34,7 +35,7 @@ const ProductContext = createContext<ProductContextType>({
 })
 
 export const useProductContext = (): ProductContextType => {
-  return useContext(ProductContext)
+  return useContext(ProductDetailsContext)
 }
 
 const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
@@ -51,15 +52,15 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
     () => ({
       state,
       dispatch,
-        updateCurrentProduct,
+      updateCurrentProduct,
     }),
     [state, updateCurrentProduct],
   )
 
   return (
-    <ProductContext.Provider value={contextValue}>
+    <ProductDetailsContext.Provider value={contextValue}>
       {children}
-    </ProductContext.Provider>
+    </ProductDetailsContext.Provider>
   )
 }
 export default ProductProvider

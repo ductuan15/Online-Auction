@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Grid, Link, Rating, Tooltip } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import Product from '../../../models/product'
 import moment from 'moment'
 import Box from '@mui/material/Box'
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined'
@@ -17,10 +16,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useTheme } from '@mui/material/styles'
 import BorderIconButton from '../button/BorderIconButton'
-
-type productDetailProps = {
-  product: Product
-}
+import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 
 type UserWithRatingProps = {
   name: string
@@ -84,23 +80,39 @@ const UserWithRating = ({
   )
 }
 
-const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
+const ProductInfo = (): JSX.Element | null => {
   const { dispatch } = useUserContext()
   const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
   const timer = useRef<NodeJS.Timeout>()
 
   const {
-    state: { watchlist },
+    state: { watchlist, userDetails },
   } = useUserContext()
 
-  const closeTimeStr = product.latestAuction?.closeTime || null
+  const {
+    state: { currentProduct: product },
+  } = useProductContext()
+
+  const isInWatchlist = useMemo(() => {
+    return (
+      _.findIndex(watchlist, function (p) {
+        return p.id === product?.id
+      }) > -1
+    )
+  }, [product?.id, watchlist])
+
+  const canBidThis = useMemo(() => {
+    return userDetails && product?.sellerId !== userDetails?.uuid
+  }, [product?.sellerId, userDetails])
+
+  const closeTimeStr = product?.latestAuction?.closeTime || null
   const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
   const closeTimeFormattedStr = closeTime
     ? `${closeTime.format('L')} ${closeTime.format('LT')}`
     : null
 
-  const dateCreated = product.createdAt
-    ? moment(new Date(product.createdAt))
+  const dateCreated = product?.createdAt
+    ? moment(new Date(product?.createdAt))
     : null
   const dateCreatedText = dateCreated
     ? `${dateCreated.fromNow()} (${dateCreated.format('L')})`
@@ -124,6 +136,8 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
   }, [closeTime, closeTimeFormattedStr])
 
   const onWatchlistButtonClicked = async () => {
+    if (!product) return
+
     const prodIndex = _.findIndex(watchlist, function (p) {
       return p.id === product.id
     })
@@ -135,7 +149,7 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
         payload: res.data.productId,
       })
     } else {
-      await addToWatchList(product?.id)
+      await addToWatchList(product.id)
       dispatch({
         type: 'ADD_WATCH_LIST',
         payload: product,
@@ -173,7 +187,7 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
       <Grid item xs={12}>
         <Link
           component={RouterLink}
-          to={`product/cat/${product.categoryId}`}
+          to={`products/search/?categoryId=${product.categoryId}`}
           underline='none'
           color='primary.main'
         >
@@ -253,9 +267,7 @@ const ProductInfo = ({ product }: productDetailProps): JSX.Element | null => {
       <Grid item container xs={12} justifyContent='flex-end' mt={1}>
         <BorderIconButton size='large' onClick={onWatchlistButtonClicked}>
           <Tooltip title='Add to watchlist'>
-            {_.findIndex(watchlist, function (p) {
-              return p.id === product.id
-            }) > -1 ? (
+            {isInWatchlist ? (
               <FavoriteOutlinedIcon color='inherit' />
             ) : (
               <FavoriteBorderOutlinedIcon color='inherit' />

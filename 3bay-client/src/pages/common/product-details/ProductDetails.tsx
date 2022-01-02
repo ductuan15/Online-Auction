@@ -9,7 +9,7 @@ import ProductCarousel from '../../../components/common/carousel/ProductCarousel
 
 import ProductDescription from '../../../components/common/product/ProductDesciption'
 import './ProductDetails.css'
-import { useProductContext } from '../../../contexts/product/ProductContext'
+import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import ProductInfoSkeleton from '../../../components/common/product/ProductInfoSkeleton'
 
 // TODO fetch related products instead of `getTop.getTopPrice`
@@ -52,7 +52,7 @@ const ProductDetails = (): JSX.Element | null => {
               }}
             />
           ) : (
-            <ProductImage product={state.currentProduct} />
+            <ProductImage />
           )}
         </Grid>
 
@@ -62,7 +62,7 @@ const ProductDetails = (): JSX.Element | null => {
           ) : (
             <>
               {state.currentProduct && (
-                <ProductInfo product={state.currentProduct} />
+                <ProductInfo />
               )}
             </>
           )}
@@ -93,7 +93,7 @@ const ProductDetails = (): JSX.Element | null => {
         ) : (
           <>
             {state.currentProduct && (
-              <ProductDescription product={state.currentProduct} />
+              <ProductDescription />
             )}
           </>
         )}

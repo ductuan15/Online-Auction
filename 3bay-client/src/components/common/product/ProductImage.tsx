@@ -1,15 +1,18 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery'
-import Product from '../../../models/product'
+import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 
-type productDetailProps = {
-  product: Product | undefined
-}
+const ProductImage = (): JSX.Element | null => {
 
-const ProductImage = ({ product }: productDetailProps): JSX.Element => {
-  const [images, setImages] = useState<ReactImageGalleryItem[]>([])
-  useEffect(() => {
+  const {
+    state: { currentProduct: product },
+  } = useProductContext()
+
+  const images = useMemo(() => {
+    if (!product) {
+      return []
+    }
     const productsImage: ReactImageGalleryItem[] = []
     // console.log(product)
     productsImage.push({
@@ -26,8 +29,12 @@ const ProductImage = ({ product }: productDetailProps): JSX.Element => {
       })
     }
     // console.log(images)
-    setImages(productsImage)
+    return productsImage
   }, [product])
+
+  if (!product) {
+    return null
+  }
 
   return (
     <ImageGallery
