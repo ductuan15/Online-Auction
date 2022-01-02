@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import passport from '../auth/passport.js'
 import * as productController from '../controllers/product.controller.js'
-import { uploadProductImagesFields } from '../controllers/product.controller.js'
+import {uploadProductImagesFields} from '../controllers/product.controller.js'
 import { uploadProductImages } from '../middlewares/upload-product.mdw.js'
 import { requireSellerRole } from '../middlewares/auth.mdw.js'
 
@@ -15,6 +15,15 @@ router
     uploadProductImages.fields(Object.values(uploadProductImagesFields)),
     productController.add,
   )
+
+
+
+router.route('/postedProducts')
+    .get(
+        passport.authenticate('jwt', { session: false }),
+        requireSellerRole,
+        productController.getPostedProductList
+    )
 
 router.route('/search').get(productController.search)
 
@@ -40,6 +49,9 @@ router
     productController.isProductOwner,
     productController.deleteProduct,
   )
+
+
+
 
 router.param('productId', productController.productById)
 

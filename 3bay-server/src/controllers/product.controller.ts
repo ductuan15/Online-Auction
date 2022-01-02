@@ -478,3 +478,46 @@ export const uploadProductImagesFields = {
     maxCount: 6,
   },
 }
+
+export const getPostedProductList = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+  try {
+    // sao nó ko chạy vô đây ra .-
+    console.log("I am here")
+    const products: ProductRes[] = await prisma.product.findMany({
+      where: {
+        deletedAt: null,
+        sellerId: req.user?.uuid,
+      },
+      include: {
+        latestAuction:{
+          include:{
+            winningBid:{
+              include:{
+                bidder:{
+                  select: userShortenSelection
+                }
+              }
+            },
+            _count:{
+              select:{
+                bids:true
+              }
+            }
+          }
+        }
+      },
+    })
+    products.forEach((product) => {
+      product.thumbnails = getAllThumbnailLink(product.id)
+    })
+    res.json(products)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(error)
+    }
+  }
+}
