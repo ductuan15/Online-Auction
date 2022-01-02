@@ -65,9 +65,10 @@ export const isValidBidAmount = async (
 
     if (
       req.auction &&
-      +(req.body.bidPrice || 0) >=
-        req.auction.currentPrice.toNumber() +
-          req.auction.incrementPrice.toNumber()
+      +req.body.bidPrice >=
+        req.auction?.currentPrice
+          .add(req.auction?.incrementPrice || 0)
+          .toNumber()
     ) {
       next()
     } else {
@@ -80,81 +81,41 @@ export const isValidBidAmount = async (
   }
 }
 
-export const isInBlacklist = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const rejectedBids = await prisma.bid.findFirst({
-      where: {
-        auction: {
-          productId: req.auction?.productId,
-        },
-        bidderId: req.user?.uuid,
-        status: Prisma.BidsStatus.REJECTED,
-      },
-    })
-    if (rejectedBids) {
-      throw new BidError({ code: BidErrorCode.InBlacklist })
-    } else {
-      next()
-    }
-  } catch (err) {
-    if (err instanceof Error) {
-      next(err)
-    }
-  }
-}
-
-export const isHavingPendingBids = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const pendingBid = await prisma.bid.findFirst({
-      where: {
-        bidderId: req.user?.uuid,
-        auctionId: req.auction?.id,
-        status: Prisma.BidsStatus.PENDING,
-      },
-    })
-    if (pendingBid) {
-      throw new BidError({ code: BidErrorCode.HavingPendingBid })
-    } else {
-      next()
-    }
-  } catch (err) {
-    if (err instanceof Error) {
-      next(err)
-    }
-  }
-}
-
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (req.body.score === undefined) {
-      const expiredDate = new Date()
-      expiredDate.setDate(expiredDate.getDate() + 1)
-      const pendingBids = await prisma.bid.create({
+    const status = req.body.score
+      ? Prisma.BidStatus.ACCEPTED
+      : Prisma.BidStatus.PENDING
+    const [bid] = await prisma.$transaction([
+      prisma.bid.create({
         data: {
           auctionId: req.auction?.id || NaN,
           bidderId: req.user?.uuid || '',
           bidPrice: req.body.bidPrice,
-          status: Prisma.BidsStatus.PENDING,
         },
-      })
-      res.json(pendingBids)
-    } else {
-      req.bid = await prisma.bid.create({
-        data: {
+      }),
+      prisma.userBidStatus.upsert({
+        where: {
+          auctionId_userId: {
+            auctionId: req.auction?.id || NaN,
+            userId: req.user?.uuid || '',
+          },
+        },
+        update: {
+          status: status,
+        },
+        create: {
           auctionId: req.auction?.id || NaN,
-          bidderId: req.user?.uuid || '',
-          status: Prisma.BidsStatus.ACCEPTED,
+          userId: req.user?.uuid || '',
+          status: status,
         },
-      })
+      }),
+    ])
+    if (status === Prisma.BidStatus.ACCEPTED) {
+      req.bid = bid
       next()
+    } else {
+      res.json(req.auction)
     }
   } catch (err) {
     if (err instanceof Error) {
@@ -169,23 +130,18 @@ export const setBidStatusToAccepted = async (
   next: NextFunction,
 ) => {
   try {
-    const bid = await prisma.bid.update({
+    await prisma.userBidStatus.update({
       where: {
-        id: req.bid?.id,
+        auctionId_userId: {
+          auctionId: req.auction?.id || NaN,
+          userId: req.bid?.bidderId || '',
+        },
       },
       data: {
-        status: Prisma.BidsStatus.ACCEPTED,
+        status: Prisma.BidStatus.ACCEPTED,
       },
     })
-    if (
-      bid.bidPrice >=
-      (req.auction?.currentPrice.add(req.auction?.incrementPrice || 0) || 0)
-    ) {
-      req.bid = bid
-      next()
-    } else {
-      res.json(bid)
-    }
+    next()
   } catch (err) {
     if (err instanceof Error) {
       next(err)
@@ -237,12 +193,15 @@ export const setBidStatusToRejected = async (
   next: NextFunction,
 ) => {
   try {
-    req.bid = await prisma.bid.update({
+    await prisma.userBidStatus.update({
       where: {
-        id: +(req.params.bidId || NaN),
+        auctionId_userId: {
+          auctionId: req.auction?.id || NaN,
+          userId: req.bid?.bidderId || '',
+        },
       },
       data: {
-        status: Prisma.BidsStatus.REJECTED,
+        status: Prisma.BidStatus.REJECTED,
       },
     })
     next()
@@ -262,9 +221,17 @@ export const getPrevWinningBid = async (
     const prevWinningBidPrice = await prisma.bid.aggregate({
       where: {
         auctionId: req.auction?.id || NaN,
-        status: Prisma.BidsStatus.ACCEPTED,
         id: {
-          notIn: req.auction?.winningBidId || 0,
+          not: req.auction?.winningBidId || NaN,
+        },
+        auction: {
+          UserBidStatus: {
+            none: {
+              userId: req.bid?.bidderId,
+              auctionId: req.auction?.id,
+              status: Prisma.BidStatus.REJECTED,
+            },
+          },
         },
       },
       _max: {
@@ -312,10 +279,96 @@ export const isWinningBid = async (
   next: NextFunction,
 ) => {
   try {
-    if (req.auction?.winningBidId === req.bid?.id) {
+    if (
+      req.auction?.winningBidId === req.bid?.id ||
+      req.bid?.bidPrice.greaterThanOrEqualTo(
+        req.auction?.currentPrice.add(req.auction?.incrementPrice || 0) || 0,
+      )
+    ) {
       next()
     } else {
-      res.json(req.bid)
+      res.json(req.auction)
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const checkUserBidStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userBidStatus = await prisma.userBidStatus.findUnique({
+      where: {
+        auctionId_userId: {
+          auctionId: req.auction?.id || NaN,
+          userId: req.user?.uuid || '',
+        },
+      },
+    })
+    if (userBidStatus?.status === Prisma.BidStatus.PENDING)
+      throw new BidError({ code: BidErrorCode.HavingPendingBid })
+    else if (userBidStatus?.status === Prisma.BidStatus.REJECTED)
+      throw new BidError({ code: BidErrorCode.InBlacklist })
+    else {
+      next()
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+export const isSelfBid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const product = await prisma.product.findUnique({
+      where: {
+        id: req.auction?.productId,
+      },
+    })
+    if (product?.sellerId === req.user?.uuid) {
+      throw new BidError({ code: BidErrorCode.SelfBid })
+    } else {
+      next()
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+
+export const isWinningBidder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const winningBid = await prisma.bid.findUnique({
+      where: {
+        id: req.auction?.winningBidId || 0,
+      },
+      include:{
+        bidder:{
+          select: {
+            uuid: true
+          }
+        }
+      }
+    })
+    if (winningBid?.bidder.uuid === req.user?.uuid) {
+      throw new BidError({ code: BidErrorCode.AlreadyWinningAuction })
+    } else {
+      next()
     }
   } catch (err) {
     if (err instanceof Error) {

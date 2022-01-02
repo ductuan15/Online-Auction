@@ -191,6 +191,14 @@ export class BidError extends ErrorException {
         this.message = 'Auction has been closed'
         this.status = 406
         break
+      case BidErrorCode.SelfBid:
+        this.message = 'Can not bid on your product'
+        this.status = 406
+        break
+      case BidErrorCode.AlreadyWinningAuction:
+        this.message = 'Has already been winning this auction'
+        this.status = 406
+        break
     }
   }
 }

@@ -44,4 +44,6 @@ export class BidErrorCode {
   public static readonly InvalidScore = 'InvaidScore'
   public static readonly HavingPendingBid = 'HavingPendingBid'
   public static readonly ClosedAuction = 'AuctionHasBeenClosed'
+  public static readonly SelfBid = 'SelfBid'
+  public static readonly AlreadyWinningAuction = 'AlreadyWinningAuction'
 }

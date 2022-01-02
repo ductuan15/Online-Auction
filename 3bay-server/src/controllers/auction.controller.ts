@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
+import { BidErrorCode } from '../error/error-code.js'
+import { BidError } from '../error/error-exception.js'
 import { AuctionRes } from '../types/AuctionRes.js'
 
 const userShortenSelection = {
@@ -157,7 +159,10 @@ export const checkAuctionExist = async (
   try {
     req.auction = await prisma.auction.findFirst({
       where: {
-        id: +req.params.auctionId
+        id: +req.params.auctionId,
+        closeTime: {
+          gt: new Date(),
+        },
       },
     })
     next()
