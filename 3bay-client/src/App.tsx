@@ -29,8 +29,8 @@ import ProductsManagement from './pages/admin/ProductsManagement'
 import WatchList from './pages/user/watchlist/WatchList'
 import CreateProduct from './pages/seller/CreateProduct'
 import EditProduct from './pages/seller/EditProduct'
-import PostAuctionList from './pages/seller/PostAuctionList'
 import ProductProvider from './contexts/product/ProductContext'
+import PostedProductList from "./pages/seller/PostedProductList";
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -57,7 +57,7 @@ function GlobalRouter(): JSX.Element {
           <Route element={<RequireLogin />}>
             <Route path='user/view' element={<Profile />} />
             <Route path='user/watchlist' element={<WatchList />} />
-            <Route path='user/postauctionlist' element={<PostAuctionList />} />
+            <Route path='user/postedproductlist' element={<PostedProductList />} />
 
             <Route path='user/' element={<UserLayout />}>
               <Route index element={<Home />} />

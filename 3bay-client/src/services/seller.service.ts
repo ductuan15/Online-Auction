@@ -1,5 +1,5 @@
 import axiosApiInstance from './api'
-import { CreateProductResponse } from '../models/product'
+import Product, { CreateProductResponse } from '../models/product'
 import { AxiosResponse } from 'axios'
 
 async function addNewProduct(
@@ -16,8 +16,13 @@ async function addNewProduct(
   )
 }
 
+async function getAllPostedProduct(): Promise<AxiosResponse<Product[]>> {
+  return await axiosApiInstance.get(`api/product/postedProducts`)
+}
+
 const SellerService = {
   addNewProduct,
+  getAllPostedProduct
 }
 
 export default SellerService
