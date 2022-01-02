@@ -41,7 +41,7 @@ export class UserErrorCode {
 export class BidErrorCode {
   public static readonly InvalidBidAmount = 'InvalidBidAmount'
   public static readonly InBlacklist = 'IsInBlacklist'
-  public static readonly InvalidScore = 'InvaidScore'
+  public static readonly InvalidScore = 'InvalidScore'
   public static readonly HavingPendingBid = 'HavingPendingBid'
   public static readonly ClosedAuction = 'AuctionHasBeenClosed'
   public static readonly SelfBid = 'SelfBid'

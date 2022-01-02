@@ -16,11 +16,11 @@ import { PaginationRes } from '../types/PaginationRes.js'
 import Prisma from '@prisma/client'
 import { AuctionRes } from '../types/AuctionRes.js'
 
-const userShortenSelection = {
+const sellerInfoSelection = {
   uuid: true,
   name: true,
-  address: true,
-  email: true,
+  // address: true,
+  // email: true,
 }
 
 export const productById = async (
@@ -41,9 +41,9 @@ export const productById = async (
         productDescriptionHistory: isWithDescription,
         category: true,
         seller: {
-          select: userShortenSelection,
+          select: sellerInfoSelection,
         },
-        latestAuction: true
+        latestAuction: true,
       },
       rejectOnNotFound: true,
     })
@@ -221,9 +221,9 @@ export const getProductByCategoryId = async (
         where: {
           categoryId: categoryId,
           latestAuction: {
-            // closeTime: {
-            //   gt: new Date(),
-            // },
+            closeTime: {
+              gt: new Date(),
+            },
           },
         },
         include: {
@@ -232,7 +232,7 @@ export const getProductByCategoryId = async (
               winningBid: {
                 include: {
                   bidder: {
-                    select: userShortenSelection,
+                    select: sellerInfoSelection,
                   },
                 },
               },
@@ -337,14 +337,14 @@ export const search = async (
       include: {
         category: true,
         seller: {
-          select: userShortenSelection,
+          select: sellerInfoSelection,
         },
         latestAuction: {
           include: {
             winningBid: {
               include: {
                 bidder: {
-                  select: userShortenSelection,
+                  select: sellerInfoSelection,
                 },
               },
             },
@@ -400,7 +400,7 @@ export const getTopPrice = async (
             winningBid: {
               include: {
                 bidder: {
-                  select: userShortenSelection,
+                  select: sellerInfoSelection,
                 },
               },
             },
@@ -496,7 +496,7 @@ export const getPostedProductList = async (
             winningBid:{
               include:{
                 bidder:{
-                  select: userShortenSelection
+                  select: sellerInfoSelection
                 }
               }
             },

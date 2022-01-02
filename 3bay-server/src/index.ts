@@ -2,11 +2,16 @@ import config from './config/config.js'
 import app from './express.js'
 import prisma from './db/prisma.js'
 import c from 'ansi-colors'
+import { createServer } from 'http'
+import initSocketIo from './socket/socket.io.js'
 
 const PORT = process.env.PORT || config.PORT || 3030
 
 async function main() {
-  app.listen(PORT, () => {
+  const server = createServer(app)
+  const io = initSocketIo(server)
+
+  server.listen(PORT, () => {
     console.log(c.magenta(`App listening on the port`), c.bgMagenta(`${PORT}`))
     console.log(c.magenta(`hostname`), c.bgMagenta(`${config.HOST_NAME}`))
     console.log(c.magenta(`Hope you're having a great day :>`))

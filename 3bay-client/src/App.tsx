@@ -30,7 +30,8 @@ import WatchList from './pages/user/watchlist/WatchList'
 import CreateProduct from './pages/seller/CreateProduct'
 import EditProduct from './pages/seller/EditProduct'
 import ProductProvider from './contexts/product/ProductContext'
-import PostedProductList from "./pages/seller/PostedProductList";
+import PostedProductList from './pages/seller/PostedProductList'
+import { SocketProvider } from './contexts/socket/SocketContext'
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -57,7 +58,10 @@ function GlobalRouter(): JSX.Element {
           <Route element={<RequireLogin />}>
             <Route path='user/view' element={<Profile />} />
             <Route path='user/watchlist' element={<WatchList />} />
-            <Route path='user/postedproductlist' element={<PostedProductList />} />
+            <Route
+              path='user/postedproductlist'
+              element={<PostedProductList />}
+            />
 
             <Route path='user/' element={<UserLayout />}>
               <Route index element={<Home />} />
@@ -110,13 +114,15 @@ function GlobalRouter(): JSX.Element {
 
 function App(): JSX.Element {
   return (
-    <ThemeConfig>
-      <AuthProvider>
+    <AuthProvider>
+      <SocketProvider>
         <UserProvider>
-          <GlobalRouter />
+          <ThemeConfig>
+            <GlobalRouter />
+          </ThemeConfig>
         </UserProvider>
-      </AuthProvider>
-    </ThemeConfig>
+      </SocketProvider>
+    </AuthProvider>
   )
 }
 
