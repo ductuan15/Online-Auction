@@ -58,6 +58,15 @@ async function getUserWonAuctionList(): Promise<Product[]> {
   return response.data as Product[]
 }
 
+
+async function getPoint(): Promise<number> {
+  const response = await axiosApiInstance.get<{
+    score: number
+  }>('/api/user/score')
+  return response.data.score
+}
+
+
 const UserService = {
   getUserInfo,
   updateUserInfo,
@@ -65,7 +74,8 @@ const UserService = {
   upgradeToSeller,
   getUserWatchList,
   getUserAuctionList,
-  getUserWonAuctionList
+  getUserWonAuctionList,
+  getPoint,
 }
 
 export default UserService

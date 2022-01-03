@@ -1,18 +1,18 @@
 import * as React from 'react'
-import {useState} from 'react'
+import { useState } from 'react'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import AppName from '../../../components/common/appname/AppName'
 import '@fontsource/jetbrains-mono'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import {Alert, Avatar, Divider, SvgIcon} from '@mui/material'
-import {ReactComponent as GoogleIcon} from '../../../assets/Google__G__Logo.svg'
-import {ReactComponent as FBIcon} from '../../../assets/Facebook_f_logo.svg'
+import { Alert, Avatar, Divider, SvgIcon } from '@mui/material'
+import { ReactComponent as GoogleIcon } from '../../../assets/Google__G__Logo.svg'
+import { ReactComponent as FBIcon } from '../../../assets/Facebook_f_logo.svg'
 import SignInForm from '../../../components/user/auth/SignInForm'
-import {useLocation, useNavigate} from 'react-router-dom'
-import {useAuth} from '../../../contexts/user/AuthContext'
-import axios, {AxiosError} from 'axios'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../contexts/user/AuthContext'
+import axios, { AxiosError } from 'axios'
 import useTitle from '../../../hooks/use-title'
 
 const SignIn: () => JSX.Element = () => {
@@ -21,11 +21,11 @@ const SignIn: () => JSX.Element = () => {
   const location = useLocation()
   const from = location.state?.from?.pathname || '/'
 
-  const {signIn} = useAuth()
+  const { signIn } = useAuth()
   const [errorText, setErrorText] = useState<string | null>(null)
 
   const handleSubmit = async (data: { email: string; pwd: string }) => {
-    const {email, pwd} = data
+    const { email, pwd } = data
     setErrorText(null)
     //console.log(data)
     try {
@@ -36,20 +36,21 @@ const SignIn: () => JSX.Element = () => {
         // when they get to the protected page and click the back button, they
         // won't end up back on the login page, which is also really nice for the
         // user experience.
-        navigate(from, {replace: true})
+        navigate(from, { replace: true })
       })
     } catch (e) {
       if (axios.isAxiosError(e) && (e as AxiosError)) {
         switch (e.response?.data.name) {
-          case 'AuthEmailNotConfirmed': {
-            try {
-              const uuid = e.response?.data.metaData.uuid || ''
-              navigate(`/verify/${uuid}`, {replace: true})
-              return
-            } catch (parseError) {
-              console.log(parseError)
+          case 'AuthEmailNotConfirmed':
+            {
+              try {
+                const uuid = e.response?.data.metaData.uuid || ''
+                navigate(`/verify/${uuid}`, { replace: true })
+                return
+              } catch (parseError) {
+                console.log(parseError)
+              }
             }
-          }
             break
           case 'AuthAccountDisabled': {
             setErrorText(e.response?.data.message)
@@ -71,7 +72,7 @@ const SignIn: () => JSX.Element = () => {
           alignItems: 'center',
         }}
       >
-        <AppName bigSize/>
+        <AppName bigSize />
 
         <Box
           sx={{
@@ -80,8 +81,8 @@ const SignIn: () => JSX.Element = () => {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
-            <LockOutlinedIcon/>
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
           </Avatar>
 
           <Typography component='h1' variant='h6' color='text.primary'>
@@ -91,10 +92,10 @@ const SignIn: () => JSX.Element = () => {
 
         {errorText && <Alert severity='error'>{errorText}</Alert>}
 
-        <SignInForm handleSubmit={handleSubmit}/>
+        <SignInForm handleSubmit={handleSubmit} />
       </Box>
 
-      <Divider sx={{mt: 2, mb: 2}}>
+      <Divider sx={{ mt: 2, mb: 2 }}>
         <Typography color='text.primary'>or</Typography>
       </Divider>
 
@@ -110,8 +111,8 @@ const SignIn: () => JSX.Element = () => {
           type='button'
           variant='outlined'
           color='secondary'
-          sx={{mx: 0.5, flexBasis: '100%'}}
-          startIcon={<SvgIcon component={GoogleIcon}/>}
+          sx={{ mx: 0.5, flexBasis: '100%' }}
+          startIcon={<SvgIcon component={GoogleIcon} />}
         >
           Google
         </Button>
@@ -120,8 +121,8 @@ const SignIn: () => JSX.Element = () => {
           type='button'
           fullWidth
           variant='outlined'
-          sx={{mx: 0.5, flexBasis: '100%'}}
-          startIcon={<SvgIcon component={FBIcon}/>}
+          sx={{ mx: 0.5, flexBasis: '100%' }}
+          startIcon={<SvgIcon component={FBIcon} />}
         >
           Facebook
         </Button>
