@@ -58,6 +58,12 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
             type: 'UPDATE_WATCH_LIST',
             payload: watchList,
           })
+          const auctionList = await UserService.getUserAuctionList()
+          console.log(auctionList)
+          dispatch({
+            type: 'UPDATE_AUCTION_LIST',
+            payload: auctionList,
+          })
         } else {
           dispatch({
             type: 'GET_ACCOUNT_INFO',

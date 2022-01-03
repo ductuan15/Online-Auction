@@ -23,6 +23,7 @@ import { Link, Stack, useTheme } from '@mui/material'
 import BorderButton from '../button/BorderButton'
 import {Link as RouterLink, useMatch, useNavigate, useResolvedPath} from 'react-router-dom'
 import { GREY } from '../../../theme/palette'
+import JoiningAuction from "./JoiningAuctionButton";
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -227,6 +228,10 @@ export default function SearchAppBar(): JSX.Element {
 
               {/*WatchList Button*/}
               {isAuth ? <WatchListButton /> : null}
+
+              {/*JoiningAuction Button*/}
+              {isAuth ? <JoiningAuction /> : null}
+
             </Stack>
 
             {/* Profile */}

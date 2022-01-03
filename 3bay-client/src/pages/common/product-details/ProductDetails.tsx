@@ -12,6 +12,7 @@ import './ProductDetails.css'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import ProductInfoSkeleton from '../../../components/common/product/ProductInfoSkeleton'
 import {useTitle} from '../../../hooks'
+import ProductBidDialog from '../../../components/common/product/ProductBidDialog'
 
 // TODO fetch related products instead of `getTop.getTopPrice`
 const ProductDetails = (): JSX.Element | null => {
@@ -36,78 +37,82 @@ const ProductDetails = (): JSX.Element | null => {
   }, [dispatch, id])
 
   return (
-    <Grid
-      container
-      my={1}
-      display='flex'
-      alignItems='center'
-      flexDirection='column'
-      rowSpacing={2}
-    >
-      <Grid container item xs={12} alignItems='flex-start' rowSpacing={2}>
-        <Grid item xs={12} md={6} component={Paper} variant='outlined' p={2}>
-          {isLoading ? (
-            <Skeleton
-              variant='rectangular'
-              sx={{
-                height: '435px',
-                width: 1,
-              }}
-            />
-          ) : (
-            <ProductImage />
-          )}
+    <>
+      <Grid
+        container
+        my={1}
+        display='flex'
+        alignItems='center'
+        flexDirection='column'
+        rowSpacing={2}
+      >
+        <Grid container item xs={12} alignItems='flex-start' rowSpacing={2}>
+          <Grid item xs={12} md={6} component={Paper} variant='outlined' p={2}>
+            {isLoading ? (
+              <Skeleton
+                variant='rectangular'
+                sx={{
+                  height: '435px',
+                  width: 1,
+                }}
+              />
+            ) : (
+              <ProductImage />
+            )}
+          </Grid>
+
+          <Grid container item xs={12} md={6} p={2}>
+            {isLoading ? (
+              <ProductInfoSkeleton />
+            ) : (
+              <>
+                {state.currentProduct && (
+                  <ProductInfo />
+                )}
+              </>
+            )}
+          </Grid>
         </Grid>
 
-        <Grid container item xs={12} md={6} p={2}>
+        <Grid item container xs={12}>
           {isLoading ? (
-            <ProductInfoSkeleton />
+            <Paper
+              elevation={0}
+              component={Grid}
+              container
+              item
+              variant='outlined'
+              flexDirection='row'
+              xs={12}
+              p={2}
+              px={3}
+            >
+              <Skeleton
+                variant='rectangular'
+                sx={{
+                  height: '435px',
+                  width: 1,
+                }}
+              />
+            </Paper>
           ) : (
             <>
               {state.currentProduct && (
-                <ProductInfo />
+                <ProductDescription />
               )}
             </>
           )}
         </Grid>
+
+        <ProductCarousel
+          name={'Related Products'}
+          fetchFunction={getTop.getTopPrice}
+          showLoading={true}
+        />
       </Grid>
 
-      <Grid item container xs={12}>
-        {isLoading ? (
-          <Paper
-            elevation={0}
-            component={Grid}
-            container
-            item
-            variant='outlined'
-            flexDirection='row'
-            xs={12}
-            p={2}
-            px={3}
-          >
-            <Skeleton
-              variant='rectangular'
-              sx={{
-                height: '435px',
-                width: 1,
-              }}
-            />
-          </Paper>
-        ) : (
-          <>
-            {state.currentProduct && (
-              <ProductDescription />
-            )}
-          </>
-        )}
-      </Grid>
-
-      <ProductCarousel
-        name={'Related Products'}
-        fetchFunction={getTop.getTopPrice}
-        showLoading={true}
-      />
-    </Grid>
+      <ProductBidDialog/>
+    </>
   )
 }
 export default ProductDetails

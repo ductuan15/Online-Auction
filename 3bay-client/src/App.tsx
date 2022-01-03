@@ -32,6 +32,7 @@ import EditProduct from './pages/seller/EditProduct'
 import ProductProvider from './contexts/product/ProductDetailsContext'
 import PostedProductList from './pages/seller/PostedProductList'
 import { SocketProvider } from './contexts/socket/SocketContext'
+import AuctionList from "./pages/user/auctionlist/AuctionList";
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -61,6 +62,7 @@ function GlobalRouter(): JSX.Element {
           <Route element={<RequireLogin />}>
             <Route path='user/view' element={<Profile />} />
             <Route path='user/watchlist' element={<WatchList />} />
+            <Route path='user/auctionlist' element={<AuctionList />} />
             <Route
               path='user/postedproductlist'
               element={<PostedProductList />}

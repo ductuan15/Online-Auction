@@ -48,12 +48,18 @@ async function getUserWatchList(): Promise<Product[]> {
   return response.data as Product[]
 }
 
+async function getUserAuctionList(): Promise<Product[]> {
+  const response = await axiosApiInstance.get(`api/auction/joined`)
+  return response.data as Product[]
+}
+
 const UserService = {
   getUserInfo,
   updateUserInfo,
   changePassword,
   upgradeToSeller,
-  getUserWatchList
+  getUserWatchList,
+  getUserAuctionList
 }
 
 export default UserService
