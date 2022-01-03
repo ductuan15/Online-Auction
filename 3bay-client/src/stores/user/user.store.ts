@@ -3,7 +3,8 @@ import Product from '../../models/product'
 
 export type UserState = {
   userDetails?: UserDetails
-  watchlist: Product[]
+  watchlist: Product[],
+  auctionlist: Product[]
 }
 
 export type UserAction =
@@ -12,10 +13,14 @@ export type UserAction =
   | { type: 'UPDATE_WATCH_LIST'; payload: Product[] }
   | { type: 'ADD_WATCH_LIST'; payload: Product }
   | { type: 'DELETE_WATCH_LIST'; payload: number }
+  | { type: 'UPDATE_AUCTION_LIST'; payload: Product[] }
+  | { type: 'ADD_AUCTION_LIST'; payload: Product }
+  | { type: 'DELETE_AUCTION_LIST'; payload: number }
 
 export const initialUserState = {
   //
   watchlist: [],
+  auctionlist: []
 }
 
 export const userReducer = (
@@ -55,6 +60,23 @@ export const userReducer = (
       return {
         ...state,
         watchlist: state.watchlist.filter((product: Product) => {
+          return product.id !== action.payload
+        }),
+      }
+    case 'UPDATE_AUCTION_LIST':
+      return {
+        ...state,
+        auctionlist: action.payload,
+      }
+    case 'ADD_AUCTION_LIST':
+      return {
+        ...state,
+        auctionlist: [...state.auctionlist, action.payload],
+      }
+    case 'DELETE_AUCTION_LIST':
+      return {
+        ...state,
+        auctionlist: state.auctionlist.filter((product: Product) => {
           return product.id !== action.payload
         }),
       }
