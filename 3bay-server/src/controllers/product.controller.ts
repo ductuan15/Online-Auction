@@ -477,13 +477,13 @@ export const getTopNumberBid = async (
   next: NextFunction,
 ) => {
   try {
-    const topNumberBidProducts = await prisma.product.findMany({
-      where:{
-        latestAuction:{
-          closeTime:{
-            gt:new Date()
-          }
-        }
+    const topNumberBidProducts: ProductRes[] = await prisma.product.findMany({
+      where: {
+        latestAuction: {
+          closeTime: {
+            gt: new Date(),
+          },
+        },
       },
       orderBy: {
         latestAuction: {
@@ -495,7 +495,9 @@ export const getTopNumberBid = async (
       include: includeProductDetailInfo,
       take: config.TOP_LIMIT,
     })
-    console.log(topNumberBidProducts)
+    topNumberBidProducts.forEach((product) => {
+      product.thumbnails = getAllThumbnailLink(product.id)
+    })
     res.json(topNumberBidProducts)
   } catch (err) {
     if (err instanceof Error) {
@@ -510,21 +512,24 @@ export const getTopCloseTime = async (
   next: NextFunction,
 ) => {
   try {
-    const topNumberBidProducts = await prisma.product.findMany({
-      where:{
-        latestAuction:{
-          closeTime:{
-            gt: new Date()
-          }
-        }
+    const topNumberBidProducts: ProductRes[] = await prisma.product.findMany({
+      where: {
+        latestAuction: {
+          closeTime: {
+            gt: new Date(),
+          },
+        },
       },
       orderBy: {
         latestAuction: {
-          closeTime: Prisma.Prisma.SortOrder.desc
+          closeTime: Prisma.Prisma.SortOrder.desc,
         },
       },
       include: includeProductDetailInfo,
       take: config.TOP_LIMIT,
+    })
+    topNumberBidProducts.forEach((product) => {
+      product.thumbnails = getAllThumbnailLink(product.id)
     })
     console.log(topNumberBidProducts)
     res.json(topNumberBidProducts)
