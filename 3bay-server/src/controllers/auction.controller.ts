@@ -484,3 +484,57 @@ export const getBidRequestList = async (
     }
   }
 }
+
+// pagnination ???
+export const getHasWinnerAuction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        sellerId: req.user.uuid,
+        latestAuction: {
+          closeTime: {
+            lt: new Date(),
+          },
+          NOT: {
+            winningBid: null,
+          },
+        },
+      },
+      include: includeProductDetailInfo,
+    })
+    res.json(products)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const getOpeingAuction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        sellerId: req.user.uuid,
+        latestAuction: {
+          closeTime: {
+            gt: new Date(),
+          },
+        },
+      },
+      include: includeProductDetailInfo,
+    })
+    res.json(products)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
