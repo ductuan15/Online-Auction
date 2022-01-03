@@ -14,7 +14,7 @@ import ProductCardSkeleton from '../product/ProductCardSkeleton'
 
 type CarouselProps = {
   name: string
-  fetchFunction: () => Promise<AxiosResponse<Product[]>>
+  fetchFunction: () => Promise<Product[]>
   showLoading?: boolean
 }
 
@@ -94,7 +94,7 @@ const ProductCarousel = ({
       setLoading(true)
       setTimeout(async () => {
         const response = await fetchFunction()
-        setProducts(response.data)
+        setProducts(response)
         setLoading(false)
       }, 1000)
       // console.log(response.data)
