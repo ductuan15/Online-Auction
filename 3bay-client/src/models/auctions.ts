@@ -1,4 +1,3 @@
-import { Bidder } from './user'
 import { Bid } from './bids'
 
 export interface Auction {
@@ -13,6 +12,6 @@ export interface Auction {
   _count: {
     bids: number
   }
-  winningBid?: Bidder
+  winningBid?: Bid
   bids: Bid[]
 }

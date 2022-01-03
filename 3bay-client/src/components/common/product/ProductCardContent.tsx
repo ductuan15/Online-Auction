@@ -103,7 +103,9 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
 
             {/*Bidder with highest price*/}
             <BackgroundLetterAvatars
-              name={product.latestAuction?.winningBid?.name || 'Tuan Cuong'}
+              name={
+                product.latestAuction?.winningBid?.bidder?.name || 'Tuan Cuong'
+              }
               fontSize={`${theme.typography.caption.fontSize}`}
               sx={{
                 ml: 1,

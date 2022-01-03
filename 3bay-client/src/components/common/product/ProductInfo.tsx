@@ -220,9 +220,9 @@ const ProductInfo = (): JSX.Element | null => {
       </Grid>
 
       <Grid item xs={12}>
-        {product.latestAuction?.winningBid?.name ? (
+        {product.latestAuction?.winningBid?.bidder?.name ? (
           <UserWithRating
-            name={product.latestAuction?.winningBid?.name}
+            name={product.latestAuction?.winningBid?.bidder?.name}
             label={'Bid by \u00a0\u00a0'}
           />
         ) : (

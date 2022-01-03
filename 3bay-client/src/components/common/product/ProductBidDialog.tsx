@@ -23,7 +23,7 @@ import GenericTextField from '../form/GenericTextField'
 import AuctionService from '../../../services/auction.service'
 import { setErrorTextMsg } from '../../../utils/error'
 import BidderService from '../../../services/bidder.service'
-import {useIsMounted} from '../../../hooks'
+import { useIsMounted } from '../../../hooks'
 
 const dialogName = 'dialog-set-bid-price'
 
@@ -39,7 +39,7 @@ function ProductBidDialog(): JSX.Element {
   } = useForm<ProductBidFormInput>({ mode: 'onChange' })
 
   const {
-    state: { isBidDialogOpened, currentProduct: product, point },
+    state: { isBidDialogOpened, currentProduct: product, point, bidStatus },
     dispatch,
   } = useProductContext()
 
@@ -47,10 +47,13 @@ function ProductBidDialog(): JSX.Element {
 
   const price = useMemo(() => {
     if (isNaN(+step) || !product?.latestAuction?.incrementPrice) {
-      return 0
+      return product?.latestAuction?.currentPrice || 0
     }
     return +step * (product?.latestAuction?.incrementPrice ?? 1)
-  }, [product?.latestAuction?.incrementPrice, step])
+  }, [
+    product,
+    step,
+  ])
 
   const hasPoint = useMemo(() => {
     return point !== undefined
@@ -131,7 +134,7 @@ function ProductBidDialog(): JSX.Element {
             </Alert>
           )}
 
-          {!hasPoint && (
+          {(!hasPoint && bidStatus?.status !== 'ACCEPT') && (
             <Alert severity='warning' sx={{ width: 1 }}>
               You need permission from seller in order to bid this product
             </Alert>

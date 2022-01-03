@@ -62,7 +62,9 @@ function ProductBidButton(): JSX.Element | null {
         break
       case 'ACCEPT':
         button = (
-          <BorderButton sx={{ mt: 1 }} color='info'>
+          <BorderButton sx={{ mt: 1 }} color='info' onClick={() => {
+            dispatch({ type: 'OPEN_BID_DIALOG' })
+          }}>
             ➕ Increase bid price
           </BorderButton>
         )
