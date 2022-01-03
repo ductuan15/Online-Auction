@@ -5,6 +5,8 @@ import Prisma from '@prisma/client'
 import { AuctionErrorCode } from '../error/error-code.js'
 import { AuctionError } from '../error/error-exception.js'
 import { includeProductDetailInfo } from './product.controller.js'
+import {getAllThumbnailLink} from "./images-product.controller.js";
+import {ProductRes} from "../types/ProductRes";
 const userShortenSelection = {
   uuid: true,
   name: true,
@@ -360,7 +362,7 @@ export const getJoinedAuction = async (
   next: NextFunction,
 ) => {
   try {
-    const joinedAuctions = await prisma.product.findMany({
+    const joinedAuctions: ProductRes[] = await prisma.product.findMany({
       where: {
         latestAuction: {
           bids: {
@@ -374,6 +376,9 @@ export const getJoinedAuction = async (
         },
       },
       include: includeProductDetailInfo,
+    })
+    joinedAuctions.forEach((product) => {
+      product.thumbnails = getAllThumbnailLink(product.id)
     })
     res.json(joinedAuctions)
   } catch (err) {
