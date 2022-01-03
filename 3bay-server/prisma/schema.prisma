@@ -159,8 +159,8 @@ model UserBidStatus {
   auctionId Int
   userId    String                  @db.VarChar(255)
   status    BidStatus?
-  auctions  Auction                 @relation("auctionsTouser_bid_status", fields: [auctionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_bid_status_fk0")
-  users     User                    @relation("user_bid_statusTousers", fields: [userId], references: [uuid], onUpdate: Restrict, map: "user_bid_status_fk1")
+  auction   Auction                 @relation("auctionsTouser_bid_status", fields: [auctionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_bid_status_fk0")
+  user      User                    @relation("user_bid_statusTousers", fields: [userId], references: [uuid], onUpdate: Restrict, map: "user_bid_status_fk1")
 
   @@id([auctionId, userId])
   @@index([userId], map: "user_bid_status_fk1")

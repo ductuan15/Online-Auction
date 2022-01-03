@@ -59,7 +59,7 @@ router
   .get(
     passport.authenticate('jwt', { session: false }),
     authMdw.requireSellerRole,
-    auctionController.getOpeingAuction,
+    auctionController.getOpeningAuction,
   )
 
 router

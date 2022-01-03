@@ -466,11 +466,19 @@ export const getBidRequestList = async (
           status: Prisma.BidStatus.PENDING,
         },
         include: {
-          // why `users` instead of `user`?
-          users: {
+          user: {
             select: {
               name: true,
               uuid: true,
+              // -.-
+              bids: {
+                select: {
+                  id: true,
+                },
+                where: {
+                  auctionId: req.auction.id
+                }
+              }
             },
           },
         },
@@ -514,7 +522,7 @@ export const getHasWinnerAuction = async (
   }
 }
 
-export const getOpeingAuction = async (
+export const getOpeningAuction = async (
   req: Request,
   res: Response,
   next: NextFunction,

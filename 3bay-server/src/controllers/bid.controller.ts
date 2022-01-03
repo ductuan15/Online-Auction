@@ -6,7 +6,7 @@ import { BidError } from '../error/error-exception.js'
 
 const VALID_SCORE = 8
 export const getWonAuction = async (userId: string) => {
-  const userWonAuction = await prisma.auction.findMany({
+  return await prisma.auction.findMany({
     where: {
       winningBid: {
         bidderId: userId,
@@ -16,7 +16,6 @@ export const getWonAuction = async (userId: string) => {
       },
     },
   })
-  return userWonAuction
 }
 
 export const getScore = async (userId: string) => {
@@ -43,7 +42,7 @@ export const isValidScore = async (
   try {
     const score = await getScore(req.user?.uuid || '')
     if (score && score <= VALID_SCORE) {
-      throw new BidError({ code: BidErrorCode.InvalidScore })
+      return next(new BidError({ code: BidErrorCode.InvalidScore }))
     } else {
       req.body.score = score
     }
@@ -70,9 +69,9 @@ export const isValidBidAmount = async (
           .add(req.auction?.incrementPrice || 0)
           .toNumber()
     ) {
-      next()
+      return next()
     } else {
-      throw new BidError({ code: BidErrorCode.InvalidBidAmount })
+      return next(new BidError({ code: BidErrorCode.InvalidBidAmount }))
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -156,9 +155,9 @@ export const isAuctionsClosed = (
 ) => {
   try {
     if (req.auction?.closeTime && req.auction?.closeTime > new Date()) {
-      next()
+      return next()
     } else {
-      throw new BidError({ code: BidErrorCode.ClosedAuction })
+      return next(new BidError({ code: BidErrorCode.ClosedAuction }))
     }
   } catch (err) {
     if (err instanceof Error) {
@@ -310,11 +309,11 @@ export const checkUserBidStatus = async (
         },
       },
     })
-    if (userBidStatus?.status === Prisma.BidStatus.PENDING)
-      throw new BidError({ code: BidErrorCode.HavingPendingBid })
-    else if (userBidStatus?.status === Prisma.BidStatus.REJECTED)
-      throw new BidError({ code: BidErrorCode.InBlacklist })
-    else {
+    if (userBidStatus?.status === Prisma.BidStatus.PENDING) {
+      return next(new BidError({ code: BidErrorCode.HavingPendingBid }))
+    } else if (userBidStatus?.status === Prisma.BidStatus.REJECTED) {
+      return next(new BidError({ code: BidErrorCode.InBlacklist }))
+    } else {
       next()
     }
   } catch (err) {
@@ -335,7 +334,7 @@ export const isSelfBid = async (
       },
     })
     if (product?.sellerId === req.user?.uuid) {
-      throw new BidError({ code: BidErrorCode.SelfBid })
+      return next(new BidError({ code: BidErrorCode.SelfBid }))
     } else {
       next()
     }
@@ -365,7 +364,7 @@ export const isWinningBidder = async (
       },
     })
     if (winningBid?.bidder.uuid === req.user?.uuid) {
-      throw new BidError({ code: BidErrorCode.AlreadyWinningAuction })
+      return next(new BidError({ code: BidErrorCode.AlreadyWinningAuction }))
     } else {
       next()
     }

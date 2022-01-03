@@ -29,6 +29,7 @@ const auctionInfoSelection = {
   openPrice: true,
   incrementPrice: true,
   buyoutPrice: true,
+  currentPrice: true,
 }
 
 export const includeProductDetailInfo = {

@@ -28,15 +28,19 @@ route
     bidController.isWinningBid,
     auctionController.update,
   )
-route.route('/setRejected/:auctionId/:bidId').patch(
-  passport.authenticate('jwt', { session: false }),
-  authMdw.requireSellerRole,
-  bidController.isProductOwner,
-  bidController.setBidStatusToRejected,
-  bidController.isWinningBid,
-  bidController.getPrevWinningBid,
-  auctionController.update,
-)
+
+route
+  .route('/setRejected/:auctionId/:bidId')
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    authMdw.requireSellerRole,
+    bidController.isProductOwner,
+    bidController.setBidStatusToRejected,
+    bidController.isWinningBid,
+    bidController.getPrevWinningBid,
+    auctionController.update,
+  )
+
 // check auctions is exist and opening
 route.param('auctionId', auctionController.checkAuctionExist)
 route.param('bidId', bidController.bidById)
