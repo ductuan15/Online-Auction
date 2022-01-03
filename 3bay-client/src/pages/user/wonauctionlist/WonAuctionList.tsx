@@ -4,9 +4,9 @@ import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import { useUserContext } from '../../../contexts/user/UserContext'
 
-const AuctionListPage = (): JSX.Element => {
+const WonAuctionListPage = (): JSX.Element => {
   const {
-    state: { auctionlist },
+    state: { wonauctionlist },
   } = useUserContext()
 
   return (
@@ -17,8 +17,8 @@ const AuctionListPage = (): JSX.Element => {
       flexDirection='row'
       spacing={{ xs: 2, md: 3, lg: 2 }}
     >
-      {auctionlist.length > 0 ? (
-        auctionlist.map((product, index) => {
+      {wonauctionlist.length > 0 ? (
+        wonauctionlist.map((product, index) => {
           return (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <ProductCard product={product} />
@@ -38,12 +38,12 @@ const AuctionListPage = (): JSX.Element => {
             color='text.primary'
             align='center'
           >
-            You don&apos;t have any products in auction list. Please return to
-            home page to search & bid your favorite products
+            You don&apos;t have any won products in auction list. Please return to
+            home page to bid & get your favorite products
           </Typography>
         </Grid>
       )}
     </Grid>
   )
 }
-export default AuctionListPage
+export default WonAuctionListPage

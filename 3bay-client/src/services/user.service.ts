@@ -53,13 +53,19 @@ async function getUserAuctionList(): Promise<Product[]> {
   return response.data as Product[]
 }
 
+async function getUserWonAuctionList(): Promise<Product[]> {
+  const response = await axiosApiInstance.get(`api/auction/wonAuction`)
+  return response.data as Product[]
+}
+
 const UserService = {
   getUserInfo,
   updateUserInfo,
   changePassword,
   upgradeToSeller,
   getUserWatchList,
-  getUserAuctionList
+  getUserAuctionList,
+  getUserWonAuctionList
 }
 
 export default UserService

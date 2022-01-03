@@ -24,6 +24,7 @@ import BorderButton from '../button/BorderButton'
 import {Link as RouterLink, useMatch, useNavigate, useResolvedPath} from 'react-router-dom'
 import { GREY } from '../../../theme/palette'
 import JoiningAuction from "./JoiningAuctionButton";
+import WonAuctionButton from "./WonAuctionButton";
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -231,6 +232,9 @@ export default function SearchAppBar(): JSX.Element {
 
               {/*JoiningAuction Button*/}
               {isAuth ? <JoiningAuction /> : null}
+
+              {/*WonAuction Button*/}
+              {isAuth ? <WonAuctionButton /> : null}
 
             </Stack>
 
