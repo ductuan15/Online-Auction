@@ -34,7 +34,6 @@ router.route('/top/price').get(productController.getTopPrice)
 router.route('/top/bidNumber').get(productController.getTopNumberBid)
 router.route('/top/closeTime').get(productController.getTopCloseTime)
 
-
 router
   .route('/:productId')
   .get(productController.read)

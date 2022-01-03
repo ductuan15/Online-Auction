@@ -23,7 +23,7 @@ const sellerInfoSelection = {
   // email: true,
 }
 
-const includeProductDetailInfo = {
+export const includeProductDetailInfo = {
   category: true,
   seller: {
     select: sellerInfoSelection,

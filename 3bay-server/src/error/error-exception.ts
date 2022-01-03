@@ -212,12 +212,16 @@ export class AuctionError extends ErrorException {
         this.message = 'Is not a winner of this auctions'
         this.status = 400
         break
-      case AuctionErrorCode.AuctionIsNotCloses:
+      case AuctionErrorCode.NotClosedAuction:
         this.message = 'This auctions has not been closed'
         this.status = 400
         break
       case AuctionErrorCode.NotProductOwner:
         this.message = 'Not own this product'
+        this.status = 400
+        break
+      case AuctionErrorCode.ClosedAuction:
+        this.message = 'Auctions has been closed'
         this.status = 400
         break
       default:

@@ -28,18 +28,40 @@ router
   )
 
 router
+  .route('/close/:auctionId')
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.isProductOwner,
+    auctionController.closeAuction,
+  )
+
+router
+  .route('/joined')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.getJoinedAuction,
+  )
+router
+  .route('/won')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.getWonAuction,
+  )
+
+router
   .route('/seller/review/:auctionId')
   .patch(
     passport.authenticate('jwt', { session: false }),
     auctionController.isProductOwner,
     auctionController.updataSellerReview,
   )
-router.route('/bidder/review/:auctionId')
-.patch(
-  passport.authenticate('jwt', { session: false }),
-  auctionController.isAuctionWinner,
-  auctionController.updataBidderReview
-)
+router
+  .route('/bidder/review/:auctionId')
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.isAuctionWinner,
+    auctionController.updataBidderReview,
+  )
 router.route('/:auctionId').get(auctionController.read)
 
 router.param('auctionId', auctionController.auctionById)

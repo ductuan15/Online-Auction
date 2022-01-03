@@ -4,6 +4,7 @@ import { AuctionRes } from '../types/AuctionRes.js'
 import Prisma from '@prisma/client'
 import { AuctionErrorCode } from '../error/error-code.js'
 import { AuctionError } from '../error/error-exception.js'
+import { includeProductDetailInfo } from './product.controller.js'
 const userShortenSelection = {
   uuid: true,
   name: true,
@@ -257,7 +258,7 @@ export const updataSellerReview = async (
 ) => {
   try {
     if (req.auction?.closeTime && req.auction.closeTime > new Date()) {
-      throw new AuctionError({ code: AuctionErrorCode.AuctionIsNotCloses })
+      throw new AuctionError({ code: AuctionErrorCode.NotClosedAuction })
     } else {
       req.auction = await prisma.auction.update({
         where: {
@@ -284,7 +285,7 @@ export const updataBidderReview = async (
 ) => {
   try {
     if (req.auction?.closeTime && req.auction.closeTime > new Date()) {
-      throw new AuctionError({ code: AuctionErrorCode.AuctionIsNotCloses })
+      throw new AuctionError({ code: AuctionErrorCode.NotClosedAuction })
     } else {
       req.auction = await prisma.auction.update({
         where: {
@@ -310,7 +311,7 @@ export const isAuctionWinner = async (
   next: NextFunction,
 ) => {
   try {
-    let winningBid:Prisma.Bid | null= null
+    let winningBid: Prisma.Bid | null = null
     if (req.auction) {
       winningBid = await prisma.bid.findUnique({
         where: {
@@ -348,6 +349,92 @@ export const isProductOwner = async (
     }
   } catch (err) {
     if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const getJoinedAuction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const joinedAuctions = await prisma.product.findMany({
+      where: {
+        latestAuction: {
+          bids: {
+            some: {
+              bidderId: req.user.uuid,
+            },
+          },
+          closeTime: {
+            gt: new Date(),
+          },
+        },
+      },
+      include: includeProductDetailInfo,
+    })
+    res.json(joinedAuctions)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const getWonAuction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const joinedAuctions = await prisma.product.findMany({
+      where: {
+        latestAuction: {
+          winningBid: {
+            bidderId: req.user?.uuid || '',
+          },
+          closeTime: {
+            lt: new Date(),
+          },
+        },
+      },
+      include: includeProductDetailInfo,
+    })
+    res.json(joinedAuctions)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const closeAuction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (
+      req.auction &&
+      req.auction.closeTime &&
+      req.auction?.closeTime > new Date()
+    ) {
+      const auction = await prisma.auction.update({
+        where: {
+          id: req.auction?.id,
+        },
+        data: {
+          closeTime: new Date(),
+        },
+      })
+      res.json(auction)
+    } else {
+      throw new AuctionError({ code: AuctionErrorCode.ClosedAuction })
+    }
+  } catch (err) {
+    if(err instanceof Error){
       next(err)
     }
   }

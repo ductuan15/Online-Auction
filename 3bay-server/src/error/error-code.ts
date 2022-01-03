@@ -52,7 +52,8 @@ export class BidErrorCode {
 
 export class AuctionErrorCode {
   public static readonly NotWinner = 'NotWinner'
-  public static readonly AuctionIsNotCloses = 'AuctionsNotClosed'
+  public static readonly NotClosedAuction = 'AuctionsNotClosed'
   public static readonly NotProductOwner = 'NotProductOwner'
+  public static readonly ClosedAuction = 'ClosedAuction'
 }
 
