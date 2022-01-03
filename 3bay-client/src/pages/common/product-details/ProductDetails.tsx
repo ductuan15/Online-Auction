@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Grid, Paper, Skeleton } from '@mui/material'
+import { useEffect, useMemo, useState } from 'react'
+import { Grid, Paper, Skeleton, Typography } from '@mui/material'
 
 import ProductImage from '../../../components/common/product/ProductImage'
 import ProductInfo from '../../../components/common/product/ProductInfo'
@@ -11,16 +11,26 @@ import ProductDescription from '../../../components/common/product/ProductDescip
 import './ProductDetails.css'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import ProductInfoSkeleton from '../../../components/common/product/ProductInfoSkeleton'
-import {useTitle} from '../../../hooks'
+import { useTitle } from '../../../hooks'
 import ProductBidDialog from '../../../components/common/product/ProductBidDialog'
+import BidRequestTable from '../../../components/seller/product/BidRequestTable'
+import { useAuth } from '../../../contexts/user/AuthContext'
 
 // TODO fetch related products instead of `getTop.getTopPrice`
 const ProductDetails = (): JSX.Element | null => {
   const { state, dispatch } = useProductContext()
+  const { user } = useAuth()
   const { id } = useParams()
   const [isLoading, setLoading] = useState(true)
 
   useTitle(`3bay | ${state.currentProduct?.name || ''}`)
+
+  const isProductSeller = useMemo(() => {
+    if (user && state.currentProduct?.sellerId) {
+      return user?.user === state.currentProduct.sellerId
+    }
+    return false
+  }, [state.currentProduct, user])
 
   useEffect(() => {
     ;(async () => {
@@ -65,11 +75,7 @@ const ProductDetails = (): JSX.Element | null => {
             {isLoading ? (
               <ProductInfoSkeleton />
             ) : (
-              <>
-                {state.currentProduct && (
-                  <ProductInfo />
-                )}
-              </>
+              <>{state.currentProduct && <ProductInfo />}</>
             )}
           </Grid>
         </Grid>
@@ -96,14 +102,37 @@ const ProductDetails = (): JSX.Element | null => {
               />
             </Paper>
           ) : (
-            <>
-              {state.currentProduct && (
-                <ProductDescription />
-              )}
-            </>
+            <>{state.currentProduct && <ProductDescription />}</>
           )}
         </Grid>
 
+        {isProductSeller && (
+          <Grid container item xs={12} mx={3} flexDirection='column'>
+            <Typography
+              gutterBottom
+              variant='h4'
+              component='h5'
+              color='text.primary'
+            >
+              Bidders request
+            </Typography>
+
+            <Typography
+              variant='subtitle1'
+              color='text.primary'
+              gutterBottom
+            >
+              These bidders would like to bid your product, you can
+              accept/reject their request. <br />
+              And remember that, once you reject their requests, they will not be
+              able to bid your product.
+            </Typography>
+
+            <Grid item xs={12} md={6}>
+              <BidRequestTable />
+            </Grid>
+          </Grid>
+        )}
         <ProductCarousel
           name={'Related Products'}
           fetchFunction={getTop.getTopPrice}
@@ -111,7 +140,7 @@ const ProductDetails = (): JSX.Element | null => {
         />
       </Grid>
 
-      <ProductBidDialog/>
+      <ProductBidDialog />
     </>
   )
 }

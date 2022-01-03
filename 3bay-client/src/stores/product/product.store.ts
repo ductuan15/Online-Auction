@@ -17,7 +17,7 @@ export type ProductAction =
 
 export const initialProductState: ProductState = {
   isBidDialogOpened: false,
-  point: 0
+  point: 0,
 }
 
 export const ProductReducer = (
@@ -43,12 +43,12 @@ export const ProductReducer = (
     case 'UPDATE_BID_STATUS':
       return {
         ...state,
-        bidStatus: action.payload
+        bidStatus: action.payload,
       }
     case 'UPDATE_POINT':
       return {
         ...state,
-        point: action.payload
+        point: action.payload,
       }
     default:
       return state

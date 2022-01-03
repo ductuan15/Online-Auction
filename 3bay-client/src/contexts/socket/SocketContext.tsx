@@ -31,7 +31,7 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
           extraHeaders: {
             Authorization: `Bearer ${user.token}`,
           },
-          reconnection: !!user,
+          reconnection: false,
           reconnectionAttempts: 5,
         })
         socket.io.on('reconnect_error', () => {
