@@ -16,7 +16,6 @@ import { Link as RouterLink } from 'react-router-dom'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useTheme } from '@mui/material/styles'
 import BorderIconButton from '../button/BorderIconButton'
-import BorderButton from '../button/BorderButton'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import ProductBidButton from './ProductBidButton'
 
@@ -261,31 +260,33 @@ const ProductInfo = (): JSX.Element | null => {
         )}
       </Grid>
 
-      <Grid
-        item
-        container
-        xs={12}
-        justifyContent='space-between'
-        alignItems='center'
-      >
-        <ProductBidButton/>
-
-        <BorderIconButton
-          size='large'
-          onClick={onWatchlistButtonClicked}
-          isSelected={isInWatchlist}
-          color='error'
-          sx={{ mt: 1 }}
+      {closeTime?.isAfter() && (
+        <Grid
+          item
+          container
+          xs={12}
+          justifyContent='space-between'
+          alignItems='center'
         >
-          <Tooltip title='Add to watchlist'>
-            {isInWatchlist ? (
-              <FavoriteOutlinedIcon color='error' />
-            ) : (
-              <FavoriteBorderOutlinedIcon color='error' />
-            )}
-          </Tooltip>
-        </BorderIconButton>
-      </Grid>
+          <ProductBidButton />
+
+          <BorderIconButton
+            size='large'
+            onClick={onWatchlistButtonClicked}
+            isSelected={isInWatchlist}
+            color='error'
+            sx={{ mt: 1 }}
+          >
+            <Tooltip title='Add to watchlist'>
+              {isInWatchlist ? (
+                <FavoriteOutlinedIcon color='error' />
+              ) : (
+                <FavoriteBorderOutlinedIcon color='error' />
+              )}
+            </Tooltip>
+          </BorderIconButton>
+        </Grid>
+      )}
     </Grid>
   ) : null
 }

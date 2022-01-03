@@ -27,13 +27,17 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
     if (user) {
       try {
         console.log('connect')
-        return connect(config.API_HOST_NAME, {
+        const socket = connect(config.API_HOST_NAME, {
           extraHeaders: {
             Authorization: `Bearer ${user.token}`,
           },
           reconnection: !!user,
           reconnectionAttempts: 5,
         })
+        socket.io.on('reconnect_error', () => {
+          socket.disconnect()
+        })
+        return socket
       } catch (e) {
         console.log(e)
         return null

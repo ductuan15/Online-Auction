@@ -56,6 +56,7 @@ axiosApiInstance.interceptors.response.use(
           // localStorage.setItem('t', res.data.accessToken)
 
           console.log('Access token refreshed!')
+          window.dispatchEvent(new Event('local-storage'))
           return axiosApiInstance(originalRequest)
         }
       } catch (e) {

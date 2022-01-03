@@ -34,15 +34,15 @@ function ProductBidDialog(): JSX.Element {
   } = useForm<ProductBidFormInput>({ mode: 'onChange' })
 
   const {
-    state: { isBidDialogOpened, currentProduct: product, score },
+    state: { isBidDialogOpened, currentProduct: product, point },
     dispatch,
   } = useProductContext()
 
   const price = +watch('step') * (product?.latestAuction?.currentPrice ?? 1)
 
-  const hasEnoughScore = useMemo(() => {
-    return score >= 8
-  }, [score])
+  const hasEnoughPoint = useMemo(() => {
+    return point >= 8
+  }, [point])
 
   useEffect(() => {
     if (product) {
@@ -74,19 +74,19 @@ function ProductBidDialog(): JSX.Element {
           component='form'
           onSubmit={handleSubmit(onSubmit)}
         >
-          {!hasEnoughScore && (
+          {!hasEnoughPoint && (
             <Alert severity='warning' sx={{ width: 1 }}>
               You need permission from seller in order to bid this product
             </Alert>
           )}
 
-          {!hasEnoughScore && (
+          {!hasEnoughPoint && (
             <BorderButton color='warning' fullWidth sx={{ mt: 2 }}>
               Request permission from the seller
             </BorderButton>
           )}
 
-          {hasEnoughScore && product && product.latestAuction && (
+          {hasEnoughPoint && product && product.latestAuction && (
             <>
               <Typography
                 color='text.primary'
@@ -170,7 +170,7 @@ function ProductBidDialog(): JSX.Element {
             </>
           )}
 
-          {hasEnoughScore && product?.latestAuction?.buyoutPrice && (
+          {hasEnoughPoint && product?.latestAuction?.buyoutPrice && (
             <BorderButton color='success' fullWidth sx={{ mt: 2 }}>
               💵 DEAL: Buy the product instantly with ₫
               {product?.latestAuction?.buyoutPrice}
@@ -183,7 +183,7 @@ function ProductBidDialog(): JSX.Element {
         <Button autoFocus onClick={onClose}>
           Cancel
         </Button>
-        {hasEnoughScore && (
+        {hasEnoughPoint && (
           <Button autoFocus type='submit' form={`category-form-${dialogName}`}>
             Save changes
           </Button>

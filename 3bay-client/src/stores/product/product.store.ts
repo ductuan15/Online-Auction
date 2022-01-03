@@ -5,7 +5,7 @@ export type ProductState = {
   currentProduct?: Product
   isBidDialogOpened: boolean
   bidStatus?: BidStatus
-  score: number
+  point: number
 }
 
 export type ProductAction =
@@ -13,10 +13,11 @@ export type ProductAction =
   | { type: 'UPDATE_BID_STATUS'; payload?: BidStatus }
   | { type: 'OPEN_BID_DIALOG' }
   | { type: 'CLOSE_BID_DIALOG' }
+  | { type: 'UPDATE_POINT'; payload: number }
 
 export const initialProductState: ProductState = {
   isBidDialogOpened: false,
-  score: 0
+  point: 0
 }
 
 export const ProductReducer = (
@@ -43,6 +44,11 @@ export const ProductReducer = (
       return {
         ...state,
         bidStatus: action.payload
+      }
+    case 'UPDATE_POINT':
+      return {
+        ...state,
+        point: action.payload
       }
     default:
       return state

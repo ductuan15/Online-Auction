@@ -1,21 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BidStatus } from '../models/bidder'
-
-async function getPoint(uuid: string): Promise<number> {
-  // const response = await axiosApiInstance.get('')
-  return 0.0
-}
+import axiosApiInstance from './api'
 
 async function getAuctionStatus(
-  userId: string,
   auctionId: number,
 ): Promise<BidStatus> {
-  // const response = await axiosApiInstance.get('api/')
-  return { status: 'NOT_BID' }
+  const response = await axiosApiInstance.get<BidStatus>(`/api/auction/userStatus/${auctionId}`)
+  return response.data
 }
 
 const BidderService = {
-  getPoint,
   getAuctionStatus
 }
 
