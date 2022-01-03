@@ -24,7 +24,7 @@ const onConnect = (socket: Socket) => {
 
   socket.on('whoami', () => {
     // cb(socket.request.user ? socket.request.user.uuid : '')
-    console.log(`${socket.request.user.uuid} - ${socket.request.user.name} greeted you`)
+    console.log(`${socket.request.user.uuid} - ${socket.request.user.name} greeted you <3`)
   })
 
   socket.on('disconnect', () => {

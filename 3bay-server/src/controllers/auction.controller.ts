@@ -193,11 +193,12 @@ export const checkAuctionExist = async (
 }
 
 enum USER_BID_STATUS {
-  NOBID,
-  PENDING,
-  REJECTED,
-  ACCEPTED_NOT_WINNING,
-  WINNING,
+  NOBID= 'NOT_BID',
+  PENDING = 'PENDING',
+  REJECTED = 'REJECT',
+  // ACCEPTED_NOT_WINNING = 'ACCEPTED_NOT_WINNING',
+  // WINNING = 'WINNING',
+  ACCEPT = 'ACCEPT'
 }
 
 export const getUserBidStatus = async (
@@ -216,12 +217,12 @@ export const getUserBidStatus = async (
     })
     const response: {
       auctionId: number
-      status?: number
+      status?: string
     } = {
       auctionId: req.auction?.id || NaN,
     }
     switch (userBidStatus?.status) {
-      case null || undefined:
+      case undefined:
         response.status = USER_BID_STATUS.NOBID
         break
       case Prisma.BidStatus.PENDING:
@@ -231,16 +232,17 @@ export const getUserBidStatus = async (
         response.status = USER_BID_STATUS.REJECTED
         break
       case Prisma.BidStatus.ACCEPTED:
-        const winningBid = await prisma.bid.findUnique({
-          where: {
-            id: req.auction?.winningBidId || NaN,
-          },
-        })
-        if (winningBid?.bidderId !== req.user.uuid) {
-          response.status = USER_BID_STATUS.ACCEPTED_NOT_WINNING
-        } else {
-          response.status = USER_BID_STATUS.WINNING
-        }
+        // const winningBid = await prisma.bid.findUnique({
+        //   where: {
+        //     id: req.auction?.winningBidId || NaN,
+        //   },
+        // })
+        // if (winningBid?.bidderId !== req.user.uuid) {
+        //   response.status = USER_BID_STATUS.ACCEPTED_NOT_WINNING
+        // } else {
+        //   response.status = USER_BID_STATUS.WINNING
+        // }
+        response.status = USER_BID_STATUS.ACCEPT
         break
       default:
         break
