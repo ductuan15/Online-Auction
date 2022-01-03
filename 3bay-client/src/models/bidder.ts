@@ -3,7 +3,17 @@ export type BidStatus = {
 }
 
 export type BidRequest = {
-    name: string
-    id: string
+  name: string
+  id: string
+  bidId: number
+}
 
+export type BidRequestResponseType = {
+  user: {
+    name: string
+    uuid: string
+    bids: {
+      id: number
+    }[]
+  }
 }

@@ -1,74 +1,95 @@
-import * as React from 'react'
 import {
   DataGrid,
   GridActionsCellItem,
   GridColumns,
   GridRenderCellParams,
-  GridRowId,
+  GridRowParams,
 } from '@mui/x-data-grid'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
-import { Box, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
-import { useAuth } from '../../../contexts/user/AuthContext'
 import { BidRequest } from '../../../models/bidder'
-import {useEffect} from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import SellerService from '../../../services/seller.service'
+import _ from 'lodash'
 
 // type BidRequestTableProps = {
 //   sx?: SxProps
 // }
 
 export default function BidRequestTable() {
-  const [rows, setRows] = React.useState<BidRequest[]>([])
-  const { state, dispatch } = useProductContext()
-  const { user } = useAuth()
+  const [rows, setRows] = useState<BidRequest[]>([])
+  const { state } = useProductContext()
+  // const { user } = useAuth()
+
+  const init = useCallback(async () => {
+    if (state.currentProduct?.latestAuctionId) {
+      try {
+        const data = await SellerService.getBidRequests(
+          state.currentProduct?.latestAuctionId,
+        )
+        setRows(data)
+      } catch (e) {
+        setRows([])
+      }
+    }
+  }, [state.currentProduct?.latestAuctionId])
 
   useEffect(() => {
     ;(async () => {
-      if (state.currentProduct?.latestAuctionId) {
-        try {
-          const data = await SellerService.getBidRequests(state.currentProduct?.latestAuctionId)
-          setRows(data)
-        } catch (e) {
-          setRows([])
-        }
-      }
+      await init()
     })()
-  }, [state.currentProduct?.latestAuctionId])
+  }, [init])
 
-  const rejectBidder = React.useCallback(
-    (id: GridRowId) => () => {
-      setTimeout(() => {
-        setRows((prevRows) => prevRows.filter((row) => row.id !== id))
-      })
+  const rejectBidder = useCallback(
+    async (params: GridRowParams) => {
+      try {
+        const idx = _.findIndex(rows, (row) => {
+          return row.id === params.id
+        })
+        if (idx === -1) {
+          return
+        }
+        const response = await SellerService.rejectBid(
+          state.currentProduct?.latestAuctionId,
+          rows[idx].bidId,
+        )
+        if (response) {
+          setRows((prevRows) => prevRows.filter((row) => row.id !== params.id))
+        }
+      } catch (e) {
+        //
+      }
     },
-    [],
+    [rows, state.currentProduct?.latestAuctionId],
   )
 
-  const acceptBidder = React.useCallback(
-    (id: GridRowId) => () => {
-      // setRows((prevRows) =>
-      //   // prevRows.map((row) =>
-      //   //   row.id === id ? { ...row,  } : row,
-      //   // ),
-      // )
+  const acceptBidder = useCallback(
+    async (params: GridRowParams) => {
+      try {
+        const idx = _.findIndex(rows, (row) => {
+          return row.id === params.id
+        })
+        if (idx === -1) {
+          return
+        }
+        const response = await SellerService.acceptBid(
+          state.currentProduct?.latestAuctionId,
+          rows[idx].bidId,
+        )
+        if (response) {
+          setRows((prevRows) => prevRows.filter((row) => row.id !== params.id))
+        }
+      } catch (e) {
+        //
+      }
     },
-    [],
+    [rows, state.currentProduct?.latestAuctionId],
   )
 
-  const duplicateUser = React.useCallback(
-    (id: GridRowId) => () => {
-      // setRows((prevRows) => {
-      //   const rowToDuplicate = prevRows.find((row) => row.id === id)!
-      //   return [...prevRows, { ...rowToDuplicate, id: Date.now() }]
-      // })
-    },
-    [],
-  )
-
-  const columns: GridColumns = React.useMemo(
+  const columns: GridColumns = useMemo(
     () => [
       {
         field: 'name',
@@ -97,13 +118,17 @@ export default function BidRequestTable() {
             key={params.id}
             icon={<CloseIcon />}
             label='Deny'
-            onClick={rejectBidder(params.id)}
+            onClick={async () => {
+              await rejectBidder(params)
+            }}
           />,
           <GridActionsCellItem
             key={params.id}
             icon={<CheckIcon />}
             label='Accept'
-            onClick={acceptBidder(params.id)}
+            onClick={async () => {
+              await acceptBidder(params)
+            }}
           />,
         ],
       },
@@ -112,8 +137,30 @@ export default function BidRequestTable() {
   )
 
   return (
-    <div style={{ height: 300, width: '100%' }}>
-      <DataGrid columns={columns} rows={rows} />
-    </div>
+    <>
+      <Grid container item xs={12} mx={3} flexDirection='column'>
+        <Typography
+          gutterBottom
+          variant='h4'
+          component='h5'
+          color='text.primary'
+        >
+          Bidders request
+        </Typography>
+
+        <Typography variant='subtitle1' color='text.primary' gutterBottom>
+          These bidders would like to bid your product, you can accept/reject
+          their request. <br />
+          And remember that, once you reject their requests, they will not be
+          able to bid your product.
+        </Typography>
+
+        <Grid item xs={12} md={6}>
+          <div style={{ height: 300, width: '100%' }}>
+            <DataGrid columns={columns} rows={rows} />
+          </div>
+        </Grid>
+      </Grid>
+    </>
   )
 }

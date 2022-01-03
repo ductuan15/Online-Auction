@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Grid, Paper, Skeleton, Typography } from '@mui/material'
+import { Grid, Paper, Skeleton } from '@mui/material'
 
 import ProductImage from '../../../components/common/product/ProductImage'
 import ProductInfo from '../../../components/common/product/ProductInfo'
@@ -106,33 +106,8 @@ const ProductDetails = (): JSX.Element | null => {
           )}
         </Grid>
 
-        {isProductSeller && (
-          <Grid container item xs={12} mx={3} flexDirection='column'>
-            <Typography
-              gutterBottom
-              variant='h4'
-              component='h5'
-              color='text.primary'
-            >
-              Bidders request
-            </Typography>
+        {isProductSeller && <BidRequestTable />}
 
-            <Typography
-              variant='subtitle1'
-              color='text.primary'
-              gutterBottom
-            >
-              These bidders would like to bid your product, you can
-              accept/reject their request. <br />
-              And remember that, once you reject their requests, they will not be
-              able to bid your product.
-            </Typography>
-
-            <Grid item xs={12} md={6}>
-              <BidRequestTable />
-            </Grid>
-          </Grid>
-        )}
         <ProductCarousel
           name={'Related Products'}
           fetchFunction={getTop.getTopPrice}
