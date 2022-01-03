@@ -4,24 +4,67 @@ import * as productController from '../controllers/product.controller.js'
 import * as authMdw from '../middlewares/auth.mdw.js'
 import passport from 'passport'
 
-const route = Router()
+const router = Router()
 
-route
+router
   .route('/byProduct/:productId')
   .post(
     passport.authenticate('jwt', { session: false }),
-    authMdw.isAuthorized('SELLER'),
+    authMdw.requireSellerRole,
     productController.isProductOwner,
     auctionController.add,
   )
   .get(auctionController.auctionsByProductId)
 
-route
+router
   .route('/byProduct/latestAuction/:productId')
   .get(auctionController.getLatestAuction)
-route.route('/:auctionId').get(auctionController.read)
 
-route.param('auctionId', auctionController.auctionById)
-route.param('productId', productController.checkProductExist)
+router
+  .route('/userStatus/:auctionId')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.getUserBidStatus,
+  )
 
-export default route
+router
+  .route('/close/:auctionId')
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.isProductOwner,
+    auctionController.closeAuction,
+  )
+
+router
+  .route('/joined')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.getJoinedAuction,
+  )
+router
+  .route('/won')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.getWonAuction,
+  )
+
+router
+  .route('/seller/review/:auctionId')
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.isProductOwner,
+    auctionController.updataSellerReview,
+  )
+router
+  .route('/bidder/review/:auctionId')
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.isAuctionWinner,
+    auctionController.updataBidderReview,
+  )
+router.route('/:auctionId').get(auctionController.read)
+
+router.param('auctionId', auctionController.auctionById)
+router.param('productId', productController.checkProductExist)
+
+export default router

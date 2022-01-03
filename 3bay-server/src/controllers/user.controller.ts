@@ -4,6 +4,7 @@ import { AuthError, ErrorException } from '../error/error-exception.js'
 import { AuthErrorCode, ErrorCode } from '../error/error-code.js'
 import prisma from '../db/prisma.js'
 import { verifyPassword } from '../auth/passport.js'
+import { getScore } from './bid.controller.js'
 
 function removePrivateData(user: Partial<Prisma.User>) {
   delete user.verified
@@ -111,5 +112,20 @@ export async function requestToSeller(
     return res.json(response)
   } catch (e) {
     return next(new ErrorException({ code: ErrorCode.UnknownError }))
+  }
+}
+
+export async function getUserScore(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const score = await getScore(req.user?.uuid || '')
+    res.json({ score })
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e)
+    }
   }
 }

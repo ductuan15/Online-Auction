@@ -279,9 +279,9 @@ const ProductInfo = (): JSX.Element | null => {
         >
           <Tooltip title='Add to watchlist'>
             {isInWatchlist ? (
-              <FavoriteOutlinedIcon color='inherit' />
+              <FavoriteOutlinedIcon color='error' />
             ) : (
-              <FavoriteBorderOutlinedIcon color='inherit' />
+              <FavoriteBorderOutlinedIcon color='error' />
             )}
           </Tooltip>
         </BorderIconButton>
