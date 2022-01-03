@@ -478,6 +478,13 @@ export const getTopNumberBid = async (
 ) => {
   try {
     const topNumberBidProducts = await prisma.product.findMany({
+      where:{
+        latestAuction:{
+          closeTime:{
+            gt:new Date()
+          }
+        }
+      },
       orderBy: {
         latestAuction: {
           bids: {
@@ -513,7 +520,7 @@ export const getTopCloseTime = async (
       },
       orderBy: {
         latestAuction: {
-          closeTime: Prisma.Prisma.SortOrder.asc
+          closeTime: Prisma.Prisma.SortOrder.desc
         },
       },
       include: includeProductDetailInfo,
