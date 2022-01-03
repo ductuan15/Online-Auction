@@ -3,15 +3,17 @@ import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import { useNavigate } from 'react-router-dom'
-import { Badge } from '@mui/material'
-import { useUserContext } from '../../../contexts/user/UserContext'
-import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
+import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
+import UserService from "../../../services/user.service";
 
 const JoiningAuctionButton = (): JSX.Element => {
   const navigate = useNavigate()
-  const {
-    state: { wonauctionlist },
-  } = useUserContext()
+  // const wonAuctionList = await UserService.getUserWonAuctionList()
+  // dispatch({
+  //   type: 'UPDATE_AUCTION_LIST',
+  //   payload: wonAuctionList,
+  // })
+
   return (
     <Box>
       <Tooltip title='Won Auctions list'>
@@ -22,9 +24,7 @@ const JoiningAuctionButton = (): JSX.Element => {
           aria-label='Won Auctions'
           color='inherit'
         >
-          <Badge badgeContent={wonauctionlist.length} color='secondary'>
-            <InventoryOutlinedIcon />
-          </Badge>
+          <InventoryOutlinedIcon />
         </IconButton>
       </Tooltip>
     </Box>

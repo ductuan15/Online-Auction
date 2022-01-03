@@ -2,12 +2,18 @@ import Grid from '@mui/material/Grid'
 import ProductCard from '../../../components/common/product/ProductCard'
 import * as React from 'react'
 import Typography from '@mui/material/Typography'
-import { useUserContext } from '../../../contexts/user/UserContext'
+import {useEffect, useState} from "react";
+import Product from "../../../models/product";
+import UserService from "../../../services/user.service";
 
 const WonAuctionListPage = (): JSX.Element => {
-  const {
-    state: { wonauctionlist },
-  } = useUserContext()
+  const [wonauctionlist, setWonAuctionlist] = useState<Product[]>([])
+  useEffect(() => {
+    ;(async () => {
+      const wonAuctionList = await UserService.getUserWonAuctionList()
+      setWonAuctionlist(wonAuctionList)
+    })()
+  }, [])
 
   return (
     <Grid
