@@ -28,6 +28,14 @@ export const auctionById = async (
             },
           },
         },
+        UserBidStatus: true,
+        bids: {
+          include: {
+            bidder: {
+              select: userShortenSelection,
+            },
+          },
+        },
       },
       rejectOnNotFound: true,
     })
@@ -87,7 +95,14 @@ export const getLatestAuction = async (
             },
           },
         },
-        bids: true,
+        UserBidStatus: true,
+        bids: {
+          include: {
+            bidder: {
+              select: userShortenSelection,
+            },
+          },
+        },
       },
     })
     res.json(auction)
