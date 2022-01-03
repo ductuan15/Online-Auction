@@ -19,8 +19,16 @@ import { AuctionRes } from '../types/AuctionRes.js'
 const sellerInfoSelection = {
   uuid: true,
   name: true,
-  // address: true,
-  // email: true,
+}
+
+
+const auctionInfoSelection = {
+  id: true,
+  startTime: true,
+  closeTime: true,
+  openPrice: true,
+  incrementPrice: true,
+  buyoutPrice: true,
 }
 
 export const includeProductDetailInfo = {
@@ -29,7 +37,8 @@ export const includeProductDetailInfo = {
     select: sellerInfoSelection,
   },
   latestAuction: {
-    include: {
+    select: {
+      ...auctionInfoSelection,
       winningBid: {
         include: {
           bidder: {
@@ -45,7 +54,6 @@ export const includeProductDetailInfo = {
     },
   },
 }
-
 export const productById = async (
   req: Request,
   res: Response,
@@ -61,12 +69,8 @@ export const productById = async (
         deletedAt: null,
       },
       include: {
+        ...includeProductDetailInfo,
         productDescriptionHistory: isWithDescription,
-        category: true,
-        seller: {
-          select: sellerInfoSelection,
-        },
-        latestAuction: true,
       },
       rejectOnNotFound: true,
     })
@@ -242,7 +246,18 @@ export const getProductByCategoryId = async (
     if (page) {
       products = await prisma.product.findMany({
         where: {
-          categoryId: categoryId,
+          OR: [
+            {
+              categoryId: categoryId,
+            },
+            {
+              category: {
+                categories: {
+                  id: categoryId,
+                },
+              },
+            },
+          ],
           latestAuction: {
             closeTime: {
               gt: new Date(),
