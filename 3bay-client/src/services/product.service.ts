@@ -62,9 +62,22 @@ export async function updateProductById(
   return response.data
 }
 
-export const getTop: { getTopPrice(): Promise<AxiosResponse<Product[]>> } = {
+export const getTop: {
+  getTopPrice(): Promise<Product[]>
+  getTopCloseTime(): Promise<Product[]>
+  getTopBidNum(): Promise<Product[]>
+} = {
   async getTopPrice() {
-    return await axiosApiInstance.get<Product[]>(`${productApi}/top/price`)
+    const res = await axiosApiInstance.get<Product[]>(`${productApi}/top/price`)
+    return res.data
+  },
+  async getTopCloseTime() {
+    const res = await axiosApiInstance.get<Product[]>(`${productApi}/top/closeTime`)
+    return res.data
+  },
+  async getTopBidNum() {
+    const res = await axiosApiInstance.get<Product[]>(`${productApi}/top/bidNumber`)
+    return res.data
   },
 }
 

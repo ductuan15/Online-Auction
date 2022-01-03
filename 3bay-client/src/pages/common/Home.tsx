@@ -44,7 +44,19 @@ const Home = (): JSX.Element => {
         </Typography>
 
         <ProductCarousel
-          name={'🔎 Popular items'}
+          name={'⌛ Close time'}
+          fetchFunction={getTop.getTopCloseTime}
+          showLoading={true}
+        />
+
+        <ProductCarousel
+          name={'🔎 Popular products'}
+          fetchFunction={getTop.getTopBidNum}
+          showLoading={true}
+        />
+
+        <ProductCarousel
+          name={'💰 Highest price'}
           fetchFunction={getTop.getTopPrice}
           showLoading={true}
         />
