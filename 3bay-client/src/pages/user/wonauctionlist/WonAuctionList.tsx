@@ -38,7 +38,7 @@ const WonAuctionListPage = (): JSX.Element => {
             color='text.primary'
             align='center'
           >
-            You don&apos;t have any won products in auction list. Please return to
+            You haven&apos;t won any auctions. Please return to
             home page to bid & get your favorite products
           </Typography>
         </Grid>
