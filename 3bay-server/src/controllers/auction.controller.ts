@@ -8,11 +8,9 @@ import { includeProductDetailInfo } from './product.controller.js'
 import { getAllThumbnailLink } from './images-product.controller.js'
 import { ProductRes } from '../types/ProductRes'
 
-const userShortenSelection = {
+const bidderInfoSelection = {
   uuid: true,
   name: true,
-  address: true,
-  email: true,
 }
 
 export const auctionById = async (
@@ -30,7 +28,7 @@ export const auctionById = async (
         winningBid: {
           include: {
             bidder: {
-              select: userShortenSelection,
+              select: bidderInfoSelection,
             },
           },
         },
@@ -38,7 +36,7 @@ export const auctionById = async (
         bids: {
           include: {
             bidder: {
-              select: userShortenSelection,
+              select: bidderInfoSelection,
             },
           },
         },
@@ -97,7 +95,7 @@ export const getLatestAuction = async (
         winningBid: {
           include: {
             bidder: {
-              select: userShortenSelection,
+              select: bidderInfoSelection,
             },
           },
         },
@@ -105,7 +103,7 @@ export const getLatestAuction = async (
         bids: {
           include: {
             bidder: {
-              select: userShortenSelection,
+              select: bidderInfoSelection,
             },
           },
         },
@@ -133,7 +131,7 @@ export const auctionsByProductId = async (
         winningBid: {
           include: {
             bidder: {
-              select: userShortenSelection,
+              select: bidderInfoSelection,
             },
           },
         },
@@ -483,6 +481,60 @@ export const getBidRequestList = async (
   } catch (e) {
     if (e instanceof Error) {
       next(e)
+    }
+  }
+}
+
+// pagnination ???
+export const getHasWinnerAuction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        sellerId: req.user.uuid,
+        latestAuction: {
+          closeTime: {
+            lt: new Date(),
+          },
+          NOT: {
+            winningBid: null,
+          },
+        },
+      },
+      include: includeProductDetailInfo,
+    })
+    res.json(products)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const getOpeingAuction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        sellerId: req.user.uuid,
+        latestAuction: {
+          closeTime: {
+            gt: new Date(),
+          },
+        },
+      },
+      include: includeProductDetailInfo,
+    })
+    res.json(products)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
     }
   }
 }

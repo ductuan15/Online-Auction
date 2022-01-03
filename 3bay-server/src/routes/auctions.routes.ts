@@ -47,6 +47,20 @@ router
     passport.authenticate('jwt', { session: false }),
     auctionController.getWonAuction,
   )
+router
+  .route('/has-winner')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    authMdw.requireSellerRole,
+    auctionController.getHasWinnerAuction,
+  )
+router
+  .route('/opening')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    authMdw.requireSellerRole,
+    auctionController.getOpeingAuction,
+  )
 
 router
   .route('/seller/review/:auctionId')
@@ -72,7 +86,7 @@ router
     auctionController.updateBidderReview,
   )
 
-router.route('/:auctionId').get(auctionController.read)
+// router.route('/:auctionId').get(auctionController.read)
 
 router.param('auctionId', auctionController.auctionById)
 router.param('productId', productController.checkProductExist)
