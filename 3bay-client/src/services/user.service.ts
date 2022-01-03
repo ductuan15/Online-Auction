@@ -54,7 +54,7 @@ async function getUserAuctionList(): Promise<Product[]> {
 }
 
 async function getUserWonAuctionList(): Promise<Product[]> {
-  const response = await axiosApiInstance.get(`api/auction/wonAuction`)
+  const response = await axiosApiInstance.get(`api/auction/won`)
   return response.data as Product[]
 }
 
