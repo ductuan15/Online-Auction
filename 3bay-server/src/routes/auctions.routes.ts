@@ -4,30 +4,45 @@ import * as productController from '../controllers/product.controller.js'
 import * as authMdw from '../middlewares/auth.mdw.js'
 import passport from 'passport'
 
-const route = Router()
+const router = Router()
 
-route
+router
   .route('/byProduct/:productId')
   .post(
     passport.authenticate('jwt', { session: false }),
-    authMdw.isAuthorized('SELLER'),
+    authMdw.requireSellerRole,
     productController.isProductOwner,
     auctionController.add,
   )
   .get(auctionController.auctionsByProductId)
 
-route
+router
   .route('/byProduct/latestAuction/:productId')
   .get(auctionController.getLatestAuction)
 
-route.route('/userStatus/:auctionId')
-.get(
+router
+  .route('/userStatus/:auctionId')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.getUserBidStatus,
+  )
+
+router
+  .route('/seller/review/:auctionId')
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.isProductOwner,
+    auctionController.updataSellerReview,
+  )
+router.route('/bidder/review/:auctionId')
+.patch(
   passport.authenticate('jwt', { session: false }),
-  auctionController.getUserBidStatus)  
+  auctionController.isAuctionWinner,
+  auctionController.updataBidderReview
+)
+router.route('/:auctionId').get(auctionController.read)
 
-route.route('/:auctionId').get(auctionController.read)
+router.param('auctionId', auctionController.auctionById)
+router.param('productId', productController.checkProductExist)
 
-route.param('auctionId', auctionController.auctionById)
-route.param('productId', productController.checkProductExist)
-
-export default route
+export default router

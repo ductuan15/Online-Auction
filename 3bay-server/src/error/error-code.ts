@@ -47,3 +47,12 @@ export class BidErrorCode {
   public static readonly SelfBid = 'SelfBid'
   public static readonly AlreadyWinningAuction = 'AlreadyWinningAuction'
 }
+
+
+
+export class AuctionErrorCode {
+  public static readonly NotWinner = 'NotWinner'
+  public static readonly AuctionIsNotCloses = 'AuctionsNotClosed'
+  public static readonly NotProductOwner = 'NotProductOwner'
+}
+
