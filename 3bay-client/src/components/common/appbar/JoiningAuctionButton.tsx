@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton'
 import { useNavigate } from 'react-router-dom'
 import { Badge } from '@mui/material'
 import { useUserContext } from '../../../contexts/user/UserContext'
-import ShopIcon from '@mui/icons-material/Shop';
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 
 const JoiningAuctionButton = (): JSX.Element => {
   const navigate = useNavigate()
@@ -23,7 +23,7 @@ const JoiningAuctionButton = (): JSX.Element => {
           color='inherit'
         >
           <Badge badgeContent={auctionlist.length} color='secondary'>
-            <ShopIcon />
+            <ShoppingBagOutlinedIcon />
           </Badge>
         </IconButton>
       </Tooltip>
