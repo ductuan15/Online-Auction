@@ -6,6 +6,7 @@ import passwordSchema from '../schemas/user-password.js'
 
 import {
   getAccountInfo,
+  getUserScore,
   requestToSeller,
   updateAccountInfo,
   updatePassword,
@@ -15,6 +16,7 @@ import {
   hashPasswordField,
   requireBidderRole,
 } from '../middlewares/auth.mdw.js'
+import route from './auctions.routes.js'
 
 const router = express.Router()
 
@@ -41,6 +43,8 @@ router
     updatePassword,
   )
 
+
 router.route('/request-to-seller').post(requireBidderRole, requestToSeller)
 
+router.route('/score').get(getUserScore)
 export default router

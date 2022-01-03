@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
-import { BidErrorCode } from '../error/error-code.js'
-import { BidError } from '../error/error-exception.js'
 import { AuctionRes } from '../types/AuctionRes.js'
-
+import Prisma from '@prisma/client'
 const userShortenSelection = {
   uuid: true,
   name: true,
@@ -169,6 +167,67 @@ export const checkAuctionExist = async (
   } catch (error) {
     if (error instanceof Error) {
       next(error)
+    }
+  }
+}
+
+enum USER_BID_STATUS {
+  NOBID,
+  PENDING,
+  REJECTED,
+  ACCEPTED_NOT_WINNING,
+  WINNING,
+}
+
+export const getUserBidStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userBidStatus = await prisma.userBidStatus.findUnique({
+      where: {
+        auctionId_userId: {
+          auctionId: req.auction?.id || NaN,
+          userId: req.user.uuid,
+        },
+      },
+    })
+    const response: {
+      auctionId: number
+      status?: number
+    } = {
+      auctionId: req.auction?.id || NaN,
+    }
+    switch (userBidStatus?.status) {
+      case null || undefined:
+        response.status = USER_BID_STATUS.NOBID
+        break
+      case Prisma.BidStatus.PENDING:
+        response.status = USER_BID_STATUS.PENDING
+        break
+      case Prisma.BidStatus.REJECTED:
+        response.status = USER_BID_STATUS.REJECTED
+        break
+      case Prisma.BidStatus.ACCEPTED:
+        const winningBid = await prisma.bid.findUnique({
+          where: {
+            id: req.auction?.winningBidId || NaN,
+          },
+        })
+        if (winningBid?.bidderId !== req.user.uuid) {
+          response.status = USER_BID_STATUS.ACCEPTED_NOT_WINNING
+        } else {
+          response.status = USER_BID_STATUS.WINNING
+        }
+        break
+      default:
+        break
+    }
+    res.json(response)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
     }
   }
 }

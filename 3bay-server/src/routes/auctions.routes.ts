@@ -19,6 +19,12 @@ route
 route
   .route('/byProduct/latestAuction/:productId')
   .get(auctionController.getLatestAuction)
+
+route.route('/userStatus/:auctionId')
+.get(
+  passport.authenticate('jwt', { session: false }),
+  auctionController.getUserBidStatus)  
+
 route.route('/:auctionId').get(auctionController.read)
 
 route.param('auctionId', auctionController.auctionById)

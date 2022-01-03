@@ -28,9 +28,9 @@ export const getScore = async (userId: string) => {
   let wonAuction = 0
   userWonAuction.forEach((auction) => {
     if (auction.sellerReview) {
-      score += +auction.sellerReview
-      wonAuction++
+      score += 1
     }
+    wonAuction++
   })
   return score / wonAuction
 }
@@ -346,7 +346,6 @@ export const isSelfBid = async (
   }
 }
 
-
 export const isWinningBidder = async (
   req: Request,
   res: Response,
@@ -357,13 +356,13 @@ export const isWinningBidder = async (
       where: {
         id: req.auction?.winningBidId || 0,
       },
-      include:{
-        bidder:{
+      include: {
+        bidder: {
           select: {
-            uuid: true
-          }
-        }
-      }
+            uuid: true,
+          },
+        },
+      },
     })
     if (winningBid?.bidder.uuid === req.user?.uuid) {
       throw new BidError({ code: BidErrorCode.AlreadyWinningAuction })
