@@ -1,4 +1,5 @@
 import {
+  Box,
   CircularProgress,
   FormControl,
   Grid,
@@ -9,6 +10,7 @@ import {
   PaginationItem,
   Select,
   SelectChangeEvent,
+  Typography,
 } from '@mui/material'
 import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -118,8 +120,8 @@ const SearchPage = (): JSX.Element => {
   }
 
   return (
-    <>
-      <FormControl sx={{ minWidth: 240 }}>
+    <Grid sx={{ m: 5 }}>
+      <FormControl sx={{ minWidth: 240, mr: 4 }}>
         <InputLabel id='sort-price-label'>Sort</InputLabel>
         <Select
           labelId='sort-price-label'
@@ -159,33 +161,52 @@ const SearchPage = (): JSX.Element => {
           {renderCategorySelection(allCategories)}
         </Select>
       </FormControl>
-      {isLoading ? (
-        <Grid container justifyContent='center'>
-          <CircularProgress color='secondary' />
-        </Grid>
-      ) : (
-        <>
-          <ProductList items={products} />
-          <Grid container justifyContent='center'>
-            <Pagination
-              page={currentPage}
-              count={currentPage + (hasNextPage ? 1 : 0)}
-              onChange={handlePageChange}
-              renderItem={(item) => {
-                if (
-                  item.page === currentPage + (hasNextPage ? 1 : 0) &&
-                  item.type === 'page' &&
-                  hasNextPage
-                ) {
-                  return <PaginationItem type='end-ellipsis' disabled />
-                }
-                return <PaginationItem {...item} />
-              }}
-            />
-          </Grid>
-        </>
-      )}
-    </>
+      <Box sx={{ my: 4 }}>
+        {(() => {
+          if (isLoading) {
+            return (
+              <Grid container justifyContent='center'>
+                <CircularProgress color='secondary' />
+              </Grid>
+            )
+          } else if (products.length === 0) {
+            return (
+              <Typography
+                color='text.primary'
+                variant='h4'
+                fontWeight={600}
+                gutterBottom
+              >
+                {`No result for ${key}`}
+              </Typography>
+            )
+          } else {
+            return (
+              <>
+                <ProductList items={products} />
+                <Grid container justifyContent='center'>
+                  <Pagination
+                    page={currentPage}
+                    count={currentPage + (hasNextPage ? 1 : 0)}
+                    onChange={handlePageChange}
+                    renderItem={(item) => {
+                      if (
+                        item.page === currentPage + (hasNextPage ? 1 : 0) &&
+                        item.type === 'page' &&
+                        hasNextPage
+                      ) {
+                        return <PaginationItem type='end-ellipsis' disabled />
+                      }
+                      return <PaginationItem {...item} />
+                    }}
+                  />
+                </Grid>
+              </>
+            )
+          }
+        })()}
+      </Box>
+    </Grid>
   )
 }
 
