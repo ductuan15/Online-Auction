@@ -16,7 +16,6 @@ import {
   hashPasswordField,
   requireBidderRole,
 } from '../middlewares/auth.mdw.js'
-import route from './auctions.routes.js'
 
 const router = express.Router()
 
