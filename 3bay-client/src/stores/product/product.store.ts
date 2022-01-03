@@ -5,7 +5,7 @@ export type ProductState = {
   currentProduct?: Product
   isBidDialogOpened: boolean
   bidStatus?: BidStatus
-  point: number
+  point: number | undefined
 }
 
 export type ProductAction =

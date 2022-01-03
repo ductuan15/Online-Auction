@@ -6,10 +6,18 @@ import BorderButton from '../button/BorderButton'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Link } from '@mui/material'
 
+const RejectButton = (
+  <BorderButton color='error' isSelected={true} disableRipple sx={{ mt: 1 }}>
+    🚫 You are not allowed to bid this product
+  </BorderButton>
+)
+
+const MINIMUM_POINT = 8.0
+
 function ProductBidButton(): JSX.Element | null {
   const {
-    state: { currentProduct: product, bidStatus },
-    dispatch
+    state: { currentProduct: product, bidStatus, point },
+    dispatch,
   } = useProductContext()
 
   const {
@@ -25,70 +33,66 @@ function ProductBidButton(): JSX.Element | null {
 
   let button: JSX.Element | null
 
-  switch (bidStatus?.status) {
-    case 'NOT_BID':
-      button = (
-        <BorderButton
-          color='success'
-          sx={{ mt: 1 }}
-          onClick={() => {
-            dispatch({ type: 'OPEN_BID_DIALOG' })
-          }}
-        >
-          💰 Bid this product
-        </BorderButton>
-      )
-      break
-    case 'PENDING':
-      button = (
-        <BorderButton
-          color='warning'
-          isSelected={true}
-          disableRipple
-          sx={{ mt: 1 }}
-        >
-          ⏳ Waiting for seller response
-        </BorderButton>
-      )
-      break
-    case 'ACCEPT':
-      button = (
-        <BorderButton sx={{ mt: 1 }} color='info'>
-          ➕ Increase bid price
-        </BorderButton>
-      )
-      break
-    case 'REJECT':
-      button = (
-        <BorderButton
-          color='error'
-          isSelected={true}
-          disableRipple
-          sx={{ mt: 1 }}
-        >
-          🚫 You are not allowed to bid this product
-        </BorderButton>
-      )
-      break
-    default:
-      button = (
-        <Link
-          underline='none'
-          color='inherit'
-          onClick={() => {
-            navigate('/signin', {
-              state: {
-                from: location,
-              },
-            })
-          }}
-        >
-          <BorderButton color='warning' sx={{ mt: 1 }}>
-            Sign in to bid the product
+  if (!point || (point && point >= MINIMUM_POINT)) {
+    switch (bidStatus?.status) {
+      case 'NOT_BID':
+        button = (
+          <BorderButton
+            color='success'
+            sx={{ mt: 1 }}
+            onClick={() => {
+              dispatch({ type: 'OPEN_BID_DIALOG' })
+            }}
+          >
+            💰 Bid this product
           </BorderButton>
-        </Link>
-      )
+        )
+        break
+      case 'PENDING':
+        button = (
+          <BorderButton
+            color='warning'
+            isSelected={true}
+            disableRipple
+            sx={{ mt: 1 }}
+          >
+            ⏳ Waiting for seller response
+          </BorderButton>
+        )
+        break
+      case 'ACCEPT':
+        button = (
+          <BorderButton sx={{ mt: 1 }} color='info'>
+            ➕ Increase bid price
+          </BorderButton>
+        )
+        break
+      case 'REJECT':
+        button = RejectButton
+        break
+      default:
+        button = (
+          <Link
+            underline='none'
+            color='inherit'
+            onClick={() => {
+              navigate('/signin', {
+                state: {
+                  from: location,
+                },
+              })
+            }}
+          >
+            <BorderButton color='warning' sx={{ mt: 1 }}>
+              Sign in to bid the product
+            </BorderButton>
+          </Link>
+        )
+    }
+  } else {
+    button = RejectButton
   }
+
   // seller cannot buy their own product
   if (!canBidThis && userDetails) {
     button = null

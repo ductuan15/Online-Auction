@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import DialogActions from '@mui/material/DialogActions'
 import Dialog from '@mui/material/Dialog'
 import * as React from 'react'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
@@ -12,6 +12,7 @@ import {
   Alert,
   Grid,
   InputAdornment,
+  LinearProgress,
   TextField,
   Typography,
 } from '@mui/material'
@@ -19,6 +20,10 @@ import BorderButton from '../button/BorderButton'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { ProductBidFormInput } from '../../../models/bids'
 import GenericTextField from '../form/GenericTextField'
+import AuctionService from '../../../services/auction.service'
+import { setErrorTextMsg } from '../../../utils/error'
+import BidderService from '../../../services/bidder.service'
+import {useIsMounted} from '../../../hooks'
 
 const dialogName = 'dialog-set-bid-price'
 
@@ -38,15 +43,28 @@ function ProductBidDialog(): JSX.Element {
     dispatch,
   } = useProductContext()
 
-  const price = +watch('step') * (product?.latestAuction?.currentPrice ?? 1)
+  const step = watch('step')
 
-  const hasEnoughPoint = useMemo(() => {
-    return point >= 8
+  const price = useMemo(() => {
+    if (isNaN(+step) || !product?.latestAuction?.incrementPrice) {
+      return 0
+    }
+    return +step * (product?.latestAuction?.incrementPrice ?? 1)
+  }, [product?.latestAuction?.incrementPrice, step])
+
+  const hasPoint = useMemo(() => {
+    return point !== undefined
   }, [point])
 
+  const [errorText, setErrorText] = useState<string | null>()
+  const [isLoading, setLoading] = useState(false)
+
+  const isMounted = useIsMounted()
+
   useEffect(() => {
-    if (product) {
+    if (product && product.latestAuctionId) {
       setValue('bidPrice', price)
+      setValue('auctionId', product.latestAuctionId)
     }
   }, [price, product, setValue])
 
@@ -54,14 +72,43 @@ function ProductBidDialog(): JSX.Element {
     dispatch({ type: 'CLOSE_BID_DIALOG' })
   }
 
-  const onSubmit: SubmitHandler<ProductBidFormInput> = (data) => {
-    //
+  const onSubmit: SubmitHandler<ProductBidFormInput> = async (data) => {
+    console.log(data)
+    if (!product) {
+      setErrorTextMsg('Unknown product', setErrorText)
+      return
+    } else if (!product?.latestAuctionId) {
+      setErrorTextMsg('Auction is not opened', setErrorText)
+      return
+    }
+
+    setLoading(true)
+    try {
+      const response = await AuctionService.newBid(data)
+      if (response) {
+        const newStatus = await BidderService.getAuctionStatus(
+          product.latestAuctionId,
+        )
+        dispatch({ type: 'UPDATE_BID_STATUS', payload: newStatus })
+        onClose()
+      } else {
+        setErrorTextMsg('Invalid auction id', setErrorText)
+      }
+    } catch (e) {
+      if (isMounted()) {
+        setErrorTextMsg(e, setErrorText)
+      }
+    } finally {
+      if (isMounted()) {
+        setLoading(false)
+      }
+    }
   }
 
   return (
     <Dialog
       fullScreen={fullScreen}
-      open={isBidDialogOpened}
+      open={isBidDialogOpened || isLoading}
       onClose={onClose}
       aria-labelledby={dialogName}
     >
@@ -74,19 +121,29 @@ function ProductBidDialog(): JSX.Element {
           component='form'
           onSubmit={handleSubmit(onSubmit)}
         >
-          {!hasEnoughPoint && (
+          {isLoading && (
+            <LinearProgress variant='indeterminate' sx={{ width: 1 }} />
+          )}
+
+          {errorText && (
+            <Alert severity='error' sx={{ width: 1, mb: 1 }}>
+              {errorText}
+            </Alert>
+          )}
+
+          {!hasPoint && (
             <Alert severity='warning' sx={{ width: 1 }}>
               You need permission from seller in order to bid this product
             </Alert>
           )}
 
-          {!hasEnoughPoint && (
-            <BorderButton color='warning' fullWidth sx={{ mt: 2 }}>
-              Request permission from the seller
-            </BorderButton>
-          )}
+          {/*{!hasPoint && (*/}
+          {/*  <BorderButton color='warning' fullWidth sx={{ mt: 2 }}>*/}
+          {/*    Request permission from the seller*/}
+          {/*  </BorderButton>*/}
+          {/*)}*/}
 
-          {hasEnoughPoint && product && product.latestAuction && (
+          {product && product.latestAuction && (
             <>
               <Typography
                 color='text.primary'
@@ -144,6 +201,7 @@ function ProductBidDialog(): JSX.Element {
                       type: 'number',
                       // disabled: disableAllElement,
                       margin: 'normal',
+                      autoFocus: true,
                     }}
                   />
                 </Grid>
@@ -170,7 +228,7 @@ function ProductBidDialog(): JSX.Element {
             </>
           )}
 
-          {hasEnoughPoint && product?.latestAuction?.buyoutPrice && (
+          {hasPoint && product?.latestAuction?.buyoutPrice && (
             <BorderButton color='success' fullWidth sx={{ mt: 2 }}>
               💵 DEAL: Buy the product instantly with ₫
               {product?.latestAuction?.buyoutPrice}
@@ -180,14 +238,18 @@ function ProductBidDialog(): JSX.Element {
       </DialogContent>
 
       <DialogActions>
-        <Button autoFocus onClick={onClose}>
+        <Button onClick={onClose} disabled={isLoading}>
           Cancel
         </Button>
-        {hasEnoughPoint && (
-          <Button autoFocus type='submit' form={`category-form-${dialogName}`}>
-            Save changes
-          </Button>
-        )}
+        {/*{hasPoint && (*/}
+        <Button
+          type='submit'
+          form={`product-form-${dialogName}`}
+          disabled={isLoading}
+        >
+          Save changes
+        </Button>
+        {/*)}*/}
       </DialogActions>
     </Dialog>
   )
