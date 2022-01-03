@@ -4,6 +4,7 @@ import * as productController from '../controllers/product.controller.js'
 import {uploadProductImagesFields} from '../controllers/product.controller.js'
 import { uploadProductImages } from '../middlewares/upload-product.mdw.js'
 import { requireSellerRole } from '../middlewares/auth.mdw.js'
+import route from './auctions.routes.js'
 
 const router = Router()
 
@@ -30,6 +31,10 @@ router
   .get(productController.getProductByCategoryId)
 
 router.route('/top/price').get(productController.getTopPrice)
+// :< Separate words with hyphens but too late,, sorry mng
+router.route('/top/bidNumber').get(productController.getTopNumberBid)
+router.route('/top/closeTime').get(productController.getTopCloseTime)
+
 
 router
   .route('/:productId')

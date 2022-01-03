@@ -177,6 +177,7 @@ export const checkAuctionExist = async (
           gt: new Date(),
         },
       },
+      rejectOnNotFound: true
     })
     next()
   } catch (error) {

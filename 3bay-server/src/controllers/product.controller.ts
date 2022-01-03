@@ -23,6 +23,29 @@ const sellerInfoSelection = {
   // email: true,
 }
 
+const includeProductDetailInfo = {
+  category: true,
+  seller: {
+    select: sellerInfoSelection,
+  },
+  latestAuction: {
+    include: {
+      winningBid: {
+        include: {
+          bidder: {
+            select: sellerInfoSelection,
+          },
+        },
+      },
+      _count: {
+        select: {
+          bids: true,
+        },
+      },
+    },
+  },
+}
+
 export const productById = async (
   req: Request,
   res: Response,
@@ -226,24 +249,7 @@ export const getProductByCategoryId = async (
             },
           },
         },
-        include: {
-          latestAuction: {
-            include: {
-              winningBid: {
-                include: {
-                  bidder: {
-                    select: sellerInfoSelection,
-                  },
-                },
-              },
-              _count: {
-                select: {
-                  bids: true,
-                },
-              },
-            },
-          },
-        },
+        include: includeProductDetailInfo,
         skip: (page - 1) * limit,
         take: limit + 1,
       })
@@ -334,28 +340,7 @@ export const search = async (
           closeTime: sortBy === SORT_BY.closeTime ? sortType : undefined,
         },
       },
-      include: {
-        category: true,
-        seller: {
-          select: sellerInfoSelection,
-        },
-        latestAuction: {
-          include: {
-            winningBid: {
-              include: {
-                bidder: {
-                  select: sellerInfoSelection,
-                },
-              },
-            },
-            _count: {
-              select: {
-                bids: true,
-              },
-            },
-          },
-        },
-      },
+      include: includeProductDetailInfo,
     })
     products.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
@@ -394,24 +379,7 @@ export const getTopPrice = async (
           },
         },
       },
-      include: {
-        latestAuction: {
-          include: {
-            winningBid: {
-              include: {
-                bidder: {
-                  select: sellerInfoSelection,
-                },
-              },
-            },
-            _count: {
-              select: {
-                bids: true,
-              },
-            },
-          },
-        },
-      },
+      include: includeProductDetailInfo,
       take: config.TOP_LIMIT,
     })
     products.forEach((product) => {
@@ -480,9 +448,9 @@ export const uploadProductImagesFields = {
 }
 
 export const getPostedProductList = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
     const products: ProductRes[] = await prisma.product.findMany({
@@ -490,24 +458,7 @@ export const getPostedProductList = async (
         deletedAt: null,
         sellerId: req.user?.uuid,
       },
-      include: {
-        latestAuction:{
-          include:{
-            winningBid:{
-              include:{
-                bidder:{
-                  select: sellerInfoSelection
-                }
-              }
-            },
-            _count:{
-              select:{
-                bids:true
-              }
-            }
-          }
-        }
-      },
+      include: includeProductDetailInfo,
     })
     products.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
@@ -516,6 +467,63 @@ export const getPostedProductList = async (
   } catch (error) {
     if (error instanceof Error) {
       next(error)
+    }
+  }
+}
+
+export const getTopNumberBid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const topNumberBidProducts = await prisma.product.findMany({
+      orderBy: {
+        latestAuction: {
+          bids: {
+            _count: Prisma.Prisma.SortOrder.asc,
+          },
+        },
+      },
+      include: includeProductDetailInfo,
+      take: config.TOP_LIMIT,
+    })
+    console.log(topNumberBidProducts)
+    res.json(topNumberBidProducts)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const getTopCloseTime = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const topNumberBidProducts = await prisma.product.findMany({
+      where:{
+        latestAuction:{
+          closeTime:{
+            gt: new Date()
+          }
+        }
+      },
+      orderBy: {
+        latestAuction: {
+          closeTime: Prisma.Prisma.SortOrder.asc
+        },
+      },
+      include: includeProductDetailInfo,
+      take: config.TOP_LIMIT,
+    })
+    console.log(topNumberBidProducts)
+    res.json(topNumberBidProducts)
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
     }
   }
 }
