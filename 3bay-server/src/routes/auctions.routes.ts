@@ -53,15 +53,25 @@ router
   .patch(
     passport.authenticate('jwt', { session: false }),
     auctionController.isProductOwner,
-    auctionController.updataSellerReview,
+    auctionController.updateSellerReview,
   )
+
+router
+  .route('/seller/bidRequest/:auctionId')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.isProductOwner,
+    auctionController.getBidRequestList,
+  )
+
 router
   .route('/bidder/review/:auctionId')
   .patch(
     passport.authenticate('jwt', { session: false }),
     auctionController.isAuctionWinner,
-    auctionController.updataBidderReview,
+    auctionController.updateBidderReview,
   )
+
 router.route('/:auctionId').get(auctionController.read)
 
 router.param('auctionId', auctionController.auctionById)

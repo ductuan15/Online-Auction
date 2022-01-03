@@ -5,8 +5,9 @@ import Prisma from '@prisma/client'
 import { AuctionErrorCode } from '../error/error-code.js'
 import { AuctionError } from '../error/error-exception.js'
 import { includeProductDetailInfo } from './product.controller.js'
-import {getAllThumbnailLink} from "./images-product.controller.js";
-import {ProductRes} from "../types/ProductRes";
+import { getAllThumbnailLink } from './images-product.controller.js'
+import { ProductRes } from '../types/ProductRes'
+
 const userShortenSelection = {
   uuid: true,
   name: true,
@@ -193,12 +194,12 @@ export const checkAuctionExist = async (
 }
 
 enum USER_BID_STATUS {
-  NOBID= 'NOT_BID',
+  NOBID = 'NOT_BID',
   PENDING = 'PENDING',
   REJECTED = 'REJECT',
   // ACCEPTED_NOT_WINNING = 'ACCEPTED_NOT_WINNING',
   // WINNING = 'WINNING',
-  ACCEPT = 'ACCEPT'
+  ACCEPT = 'ACCEPT',
 }
 
 export const getUserBidStatus = async (
@@ -255,14 +256,14 @@ export const getUserBidStatus = async (
   }
 }
 
-export const updataSellerReview = async (
+export const updateSellerReview = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     if (req.auction?.closeTime && req.auction.closeTime > new Date()) {
-      throw new AuctionError({ code: AuctionErrorCode.NotClosedAuction })
+      return next(new AuctionError({ code: AuctionErrorCode.NotClosedAuction }))
     } else {
       req.auction = await prisma.auction.update({
         where: {
@@ -282,14 +283,14 @@ export const updataSellerReview = async (
   }
 }
 
-export const updataBidderReview = async (
+export const updateBidderReview = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     if (req.auction?.closeTime && req.auction.closeTime > new Date()) {
-      throw new AuctionError({ code: AuctionErrorCode.NotClosedAuction })
+      return next(new AuctionError({ code: AuctionErrorCode.NotClosedAuction }))
     } else {
       req.auction = await prisma.auction.update({
         where: {
@@ -324,7 +325,7 @@ export const isAuctionWinner = async (
       })
     }
     if (winningBid?.bidderId !== req.user.uuid) {
-      throw new AuctionError({ code: AuctionErrorCode.NotWinner })
+      return next(new AuctionError({ code: AuctionErrorCode.NotWinner }))
     } else {
       next()
     }
@@ -347,7 +348,7 @@ export const isProductOwner = async (
       },
     })
     if (product?.sellerId !== req.user.uuid) {
-      throw new AuctionError({ code: AuctionErrorCode.NotProductOwner })
+      return next(new AuctionError({ code: AuctionErrorCode.NotProductOwner }))
     } else {
       next()
     }
@@ -441,11 +442,47 @@ export const closeAuction = async (
       })
       res.json(auction)
     } else {
-      throw new AuctionError({ code: AuctionErrorCode.ClosedAuction })
+      return next(new AuctionError({ code: AuctionErrorCode.ClosedAuction }))
     }
   } catch (err) {
-    if(err instanceof Error){
+    if (err instanceof Error) {
       next(err)
+    }
+  }
+}
+
+export const getBidRequestList = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (
+      req.auction &&
+      req.auction.closeTime &&
+      req.auction?.closeTime > new Date()
+    ) {
+      const users = await prisma.userBidStatus.findMany({
+        where: {
+          auctionId: req.auction.id,
+          status: Prisma.BidStatus.PENDING,
+        },
+        include: {
+          // why `users` instead of `user`?
+          users: {
+            select: {
+              name: true,
+              uuid: true,
+            },
+          },
+        },
+      })
+      return res.json(users)
+    }
+    return next(new AuctionError({ code: AuctionErrorCode.ClosedAuction }))
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e)
     }
   }
 }
