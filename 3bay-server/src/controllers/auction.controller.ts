@@ -394,7 +394,7 @@ export const getWonAuction = async (
   next: NextFunction,
 ) => {
   try {
-    const joinedAuctions = await prisma.product.findMany({
+    const joinedAuctions: ProductRes[] = await prisma.product.findMany({
       where: {
         latestAuction: {
           winningBid: {
@@ -406,6 +406,9 @@ export const getWonAuction = async (
         },
       },
       include: includeProductDetailInfo,
+    })
+    joinedAuctions.forEach((product) => {
+      product.thumbnails = getAllThumbnailLink(product.id)
     })
     res.json(joinedAuctions)
   } catch (err) {
