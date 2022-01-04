@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
 import { BidErrorCode } from '../error/error-code.js'
 import { BidError } from '../error/error-exception.js'
+import c from 'ansi-colors'
 
 const VALID_SCORE = 8
 export const getWonAuction = async (userId: string) => {
@@ -39,6 +40,7 @@ export const isValidScore = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.isValidScore'))
   try {
     const score = await getScore(req.user?.uuid || '')
     if (score && score <= VALID_SCORE) {
@@ -59,6 +61,7 @@ export const isValidBidAmount = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.isValidBidAmount'))
   try {
     // console.log(req.body.bidPrice)
 
@@ -81,6 +84,7 @@ export const isValidBidAmount = async (
 }
 
 export const add = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(c.yellow('bidController.add'))
   try {
     const status = req.body.score
       ? Prisma.BidStatus.ACCEPTED
@@ -115,6 +119,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
       next()
     } else {
       res.json(req.auction)
+      next()
     }
   } catch (err) {
     if (err instanceof Error) {
@@ -247,6 +252,7 @@ export const isWinningBid = async (
       next()
     } else {
       res.json(req.auction)
+      next()
     }
   } catch (err) {
     if (err instanceof Error) {
@@ -260,6 +266,7 @@ export const checkUserBidStatus = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.checkUserBidStatus'))
   try {
     const userBidStatus = await prisma.userBidStatus.findUnique({
       where: {
@@ -287,6 +294,7 @@ export const isSelfBid = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.isSelfBid'))
   try {
     const product = await prisma.product.findUnique({
       where: {
@@ -310,6 +318,7 @@ export const isWinningBidder = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.isWinningBidder'))
   try {
     const winningBid = await prisma.bid.findUnique({
       where: {
@@ -377,6 +386,7 @@ export const executeAutoBid = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.executeAutoBid'))
   try {
     const autoBids = await prisma.autoBid.findMany({
       where: {
@@ -439,6 +449,7 @@ export const recalculateNewWinningBid = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.recalculateNewWinningBid'))
   try {
     const winningBid = await prisma.bid.findFirst({
       orderBy: {

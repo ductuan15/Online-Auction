@@ -92,6 +92,15 @@ export const productById = async (
           select: {
             ...latestAuction.select,
             autoExtendAuctionTiming: true,
+            // userBidStatus: {
+            //   select: {
+            //     user: {
+            //       select: {
+            //         ...sellerInfoSelection,
+            //       },
+            //     },
+            //   },
+            // },
             bids: {
               include: {
                 bidder: {
@@ -295,7 +304,7 @@ export const getProductByCategoryId = async (
     if (page) {
       products = await prisma.product.findMany({
         where: {
-          deletedAt:null,
+          deletedAt: null,
           OR: [
             {
               categoryId: categoryId,
@@ -360,7 +369,8 @@ export const search = async (
     const queryResultRows = await prisma.$queryRaw<any[]>(Prisma.Prisma
       .sql`SELECT products.id
            FROM products
-                    JOIN auctions on auctions.id = products.latestAuctionId WHERE products.deletedAt IS NULL
+                    JOIN auctions on auctions.id = products.latestAuctionId
+           WHERE products.deletedAt IS NULL
                ${
                  key !== '' && key !== undefined
                    ? Prisma.Prisma

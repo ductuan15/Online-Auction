@@ -64,6 +64,15 @@ export async function getDetailsAuctionById(auctionId: number | undefined) {
     select: {
       ...includeProductDetailInfo.latestAuction.select,
       autoExtendAuctionTiming: true,
+      // userBidStatus: {
+      //   select: {
+      //     user: {
+      //       select: {
+      //         ...sellerInfoSelection,
+      //       },
+      //     },
+      //   },
+      // },
       bids: {
         include: {
           bidder: {
@@ -197,6 +206,7 @@ export const update = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('auctionController.update'))
   try {
     const auction = await prisma.auction.update({
       where: {
