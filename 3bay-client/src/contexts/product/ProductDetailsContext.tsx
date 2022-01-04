@@ -54,10 +54,10 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
 
   useEffect(() => {
     ;(async () => {
-      if (user && state.currentProduct?.latestAuctionId) {
+      if (user && state.latestAuction?.id) {
         try {
           const response = await BidderService.getAuctionStatus(
-            state.currentProduct.latestAuctionId,
+            state.latestAuction?.id,
           )
           dispatch({ type: 'UPDATE_BID_STATUS', payload: response })
 
@@ -73,7 +73,7 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
         dispatch({ type: 'UPDATE_POINT', payload: 0 })
       }
     })()
-  }, [state.currentProduct, user])
+  }, [state.latestAuction, user])
 
   const contextValue = useMemo(
     () => ({

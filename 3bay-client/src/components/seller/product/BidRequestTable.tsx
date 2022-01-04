@@ -19,24 +19,23 @@ import _ from 'lodash'
 //   sx?: SxProps
 // }
 
-// TODO: handle realtime in this table
 export default function BidRequestTable() {
   const [rows, setRows] = useState<BidRequest[]>([])
   const { state } = useProductContext()
   // const { user } = useAuth()
 
   const init = useCallback(async () => {
-    if (state.currentProduct?.latestAuctionId) {
+    if (state.latestAuction?.id) {
       try {
         const data = await SellerService.getBidRequests(
-          state.currentProduct?.latestAuctionId,
+          state.latestAuction?.id,
         )
         setRows(data)
       } catch (e) {
         setRows([])
       }
     }
-  }, [state.currentProduct?.latestAuctionId])
+  }, [state.latestAuction])
 
   useEffect(() => {
     ;(async () => {
@@ -54,7 +53,7 @@ export default function BidRequestTable() {
           return
         }
         const response = await SellerService.rejectBid(
-          state.currentProduct?.latestAuctionId,
+          state.latestAuction?.id,
           rows[idx].bidId,
         )
         if (response) {
@@ -64,7 +63,7 @@ export default function BidRequestTable() {
         //
       }
     },
-    [rows, state.currentProduct?.latestAuctionId],
+    [rows, state.latestAuction?.id],
   )
 
   const acceptBidder = useCallback(
@@ -77,7 +76,7 @@ export default function BidRequestTable() {
           return
         }
         const response = await SellerService.acceptBid(
-          state.currentProduct?.latestAuctionId,
+          state.latestAuction?.id,
           rows[idx].bidId,
         )
         if (response) {
@@ -87,7 +86,7 @@ export default function BidRequestTable() {
         //
       }
     },
-    [rows, state.currentProduct?.latestAuctionId],
+    [rows, state.latestAuction?.id],
   )
 
   const columns: GridColumns = useMemo(
