@@ -72,10 +72,10 @@ const SearchPage = (): JSX.Element => {
       setProducts([...res.data.items])
       // console.log(res.data.hasNextPage)
       //test is loading
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 1000)
-    } catch (e) {
+      // setTimeout(() => {
+      // setIsLoading(false)
+      // }, 1000)
+    } finally {
       // set is error
       setIsLoading(false)
     }

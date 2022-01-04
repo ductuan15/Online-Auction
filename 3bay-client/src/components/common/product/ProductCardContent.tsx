@@ -60,9 +60,11 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
     showRemaining()
     timer.current = setInterval(showRemaining, 1000)
     return () => {
-      timer.current && clearInterval(timer.current)
+      if (isMounted()) {
+        timer.current && clearInterval(timer.current)
+      }
     }
-  }, [showRemaining])
+  }, [isMounted, showRemaining])
 
   return (
     <CardContent component={Box} display='flex' flexDirection='column' sx={sx}>
@@ -99,27 +101,30 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
       >
         {product.latestAuction?._count.bids ? (
           <>
-            <Typography variant='body1'>Bid by</Typography>
-
             {/*Bidder with highest price*/}
-            <BackgroundLetterAvatars
-              name={
-                product.latestAuction?.winningBid?.bidder?.name || 'Tuan Cuong'
-              }
-              fontSize={`${theme.typography.caption.fontSize}`}
-              sx={{
-                ml: 1,
-                width: `25px`,
-                height: `25px`,
-              }}
-            />
+            {product.latestAuction?.winningBid?.bidder?.name && (
+              <>
+                <Typography variant='body1'>Bid by</Typography>
+                <BackgroundLetterAvatars
+                  name={
+                    product.latestAuction?.winningBid?.bidder?.name ||
+                    'Tuan Cuong'
+                  }
+                  fontSize={`${theme.typography.caption.fontSize}`}
+                  sx={{
+                    ml: 1,
+                    width: `25px`,
+                    height: `25px`,
+                  }}
+                />
+                <Box flexGrow={1} />
+              </>
+            )}
 
-            <Box flexGrow={1} />
-
-            {/*Display total number of people (excluding 1 person) are currently bidding */}
+            {/*Display total number of bids currently bidding */}
             {totalBidder >= 0 && (
               <Typography variant='body2' color='text.secondary'>
-                & <b>{product.latestAuction?._count.bids || 0}</b> other people
+                Total <b>{product.latestAuction?._count.bids || 0}</b> bids
               </Typography>
             )}
           </>

@@ -249,6 +249,7 @@ const ProductInfo = (): JSX.Element | null => {
           <Grid item xs={12} sm={'auto'}>
             <Typography variant='body1' color='text.secondary'>
               {endTimeCountDownText}
+              {product?.latestAuction?.autoExtendAuctionTiming ? '*' : ''}
             </Typography>
           </Grid>
         )}
@@ -263,6 +264,8 @@ const ProductInfo = (): JSX.Element | null => {
           alignItems='center'
         >
           <ProductBidButton />
+
+          <Box flexGrow={1} />
 
           <BorderIconButton
             size='large'

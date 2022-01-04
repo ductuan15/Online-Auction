@@ -6,7 +6,6 @@ import './ProductCarousel.css'
 import { Container, Divider } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Product from '../../../models/product'
-import { AxiosResponse } from 'axios'
 import { useEffectOnce } from '../../../hooks'
 import { styled, Theme, useTheme } from '@mui/material/styles'
 import { GREY } from '../../../theme/palette'
@@ -92,11 +91,11 @@ const ProductCarousel = ({
   useEffectOnce(() => {
     ;(async () => {
       setLoading(true)
-      setTimeout(async () => {
-        const response = await fetchFunction()
-        setProducts(response)
-        setLoading(false)
-      }, 1000)
+      // setTimeout(async () => {
+      const response = await fetchFunction()
+      setProducts(response)
+      setLoading(false)
+      // }, 1000)
       // console.log(response.data)
     })()
   })
