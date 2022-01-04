@@ -500,7 +500,7 @@ export const getHasWinnerAuction = async (
   next: NextFunction,
 ) => {
   try {
-    const products = await prisma.product.findMany({
+    const products: ProductRes[] = await prisma.product.findMany({
       where: {
         sellerId: req.user.uuid,
         latestAuction: {
@@ -513,6 +513,9 @@ export const getHasWinnerAuction = async (
         },
       },
       include: includeProductDetailInfo,
+    })
+    products.forEach((product) => {
+      product.thumbnails = getAllThumbnailLink(product.id)
     })
     res.json(products)
   } catch (err) {
