@@ -21,7 +21,6 @@ const sellerInfoSelection = {
   name: true,
 }
 
-
 const auctionInfoSelection = {
   id: true,
   startTime: true,
@@ -64,13 +63,56 @@ export const productById = async (
 ) => {
   try {
     const isWithDescription = !!req.query.isWithDescription
+
+    const { latestAuction, ...remain } = includeProductDetailInfo
+    const latestAuctionId = await prisma.product.findFirst({
+      select: {
+        latestAuctionId: true,
+      },
+      where: {
+        id: +value,
+        deletedAt: null,
+      },
+      rejectOnNotFound: true,
+    })
+
     req.product = await prisma.product.findFirst({
       where: {
         id: +value,
         deletedAt: null,
       },
       include: {
-        ...includeProductDetailInfo,
+        ...remain,
+        latestAuction: {
+          select: {
+            ...latestAuction.select,
+            bids: {
+              include: {
+                bidder: {
+                  select: {
+                    ...sellerInfoSelection,
+                  },
+                },
+              },
+              where: {
+                // return accepted bids only
+                NOT: {
+                  bidder: {
+                    userBidStatus: {
+                      none: {
+                        auctionId: latestAuctionId.latestAuctionId || undefined,
+                        status: Prisma.BidStatus.ACCEPTED,
+                      },
+                    },
+                  },
+                },
+              },
+              orderBy: {
+                bidTime: 'desc',
+              },
+            },
+          },
+        },
         productDescriptionHistory: isWithDescription,
       },
       rejectOnNotFound: true,
@@ -373,6 +415,7 @@ export const search = async (
     }
   }
 }
+
 export const getTopPrice = async (
   req: Request,
   res: Response,
@@ -547,7 +590,7 @@ export const getTopCloseTime = async (
     topNumberBidProducts.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
     })
-    console.log(topNumberBidProducts)
+    // console.log(topNumberBidProducts)
     res.json(topNumberBidProducts)
   } catch (err) {
     if (err instanceof Error) {
