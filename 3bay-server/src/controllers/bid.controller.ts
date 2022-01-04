@@ -453,6 +453,7 @@ export const recalculateNewWinningBid = async (
             },
           },
         },
+        auctionId: req.auction?.id || NaN,
       },
     })
     req.bid = winningBid

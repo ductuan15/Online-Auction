@@ -4,10 +4,14 @@ import { AuctionRes } from '../types/AuctionRes.js'
 import Prisma from '@prisma/client'
 import { AuctionErrorCode } from '../error/error-code.js'
 import { AuctionError } from '../error/error-exception.js'
-import { includeProductDetailInfo } from './product.controller.js'
+import {
+  includeProductDetailInfo,
+  sellerInfoSelection,
+} from './product.controller.js'
 import { getAllThumbnailLink } from './images-product.controller.js'
 import { ProductRes } from '../types/ProductRes'
 import c from 'ansi-colors'
+import { emitAuctionDetails } from '../socket/auction.io.js'
 
 export const AUCTION_EXTEND_MINUTES = 10
 export const MINUTES_TO_EXTEND_AUCTION = 5
@@ -55,6 +59,44 @@ export const auctionById = async (
   }
 }
 
+export async function getDetailsAuctionById(auctionId: number | undefined) {
+  return await prisma.auction.findUnique({
+    select: {
+      ...includeProductDetailInfo.latestAuction.select,
+      autoExtendAuctionTiming: true,
+      bids: {
+        include: {
+          bidder: {
+            select: {
+              ...sellerInfoSelection,
+            },
+          },
+        },
+        where: {
+          // return accepted bids only
+          NOT: {
+            bidder: {
+              userBidStatus: {
+                none: {
+                  auctionId: auctionId || undefined,
+                  status: Prisma.BidStatus.ACCEPTED,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          bidTime: 'desc',
+        },
+      },
+    },
+    where: {
+      id: auctionId || undefined,
+    },
+    rejectOnNotFound: true,
+  })
+}
+
 export const read = async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.json(req.auction)
@@ -77,6 +119,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
         buyoutPrice: req.body.buyoutPrice,
       },
     })
+    await emitAuctionDetails(auction.id)
     res.json(auction)
   } catch (error) {
     if (error instanceof Error) {
@@ -164,6 +207,7 @@ export const update = async (
         currentPrice: req.bid?.bidPrice || req.auction?.openPrice,
       },
     })
+    await emitAuctionDetails(auction.id)
     res.json(auction)
   } catch (err) {
     if (err instanceof Error) {
@@ -442,6 +486,7 @@ export const closeAuction = async (
           closeTime: new Date(),
         },
       })
+      await emitAuctionDetails(auction.id)
       res.json(auction)
     } else {
       return next(new AuctionError({ code: AuctionErrorCode.ClosedAuction }))
@@ -574,6 +619,7 @@ export const extendAuctionTime = async (auctionId: number) => {
         closeTime: extendTime,
       },
     })
+    await emitAuctionDetails(auctionId)
     console.log(c.blue(`Extend auction time - id ${auction.id}`))
   }
 }

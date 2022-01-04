@@ -16,12 +16,12 @@ import { PaginationRes } from '../types/PaginationRes.js'
 import Prisma from '@prisma/client'
 import { AuctionRes } from '../types/AuctionRes.js'
 
-const sellerInfoSelection = {
+export const sellerInfoSelection = {
   uuid: true,
   name: true,
 }
 
-const auctionInfoSelection = {
+export const auctionInfoSelection = {
   id: true,
   startTime: true,
   closeTime: true,
@@ -58,6 +58,7 @@ export const includeProductDetailInfo = {
     },
   },
 }
+
 export const productById = async (
   req: Request,
   res: Response,
