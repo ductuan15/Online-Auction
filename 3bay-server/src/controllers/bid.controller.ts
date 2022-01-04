@@ -211,45 +211,6 @@ export const setBidStatusToRejected = async (
   }
 }
 
-export const getPrevWinningBid = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const prevWinningBidPrice = await prisma.bid.aggregate({
-      where: {
-        auctionId: req.auction?.id || NaN,
-        id: {
-          not: req.auction?.winningBidId || NaN,
-        },
-        auction: {
-          UserBidStatus: {
-            none: {
-              userId: req.bid?.bidderId,
-              auctionId: req.auction?.id,
-              status: Prisma.BidStatus.REJECTED,
-            },
-          },
-        },
-      },
-      _max: {
-        bidPrice: true,
-      },
-    })
-    req.bid = await prisma.bid.findFirst({
-      where: {
-        auctionId: req.auction?.id || NaN,
-        bidPrice: prevWinningBidPrice._max.bidPrice?.toNumber() || 0,
-      },
-    })
-    next()
-  } catch (err) {
-    if (err instanceof Error) {
-      next(err)
-    }
-  }
-}
 
 export const bidById = async (
   req: Request,
@@ -368,6 +329,135 @@ export const isWinningBidder = async (
     } else {
       next()
     }
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const addAutoBid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const status = req.body.score
+      ? Prisma.BidStatus.ACCEPTED
+      : Prisma.BidStatus.PENDING
+    await prisma.userBidStatus.upsert({
+      update: {
+        status: status,
+      },
+      create: {
+        auctionId: req.auction?.id || NaN,
+        userId: req.user.uuid,
+        status: status,
+      },
+      where: {
+        auctionId_userId: {
+          auctionId: req.auction?.id || NaN,
+          userId: req.user.uuid,
+        },
+      },
+    })
+
+    req.body.bidPrice = req.auction?.currentPrice.add(
+      req.auction.incrementPrice,
+    )
+    next()
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const executeAutoBid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const autoBids = await prisma.autoBid.findMany({
+      where: {
+        auctionId: req.auction?.id || NaN,
+        user: {
+          userBidStatus: {
+            some: {
+              auctionId: req.auction?.id || NaN,
+              status: Prisma.BidStatus.ACCEPTED,
+            },
+          },
+        },
+      },
+      include: {
+        auctions: true,
+      },
+    })
+    // add auto bid to bid table
+    const newBids: Prisma.Prisma.BidCreateManyInput[] = []
+    let curWinningBider = req.bid?.bidderId
+    let curWinningPrice = req.bid?.bidPrice
+    while (true) {
+      let isFoundNewWinner = false
+      autoBids.forEach((autoBid) => {
+        if (
+          req.bid &&
+          autoBid.maximumPrice.greaterThan(req.bid?.bidPrice) &&
+          autoBid.userId !== curWinningBider
+        ) {
+          newBids.push({
+            auctionId: req.bid.auctionId,
+            bidPrice: curWinningPrice?.add(autoBid.auctions.incrementPrice),
+            bidderId: autoBid.userId,
+            bidTime: new Date(),
+          })
+          curWinningBider = autoBid.userId
+          curWinningPrice = curWinningPrice?.add(
+            autoBid.auctions.incrementPrice,
+          )
+          isFoundNewWinner = true
+        }
+      })
+      if (!isFoundNewWinner) {
+        break
+      }
+    }
+    await prisma.bid.createMany({
+      data: [...newBids],
+    }),
+      next()
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const recalculateNewWinningBid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const winningBid = await prisma.bid.findFirst({
+      orderBy: {
+        bidPrice: Prisma.Prisma.SortOrder.desc,
+      },
+      where: {
+        bidder: {
+          userBidStatus: {
+            some: {
+              auctionId: req.auction?.id || NaN,
+              status: Prisma.BidStatus.ACCEPTED,
+            },
+          },
+        },
+      },
+    })
+    req.bid = winningBid
+    next()
   } catch (err) {
     if (err instanceof Error) {
       next(err)
