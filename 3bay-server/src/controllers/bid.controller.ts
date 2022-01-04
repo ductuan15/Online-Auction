@@ -396,7 +396,7 @@ export const executeAutoBid = async (
     })
     // add auto bid to bid table
     const newBids: Prisma.Prisma.BidCreateManyInput[] = []
-    let curWinningBider = req.bid?.bidderId
+    let curWinningBidder = req.bid?.bidderId
     let curWinningPrice = req.bid?.bidPrice
     while (true) {
       let isFoundNewWinner = false
@@ -404,7 +404,7 @@ export const executeAutoBid = async (
         if (
           req.bid &&
           autoBid.maximumPrice.greaterThan(req.bid?.bidPrice) &&
-          autoBid.userId !== curWinningBider
+          autoBid.userId !== curWinningBidder
         ) {
           newBids.push({
             auctionId: req.bid.auctionId,
@@ -412,7 +412,7 @@ export const executeAutoBid = async (
             bidderId: autoBid.userId,
             bidTime: new Date(),
           })
-          curWinningBider = autoBid.userId
+          curWinningBidder = autoBid.userId
           curWinningPrice = curWinningPrice?.add(
             autoBid.auctions.incrementPrice,
           )

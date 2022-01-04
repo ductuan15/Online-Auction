@@ -3,7 +3,10 @@ import { Grid, Paper, Skeleton } from '@mui/material'
 
 import ProductImage from '../../../components/common/product/ProductImage'
 import ProductInfo from '../../../components/common/product/ProductInfo'
-import { getProductById, getTop } from '../../../services/product.service'
+import {
+  getProductById,
+  getRelativeProductsFunction,
+} from '../../../services/product.service'
 import { useParams } from 'react-router-dom'
 import ProductCarousel from '../../../components/common/carousel/ProductCarousel'
 
@@ -116,11 +119,20 @@ const ProductDetails = (): JSX.Element | null => {
 
         <BidHistoryTable />
 
-        <ProductCarousel
-          name={'Related Products'}
-          fetchFunction={getTop.getTopPrice}
-          showLoading={true}
-        />
+        <>
+          {!isLoading
+            ? state.currentProduct && (
+                <ProductCarousel
+                  name={'Related Products'}
+                  fetchFunction={getRelativeProductsFunction(
+                    +state.currentProduct.category.id,
+                    state.currentProduct.id,
+                  )}
+                  showLoading={true}
+                ></ProductCarousel>
+              )
+            : null}
+        </>
 
         <ProductComment />
 

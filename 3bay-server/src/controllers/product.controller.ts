@@ -29,6 +29,10 @@ const auctionInfoSelection = {
   incrementPrice: true,
   buyoutPrice: true,
   currentPrice: true,
+  bidderReview: true,
+  bidderComment: true,
+  sellerReview: true,
+  sellerComment: true,
 }
 
 export const includeProductDetailInfo = {
@@ -86,6 +90,7 @@ export const productById = async (
         latestAuction: {
           select: {
             ...latestAuction.select,
+            autoExtendAuctionTiming: true,
             bids: {
               include: {
                 bidder: {
