@@ -41,6 +41,7 @@ model Auction {
   bids                                        Bid[]             @relation("auctionsTobids_auctionId")
   products_auctionsToproducts_latestAuctionId Product?          @relation("auctionsToproducts_latestAuctionId")
   UserBidStatus                               UserBidStatus[]     @relation("auctionsTouser_bid_status")
+  autoBids                                    autoBid[]        @relation("auctionsToauto_bid")
 
   @@index([productId], map: "auctions_fk0")
   @@index([winningBidId], map: "auctions_fk1")
@@ -136,6 +137,7 @@ model User {
   profile                String?                 @db.VarChar(255)
   refreshToken           String                  @default(uuid()) @db.VarChar(512)
   address                String?                 @db.VarChar(255)
+  autoBids               autoBid[]              @relation("auto_bidTousers")
   bids                   Bid[]                   @relation("bidsTousers")
   products               Product[]               @relation("productsTousers")
   upgradeToSellerRequest UpgradeToSellerRequest? @relation("upgrade_to_seller_requestsTousers")
@@ -165,6 +167,18 @@ model UserBidStatus {
   @@id([auctionId, userId])
   @@index([userId], map: "user_bid_status_fk1")
   @@map("user_bid_status")
+}
+
+model autoBid {
+  auctionId    Int
+  userId       String  @db.VarChar(255)
+  maximumPrice Decimal @db.Decimal(19, 4)
+  auctions     Auction @relation("auctionsToauto_bid", fields: [auctionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auto_bid_fk0")
+  user         User    @relation("auto_bidTousers", fields: [userId], references: [uuid], onDelete: NoAction, onUpdate: NoAction, map: "auto_bid_fk1")
+
+  @@id([auctionId, userId])
+  @@index([userId], map: "auto_bid_fk1")
+	@@map("auto_bid")
 }
 
 enum Role {

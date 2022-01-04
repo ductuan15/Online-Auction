@@ -334,3 +334,18 @@ CREATE TABLE `users`
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
 -- Dump completed on 2022-01-02 13:03:40
+
+
+DROP TABLE IF EXISTS `auto_bid`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `auto_bid` (
+  `auctionId` int NOT NULL,
+  `userId` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `maximumPrice` decimal(19,4) NOT NULL,
+  PRIMARY KEY (`auctionId`,`userId`),
+  KEY `auto_bid_fk1` (`userId`),
+  CONSTRAINT `auto_bid_fk0` FOREIGN KEY (`auctionId`) REFERENCES `auctions` (`id`),
+  CONSTRAINT `auto_bid_fk1` FOREIGN KEY (`userId`) REFERENCES `users` (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
