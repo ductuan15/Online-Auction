@@ -32,7 +32,7 @@ export const auctionById = async (
             },
           },
         },
-        UserBidStatus: true,
+        userBidStatus: true,
         bids: {
           include: {
             bidder: {
@@ -99,7 +99,7 @@ export const getLatestAuction = async (
             },
           },
         },
-        UserBidStatus: true,
+        userBidStatus: true,
         bids: {
           include: {
             bidder: {

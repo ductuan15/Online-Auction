@@ -60,7 +60,7 @@ export const isValidBidAmount = async (
   next: NextFunction,
 ) => {
   try {
-    console.log(req.body.bidPrice)
+    // console.log(req.body.bidPrice)
 
     if (
       req.auction &&
@@ -210,7 +210,6 @@ export const setBidStatusToRejected = async (
     }
   }
 }
-
 
 export const bidById = async (
   req: Request,
@@ -426,8 +425,8 @@ export const executeAutoBid = async (
     }
     await prisma.bid.createMany({
       data: [...newBids],
-    }),
-      next()
+    })
+    next()
   } catch (err) {
     if (err instanceof Error) {
       next(err)

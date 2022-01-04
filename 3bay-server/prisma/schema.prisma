@@ -40,7 +40,7 @@ model Auction {
   winningBid                                  Bid?              @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auctions_fk1")
   bids                                        Bid[]             @relation("auctionsTobids_auctionId")
   products_auctionsToproducts_latestAuctionId Product?          @relation("auctionsToproducts_latestAuctionId")
-  UserBidStatus                               UserBidStatus[]     @relation("auctionsTouser_bid_status")
+  userBidStatus                               UserBidStatus[]     @relation("auctionsTouser_bid_status")
   autoBids                                    autoBid[]        @relation("auctionsToauto_bid")
 
   @@index([productId], map: "auctions_fk0")
