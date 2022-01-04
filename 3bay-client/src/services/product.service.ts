@@ -9,36 +9,39 @@ export const SORT_TYPE = {
 }
 export const SORT_BY = {
   closeTime: 'closeTime',
-  currentPrice:'currentPrice'
+  currentPrice: 'currentPrice',
 }
 
 export interface GetProductsResponse {
-  items: Product[],
-  hasNextPage: boolean,
+  items: Product[]
+  hasNextPage: boolean
   cursor: number
 }
 //Small limit for test purpose
-export const PAGE_LIMIT = 12;
+export const PAGE_LIMIT = 12
 const productApi = 'api/product'
 
 export async function searchProduct(
   key: string,
   page: number,
-  categoryId: number | string, 
+  categoryId: number | string,
   sortBy: keyof typeof SORT_BY,
   sortType: keyof typeof SORT_TYPE,
 ): Promise<AxiosResponse<GetProductsResponse>> {
-  console.log(categoryId);
-  return await axiosApiInstance.get<GetProductsResponse>(`${productApi}/search`, {
-    params: {
-      key,
-      page,
-      categoryId: categoryId,
-      sortBy,
-      sortType,
-      limit: PAGE_LIMIT,
+  console.log(categoryId)
+  return await axiosApiInstance.get<GetProductsResponse>(
+    `${productApi}/search`,
+    {
+      params: {
+        key,
+        page,
+        categoryId: categoryId,
+        sortBy,
+        sortType,
+        limit: PAGE_LIMIT,
+      },
     },
-  })
+  )
 }
 
 export async function getProductById(
@@ -52,11 +55,11 @@ export async function getProductById(
 
 export async function updateProductById(
   id: number,
-  data: EditProductFormInput
+  data: EditProductFormInput,
 ): Promise<Product> {
   const response = await axiosApiInstance.patch<Product>(
     `${productApi}/${id}?isWithDescription=true`,
-    data
+    data,
   )
   // console.log(response.data)
   return response.data
@@ -72,11 +75,15 @@ export const getTop: {
     return res.data
   },
   async getTopCloseTime() {
-    const res = await axiosApiInstance.get<Product[]>(`${productApi}/top/closeTime`)
+    const res = await axiosApiInstance.get<Product[]>(
+      `${productApi}/top/closeTime`,
+    )
     return res.data
   },
   async getTopBidNum() {
-    const res = await axiosApiInstance.get<Product[]>(`${productApi}/top/bidNumber`)
+    const res = await axiosApiInstance.get<Product[]>(
+      `${productApi}/top/bidNumber`,
+    )
     return res.data
   },
 }
@@ -84,16 +91,28 @@ export const getTop: {
 export async function addToWatchList(
   id?: number,
 ): Promise<AxiosResponse<Watchlist>> {
-  return await axiosApiInstance.post<Watchlist>(
-    `api/watchlist/byUser/${id}`,
-  )
+  return await axiosApiInstance.post<Watchlist>(`api/watchlist/byUser/${id}`)
 }
 
 export async function deleteProdWatchList(
   id?: number,
 ): Promise<AxiosResponse<Watchlist>> {
-  return await axiosApiInstance.delete<Watchlist>(
-    `api/watchlist/byUser/${id}`,
-  )
+  return await axiosApiInstance.delete<Watchlist>(`api/watchlist/byUser/${id}`)
+}
 
+export function getRelativeProductsFunction(
+  categoryId: number,
+  currentProductId: number,
+) {
+  return async function () {
+    const response = await axiosApiInstance.get<GetProductsResponse>(
+      `${productApi}/byCategory/${categoryId}?page=1&limit=5`,
+    )
+    return response.data.items.filter((product) => {
+      if (product.id !== currentProductId) {
+        return true
+      }
+      return false
+    })
+  }
 }
