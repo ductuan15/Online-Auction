@@ -86,7 +86,7 @@ router
     auctionController.updateBidderReview,
   )
 
-// router.route('/:auctionId').get(auctionController.read)
+router.route('/:auctionId').get(auctionController.read)
 
 router.param('auctionId', auctionController.auctionById)
 router.param('productId', productController.checkProductExist)
