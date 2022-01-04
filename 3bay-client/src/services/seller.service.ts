@@ -22,6 +22,10 @@ async function getAllPostedProduct(): Promise<AxiosResponse<Product[]>> {
   return await axiosApiInstance.get(`api/product/postedProducts`)
 }
 
+async function getAllAuctionHasWinner(): Promise<AxiosResponse<Product[]>> {
+  return await axiosApiInstance.get(`api/auction/has-winner`)
+}
+
 async function getBidRequests(auctionId: number): Promise<BidRequest[]> {
   if (isNaN(auctionId)) {
     return []
@@ -69,6 +73,7 @@ const SellerService = {
   getBidRequests,
   acceptBid,
   rejectBid,
+  getAllAuctionHasWinner
 }
 
 export default SellerService

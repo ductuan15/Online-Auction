@@ -34,6 +34,7 @@ import PostedProductList from './pages/seller/PostedProductList'
 import { SocketProvider } from './contexts/socket/SocketContext'
 import AuctionList from "./pages/user/auctionlist/AuctionList";
 import WonAuctionList from "./pages/user/wonauctionlist/WonAuctionList";
+import AuctionHasWinner from "./pages/seller/AuctionHasWinner";
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -68,6 +69,10 @@ function GlobalRouter(): JSX.Element {
             <Route
               path='user/postedproductlist'
               element={<PostedProductList />}
+            />
+            <Route
+              path='user/auctionhaswinner'
+              element={<AuctionHasWinner />}
             />
 
             <Route path='user/' element={<UserLayout />}>

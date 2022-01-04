@@ -12,6 +12,8 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 import { useDarkMode } from '../../../hooks'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
+import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
 
 const profileMenu = {
   elevation: 0,
@@ -194,9 +196,18 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       {user && user.role === 'SELLER' && (
         <MenuItem component={RouterLink} to='/user/postedproductlist'>
           <ListItemIcon>
-            <LoginOutlinedIcon fontSize='small' />
+            <Inventory2OutlinedIcon fontSize='small' />
           </ListItemIcon>
           Posted product list
+        </MenuItem>
+      )}
+
+      {user && user.role === 'SELLER' && (
+        <MenuItem component={RouterLink} to='/user/auctionhaswinner'>
+          <ListItemIcon>
+            <InventoryOutlinedIcon fontSize='small' />
+          </ListItemIcon>
+          Auctions have winner
         </MenuItem>
       )}
 

@@ -6,18 +6,18 @@ import Grid from "@mui/material/Grid";
 import ProductCard from "../../components/common/product/ProductCard";
 import Typography from "@mui/material/Typography";
 
-const PostedProductListPage = (): JSX.Element => {
+const AuctionHaveWinnerPage = (): JSX.Element => {
 
   const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
-    async function getPostedProduct () {
-      const res = await sellerService.getAllPostedProduct()
+    async function getWonAuction () {
+      const res = await sellerService.getAllAuctionHasWinner()
       setProducts(res.data)
     }
-    getPostedProduct()
+    getWonAuction()
   }, [])
-  
+
   return (
     <Grid
       container
@@ -47,11 +47,11 @@ const PostedProductListPage = (): JSX.Element => {
             color='text.primary'
             align='center'
           >
-            You haven&apos;t posted any products.
+            You don&apos;t have any auction has winner.
           </Typography>
         </Grid>
       )}
     </Grid>
   )
 }
-export default PostedProductListPage
+export default AuctionHaveWinnerPage
