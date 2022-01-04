@@ -100,7 +100,7 @@ const SearchPage = (): JSX.Element => {
     ;(async () => {
       await fetchData()
     })()
-  }, [currentPage, sortBy, sortType, categoryId])
+  }, [currentPage, sortBy, sortType, categoryId, key])
   const handlePriceSortChange = (event: SelectChangeEvent) => {
     const [sortBy, sortType] = event.target.value.split('-')
     setSortBy(sortBy)

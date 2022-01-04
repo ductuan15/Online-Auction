@@ -146,7 +146,7 @@ export default function SearchAppBar(): JSX.Element {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key == 'Enter') {
       navigate(`/products/search/?key='${searchKey}'`)
-      window.location.reload();
+      // window.location.reload();
     }
   }
 
