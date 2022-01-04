@@ -192,12 +192,6 @@ const ProductInfo = (): JSX.Element | null => {
       </Grid>
 
       <Grid item xs={12}>
-        <Typography variant='body1' color='text.secondary'>
-          {/*Current price*/}
-        </Typography>
-      </Grid>
-
-      <Grid item xs={12}>
         <Typography variant='h3' color='text.primary' fontWeight={600}>
           💵 ₫{product.latestAuction?.currentPrice}
         </Typography>

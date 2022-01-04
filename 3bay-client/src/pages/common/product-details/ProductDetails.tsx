@@ -16,6 +16,7 @@ import ProductBidDialog from '../../../components/common/product/ProductBidDialo
 import BidRequestTable from '../../../components/seller/product/BidRequestTable'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import BidHistoryTable from '../../../components/common/product/BidHistoryTable'
+import ProductComment from "../../../components/common/product/ProductComment";
 
 // TODO fetch related products instead of `getTop.getTopPrice`
 const ProductDetails = (): JSX.Element | null => {
@@ -120,6 +121,9 @@ const ProductDetails = (): JSX.Element | null => {
           fetchFunction={getTop.getTopPrice}
           showLoading={true}
         />
+
+        <ProductComment />
+
       </Grid>
 
       <ProductBidDialog />
