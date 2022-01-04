@@ -1,30 +1,26 @@
 import {
-  Avatar,
   Box,
   Button,
+  ButtonGroup,
+  Chip,
   Divider,
   Grid,
   List,
   ListItem,
-  ListItemAvatar, ListItemText,
-  makeStyles,
+  ListItemAvatar,
+  ListItemText,
   Paper,
+  TextField,
   Typography,
 } from '@mui/material'
 
-import {styled, useTheme} from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
-import BackgroundLetterAvatars from "../../user/profile/BackgroundLettersAvatar";
-import * as React from "react";
-
-const StyledDiv = styled('div')(({ theme }) => ({
-  background: theme.palette.background.default,
-  span: {
-    backgroundColor: 'inherit !important',
-    color: 'inherit !important',
-  },
-}))
+import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
+import * as React from 'react'
+import { useState } from 'react'
+import PlusOneIcon from '@mui/icons-material/PlusOne'
 
 const ProductComment = (): JSX.Element | null => {
   const {
@@ -36,6 +32,18 @@ const ProductComment = (): JSX.Element | null => {
   } = useProductContext()
   const theme = useTheme()
   const minSize = '40px'
+  const [comment, setComment] = useState('')
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setComment(e.currentTarget.value)
+  }
+
+  const buttonplus_onClicked = () => {
+    console.log('Plus')
+  }
+  const buttonminus_onClicked = () => {
+    console.log('Minus')
+  }
 
   if (!product) return null
   return (
@@ -62,12 +70,42 @@ const ProductComment = (): JSX.Element | null => {
             product.latestAuction?.winningBid?.bidder.uuid ===
               userDetails?.uuid) && <Button>➕️ Save</Button>}
         </Grid>
+        <Grid item container xs={12} flexDirection='row'>
+          {(product.sellerId === userDetails?.uuid ||
+            product.latestAuction?.winningBid?.bidder.uuid ===
+              userDetails?.uuid) && (
+            <>
+              <ButtonGroup disableElevation variant='contained'>
+                <Button onClick={buttonplus_onClicked}>
+                  <Typography variant='body2' color='text.secondary'>
+                    <b>➕1</b>
+                  </Typography>
+                </Button>
+                <Button onClick={buttonminus_onClicked}>
+                  {' '}
+                  <Typography variant='body2' color='text.secondary'>
+                    <b>➖1</b>
+                  </Typography>
+                </Button>
+              </ButtonGroup>
+              <TextField
+                multiline
+                value={comment}
+                onChange={handleChange}
+                sx={{
+                  width: 1,
+                }}
+              />
+            </>
+          )}
+        </Grid>
+
         <Grid item xs={12}>
           <Divider />
         </Grid>
 
-        <List >
-          <ListItem alignItems="flex-start">
+        <List>
+          <ListItem alignItems='flex-start'>
             <ListItemAvatar>
               <BackgroundLetterAvatars
                 name={'Seller'}
@@ -79,7 +117,24 @@ const ProductComment = (): JSX.Element | null => {
               />
             </ListItemAvatar>
             <ListItemText
-              primary="username"
+              primary={
+                <>
+                  <Typography variant='body1' color='text.primary'>
+                    Sellername
+                    <Chip
+                      sx={{
+                        mx: 1,
+                      }}
+                      color='success'
+                      label={
+                        <Typography fontWeight={550} variant='body1'>
+                          Seller
+                        </Typography>
+                      }
+                    />
+                  </Typography>
+                </>
+              }
               secondary={
                 <>
                   <Typography variant='body1' color='text.primary'>
@@ -89,8 +144,7 @@ const ProductComment = (): JSX.Element | null => {
               }
             />
           </ListItem>
-          <Divider variant="inset" component="li" />
-          <ListItem alignItems="flex-start">
+          <ListItem alignItems='flex-start'>
             <ListItemAvatar>
               <BackgroundLetterAvatars
                 name={'Bidder'}
@@ -102,7 +156,24 @@ const ProductComment = (): JSX.Element | null => {
               />
             </ListItemAvatar>
             <ListItemText
-              primary="username"
+              primary={
+                <>
+                  <Typography variant='body1' color='text.primary'>
+                    Biddername
+                    <Chip
+                      sx={{
+                        mx: 1,
+                      }}
+                      color='success'
+                      label={
+                        <Typography fontWeight={550} variant='body1'>
+                          Bidder
+                        </Typography>
+                      }
+                    />
+                  </Typography>
+                </>
+              }
               secondary={
                 <>
                   <Typography variant='body1' color='text.primary'>
@@ -112,7 +183,6 @@ const ProductComment = (): JSX.Element | null => {
               }
             />
           </ListItem>
-          <Divider variant="inset" component="li" />
         </List>
       </Paper>
     </>
