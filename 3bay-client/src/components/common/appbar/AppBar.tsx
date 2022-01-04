@@ -21,10 +21,15 @@ import RoleLabel from '../../user/profile/RoleLabel'
 import WatchListButton from './WatchListButton'
 import { Link, Stack, useTheme } from '@mui/material'
 import BorderButton from '../button/BorderButton'
-import {Link as RouterLink, useMatch, useNavigate, useResolvedPath} from 'react-router-dom'
+import {
+  Link as RouterLink,
+  useMatch,
+  useNavigate,
+  useResolvedPath,
+} from 'react-router-dom'
 import { GREY } from '../../../theme/palette'
-import JoiningAuction from "./JoiningAuctionButton";
-import WonAuctionButton from "./WonAuctionButton";
+import JoiningAuction from './JoiningAuctionButton'
+import WonAuctionButton from './WonAuctionButton'
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -145,12 +150,11 @@ export default function SearchAppBar(): JSX.Element {
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key == 'Enter') {
-      navigate(`/products/search/?key='${searchKey}'`)
-      // window.location.reload();
+      navigate(`/products/search/?key=${searchKey.trim()}&categoryId=&sortBy=closeTime&sortType=desc&page=1`)
     }
   }
 
-  const searchKey_Changed = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onSearchKeyChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchKey(e.currentTarget.value)
   }
 
@@ -188,7 +192,7 @@ export default function SearchAppBar(): JSX.Element {
                 inputProps={{ 'aria-label': 'search' }}
                 onKeyPress={handleKeyPress}
                 value={searchKey}
-                onChange={searchKey_Changed}
+                onChange={onSearchKeyChanges}
               />
             </Search>
 
@@ -235,7 +239,6 @@ export default function SearchAppBar(): JSX.Element {
 
               {/*WonAuction Button*/}
               {isAuth ? <WonAuctionButton /> : null}
-
             </Stack>
 
             {/* Profile */}

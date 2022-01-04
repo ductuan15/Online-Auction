@@ -24,8 +24,7 @@ type CategoryItemProps = {
 
 const CategoryItem = ({ navigate, category }: CategoryItemProps) => {
   const [open, setOpen] = useState(true)
-
-  const categoryLink = `/products/search/?categoryId=${category.id}`
+  const categoryLink = `/products/search/?key=&categoryId=${category.id}&sortBy=closeTime&sortType=desc&page=1`
 
   const [searchParams] = useSearchParams()
   const categoryIdParam = searchParams.get('categoryId')

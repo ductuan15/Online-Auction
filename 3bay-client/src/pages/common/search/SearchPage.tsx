@@ -1,6 +1,5 @@
 import {
   Box,
-  CircularProgress,
   FormControl,
   Grid,
   InputLabel,
@@ -23,6 +22,7 @@ import {
 } from '../../../services/product.service'
 import ProductList from '../product-list/ProductList'
 import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
+import ProductCardSkeleton from '../../../components/common/product/ProductCardSkeleton'
 
 const SearchPage = (): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -41,6 +41,7 @@ const SearchPage = (): JSX.Element => {
       ? SORT_TYPE.asc
       : SORT_TYPE.desc,
   )
+
   const [hasNextPage, setHasNextPage] = useState(false)
   const [currentPage, setCurrentPage] = useState(page)
   const [isNeedRedirect, setIsNeedRedirect] = useState(false)
@@ -69,7 +70,7 @@ const SearchPage = (): JSX.Element => {
       )
       setHasNextPage(res.data.hasNextPage)
       setProducts([...res.data.items])
-      console.log(res.data.hasNextPage)
+      // console.log(res.data.hasNextPage)
       //test is loading
       setTimeout(() => {
         setIsLoading(false)
@@ -93,19 +94,31 @@ const SearchPage = (): JSX.Element => {
       navigate(`/products/search/?${searchParams.toString()}`)
       setIsNeedRedirect(false)
     }
-  }, [isNeedRedirect])
+  }, [
+    categoryId,
+    currentPage,
+    isNeedRedirect,
+    key,
+    navigate,
+    searchParams,
+    setSearchParams,
+    sortBy,
+    sortType,
+  ])
 
   useEffect(() => {
     setIsNeedRedirect(true)
     ;(async () => {
       await fetchData()
     })()
-  }, [currentPage, sortBy, sortType, categoryId, key])
+  }, [fetchData])
+
   const handlePriceSortChange = (event: SelectChangeEvent) => {
     const [sortBy, sortType] = event.target.value.split('-')
     setSortBy(sortBy)
     setSortType(sortType)
   }
+
   const handleCategoryChange = (event: SelectChangeEvent) => {
     searchParams.set('categoryId', event.target.value)
     setCurrentPage(1)
@@ -120,9 +133,10 @@ const SearchPage = (): JSX.Element => {
   }
 
   return (
-    <Grid sx={{ m: 5 }}>
-      <FormControl sx={{ minWidth: 240, mr: 4 }}>
+    <Grid sx={{m: 5}}>
+      <FormControl sx={{minWidth: 240, mr: 4}}>
         <InputLabel id='sort-price-label'>Sort</InputLabel>
+
         <Select
           labelId='sort-price-label'
           id='demo-simple-select'
@@ -131,22 +145,28 @@ const SearchPage = (): JSX.Element => {
           onChange={handlePriceSortChange}
         >
           <ListSubheader>Close time</ListSubheader>
+
           <MenuItem value={`${SORT_BY.closeTime}-${SORT_TYPE.desc}`}>
             Close time: ↓
           </MenuItem>
+
           <MenuItem value={`${SORT_BY.closeTime}-${SORT_TYPE.asc}`}>
             Close time: ↑
           </MenuItem>
+
           <ListSubheader>Price</ListSubheader>
+
           <MenuItem value={`${SORT_BY.currentPrice}-${SORT_TYPE.desc}`}>
             Price: ↓
           </MenuItem>
+
           <MenuItem value={`${SORT_BY.currentPrice}-${SORT_TYPE.asc}`}>
             Price: ↑
           </MenuItem>
         </Select>
       </FormControl>
-      <FormControl sx={{ minWidth: 240 }}>
+
+      <FormControl sx={{minWidth: 240}}>
         <InputLabel id='category-select-label'>Category</InputLabel>
         <Select
           labelId='category-select-label'
@@ -158,15 +178,22 @@ const SearchPage = (): JSX.Element => {
           <MenuItem value=''>
             <em>None</em>
           </MenuItem>
+
           {renderCategorySelection(allCategories)}
         </Select>
       </FormControl>
-      <Box sx={{ my: 4 }}>
+
+      <Box sx={{my: 4}}>
         {(() => {
           if (isLoading) {
             return (
-              <Grid container justifyContent='center'>
-                <CircularProgress color='secondary' />
+              <Grid container justifyContent='center' spacing={2}>
+                {/*<CircularProgress color='secondary' />*/}
+                {[1, 2, 3, 4].map((i) => (
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+                    <ProductCardSkeleton/>
+                  </Grid>
+                ))}
               </Grid>
             )
           } else if (products.length === 0) {
@@ -177,13 +204,23 @@ const SearchPage = (): JSX.Element => {
                 fontWeight={600}
                 gutterBottom
               >
-                {`No result for ${key}`}
+                {`No result for 「${key}」`}
               </Typography>
             )
           } else {
             return (
               <>
-                <ProductList items={products} />
+                <Typography
+                  color='text.primary'
+                  variant='h4'
+                  fontWeight={600}
+                  gutterBottom
+                >
+                  {`Search result ${key ? `for 「${key}」` : ''}`}
+                </Typography>
+
+                <ProductList items={products}/>
+
                 <Grid container justifyContent='center'>
                   <Pagination
                     page={currentPage}
@@ -195,7 +232,7 @@ const SearchPage = (): JSX.Element => {
                         item.type === 'page' &&
                         hasNextPage
                       ) {
-                        return <PaginationItem type='end-ellipsis' disabled />
+                        return <PaginationItem type='end-ellipsis' disabled/>
                       }
                       return <PaginationItem {...item} />
                     }}

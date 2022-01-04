@@ -183,7 +183,7 @@ const ProductInfo = (): JSX.Element | null => {
       <Grid item xs={12}>
         <Link
           component={RouterLink}
-          to={`/products/search/?categoryId=${product.categoryId}`}
+          to={`/products/search/?key=&categoryId=${product.categoryId}&sortBy=closeTime&sortType=desc&page=1`}
           underline='none'
           color='primary.main'
         >

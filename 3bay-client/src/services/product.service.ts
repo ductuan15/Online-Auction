@@ -18,7 +18,7 @@ export interface GetProductsResponse {
   cursor: number
 }
 //Small limit for test purpose
-export const PAGE_LIMIT = 2;
+export const PAGE_LIMIT = 12;
 const productApi = 'api/product'
 
 export async function searchProduct(
