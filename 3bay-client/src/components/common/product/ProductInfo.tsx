@@ -260,7 +260,7 @@ const ProductInfo = (): JSX.Element | null => {
         )}
       </Grid>
 
-      {closeTime?.isAfter() && (
+      {product && closeTime?.isAfter() && (
         <Grid
           item
           container

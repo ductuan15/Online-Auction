@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import DialogActions from '@mui/material/DialogActions'
 import Dialog from '@mui/material/Dialog'
 import * as React from 'react'
-import {useCallback, useEffect, useMemo, useState} from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
@@ -36,7 +36,12 @@ function ProductBidDialog(): JSX.Element {
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm<ProductBidFormInput>({ mode: 'onChange' })
+  } = useForm<ProductBidFormInput>({
+    mode: 'onChange',
+    defaultValues: {
+      step: '1',
+    },
+  })
 
   const {
     state: { isBidDialogOpened, currentProduct: product, point, bidStatus },
@@ -49,8 +54,15 @@ function ProductBidDialog(): JSX.Element {
     if (isNaN(+step) || !product?.latestAuction?.incrementPrice) {
       return product?.latestAuction?.currentPrice || 0
     }
-    return +step * (product?.latestAuction?.incrementPrice ?? 1) + +(product?.latestAuction?.currentPrice ?? 0)
+    return (
+      +step * (product?.latestAuction?.incrementPrice ?? 1) +
+      +(product?.latestAuction?.currentPrice ?? 0)
+    )
   }, [product, step])
+
+  useEffect(() => {
+    setValue('bidPrice', price)
+  }, [price])
 
   const hasPoint = useMemo(() => {
     return point !== undefined
@@ -67,8 +79,7 @@ function ProductBidDialog(): JSX.Element {
     }
   }, [product, setValue])
 
-
-  const onClose = useCallback( () => {
+  const onClose = useCallback(() => {
     // if (isMounted()) {
     setErrorText(null)
     // }
@@ -83,7 +94,12 @@ function ProductBidDialog(): JSX.Element {
       setErrorTextMsg('Auction is not opened', setErrorText)
       return
     }
-    if (confirm(`Are you sure you want to bid this product with ₫${data.bidPrice}?`)) {
+    console.log(data)
+    if (
+      confirm(
+        `Are you sure you want to bid this product with ₫${data.bidPrice}?`,
+      )
+    ) {
       // console.log(data)
       setLoading(true)
       try {

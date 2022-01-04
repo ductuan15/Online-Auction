@@ -15,6 +15,7 @@ import { useTitle } from '../../../hooks'
 import ProductBidDialog from '../../../components/common/product/ProductBidDialog'
 import BidRequestTable from '../../../components/seller/product/BidRequestTable'
 import { useAuth } from '../../../contexts/user/AuthContext'
+import BidHistoryTable from '../../../components/common/product/BidHistoryTable'
 
 // TODO fetch related products instead of `getTop.getTopPrice`
 const ProductDetails = (): JSX.Element | null => {
@@ -36,7 +37,11 @@ const ProductDetails = (): JSX.Element | null => {
     ;(async () => {
       setLoading(true)
       if (id && +id) {
+        dispatch({
+          type: 'UPDATE_BID_STATUS',
+        })
         const response = await getProductById(+id)
+        // console.log(response.data)
         dispatch({
           type: 'UPDATE_CURRENT_PRODUCT',
           payload: response.data,
@@ -107,6 +112,8 @@ const ProductDetails = (): JSX.Element | null => {
         </Grid>
 
         {isProductSeller && <BidRequestTable />}
+
+        <BidHistoryTable />
 
         <ProductCarousel
           name={'Related Products'}

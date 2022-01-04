@@ -62,9 +62,13 @@ function ProductBidButton(): JSX.Element | null {
         break
       case 'ACCEPT':
         button = (
-          <BorderButton sx={{ mt: 1 }} color='info' onClick={() => {
-            dispatch({ type: 'OPEN_BID_DIALOG' })
-          }}>
+          <BorderButton
+            sx={{ mt: 1 }}
+            color='info'
+            onClick={() => {
+              dispatch({ type: 'OPEN_BID_DIALOG' })
+            }}
+          >
             ➕ Increase bid price
           </BorderButton>
         )
@@ -73,7 +77,7 @@ function ProductBidButton(): JSX.Element | null {
         button = RejectButton
         break
       default:
-        button = (
+        button = !userDetails ? (
           <Link
             underline='none'
             color='inherit'
@@ -89,7 +93,7 @@ function ProductBidButton(): JSX.Element | null {
               Sign in to bid the product
             </BorderButton>
           </Link>
-        )
+        ) : null
     }
   } else {
     button = RejectButton

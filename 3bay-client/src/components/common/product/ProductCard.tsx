@@ -1,6 +1,6 @@
 import {
   MouseEventHandler,
-  SyntheticEvent,
+  SyntheticEvent, useCallback,
   useEffect,
   useMemo,
   useState,
@@ -134,14 +134,15 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
     setColor(theme.palette.text.primary)
   }, [theme])
 
-  const onMouseOver = () => {
+  const onMouseOver = useCallback(() => {
     setColor(theme.palette.primary.dark)
     setScale(1.1)
-  }
-  const onMouseOut = () => {
+  }, [theme.palette.primary.dark])
+
+  const onMouseOut = useCallback(() => {
     setColor(theme.palette.text.primary)
     setScale(1.0)
-  }
+  }, [theme.palette.text.primary])
 
   return (
     <div onContextMenu={handleContextMenu}>
