@@ -294,6 +294,7 @@ export const getProductByCategoryId = async (
     if (page) {
       products = await prisma.product.findMany({
         where: {
+          deletedAt:null,
           OR: [
             {
               categoryId: categoryId,
@@ -358,11 +359,11 @@ export const search = async (
     const queryResultRows = await prisma.$queryRaw<any[]>(Prisma.Prisma
       .sql`SELECT products.id
            FROM products
-                    JOIN auctions on auctions.id = products.latestAuctionId
+                    JOIN auctions on auctions.id = products.latestAuctionId WHERE products.deletedAt IS NULL
                ${
                  key !== '' && key !== undefined
                    ? Prisma.Prisma
-                       .sql`WHERE MATCH (products.name) AGAINST (${key})`
+                       .sql`AND MATCH (products.name) AGAINST (${key}) `
                    : Prisma.Prisma.empty
                } ${
       categoryId !== 0
@@ -487,6 +488,16 @@ export const deleteProduct = async (
     const product = await prisma.product.update({
       data: {
         deletedAt: new Date(),
+        auctions: {
+          update: {
+            where: {
+              id: req.product?.id,
+            },
+            data: {
+              closeTime: new Date(),
+            },
+          },
+        },
       },
       where: {
         id: req.product?.id,
@@ -543,6 +554,7 @@ export const getTopNumberBid = async (
   try {
     const topNumberBidProducts: ProductRes[] = await prisma.product.findMany({
       where: {
+        deletedAt: null,
         latestAuction: {
           closeTime: {
             gt: new Date(),
@@ -578,6 +590,7 @@ export const getTopCloseTime = async (
   try {
     const topNumberBidProducts: ProductRes[] = await prisma.product.findMany({
       where: {
+        deletedAt: null,
         latestAuction: {
           closeTime: {
             gt: new Date(),

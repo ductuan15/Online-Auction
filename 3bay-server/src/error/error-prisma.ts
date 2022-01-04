@@ -12,9 +12,9 @@ export const prismaErrorHandler = (
 ) => {
   if (err.name === 'NotFoundError') {
     console.error(err.message)
-    res.status(400).send({
+    res.status(404).send({
       code: err.message,
-      status: 400,
+      status: 404,
     } as ErrorModel)
   } else if (err instanceof Prisma.PrismaClientValidationError) {
     console.error(err.message)

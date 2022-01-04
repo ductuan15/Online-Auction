@@ -161,7 +161,7 @@ export const update = async (
       },
       data: {
         winningBidId: req.bid?.id || null,
-        currentPrice: req.bid?.bidPrice || 0,
+        currentPrice: req.bid?.bidPrice || req.auction?.openPrice,
       },
     })
     res.json(auction)

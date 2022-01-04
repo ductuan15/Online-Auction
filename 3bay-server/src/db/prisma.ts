@@ -123,6 +123,9 @@ prisma.$use(async (param, next) => {
       }
       return results
     }
+    else {
+      return await next(param)
+    }
   } else {
     return await next(param)
   }
