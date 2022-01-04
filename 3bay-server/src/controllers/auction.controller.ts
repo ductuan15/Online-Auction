@@ -7,6 +7,10 @@ import { AuctionError } from '../error/error-exception.js'
 import { includeProductDetailInfo } from './product.controller.js'
 import { getAllThumbnailLink } from './images-product.controller.js'
 import { ProductRes } from '../types/ProductRes'
+import c from 'ansi-colors'
+
+export const AUCTION_EXTEND_MINUTES = 10
+export const MINUTES_TO_EXTEND_AUCTION = 5
 
 const bidderInfoSelection = {
   uuid: true,
@@ -476,9 +480,9 @@ export const getBidRequestList = async (
                   id: true,
                 },
                 where: {
-                  auctionId: req.auction.id
-                }
-              }
+                  auctionId: req.auction.id,
+                },
+              },
             },
           },
         },
@@ -547,5 +551,29 @@ export const getOpeningAuction = async (
     if (err instanceof Error) {
       next(err)
     }
+  }
+}
+
+export const extendAuctionTime = async (auctionId: number) => {
+  const auction = await prisma.auction.findUnique({
+    where: { id: auctionId },
+  })
+
+  if (
+    auction &&
+    auction.autoExtendAuctionTiming &&
+    auction.closeTime &&
+    auction.closeTime.getTime() - new Date().getTime() <=
+      MINUTES_TO_EXTEND_AUCTION * 1000 * 60 // to ms
+  ) {
+    const extendTime = new Date()
+    extendTime.setMinutes(extendTime.getMinutes() + AUCTION_EXTEND_MINUTES)
+    await prisma.auction.update({
+      where: { id: auction.id },
+      data: {
+        closeTime: extendTime,
+      },
+    })
+    console.log(c.blue(`Extend auction time - id ${auction.id}`))
   }
 }

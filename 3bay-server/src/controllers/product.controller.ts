@@ -90,6 +90,7 @@ export const productById = async (
         latestAuction: {
           select: {
             ...latestAuction.select,
+            autoExtendAuctionTiming: true,
             bids: {
               include: {
                 bidder: {
