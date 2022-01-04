@@ -1,0 +1,64 @@
+<mjml>
+  <mj-head>
+  <mj-font name="Libre Baskerville" href="https://fonts.googleapis.com/css?family=Libre+Baskerville"/>
+  <mj-font name="Noto Sans Display" href="https://fonts.googleapis.com/css?family=Noto+Sans+Display"/>
+
+  <mj-attributes>
+    <mj-class name="preheader" color="#000000" font-size="11px" font-family="Ubuntu, Helvetica, Arial, sans-serif"
+              padding="0 20px"/>
+    <mj-class name="company-name" font-size="32px" font-family="Libre Baskerville, serif" color="#3366FF"
+              font-style="italic"/>
+    <mj-class name="title" font-size="30px" font-family="Ubuntu" color="#626262"/>
+    <mj-class name="text" color="#525252" font-size='18px' font-family='Noto Sans Display' line-height='1.25'/>
+    <mj-class name="btn" background-color="#3366FF" font-size='18px' font-family='Noto Sans Display'
+              line-height='1.25'/>
+  </mj-attributes>
+
+  <mj-preview>Your bid has been rejected by the seller</mj-preview>
+
+  </mj-head>
+
+  <mj-body>
+
+    <mj-section>
+      <mj-column>
+        <mj-text mj-class="company-name">3bay
+        </mj-text>
+        <mj-divider border-width='1px' border-color='#525252'/>
+      </mj-column>
+
+    </mj-section>
+
+    <mj-section padding-top="0px">
+
+      <mj-column width="600px">
+
+        <mj-text mj-class="title">
+          <b>Your bid has been rejected by the seller</b>
+        </mj-text>
+
+        <mj-text mj-class="text">Hello
+          <b>{{name}}</b>,
+          <br/>
+          Thank you for submitting a bid for the product 「{{productName}}」 from our website.
+          <br/>
+          We regret to inform you that on this occasion your bid has been unsuccessful.
+          The seller have decided to offer the product to one of the other bidders.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          While you were not successful on this occasion,
+          we would encourage you to check our other products and apply again if you find one that is suitable.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          Thanks,
+          <br/>
+          - 3bay
+        </mj-text>
+
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>
