@@ -56,7 +56,7 @@ function getUserCredential(user: Prisma.User) {
   }
 
   const token = jwt.sign(payload, config.JWT, {
-    expiresIn: '5m',
+    expiresIn: '60m',
   })
 
   return {
