@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Chip,
   Divider,
   Grid,
@@ -21,6 +20,7 @@ import { useProductContext } from '../../../contexts/product/ProductDetailsConte
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import * as React from 'react'
 import { SyntheticEvent, useState } from 'react'
+import BorderButton from '../button/BorderButton'
 
 const ProductComment = (): JSX.Element | null => {
   const {
@@ -28,7 +28,7 @@ const ProductComment = (): JSX.Element | null => {
   } = useUserContext()
 
   const {
-    state: { currentProduct: product },
+    state: { latestAuction, currentProduct: product },
   } = useProductContext()
   const theme = useTheme()
   const minSize = '40px'
@@ -52,7 +52,7 @@ const ProductComment = (): JSX.Element | null => {
   //   setPoint(-1)
   // }
 
-  if (!product) return null
+  if (!product || !latestAuction) return null
   return (
     <>
       <Paper
@@ -74,14 +74,12 @@ const ProductComment = (): JSX.Element | null => {
           <Box flexGrow={1} />
 
           {(product.sellerId === userDetails?.uuid ||
-            product.latestAuction?.winningBid?.bidder.uuid ===
-              userDetails?.uuid) && (
-            <Button variant='outlined'>➕️ Save</Button>
-          )}
+            latestAuction?.winningBid?.bidder.uuid ===
+              userDetails?.uuid) && <BorderButton>💾️ Save</BorderButton>}
         </Grid>
         <Grid item container xs={12} flexDirection='row'>
           {(product.sellerId === userDetails?.uuid ||
-            product.latestAuction?.winningBid?.bidder.uuid ===
+            latestAuction?.winningBid?.bidder.uuid ===
               userDetails?.uuid) && (
             <>
               <Grid
@@ -172,7 +170,7 @@ const ProductComment = (): JSX.Element | null => {
             <ListItemAvatar>
               <BackgroundLetterAvatars
                 name={
-                  product?.latestAuction?.winningBid?.bidder?.name ||
+                  latestAuction?.winningBid?.bidder?.name ||
                   'Tuan Cuong'
                 }
                 fontSize={`${theme.typography.body1.fontSize}`}
@@ -186,7 +184,7 @@ const ProductComment = (): JSX.Element | null => {
               primary={
                 <Box display='flex' flexDirection='row' alignItems='center'>
                   <Typography variant='h6' color='text.primary'>
-                    {product?.latestAuction?.winningBid?.bidder?.name ||
+                    {latestAuction?.winningBid?.bidder?.name ||
                       'Tuan Cuong'}
                   </Typography>
                   <Chip

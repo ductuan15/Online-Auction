@@ -90,7 +90,7 @@ const ProductInfo = (): JSX.Element | null => {
   } = useUserContext()
 
   const {
-    state: { currentProduct: product },
+    state: { currentProduct: product, latestAuction },
   } = useProductContext()
 
   const isInWatchlist = useMemo(() => {
@@ -101,7 +101,7 @@ const ProductInfo = (): JSX.Element | null => {
     )
   }, [product?.id, watchlist])
 
-  const closeTimeStr = product?.latestAuction?.closeTime || null
+  const closeTimeStr = latestAuction?.closeTime || null
   const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
   const closeTimeFormattedStr = closeTime
     ? `${closeTime.format('L')} ${closeTime.format('LT')}`
@@ -193,18 +193,18 @@ const ProductInfo = (): JSX.Element | null => {
 
       <Grid item xs={12}>
         <Typography variant='h3' color='text.primary' fontWeight={600}>
-          💵 ₫{product.latestAuction?.currentPrice}
+          💵 ₫{latestAuction?.currentPrice}
         </Typography>
       </Grid>
 
-      {product?.latestAuction?.buyoutPrice && (
+      {latestAuction?.buyoutPrice && (
         <Grid item xs={12}>
           <Typography
             variant='subtitle1'
             color='text.primary'
             fontStyle='italic'
           >
-            💨 Instant buy with ₫{product.latestAuction?.buyoutPrice}
+            💨 Instant buy with ₫{latestAuction?.buyoutPrice}
           </Typography>
         </Grid>
       )}
@@ -214,9 +214,9 @@ const ProductInfo = (): JSX.Element | null => {
       </Grid>
 
       <Grid item xs={12}>
-        {product.latestAuction?.winningBid?.bidder?.name ? (
+        {latestAuction?.winningBid?.bidder?.name ? (
           <UserWithRating
-            name={product.latestAuction?.winningBid?.bidder?.name}
+            name={latestAuction?.winningBid?.bidder?.name || 'Tuan Cuong'}
             label={'Bid by \u00a0\u00a0'}
           />
         ) : (
@@ -249,7 +249,7 @@ const ProductInfo = (): JSX.Element | null => {
           <Grid item xs={12} sm={'auto'}>
             <Typography variant='body1' color='text.secondary'>
               {endTimeCountDownText}
-              {product?.latestAuction?.autoExtendAuctionTiming ? '*' : ''}
+              {latestAuction?.autoExtendAuctionTiming ? '*' : ''}
             </Typography>
           </Grid>
         )}

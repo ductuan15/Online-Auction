@@ -19,6 +19,7 @@ import _ from 'lodash'
 //   sx?: SxProps
 // }
 
+// TODO: handle realtime in this table
 export default function BidRequestTable() {
   const [rows, setRows] = useState<BidRequest[]>([])
   const { state } = useProductContext()

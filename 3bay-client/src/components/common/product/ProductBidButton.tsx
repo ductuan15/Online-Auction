@@ -14,6 +14,7 @@ const RejectButton = (
 
 const MINIMUM_POINT = 8.0
 
+// TODO handle real time
 function ProductBidButton(): JSX.Element | null {
   const {
     state: { currentProduct: product, bidStatus, point },

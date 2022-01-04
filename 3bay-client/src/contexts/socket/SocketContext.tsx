@@ -15,6 +15,10 @@ const SocketContext = createContext<SocketContextType>({
   socket: null,
 })
 
+export enum SocketEvent {
+  UPDATE_AUCTION = 'update_auction'
+}
+
 const useSocketContext = (): SocketContextType => {
   return useContext(SocketContext)
 }

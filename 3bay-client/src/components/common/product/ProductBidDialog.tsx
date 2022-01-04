@@ -44,25 +44,31 @@ function ProductBidDialog(): JSX.Element {
   })
 
   const {
-    state: { isBidDialogOpened, currentProduct: product, point, bidStatus },
+    state: {
+      isBidDialogOpened,
+      currentProduct: product,
+      point,
+      bidStatus,
+      latestAuction,
+    },
     dispatch,
   } = useProductContext()
 
   const step = watch('step')
 
   const price = useMemo(() => {
-    if (isNaN(+step) || !product?.latestAuction?.incrementPrice) {
-      return product?.latestAuction?.currentPrice || 0
+    if (isNaN(+step) || !latestAuction?.incrementPrice) {
+      return latestAuction?.currentPrice || 0
     }
     return (
-      +step * (product?.latestAuction?.incrementPrice ?? 1) +
-      +(product?.latestAuction?.currentPrice ?? 0)
+      +step * (latestAuction?.incrementPrice ?? 1) +
+      +(latestAuction?.currentPrice ?? 0)
     )
-  }, [product, step])
+  }, [latestAuction?.currentPrice, latestAuction?.incrementPrice, step])
 
   useEffect(() => {
     setValue('bidPrice', price)
-  }, [price])
+  }, [price, setValue])
 
   const hasPoint = useMemo(() => {
     return point !== undefined
@@ -106,7 +112,7 @@ function ProductBidDialog(): JSX.Element {
         const response = await AuctionService.newBid(data)
         if (response) {
           const newStatus = await BidderService.getAuctionStatus(
-            product.latestAuctionId,
+            product?.latestAuctionId,
           )
           dispatch({ type: 'UPDATE_BID_STATUS', payload: newStatus })
           onClose()
@@ -163,7 +169,7 @@ function ProductBidDialog(): JSX.Element {
           {/*  </BorderButton>*/}
           {/*)}*/}
 
-          {product && product.latestAuction && (
+          {latestAuction && (
             <>
               <Typography
                 color='text.primary'
@@ -176,7 +182,7 @@ function ProductBidDialog(): JSX.Element {
               <TextField
                 margin='normal'
                 fullWidth
-                value={product.latestAuction.currentPrice}
+                value={latestAuction.currentPrice}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position='start'>₫</InputAdornment>
@@ -250,7 +256,7 @@ function ProductBidDialog(): JSX.Element {
                   <TextField
                     margin='normal'
                     fullWidth
-                    value={product.latestAuction.incrementPrice}
+                    value={latestAuction.incrementPrice}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position='start'>₫</InputAdornment>
@@ -281,10 +287,10 @@ function ProductBidDialog(): JSX.Element {
             </>
           )}
 
-          {hasPoint && product?.latestAuction?.buyoutPrice && (
+          {hasPoint && latestAuction?.buyoutPrice && (
             <BorderButton color='success' fullWidth sx={{ mt: 2 }}>
               💵 DEAL: Buy the product instantly with ₫
-              {product?.latestAuction?.buyoutPrice}
+              {latestAuction?.buyoutPrice}
             </BorderButton>
           )}
         </Grid>

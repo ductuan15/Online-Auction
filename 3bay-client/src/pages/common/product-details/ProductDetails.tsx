@@ -19,14 +19,18 @@ import ProductBidDialog from '../../../components/common/product/ProductBidDialo
 import BidRequestTable from '../../../components/seller/product/BidRequestTable'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import BidHistoryTable from '../../../components/common/product/BidHistoryTable'
-import ProductComment from "../../../components/common/product/ProductComment";
+import ProductComment from '../../../components/common/product/ProductComment'
+import useSocketContext, {
+  SocketEvent,
+} from '../../../contexts/socket/SocketContext'
+import { Auction } from '../../../models/auctions'
 
-// TODO fetch related products instead of `getTop.getTopPrice`
 const ProductDetails = (): JSX.Element | null => {
   const { state, dispatch } = useProductContext()
   const { user } = useAuth()
   const { id } = useParams()
   const [isLoading, setLoading] = useState(true)
+  const { socket } = useSocketContext()
 
   useTitle(`3bay | ${state.currentProduct?.name || ''}`)
 
@@ -54,6 +58,18 @@ const ProductDetails = (): JSX.Element | null => {
       setLoading(false)
     })()
   }, [dispatch, id])
+
+  useEffect(() => {
+    socket?.on(SocketEvent.UPDATE_AUCTION, (data: Auction) => {
+      // console.log(data)
+      if (state.currentProduct?.latestAuctionId === data.id) {
+        dispatch({type: 'UPDATE_AUCTION', payload: data})
+      }
+    })
+    return () => {
+      socket?.off(SocketEvent.UPDATE_AUCTION)
+    }
+  }, [dispatch, socket, state.currentProduct?.latestAuctionId])
 
   return (
     <>
@@ -129,13 +145,12 @@ const ProductDetails = (): JSX.Element | null => {
                     state.currentProduct.id,
                   )}
                   showLoading={true}
-                ></ProductCarousel>
+                />
               )
             : null}
         </>
 
         <ProductComment />
-
       </Grid>
 
       <ProductBidDialog />

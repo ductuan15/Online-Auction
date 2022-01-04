@@ -21,24 +21,24 @@ import { Bid } from '../../../models/bids'
 
 export default function BidHistoryTable() {
   const {
-    state: { currentProduct },
+    state: { currentProduct, latestAuction },
   } = useProductContext()
   const { user } = useAuth()
   const [rows, setRows] = useState<Bid[]>(() => {
-    if (currentProduct?.latestAuction?.bids) {
-      return currentProduct?.latestAuction?.bids
+    if (latestAuction?.bids) {
+      return latestAuction?.bids
     }
     return []
   })
 
   useEffect(() => {
-    if (currentProduct?.latestAuction?.bids) {
-      // console.log(currentProduct?.latestAuction?.bids)
-      setRows(currentProduct?.latestAuction?.bids)
+    if (latestAuction?.bids) {
+      // console.log(latestAuction?.bids)
+      setRows(latestAuction?.bids)
     } else {
       setRows([])
     }
-  }, [currentProduct?.latestAuction?.bids])
+  }, [latestAuction?.bids])
 
   const isProductSeller = useMemo(() => {
     if (user && currentProduct?.sellerId) {
@@ -57,7 +57,7 @@ export default function BidHistoryTable() {
           return
         }
         const response = await SellerService.rejectBid(
-          currentProduct?.latestAuctionId,
+          latestAuction?.id,
           rows[idx].id,
         )
         if (response) {
@@ -67,7 +67,7 @@ export default function BidHistoryTable() {
         //
       }
     },
-    [rows, currentProduct?.latestAuctionId],
+    [latestAuction?.id, rows],
   )
 
   const columns: GridColumns = useMemo(
@@ -128,7 +128,7 @@ export default function BidHistoryTable() {
         ],
       },
     ],
-    [rejectBidder],
+    [isProductSeller, rejectBidder],
   )
 
   return (
