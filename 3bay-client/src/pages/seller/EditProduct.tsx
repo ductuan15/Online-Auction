@@ -8,9 +8,13 @@ import {
   Grid,
   LinearProgress,
   Paper,
+  Skeleton,
 } from '@mui/material'
-import {useNavigate, useParams} from 'react-router-dom'
-import {getProductById, updateProductById} from '../../services/product.service'
+import { useNavigate, useParams } from 'react-router-dom'
+import {
+  getProductById,
+  updateProductById,
+} from '../../services/product.service'
 import { useUserContext } from '../../contexts/user/UserContext'
 import Error404 from '../common/error/Error404'
 import Product, { EditProductFormInput } from '../../models/product'
@@ -18,18 +22,17 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import WYSIWYGEditor from '../../components/common/editor/WYSIWYGEditor'
 import Button from '@mui/material/Button'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
-import {useIsMounted} from '../../hooks'
-import {setErrorTextMsg} from '../../utils/error'
+import { useIsMounted } from '../../hooks'
+import { setErrorTextMsg } from '../../utils/error'
 
 export default function EditProduct(): JSX.Element {
   const [errorText, setErrorText] = useState<string | null>(null)
   const [isLoading, setLoading] = useState(false)
   const [product, setProduct] = useState<Product | undefined>(undefined)
+  const [isProductOwner, setIsProductOwner] = useState(false)
+  const [isFirstLoading, setIsFirstLoading] = useState(true)
 
-  const {
-    control,
-    handleSubmit,
-  } = useForm<EditProductFormInput>({
+  const { control, handleSubmit } = useForm<EditProductFormInput>({
     mode: 'all',
   })
 
@@ -46,20 +49,24 @@ export default function EditProduct(): JSX.Element {
       try {
         if (id && +id) {
           const response = await getProductById(+id)
+          const product = response.data
           // console.log(response.data)
-          setProduct(response.data)
+          setProduct(product)
+          setIsProductOwner(!!product && product.sellerId === userDetails?.uuid)
           return
         }
         setProduct(undefined)
       } catch (e) {
         setProduct(undefined)
+        setIsProductOwner(false)
+      } finally {
+        setIsFirstLoading(false)
       }
     })()
-  }, [id])
+  }, [id, userDetails?.uuid])
 
   const submitHandler: SubmitHandler<EditProductFormInput> = async (data) => {
     try {
-
       setErrorText(null)
       setLoading(true)
       if (product) {
@@ -76,8 +83,18 @@ export default function EditProduct(): JSX.Element {
   }
 
   // console.log(userDetails?.uuid)
+  if (isFirstLoading) {
+    return (
+      <Container maxWidth='lg' sx={{ my: 2 }}>
+        <Skeleton height={256} />
+      </Container>
+    )
+  }
 
-  return product && product.sellerId === userDetails?.uuid ? (
+  if (!isProductOwner) {
+    return <Error404 />
+  }
+  return (
     <Container maxWidth='lg' sx={{ my: 2 }}>
       <Typography
         color='text.primary'
@@ -90,7 +107,7 @@ export default function EditProduct(): JSX.Element {
         })}
         gutterBottom
       >
-        📦 Edit 「{product.name}」
+        📦 Edit 「{product?.name}」
       </Typography>
 
       {errorText && <Alert severity='error'>{errorText}</Alert>}
@@ -160,7 +177,5 @@ export default function EditProduct(): JSX.Element {
 
       {isLoading && <LinearProgress variant='indeterminate' />}
     </Container>
-  ) : (
-    <Error404 />
   )
 }
