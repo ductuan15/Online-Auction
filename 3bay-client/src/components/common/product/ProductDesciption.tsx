@@ -14,6 +14,7 @@ import DOMPurify from 'dompurify'
 import { styled } from '@mui/material/styles'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
+import { useIsAuctionClosed } from '../../../hooks/use-is-auction-closed'
 
 const StyledDiv = styled('div')(({ theme }) => ({
   background: theme.palette.background.default,
@@ -29,8 +30,10 @@ const ProductDescription = (): JSX.Element | null => {
   } = useUserContext()
 
   const {
-    state: { currentProduct: product },
+    state: { currentProduct: product, latestAuction },
   } = useProductContext()
+
+  const isAuctionClosed = useIsAuctionClosed(latestAuction)
 
   if (!product) return null
   return (
@@ -52,7 +55,7 @@ const ProductDescription = (): JSX.Element | null => {
 
         <Box flexGrow={1} />
 
-        {product.sellerId === userDetails?.uuid && (
+        {product.sellerId === userDetails?.uuid && !isAuctionClosed && (
           <Link
             component={RouterLink}
             to={`/product/${product?.id}/edit`}

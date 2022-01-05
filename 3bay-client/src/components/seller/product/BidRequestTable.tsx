@@ -138,7 +138,9 @@ export default function BidRequestTable() {
 
   return (
     <>
-      <Grid container item xs={12} mx={3} flexDirection='column'>
+      <Grid container item xs={12} flexDirection='column' display={
+        rows.length === 0 ? 'none' : undefined
+      }>
         <Typography
           gutterBottom
           variant='h4'

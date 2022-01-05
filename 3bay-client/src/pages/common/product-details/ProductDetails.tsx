@@ -24,6 +24,7 @@ import useSocketContext, {
   SocketEvent,
 } from '../../../contexts/socket/SocketContext'
 import { Auction } from '../../../models/auctions'
+import Error404 from '../error/Error404'
 
 const ProductDetails = (): JSX.Element | null => {
   const { state, dispatch } = useProductContext()
@@ -31,6 +32,7 @@ const ProductDetails = (): JSX.Element | null => {
   const { id } = useParams()
   const [isLoading, setLoading] = useState(true)
   const { socket } = useSocketContext()
+  const [notFound, setNotFound] = useState(false)
 
   useTitle(`3bay | ${state.currentProduct?.name || ''}`)
 
@@ -48,12 +50,16 @@ const ProductDetails = (): JSX.Element | null => {
         dispatch({
           type: 'UPDATE_BID_STATUS',
         })
-        const response = await getProductById(+id)
-        // console.log(response.data)
-        dispatch({
-          type: 'UPDATE_CURRENT_PRODUCT',
-          payload: response.data,
-        })
+        try {
+          const response = await getProductById(+id)
+          // console.log(response.data)
+          dispatch({
+            type: 'UPDATE_CURRENT_PRODUCT',
+            payload: response.data,
+          })
+        } catch (e) {
+          setNotFound(true)
+        }
       }
       setLoading(false)
     })()
@@ -63,7 +69,7 @@ const ProductDetails = (): JSX.Element | null => {
     socket?.on(SocketEvent.UPDATE_AUCTION, (data: Auction) => {
       // console.log(data)
       if (state.currentProduct?.latestAuctionId === data.id) {
-        dispatch({type: 'UPDATE_AUCTION', payload: data})
+        dispatch({ type: 'UPDATE_AUCTION', payload: data })
       }
     })
     return () => {
@@ -71,13 +77,14 @@ const ProductDetails = (): JSX.Element | null => {
     }
   }, [dispatch, socket, state.currentProduct?.latestAuctionId])
 
-  return (
+  return notFound ? (
+    <Error404 />
+  ) : (
     <>
       <Grid
         container
         my={1}
         display='flex'
-        alignItems='center'
         flexDirection='column'
         rowSpacing={2}
       >

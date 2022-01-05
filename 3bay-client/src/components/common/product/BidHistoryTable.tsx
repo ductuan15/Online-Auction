@@ -14,6 +14,7 @@ import SellerService from '../../../services/seller.service'
 import _ from 'lodash'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { Bid } from '../../../models/bids'
+import { useIsAuctionClosed } from '../../../hooks/use-is-auction-closed'
 
 // type BidRequestTableProps = {
 //   sx?: SxProps
@@ -30,6 +31,7 @@ export default function BidHistoryTable() {
     }
     return []
   })
+  const isAuctionClosed = useIsAuctionClosed(latestAuction)
 
   useEffect(() => {
     if (latestAuction?.bids) {
@@ -119,7 +121,7 @@ export default function BidHistoryTable() {
             icon={<CloseIcon />}
             label='Deny'
             sx={{
-              display: !isProductSeller ? 'none' : undefined,
+              display: !isProductSeller || isAuctionClosed ? 'none' : undefined,
             }}
             onClick={async () => {
               await rejectBidder(params)
@@ -133,7 +135,7 @@ export default function BidHistoryTable() {
 
   return (
     <>
-      <Grid container item xs={12} mx={3} flexDirection='column'>
+      <Grid container item xs={12} flexDirection='column'>
         <Typography
           gutterBottom
           variant='h4'
