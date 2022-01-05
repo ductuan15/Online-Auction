@@ -11,6 +11,7 @@ router
   .patch(
     passport.authenticate('jwt', { session: false }),
     authMdw.requireSellerRole,
+    auctionController.isAuctionClosed,
     bidController.isProductOwner,
     bidController.setBidStatusToAccepted,
     bidController.isWinningBid,
@@ -24,10 +25,11 @@ router
   .patch(
     passport.authenticate('jwt', { session: false }),
     authMdw.requireSellerRole,
+    auctionController.isAuctionClosed,
     bidController.isProductOwner,
     bidController.setBidStatusToRejected,
     bidController.isWinningBid,
-    // bidController.executeAutoBid,
+    bidController.executeAutoBid,
     bidController.recalculateNewWinningBid,
     auctionController.update,
   )

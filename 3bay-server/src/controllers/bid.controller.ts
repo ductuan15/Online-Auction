@@ -176,6 +176,7 @@ export const isProductOwner = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.isProductOwner'))
   try {
     await prisma.product.findFirst({
       where: {
@@ -196,6 +197,7 @@ export const setBidStatusToRejected = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.setBidStatusToRejected'))
   try {
     await prisma.userBidStatus.update({
       where: {
@@ -242,6 +244,7 @@ export const isWinningBid = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log(c.yellow('bidController.isWinningBid'))
   try {
     if (
       req.auction?.winningBidId === req.bid?.id ||

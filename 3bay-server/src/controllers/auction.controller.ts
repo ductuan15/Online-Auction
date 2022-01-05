@@ -392,6 +392,28 @@ export const isAuctionWinner = async (
   }
 }
 
+export const isAuctionClosed = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (
+      req.auction &&
+      req.auction.closeTime &&
+      req.auction.closeTime.getTime() <= new Date().getTime()
+    ) {
+      return next(new AuctionError({code: AuctionErrorCode.ClosedAuction}))
+    } else {
+      return next()
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
 export const isProductOwner = async (
   req: Request,
   res: Response,
