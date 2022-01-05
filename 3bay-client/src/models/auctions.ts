@@ -9,6 +9,11 @@ export interface Auction {
   buyoutPrice: number
   autoExtendAuctionTiming: boolean
   currentPrice: number
+  bidderReview: boolean,
+  bidderComment: string,
+  sellerReview: boolean,
+  sellerComment: string,
+
   _count: {
     bids: number
   }

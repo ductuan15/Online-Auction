@@ -33,26 +33,22 @@ const ProductComment = (): JSX.Element | null => {
   const theme = useTheme()
   const minSize = '40px'
   const [comment, setComment] = useState('')
-  const [point, setPoint] = useState<null | string>()
+  const [point, setPoint] = useState<null | boolean>()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.currentTarget.value)
   }
 
-  const handleButtonChange = (e: SyntheticEvent, newPoint: string) => {
+  const handleButtonChange = (e: SyntheticEvent, newPoint: boolean) => {
     setPoint(newPoint)
   }
 
-  // const onButtonPlusClicked = () => {
-  //   // console.log('Plus')
-  //   setPoint(1)
-  // }
-  // const onButtonMinusClicked = () => {
-  //   // console.log('Minus')
-  //   setPoint(-1)
-  // }
-
   if (!product || !latestAuction) return null
+  if (latestAuction) {
+    if(new Date(latestAuction.closeTime) > new Date()) {
+      return null
+    }
+  }
   return (
     <>
       <Paper
@@ -73,14 +69,14 @@ const ProductComment = (): JSX.Element | null => {
 
           <Box flexGrow={1} />
 
-          {(product.sellerId === userDetails?.uuid ||
-            latestAuction?.winningBid?.bidder.uuid ===
-              userDetails?.uuid) && <BorderButton>💾️ Save</BorderButton>}
+          {(product.sellerId === userDetails?.uuid && !latestAuction.sellerComment && !latestAuction.sellerReview ||
+            latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid && !latestAuction.bidderComment && !latestAuction.bidderReview)
+            && <BorderButton>💾️ Save</BorderButton>}
         </Grid>
         <Grid item container xs={12} flexDirection='row'>
-          {(product.sellerId === userDetails?.uuid ||
-            latestAuction?.winningBid?.bidder.uuid ===
-              userDetails?.uuid) && (
+          {(product.sellerId === userDetails?.uuid && !latestAuction.sellerComment && !latestAuction.sellerReview ||
+            latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid && !latestAuction.bidderComment && !latestAuction.bidderReview)
+            && (
             <>
               <Grid
                 item
@@ -98,18 +94,18 @@ const ProductComment = (): JSX.Element | null => {
                   value={point}
                   exclusive
                 >
-                  <ToggleButton color='info' value={'-1'}>
+                  <ToggleButton color='info' value={false}>
                     -1
                   </ToggleButton>
 
-                  <ToggleButton color='error' value={'1'}>
+                  <ToggleButton color='error' value={true}>
                     +1
                   </ToggleButton>
                 </ToggleButtonGroup>
 
                 <Typography variant='h6' color='text.primary'>
-                  {point === '1' && 'Liked this '}
-                  {point === '-1' && 'Not okay :('}
+                  {point === true && 'Liked this '}
+                  {point === false && 'Not okay :('}
                 </Typography>
               </Grid>
 
@@ -131,82 +127,93 @@ const ProductComment = (): JSX.Element | null => {
         </Grid>
 
         <List>
-          <ListItem alignItems='flex-start'>
-            <ListItemAvatar>
-              <BackgroundLetterAvatars
-                name={product?.seller?.name || 'Tuan Cuong'}
-                fontSize={`${theme.typography.body1.fontSize}`}
-                sx={{
-                  width: minSize,
-                  height: minSize,
-                }}
-              />
-            </ListItemAvatar>
-            <ListItemText
-              primary={
-                <Box display='flex' flexDirection='row' alignItems='center'>
-                  <Typography variant='h6' color='text.primary'>
-                    {product?.seller?.name || 'Tuan Cuong'}
-                  </Typography>
-                  <Chip
+          {
+            latestAuction.sellerReview && latestAuction.sellerComment
+            && (
+              <ListItem alignItems='flex-start'>
+                <ListItemAvatar>
+                  <BackgroundLetterAvatars
+                    name={product?.seller?.name || 'Tuan Cuong'}
+                    fontSize={`${theme.typography.body1.fontSize}`}
                     sx={{
-                      mx: 1,
+                      width: minSize,
+                      height: minSize,
                     }}
-                    color='success'
-                    label={
-                      <Typography fontWeight={550} variant='body1'>
-                        SELLER
-                      </Typography>
-                    }
                   />
-                </Box>
-              }
-              secondary={
-                <Typography variant='body1'>This is comment</Typography>
-              }
-            />
-          </ListItem>
-          <ListItem alignItems='flex-start'>
-            <ListItemAvatar>
-              <BackgroundLetterAvatars
-                name={
-                  latestAuction?.winningBid?.bidder?.name ||
-                  'Tuan Cuong'
-                }
-                fontSize={`${theme.typography.body1.fontSize}`}
-                sx={{
-                  width: minSize,
-                  height: minSize,
-                }}
-              />
-            </ListItemAvatar>
-            <ListItemText
-              primary={
-                <Box display='flex' flexDirection='row' alignItems='center'>
-                  <Typography variant='h6' color='text.primary'>
-                    {latestAuction?.winningBid?.bidder?.name ||
-                      'Tuan Cuong'}
-                  </Typography>
-                  <Chip
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Box display='flex' flexDirection='row' alignItems='center'>
+                      <Typography variant='h6' color='text.primary'>
+                        {product?.seller?.name || 'Tuan Cuong'}
+                      </Typography>
+                      <Chip
+                        sx={{
+                          mx: 1,
+                        }}
+                        color='success'
+                        label={
+                          <Typography fontWeight={550} variant='body1'>
+                            SELLER
+                          </Typography>
+                        }
+                      />
+                    </Box>
+                  }
+                  secondary={
+                    <Typography variant='body1'>This is comment</Typography>
+                  }
+                />
+              </ListItem>
+            )
+          }
+
+          {
+            latestAuction.bidderReview && latestAuction.bidderComment
+            && (
+              <ListItem alignItems='flex-start'>
+                <ListItemAvatar>
+                  <BackgroundLetterAvatars
+                    name={
+                      latestAuction?.winningBid?.bidder?.name ||
+                      'Tuan Cuong'
+                    }
+                    fontSize={`${theme.typography.body1.fontSize}`}
                     sx={{
-                      mx: 1,
+                      width: minSize,
+                      height: minSize,
                     }}
-                    color='info'
-                    label={
-                      <Typography fontWeight={550} variant='body1'>
-                        BIDDER
-                      </Typography>
-                    }
                   />
-                </Box>
-              }
-              secondary={
-                <Typography variant='body1' color='text.primary'>
-                  This is comment
-                </Typography>
-              }
-            />
-          </ListItem>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Box display='flex' flexDirection='row' alignItems='center'>
+                      <Typography variant='h6' color='text.primary'>
+                        {latestAuction?.winningBid?.bidder?.name ||
+                          'Tuan Cuong'}
+                      </Typography>
+                      <Chip
+                        sx={{
+                          mx: 1,
+                        }}
+                        color='info'
+                        label={
+                          <Typography fontWeight={550} variant='body1'>
+                            BIDDER
+                          </Typography>
+                        }
+                      />
+                    </Box>
+                  }
+                  secondary={
+                    <Typography variant='body1' color='text.primary'>
+                      This is comment
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            )
+          }
         </List>
       </Paper>
     </>
