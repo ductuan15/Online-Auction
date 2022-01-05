@@ -21,6 +21,7 @@ import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import * as React from 'react'
 import { SyntheticEvent, useState } from 'react'
 import BorderButton from '../button/BorderButton'
+import auctionService from "../../../services/auction.service";
 
 const ProductComment = (): JSX.Element | null => {
   const {
@@ -34,6 +35,7 @@ const ProductComment = (): JSX.Element | null => {
   const minSize = '40px'
   const [comment, setComment] = useState('')
   const [point, setPoint] = useState<null | boolean>()
+  const { dispatch } = useProductContext()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.currentTarget.value)
@@ -41,6 +43,40 @@ const ProductComment = (): JSX.Element | null => {
 
   const handleButtonChange = (e: SyntheticEvent, newPoint: boolean) => {
     setPoint(newPoint)
+  }
+
+  const handleSaveButton = () => {
+    async function addReview () {
+      if(product) {
+        if (product.sellerId === userDetails?.uuid) {
+          const payload = {
+            "sellerComment": comment,
+            "sellerReview": point
+          }
+          const res = await auctionService.addSellerReview(product.id, payload)
+          product.latestAuction = res
+          dispatch({
+            type: 'UPDATE_CURRENT_PRODUCT',
+            payload: product,
+          })
+        }
+        else if (latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid) {
+          const payload = {
+            "bidderComment": comment,
+            "bidderReview": point
+          }
+          const res = await auctionService.addBidderReview(product.id, payload)
+          product.latestAuction = res
+          dispatch({
+            type: 'UPDATE_CURRENT_PRODUCT',
+            payload: product,
+          })
+        }
+      }
+      setComment('')
+      setPoint(null)
+    }
+    addReview()
   }
 
   if (!product || !latestAuction) return null
@@ -69,13 +105,13 @@ const ProductComment = (): JSX.Element | null => {
 
           <Box flexGrow={1} />
 
-          {(product.sellerId === userDetails?.uuid && !latestAuction.sellerComment && !latestAuction.sellerReview ||
-            latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid && !latestAuction.bidderComment && !latestAuction.bidderReview)
-            && <BorderButton>💾️ Save</BorderButton>}
+          {(product.sellerId === userDetails?.uuid && !latestAuction.sellerComment && latestAuction.sellerReview === null ||
+            latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid && !latestAuction.bidderComment && latestAuction.bidderReview === null)
+            && <BorderButton onClick={handleSaveButton}>💾️ Save</BorderButton>}
         </Grid>
         <Grid item container xs={12} flexDirection='row'>
-          {(product.sellerId === userDetails?.uuid && !latestAuction.sellerComment && !latestAuction.sellerReview ||
-            latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid && !latestAuction.bidderComment && !latestAuction.bidderReview)
+          {(product.sellerId === userDetails?.uuid && !latestAuction.sellerComment && latestAuction.sellerReview === null ||
+            latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid && !latestAuction.bidderComment && latestAuction.bidderReview === null)
             && (
             <>
               <Grid
@@ -128,7 +164,7 @@ const ProductComment = (): JSX.Element | null => {
 
         <List>
           {
-            latestAuction.sellerReview && latestAuction.sellerComment
+            latestAuction.sellerReview !== null && latestAuction.sellerComment
             && (
               <ListItem alignItems='flex-start'>
                 <ListItemAvatar>
@@ -158,10 +194,16 @@ const ProductComment = (): JSX.Element | null => {
                           </Typography>
                         }
                       />
+                      <Typography variant='h6' color='text.primary'>
+                        {latestAuction.sellerReview ? '+1' : '-1'}
+                      </Typography>
+
                     </Box>
                   }
                   secondary={
-                    <Typography variant='body1'>This is comment</Typography>
+                    <Typography variant='body1'>
+                      {latestAuction.sellerComment}
+                    </Typography>
                   }
                 />
               </ListItem>
@@ -169,7 +211,7 @@ const ProductComment = (): JSX.Element | null => {
           }
 
           {
-            latestAuction.bidderReview && latestAuction.bidderComment
+            latestAuction.bidderReview !== null && latestAuction.bidderComment
             && (
               <ListItem alignItems='flex-start'>
                 <ListItemAvatar>
@@ -203,11 +245,14 @@ const ProductComment = (): JSX.Element | null => {
                           </Typography>
                         }
                       />
+                      <Typography variant='h6' color='text.primary'>
+                        {latestAuction.bidderReview ? '+1' : '-1'}
+                      </Typography>
                     </Box>
                   }
                   secondary={
                     <Typography variant='body1' color='text.primary'>
-                      This is comment
+                      {latestAuction.bidderComment}
                     </Typography>
                   }
                 />
