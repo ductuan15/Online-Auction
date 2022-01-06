@@ -11,8 +11,8 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material'
-import { ChangeEvent, useCallback, useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 import Product from '../../../models/product'
 import {
@@ -26,88 +26,54 @@ import ProductCardSkeleton from '../../../components/common/product/ProductCardS
 
 const SearchPage = (): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const key = searchParams.get('key') || ''
-  const page = +(searchParams.get('page') || 1)
-  const [categoryId, setCategoryId] = useState(
-    searchParams.get('categoryId') || '',
-  )
-  const [sortBy, setSortBy] = useState(
-    searchParams.get('sortBy') === SORT_BY.currentPrice
-      ? SORT_BY.currentPrice
-      : SORT_BY.closeTime,
-  )
-  const [sortType, setSortType] = useState(
-    searchParams.get('sortType') === SORT_TYPE.asc
-      ? SORT_TYPE.asc
-      : SORT_TYPE.desc,
-  )
+
+  const params = useMemo(() => {
+    return {
+      key: searchParams.get('key') || '',
+      page: +(searchParams.get('page') || 1),
+      categoryId: searchParams.get('categoryId') || '',
+      sortBy:
+        searchParams.get('sortBy') === SORT_BY.currentPrice
+          ? SORT_BY.currentPrice
+          : SORT_BY.closeTime,
+      sortType:
+        searchParams.get('sortType') === SORT_TYPE.asc
+          ? SORT_TYPE.asc
+          : SORT_TYPE.desc,
+    }
+  }, [searchParams])
 
   const [hasNextPage, setHasNextPage] = useState(false)
-  const [currentPage, setCurrentPage] = useState(page)
-  const [isNeedRedirect, setIsNeedRedirect] = useState(false)
-  const navigate = useNavigate()
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const { state } = useCategoryContext()
   const { allCategories } = state
 
-  useEffect(() => {
-    const newCategoryId = searchParams.get('categoryId')
-    if (newCategoryId && newCategoryId !== categoryId) {
-      setCategoryId(newCategoryId)
-    }
-  }, [categoryId, searchParams])
-
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true)
       const res = await searchProduct(
-        key,
-        currentPage,
-        categoryId,
-        sortBy as keyof typeof SORT_BY,
-        sortType as keyof typeof SORT_TYPE,
+        params.key,
+        params.page,
+        params.categoryId,
+        params.sortBy as keyof typeof SORT_BY,
+        params.sortType as keyof typeof SORT_TYPE,
       )
       setHasNextPage(res.data.hasNextPage)
       setProducts([...res.data.items])
-      // console.log(res.data.hasNextPage)
-      //test is loading
-      // setTimeout(() => {
-      // setIsLoading(false)
-      // }, 1000)
     } finally {
       // set is error
       setIsLoading(false)
     }
-  }, [key, currentPage, categoryId, sortBy, sortType])
-
-  useEffect(() => {
-    if (isNeedRedirect) {
-      searchParams.set('categoryId', categoryId)
-      searchParams.set('sortBy', sortBy)
-      searchParams.set('sortType', sortType)
-      searchParams.set('key', key)
-      searchParams.set('page', currentPage + '')
-      setSearchParams({
-        ...searchParams,
-      })
-      navigate(`/products/search/?${searchParams.toString()}`)
-      setIsNeedRedirect(false)
-    }
   }, [
-    categoryId,
-    currentPage,
-    isNeedRedirect,
-    key,
-    navigate,
-    searchParams,
-    setSearchParams,
-    sortBy,
-    sortType,
+    params.key,
+    params.page,
+    params.categoryId,
+    params.sortBy,
+    params.sortType,
   ])
 
   useEffect(() => {
-    setIsNeedRedirect(true)
     ;(async () => {
       await fetchData()
     })()
@@ -115,21 +81,29 @@ const SearchPage = (): JSX.Element => {
 
   const handlePriceSortChange = (event: SelectChangeEvent) => {
     const [sortBy, sortType] = event.target.value.split('-')
-    setSortBy(sortBy)
-    setSortType(sortType)
+    setSearchParams({
+      ...Object.fromEntries(new URLSearchParams(searchParams)),
+      sortBy: sortBy,
+      sortType: sortType,
+    })
   }
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
-    searchParams.set('categoryId', event.target.value)
-    setCurrentPage(1)
-    setCategoryId(event.target.value || '')
+    setSearchParams({
+      ...Object.fromEntries(new URLSearchParams(searchParams)),
+      page: '1',
+      categoryId: event.target.value || '',
+    })
   }
 
   const handlePageChange = (
     event: ChangeEvent<unknown>,
     pageNumber: number,
   ) => {
-    setCurrentPage(pageNumber)
+    setSearchParams({
+      ...Object.fromEntries(new URLSearchParams(searchParams)),
+      page: `${pageNumber}`,
+    })
   }
 
   return (
@@ -140,7 +114,7 @@ const SearchPage = (): JSX.Element => {
         <Select
           labelId='sort-price-label'
           id='demo-simple-select'
-          value={`${sortBy}-${sortType}`}
+          value={`${params.sortBy}-${params.sortType}`}
           label='Price'
           onChange={handlePriceSortChange}
         >
@@ -171,7 +145,7 @@ const SearchPage = (): JSX.Element => {
         <Select
           labelId='category-select-label'
           id='category-select'
-          value={categoryId + ''}
+          value={params.categoryId + ''}
           label='Category'
           onChange={handleCategoryChange}
         >
@@ -190,7 +164,7 @@ const SearchPage = (): JSX.Element => {
           fontWeight={600}
           gutterBottom
         >
-          {`Search result ${key ? `for 「${key}」` : ''}`}
+          {`Search result ${params.key ? `for 「${params.key}」` : ''}`}
         </Typography>
 
         {(() => {
@@ -222,14 +196,14 @@ const SearchPage = (): JSX.Element => {
               <>
                 <ProductList items={products} />
 
-                <Grid container justifyContent='center'>
+                <Grid container justifyContent='center' sx={{ mt: 2 }}>
                   <Pagination
-                    page={currentPage}
-                    count={currentPage + (hasNextPage ? 1 : 0)}
+                    page={params.page}
+                    count={params.page + (hasNextPage ? 1 : 0)}
                     onChange={handlePageChange}
                     renderItem={(item) => {
                       if (
-                        item.page === currentPage + (hasNextPage ? 1 : 0) &&
+                        item.page === params.page + (hasNextPage ? 1 : 0) &&
                         item.type === 'page' &&
                         hasNextPage
                       ) {

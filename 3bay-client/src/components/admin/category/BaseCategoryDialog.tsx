@@ -190,12 +190,12 @@ export function BaseCategoryDialog(
               </Label>
             </Grid>
 
-            {!image && (
+            {!image && category?.thumbnails && (
               <Grid item>
                 <CardMedia
                   component='img'
                   sx={{ width: 128 }}
-                  src={category?.thumbnails.sm}
+                  image={category.thumbnails.sm}
                   alt='Category thumbnail'
                 />
               </Grid>
