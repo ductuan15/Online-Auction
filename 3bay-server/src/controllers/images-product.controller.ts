@@ -1,12 +1,14 @@
 import path, { dirname } from 'path'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
-import fs from 'fs-extra'
+import fs, { ensureDirSync } from 'fs-extra'
 import config from '../config/config.js'
 import { Request, Response } from 'express'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
+const MAX_IMAGE_SIZE = 2048
 
 const ProductImageSize: {
   [key: string]: number
@@ -22,17 +24,17 @@ const ImageURLPrefixType = {
 }
 
 export const saveProductThumbnail = async (
-  files: Express.Multer.File[],
+  files: Buffer,
   productId: Number,
 ) => {
   if (files) {
     // crop the original image & save
-    await sharp(files[0].buffer)
-      .resize(2048)
+    await sharp(files)
+      .resize(MAX_IMAGE_SIZE, MAX_IMAGE_SIZE)
       .toFile(getThumbnailUrl.getPath(productId))
 
     for (const key in ProductImageSize) {
-      await sharp(files[0].buffer)
+      await sharp(files)
         .resize(ProductImageSize[key])
         .toFile(getThumbnailUrl.getPath(productId, key))
     }
@@ -47,7 +49,7 @@ export const saveProductDetailImage = async (
     for (const file of files) {
       const index = files.indexOf(file)
       await sharp(file.buffer)
-        .resize(2048)
+        .resize(MAX_IMAGE_SIZE, MAX_IMAGE_SIZE)
         .toFile(getDetailImageUrl.getPath(productId, index))
     }
   }
@@ -137,14 +139,21 @@ export const getAllDetailImageLinks = async (productId: Number) => {
     return []
   }
 }
-export const findProductThumbnail = (req: Request, res: Response) => {
-  const thumnailSizeType = req.query.type as keyof typeof ProductImageSize
-  // console.log(thumnailSizeType)
+export const findProductThumbnail = async (req: Request, res: Response) => {
+  const thumbnailSizeType = req.query.type as keyof typeof ProductImageSize
+  // console.log(thumbnailSizeType)
 
   const productId = +req.params.productId
   let fileOutPath
   if (productId) {
-    fileOutPath = getThumbnailUrl.getPath(productId, thumnailSizeType)
+    ensureDirSync(getThumbnailOutputPath(productId))
+
+    fileOutPath = getThumbnailUrl.getPath(productId, thumbnailSizeType)
+    const defaultImage = getThumbnailUrl.getPath(productId)
+    if (!fs.existsSync(fileOutPath) && fs.existsSync(defaultImage)) {
+      const file = await fs.readFile(defaultImage)
+      await saveProductThumbnail(file, productId)
+    }
   } else {
     fileOutPath = getDefaultImage()
   }

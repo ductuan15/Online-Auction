@@ -211,9 +211,9 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
 
     await ensureProductImagePath(product.id)
     const files = req.files as { [fieldname: string]: Express.Multer.File[] }
-    if (req.files) {
+    if (req.files && req.files.length !== 0) {
       await saveProductThumbnail(
-        files[uploadProductImagesFields.thumbnail.name],
+        files[uploadProductImagesFields.thumbnail.name][0].buffer,
         product.id,
       )
       await saveProductDetailImage(
@@ -250,11 +250,12 @@ export const update = async (
       const files = req.files as { [fieldname: string]: Express.Multer.File[] }
       if (
         data.isUpdateThumbnail &&
-        files[uploadProductImagesFields.thumbnail.name].length > 0
+        files[uploadProductImagesFields.thumbnail.name].length > 0 &&
+        files[uploadProductImagesFields.detail.name].length > 0
       ) {
         await removeProductThumbnailCache(req.product.id)
         await saveProductThumbnail(
-          files[uploadProductImagesFields.detail.name],
+          files[uploadProductImagesFields.detail.name][0].buffer,
           req.product.id,
         )
       }

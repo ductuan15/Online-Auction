@@ -35,15 +35,13 @@ async function createCategoryThumbnailIfNotExist(
 ) {
   if (!fs.existsSync(fileOutName)) {
     // create folder name if not exist
-    if (!fs.existsSync(`${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`)) {
-      fs.mkdirSync(`${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`, {
-        recursive: true
-      })
-    }
+    fs.mkdirSync(`${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${id}`, {
+      recursive: true,
+    })
 
     // crop the original image & save
     await sharp(`${CATEGORY_THUMBNAIL_PATH}/${id}.jpeg`)
-      .resize(size)
+      .resize(size, size)
       .toFile(fileOutName)
   }
 }
@@ -90,10 +88,7 @@ const findCategoryThumbnailById = (
   id: any,
   _: string,
 ) => {
-  if (
-    (typeof id === 'string' || typeof id === 'number') &&
-    fs.existsSync(`${CATEGORY_THUMBNAIL_PATH}/${id}.jpeg`)
-  ) {
+  if (fs.existsSync(`${CATEGORY_THUMBNAIL_PATH}/${+(id || 0)}.jpeg`)) {
     req.id = id
   } else {
     // fallback image
@@ -109,11 +104,12 @@ export async function saveCategoryThumbnail(
   const fileOutName = `${CATEGORY_THUMBNAIL_PATH}/${categoryId}.jpeg`
 
   // crop the original image & save
-  await sharp(file.buffer).resize(1024).toFile(fileOutName)
+  await sharp(file.buffer).resize(1024, 1024).toFile(fileOutName)
 }
 
 export function removeCategoryThumbnailCache(categoryId: Number) {
   const folder = `${CATEGORY_THUMBNAIL_OUTPUT_PATH}/${categoryId}/`
+  fs.emptydirSync(folder)
   fs.removeSync(folder)
 }
 
