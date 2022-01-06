@@ -130,7 +130,7 @@ export default function BidHistoryTable() {
         ],
       },
     ],
-    [isProductSeller, rejectBidder],
+    [isAuctionClosed, isProductSeller, rejectBidder],
   )
 
   return (

@@ -23,3 +23,14 @@
   margin-bottom: 5px;
   user-select: none;
 }
+
+.rdw-block-wrapper {
+  display: flex;
+  align-items: center;
+  /*margin-bottom: 6px;*/
+  flex-wrap: wrap
+}
+
+.public-DraftStyleDefault-block {
+  margin: 0;
+}

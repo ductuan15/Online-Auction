@@ -118,7 +118,6 @@ export function BaseCategoryDialog(
     }
   }
 
-  // TODO: refactor me
   const onError = (error: unknown) => {
     //console.log(error)
     if (progressRef.current && progressRef.current.style) {
@@ -191,12 +190,12 @@ export function BaseCategoryDialog(
               </Label>
             </Grid>
 
-            {!image && category?.thumbnails && (
+            {!image && (
               <Grid item>
                 <CardMedia
                   component='img'
                   sx={{ width: 128 }}
-                  image={category.thumbnails.sm}
+                  src={category?.thumbnails.sm}
                   alt='Category thumbnail'
                 />
               </Grid>

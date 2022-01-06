@@ -500,11 +500,11 @@ export default function CreateProductForm({
               id='incrementPrice'
               name='incrementPrice'
               control={control}
-              defaultValue={10_000}
+              defaultValue={5_000}
               rules={{
                 min: {
-                  value: 10_000,
-                  message: 'Minimum increment price is 10,000',
+                  value: 5_000,
+                  message: 'Minimum increment price is 50,000',
                 },
                 required: 'This field is required',
               }}

@@ -176,7 +176,7 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
               <Box sx={imageSx}>
                 <CardMedia
                   component='img'
-                  image={product.thumbnails.lg || ''}
+                  image={product.thumbnails.md || ''}
                   sx={{
                     width: '100%',
                     height: '100%',

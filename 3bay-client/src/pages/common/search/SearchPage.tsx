@@ -133,8 +133,8 @@ const SearchPage = (): JSX.Element => {
   }
 
   return (
-    <Grid sx={{m: 5}}>
-      <FormControl sx={{minWidth: 240, mr: 4}}>
+    <Grid sx={{ m: 5 }}>
+      <FormControl sx={{ minWidth: 240, mr: 4 }}>
         <InputLabel id='sort-price-label'>Sort</InputLabel>
 
         <Select
@@ -166,7 +166,7 @@ const SearchPage = (): JSX.Element => {
         </Select>
       </FormControl>
 
-      <FormControl sx={{minWidth: 240}}>
+      <FormControl sx={{ minWidth: 240 }}>
         <InputLabel id='category-select-label'>Category</InputLabel>
         <Select
           labelId='category-select-label'
@@ -183,7 +183,16 @@ const SearchPage = (): JSX.Element => {
         </Select>
       </FormControl>
 
-      <Box sx={{my: 4}}>
+      <Box sx={{ my: 4 }} minHeight={400}>
+        <Typography
+          color='text.primary'
+          variant='h4'
+          fontWeight={600}
+          gutterBottom
+        >
+          {`Search result ${key ? `for 「${key}」` : ''}`}
+        </Typography>
+
         {(() => {
           if (isLoading) {
             return (
@@ -191,7 +200,7 @@ const SearchPage = (): JSX.Element => {
                 {/*<CircularProgress color='secondary' />*/}
                 {[1, 2, 3, 4].map((i) => (
                   <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
-                    <ProductCardSkeleton/>
+                    <ProductCardSkeleton />
                   </Grid>
                 ))}
               </Grid>
@@ -202,24 +211,16 @@ const SearchPage = (): JSX.Element => {
                 color='text.primary'
                 variant='h4'
                 fontWeight={600}
+                textAlign='center'
                 gutterBottom
               >
-                {`No result for 「${key}」`}
+                Empty results :(
               </Typography>
             )
           } else {
             return (
               <>
-                <Typography
-                  color='text.primary'
-                  variant='h4'
-                  fontWeight={600}
-                  gutterBottom
-                >
-                  {`Search result ${key ? `for 「${key}」` : ''}`}
-                </Typography>
-
-                <ProductList items={products}/>
+                <ProductList items={products} />
 
                 <Grid container justifyContent='center'>
                   <Pagination
@@ -232,7 +233,7 @@ const SearchPage = (): JSX.Element => {
                         item.type === 'page' &&
                         hasNextPage
                       ) {
-                        return <PaginationItem type='end-ellipsis' disabled/>
+                        return <PaginationItem type='end-ellipsis' disabled />
                       }
                       return <PaginationItem {...item} />
                     }}
