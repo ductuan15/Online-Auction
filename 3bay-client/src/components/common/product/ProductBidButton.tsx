@@ -16,7 +16,7 @@ const MINIMUM_POINT = 0.8
 
 function ProductBidButton(): JSX.Element | null {
   const {
-    state: { currentProduct: product, bidStatus, point },
+    state: { currentProduct: product, bidStatus, userPoint },
     dispatch,
   } = useProductContext()
 
@@ -33,7 +33,7 @@ function ProductBidButton(): JSX.Element | null {
 
   let button: JSX.Element | null
 
-  if (!point || (point && point >= MINIMUM_POINT)) {
+  if (!userPoint || (userPoint && userPoint >= MINIMUM_POINT)) {
     switch (bidStatus?.status) {
       case 'NOT_BID':
         button = (

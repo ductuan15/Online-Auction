@@ -49,7 +49,7 @@ function ProductBidDialog(): JSX.Element {
     state: {
       isBidDialogOpened,
       currentProduct: product,
-      point,
+      userPoint,
       bidStatus,
       latestAuction,
     },
@@ -73,8 +73,8 @@ function ProductBidDialog(): JSX.Element {
   }, [price, setValue])
 
   const hasPoint = useMemo(() => {
-    return point !== undefined
-  }, [point])
+    return userPoint !== undefined
+  }, [userPoint])
 
   const [errorText, setErrorText] = useState<string | null>()
   const [isLoading, setLoading] = useState(false)

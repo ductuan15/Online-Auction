@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Grid, Link, Rating, Tooltip } from '@mui/material'
+import { Grid, Link, Tooltip } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import moment from 'moment'
 import Box from '@mui/material/Box'
@@ -66,18 +66,13 @@ const UserWithRating = ({
         }}
       />
 
-      <Typography variant='body1' color='text.primary'>
+      <Typography variant='body1' color='text.primary' sx={{ mr: 1 }}>
         {name}
       </Typography>
 
-      <Rating
-        name='read-only'
-        value={rating}
-        readOnly
-        precision={0.5}
-        size={'small'}
-        sx={{ mx: 2 }}
-      />
+      <Typography variant={'subtitle2'} color='text.primary'>
+        {rating !== undefined ? `(${rating * 100}% approval)` : `(No rating)`}
+      </Typography>
     </Box>
   )
 }
@@ -91,7 +86,12 @@ const ProductInfo = (): JSX.Element | null => {
   } = useUserContext()
 
   const {
-    state: { currentProduct: product, latestAuction },
+    state: {
+      currentProduct: product,
+      latestAuction,
+      sellerPoint,
+      winningBidderPoint,
+    },
   } = useProductContext()
 
   const isInWatchlist = useMemo(() => {
@@ -207,14 +207,18 @@ const ProductInfo = (): JSX.Element | null => {
             color='text.primary'
             fontStyle='italic'
           >
-            💨 Buy instantly with {' '}
+            💨 Buy instantly with&nbsp;
             <b>{formatNumberToVND(latestAuction?.buyoutPrice)}</b>
           </Typography>
         </Grid>
       )}
 
       <Grid item xs={12}>
-        <UserWithRating name={product.seller.name} label={'Sold by'} />
+        <UserWithRating
+          name={product.seller.name}
+          label={'Sold by'}
+          rating={sellerPoint}
+        />
       </Grid>
 
       <Grid item xs={12}>
@@ -222,6 +226,7 @@ const ProductInfo = (): JSX.Element | null => {
           <UserWithRating
             name={latestAuction?.winningBid?.bidder?.name || 'Tuan Cuong'}
             label={'Bid by \u00a0\u00a0'}
+            rating={winningBidderPoint}
           />
         ) : (
           <Typography variant='body2' color='text.secondary'>

@@ -83,8 +83,6 @@ export default function CreateProductForm({
     }
   }, [detailFiles, isMounted])
 
-  console.log(watch('openPrice'))
-
   const submitHandler: SubmitHandler<ProductFormInput> = useCallback(
     async (data) => {
       // console.log(data)

@@ -59,10 +59,10 @@ async function getUserWonAuctionList(): Promise<Product[]> {
 }
 
 
-async function getPoint(): Promise<number> {
+async function getPoint(uuid?: string): Promise<number | undefined> {
   const response = await axiosApiInstance.get<{
     score: number
-  }>('/api/user/score')
+  }>(`/api/user/score/${uuid}`)
   return response.data.score
 }
 
