@@ -5,13 +5,41 @@ import { BidErrorCode } from '../error/error-code.js'
 import { BidError } from '../error/error-exception.js'
 import c from 'ansi-colors'
 
-const VALID_SCORE = 8
+// total reviews / total auctions
+const VALID_SCORE = 0.8
+
 export const getWonAuction = async (userId: string) => {
   return await prisma.auction.findMany({
-    where: {
-      winningBid: {
-        bidderId: userId,
+    include: {
+      product: {
+        select: {
+          sellerId: true,
+        },
       },
+    },
+    where: {
+      OR: [
+        {
+          // user is the bidder of a product
+          // and they have been reviewed by the seller
+          winningBid: {
+            bidderId: userId,
+          },
+          NOT: {
+            sellerReview: null,
+          },
+        },
+        // user is the seller of a product
+        // and they have been reviewed by ther bidder
+        {
+          product: {
+            sellerId: userId,
+          },
+          NOT: {
+            bidderReview: null,
+          },
+        },
+      ],
       closeTime: {
         lt: new Date(),
       },
@@ -27,11 +55,15 @@ export const getScore = async (userId: string) => {
   let score = 0
   let wonAuction = 0
   userWonAuction.forEach((auction) => {
-    if (auction.sellerReview) {
+    if (
+      (auction.product.sellerId === userId && auction.bidderReview) ||
+      auction.sellerReview
+    ) {
       score += 1
     }
     wonAuction++
   })
+  // console.log(c.green(`${score / wonAuction}`))
   return score / wonAuction
 }
 
