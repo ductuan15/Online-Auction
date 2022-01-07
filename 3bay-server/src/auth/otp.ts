@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const verifyMjmlFile = path.join(__dirname, '../templates/verify.mjml')
+const verifyMjmlFile = path.join(__dirname, '../../templates/verify.mjml')
 const verifyMjmlContent = await fs.readFile(verifyMjmlFile)
 const verifyTemplate = Handlebars.compile(
   mjml(verifyMjmlContent.toString()).html,
@@ -31,7 +31,7 @@ const sendVerifyEmail = async (otp: string, user: {
   )
 }
 
-const rpMjmlFile = path.join(__dirname, '../templates/reset-password.mjml')
+const rpMjmlFile = path.join(__dirname, '../../templates/reset-password.mjml')
 const rpMjmlContent = await fs.readFile(rpMjmlFile)
 const rpTemplate = Handlebars.compile(mjml(rpMjmlContent.toString()).html)
 
