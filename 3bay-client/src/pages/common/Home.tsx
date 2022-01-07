@@ -60,16 +60,6 @@ const Home = (): JSX.Element => {
           fetchFunction={getTop.getTopPrice}
           showLoading={true}
         />
-
-        <Link
-          component={RouterLink}
-          variant='h6'
-          to='/admin/cat'
-          gutterBottom
-          p={4}
-        >
-          Test link (category management)
-        </Link>
       </Grid>
     </>
   )

@@ -64,7 +64,7 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
           const point = await UserService.getPoint()
           dispatch({ type: 'UPDATE_POINT', payload: point})
         } catch (e) {
-          console.log('Cannot update bid status')
+          // console.log('Cannot update bid status')
           dispatch({ type: 'UPDATE_BID_STATUS' })
           dispatch({ type: 'UPDATE_POINT', payload: 0 })
         }

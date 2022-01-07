@@ -47,7 +47,7 @@ axiosApiInstance.interceptors.response.use(
       originalRequest._retry = true
 
       try {
-        const res = await axiosApiInstance.post('/auth/rf', {
+        const res = await axiosApiInstance.post('api/auth/rf', {
           refreshToken: authData.refreshToken,
           uuid: authData.user
         })
@@ -55,7 +55,7 @@ axiosApiInstance.interceptors.response.use(
           TokenService.updateAccessToken(res.data.token)
           // localStorage.setItem('t', res.data.accessToken)
 
-          console.log('Access token refreshed!')
+          // console.log('Access token refreshed!')
           window.dispatchEvent(new Event('local-storage'))
           return axiosApiInstance(originalRequest)
         }

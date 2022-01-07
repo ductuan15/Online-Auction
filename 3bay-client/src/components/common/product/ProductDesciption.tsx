@@ -80,17 +80,23 @@ const ProductDescription = (): JSX.Element | null => {
                 xs={12}
                 key={des.id}
                 mt={2}
-                flexDirection='column'
               >
-                <Typography variant='body1' color='text.primary'>
-                  ✏️ {moment(des.createdAt).format('L')}
-                </Typography>
+                <Grid item xs={12}>
+                  <Typography variant='body1' color='text.primary'>
+                    ✏️ {moment(des.createdAt).format('L')}
+                  </Typography>
+                </Grid>
 
-                <StyledDiv
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(des.description),
-                  }}
-                />
+                <Grid item xs={12}>
+                  <StyledDiv
+                    style={{
+                      wordWrap: 'break-word'
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(des.description),
+                    }}
+                  />
+                </Grid>
               </Grid>
             )
           })

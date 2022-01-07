@@ -48,7 +48,7 @@ const SignIn: () => JSX.Element = () => {
                 navigate(`/verify/${uuid}`, { replace: true })
                 return
               } catch (parseError) {
-                console.log(parseError)
+                // console.log(parseError)
               }
             }
             break

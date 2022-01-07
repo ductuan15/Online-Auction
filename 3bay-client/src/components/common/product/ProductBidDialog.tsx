@@ -100,7 +100,7 @@ function ProductBidDialog(): JSX.Element {
       setErrorTextMsg('Auction is not opened', setErrorText)
       return
     }
-    console.log(data)
+    // console.log(data)
     if (
       confirm(
         `Are you sure you want to bid this product with ₫${data.bidPrice}?`,
@@ -287,7 +287,7 @@ function ProductBidDialog(): JSX.Element {
             </>
           )}
 
-          {hasPoint && latestAuction?.buyoutPrice && (
+          {latestAuction?.buyoutPrice && (
             <BorderButton color='success' fullWidth sx={{ mt: 2 }}>
               💵 DEAL: Buy the product instantly with ₫
               {latestAuction?.buyoutPrice}
@@ -306,7 +306,7 @@ function ProductBidDialog(): JSX.Element {
           form={`product-form-${dialogName}`}
           disabled={isLoading}
         >
-          Save changes
+          Place bid
         </Button>
         {/*)}*/}
       </DialogActions>

@@ -52,6 +52,7 @@ const SearchPage = (): JSX.Element => {
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true)
+      window.scrollTo(0, 0)
       const res = await searchProduct(
         params.key,
         params.page,

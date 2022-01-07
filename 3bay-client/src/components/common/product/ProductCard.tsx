@@ -1,6 +1,7 @@
 import {
   MouseEventHandler,
-  SyntheticEvent, useCallback,
+  SyntheticEvent,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -78,10 +79,10 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
     mouseX: number
     mouseY: number
   } | null>(null)
-  const { dispatch } = useUserContext()
 
   const {
-    state: { watchlist },
+    dispatch,
+    state: { watchlist, userDetails },
   } = useUserContext()
 
   const isInWatchlist = useMemo(() => {
@@ -91,44 +92,56 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
     return prodIndex !== -1
   }, [product.id, watchlist])
 
-  const toggleWatchlistButton = async (e: SyntheticEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const toggleWatchlistButton = useCallback(
+    async (e: SyntheticEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
 
-    if (isInWatchlist) {
-      const res = await deleteProdWatchList(product.id)
-      dispatch({
-        type: 'DELETE_WATCH_LIST',
-        payload: res.data.productId,
-      })
-    } else {
-      await addToWatchList(product.id)
-      dispatch({
-        type: 'ADD_WATCH_LIST',
-        payload: product,
-      })
-    }
-  }
-  const handleContextMenu: MouseEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault()
-    setContextMenu(
-      contextMenu === null
-        ? {
-            mouseX: event.clientX - 2,
-            mouseY: event.clientY - 4,
-          }
-        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-          // Other native context menus might behave different.
-          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-          null,
-    )
-  }
+      if (isInWatchlist) {
+        const res = await deleteProdWatchList(product.id)
+        dispatch({
+          type: 'DELETE_WATCH_LIST',
+          payload: res.data.productId,
+        })
+      } else {
+        await addToWatchList(product.id)
+        dispatch({
+          type: 'ADD_WATCH_LIST',
+          payload: product,
+        })
+      }
+    },
+    [dispatch, isInWatchlist, product],
+  )
 
-  const handleContextMenuClose = async (e: SyntheticEvent) => {
-    e.stopPropagation()
-    await toggleWatchlistButton(e)
-    setContextMenu(null)
-  }
+  const handleContextMenu: MouseEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      event.preventDefault()
+      if (userDetails) {
+        setContextMenu(
+          contextMenu === null
+            ? {
+                mouseX: event.clientX - 2,
+                mouseY: event.clientY - 4,
+              }
+            : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+              // Other native context menus might behave different.
+              // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+              null,
+        )
+      }
+    },
+    [contextMenu, userDetails],
+  )
+
+  const handleContextMenuClose = useCallback(
+    async (e: SyntheticEvent) => {
+      e.stopPropagation()
+      setContextMenu(null)
+      await toggleWatchlistButton(e)
+    },
+    [toggleWatchlistButton],
+  )
 
   useEffect(() => {
     setColor(theme.palette.text.primary)
@@ -209,47 +222,53 @@ const ProductCard = ({ product }: CardProps): JSX.Element => {
               />
 
               <ProductCardContent product={product} sx={{ pt: 1 }} />
-              <CardActions
-                disableSpacing
-                sx={{
-                  pt: 0,
-                }}
-              >
-                <IconButton
-                  aria-label='add to watchlist'
-                  color='inherit'
-                  onClick={toggleWatchlistButton}
+              {userDetails && (
+                <CardActions
+                  disableSpacing
+                  sx={{
+                    pt: 0,
+                  }}
                 >
-                  {isInWatchlist ? (
-                    <FavoriteOutlinedIcon />
-                  ) : (
-                    <FavoriteBorderOutlinedIcon />
-                  )}
-                </IconButton>
-              </CardActions>
+                  <IconButton
+                    aria-label='add to watchlist'
+                    color='inherit'
+                    onClick={toggleWatchlistButton}
+                  >
+                    {isInWatchlist ? (
+                      <FavoriteOutlinedIcon />
+                    ) : (
+                      <FavoriteBorderOutlinedIcon />
+                    )}
+                  </IconButton>
+                </CardActions>
+              )}
             </CardActionArea>
           </Link>
         </Card>
       </Tooltip>
 
-      <Menu
-        open={contextMenu !== null}
-        onClose={handleContextMenuClose}
-        anchorReference='anchorPosition'
-        anchorPosition={
-          contextMenu !== null
-            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-            : undefined
-        }
-      >
-        {!isInWatchlist ? (
-          <MenuItem onClick={handleContextMenuClose}>Add to watchlist</MenuItem>
-        ) : (
-          <MenuItem onClick={handleContextMenuClose}>
-            Remove from watchlist
-          </MenuItem>
-        )}
-      </Menu>
+      {userDetails && (
+        <Menu
+          open={contextMenu !== null}
+          onClose={handleContextMenuClose}
+          anchorReference='anchorPosition'
+          anchorPosition={
+            contextMenu !== null
+              ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+              : undefined
+          }
+        >
+          {!isInWatchlist ? (
+            <MenuItem onClick={handleContextMenuClose}>
+              Add to watchlist
+            </MenuItem>
+          ) : (
+            <MenuItem onClick={handleContextMenuClose}>
+              Remove from watchlist
+            </MenuItem>
+          )}
+        </Menu>
+      )}
     </div>
   )
 }

@@ -30,7 +30,7 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
   const socket = useMemo(() => {
     if (user) {
       try {
-        console.log('connect')
+        // console.log('connect')
         const socket = connect(config.API_HOST_NAME, {
           extraHeaders: {
             Authorization: `Bearer ${user.token}`,
@@ -57,7 +57,7 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
     }
     return () => {
       if (socket) {
-        console.log('disconnect')
+        // console.log('disconnect')
         socket?.disconnect()
       }
     }

@@ -11,6 +11,7 @@ import { SxProps } from '@mui/system'
 import { Theme } from '@mui/material/styles'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import ProductCardContentSkeleton from './ProductCardContentSkeleton'
+import { useUserContext } from '../../../contexts/user/UserContext'
 
 const imageSx: SxProps<Theme> = (theme) => ({
   [theme.breakpoints.up('xs')]: {
@@ -26,6 +27,10 @@ const imageSx: SxProps<Theme> = (theme) => ({
 })
 
 const ProductCardSkeleton = (): JSX.Element => {
+  const {
+    state: { userDetails },
+  } = useUserContext()
+
   return (
     <Card
       variant='outlined'
@@ -68,16 +73,18 @@ const ProductCardSkeleton = (): JSX.Element => {
 
         <ProductCardContentSkeleton sx={{ pt: 1 }} />
 
-        <CardActions
-          disableSpacing
-          sx={{
-            pt: 0,
-          }}
-        >
-          <IconButton aria-label='add to watchlist' color='inherit'>
-            <FavoriteBorderOutlinedIcon />
-          </IconButton>
-        </CardActions>
+        {userDetails && (
+          <CardActions
+            disableSpacing
+            sx={{
+              pt: 0,
+            }}
+          >
+            <IconButton aria-label='add to watchlist' color='inherit'>
+              <FavoriteBorderOutlinedIcon />
+            </IconButton>
+          </CardActions>
+        )}
       </CardActionArea>
     </Card>
   )

@@ -20,8 +20,8 @@ async function addSellerReview(
   productId: number,
   payload: any,
 ): Promise<Auction> {
-  console.log(productId)
-  console.log(payload)
+  // console.log(productId)
+  // console.log(payload)
   const response = await axiosApiInstance.patch<Auction>(
     `/api/auction/seller/review/${productId}`,
     payload,
@@ -33,8 +33,8 @@ async function addBidderReview(
   productId: number,
   payload: any,
 ): Promise<Auction> {
-  console.log(productId)
-  console.log(payload)
+  // console.log(productId)
+  // console.log(payload)
   const response = await axiosApiInstance.patch<Auction>(
     `/api/auction/bidder/review/${productId}`,
     payload,

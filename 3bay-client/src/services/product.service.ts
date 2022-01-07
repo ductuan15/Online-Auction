@@ -28,7 +28,7 @@ export async function searchProduct(
   sortBy: keyof typeof SORT_BY,
   sortType: keyof typeof SORT_TYPE,
 ): Promise<AxiosResponse<GetProductsResponse>> {
-  console.log(categoryId)
+  // console.log(categoryId)
   return await axiosApiInstance.get<GetProductsResponse>(
     `${productApi}/search`,
     {

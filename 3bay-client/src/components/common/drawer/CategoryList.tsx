@@ -29,8 +29,8 @@ const CategoryItem = ({ navigate, category }: CategoryItemProps) => {
   const [searchParams] = useSearchParams()
   const categoryIdParam = searchParams.get('categoryId')
 
-  const onCategoryClicked = (e: SyntheticEvent) => {
-    e.stopPropagation()
+  const onCategoryClicked = () => {
+    // e.stopPropagation()
     navigate(categoryLink)
   }
 
