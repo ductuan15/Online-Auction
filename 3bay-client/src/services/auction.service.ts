@@ -2,6 +2,8 @@ import { Auction } from '../models/auctions'
 import axiosApiInstance from './api'
 import { ProductBidFormInput } from '../models/bids'
 import { CreateProductResponse } from '../models/product'
+import {AxiosResponse} from 'axios'
+import {BidderComment, SellerComment} from '../models/user'
 
 async function newBid(
   bidInput: ProductBidFormInput,
@@ -18,28 +20,26 @@ async function newBid(
 
 async function addSellerReview(
   productId: number,
-  payload: any,
-): Promise<Auction> {
+  payload: SellerComment,
+): Promise<AxiosResponse> {
   // console.log(productId)
   // console.log(payload)
-  const response = await axiosApiInstance.patch<Auction>(
+  return await axiosApiInstance.patch(
     `/api/auction/seller/review/${productId}`,
     payload,
   )
-  return response.data
 }
 
 async function addBidderReview(
   productId: number,
-  payload: any,
-): Promise<Auction> {
+  payload: BidderComment,
+): Promise<AxiosResponse> {
   // console.log(productId)
   // console.log(payload)
-  const response = await axiosApiInstance.patch<Auction>(
+  return await axiosApiInstance.patch<Auction>(
     `/api/auction/bidder/review/${productId}`,
     payload,
   )
-  return response.data
 }
 
 const AuctionService = {

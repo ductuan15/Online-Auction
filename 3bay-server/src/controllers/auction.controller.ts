@@ -73,6 +73,13 @@ export async function getDetailsAuctionById(auctionId: number | undefined) {
       //     },
       //   },
       // },
+      winningBid: {
+        include: {
+          bidder: {
+            select: bidderInfoSelection,
+          },
+        },
+      },
       bids: {
         include: {
           bidder: {
@@ -318,10 +325,10 @@ export const updateSellerReview = async (
   next: NextFunction,
 ) => {
   try {
-    if (req.auction?.closeTime && req.auction.closeTime > new Date()) {
+    if (req.auction?.closeTime && req.auction.closeTime) {
       return next(new AuctionError({ code: AuctionErrorCode.NotClosedAuction }))
     } else {
-      req.auction = await prisma.auction.update({
+      const auction = await prisma.auction.update({
         where: {
           id: req.auction?.id,
         },
@@ -330,8 +337,10 @@ export const updateSellerReview = async (
           sellerReview: !!req.body.sellerReview,
         },
       })
+      await emitAuctionDetails(auction.id)
     }
-    res.json(req.auction)
+    return next()
+
   } catch (err) {
     if (err instanceof Error) {
       next(err)
@@ -348,7 +357,7 @@ export const updateBidderReview = async (
     if (req.auction?.closeTime && req.auction.closeTime > new Date()) {
       return next(new AuctionError({ code: AuctionErrorCode.NotClosedAuction }))
     } else {
-      req.auction = await prisma.auction.update({
+      const auction = await prisma.auction.update({
         where: {
           id: req.auction?.id,
         },
@@ -357,8 +366,9 @@ export const updateBidderReview = async (
           bidderReview: !!req.body.bidderReview,
         },
       })
+      await emitAuctionDetails(auction.id)
     }
-    res.json(req.auction)
+    return next()
   } catch (err) {
     if (err instanceof Error) {
       next(err)

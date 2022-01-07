@@ -35,7 +35,6 @@ const ProductComment = (): JSX.Element | null => {
   const minSize = '40px'
   const [comment, setComment] = useState('')
   const [point, setPoint] = useState<undefined | boolean>(undefined)
-  const { dispatch } = useProductContext()
 
   const hasSellerReview = useMemo(() => {
     return latestAuction?.sellerReview !== null && latestAuction?.sellerComment
@@ -85,21 +84,14 @@ const ProductComment = (): JSX.Element | null => {
           sellerComment: comment,
           sellerReview: point ?? true,
         }
-        const res = await auctionService.addSellerReview(product.id, payload)
-        dispatch({
-          type: 'UPDATE_AUCTION',
-          payload: res,
-        })
+
+        await auctionService.addSellerReview(product.id, payload)
       } else if (latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid) {
         const payload = {
           bidderComment: comment,
           bidderReview: point ?? true,
         }
-        const res = await auctionService.addBidderReview(product.id, payload)
-        dispatch({
-          type: 'UPDATE_AUCTION',
-          payload: res,
-        })
+        await auctionService.addBidderReview(product.id, payload)
       }
     } else {
       setComment('')
@@ -107,7 +99,6 @@ const ProductComment = (): JSX.Element | null => {
     }
   }, [
     comment,
-    dispatch,
     latestAuction?.winningBid?.bidder.uuid,
     point,
     product,

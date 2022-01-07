@@ -21,3 +21,13 @@ export type Watchlist = {
   userId: string
   productId: number
 }
+
+export type BidderComment = {
+  bidderComment: string | null,
+  bidderReview?: boolean
+}
+
+export type SellerComment = {
+  sellerComment: string | null,
+  sellerReview?: boolean
+}
