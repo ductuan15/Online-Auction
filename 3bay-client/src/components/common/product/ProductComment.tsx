@@ -19,9 +19,9 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import * as React from 'react'
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useCallback, useMemo, useState } from 'react'
 import BorderButton from '../button/BorderButton'
-import auctionService from "../../../services/auction.service";
+import auctionService from '../../../services/auction.service'
 
 const ProductComment = (): JSX.Element | null => {
   const {
@@ -34,57 +34,93 @@ const ProductComment = (): JSX.Element | null => {
   const theme = useTheme()
   const minSize = '40px'
   const [comment, setComment] = useState('')
-  const [point, setPoint] = useState<null | boolean>()
+  const [point, setPoint] = useState<undefined | boolean>(undefined)
   const { dispatch } = useProductContext()
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const hasSellerReview = useMemo(() => {
+    return latestAuction?.sellerReview !== null && latestAuction?.sellerComment
+  }, [latestAuction?.sellerComment, latestAuction?.sellerReview])
+
+  const hasBidderReview = useMemo(() => {
+    return latestAuction?.bidderReview !== null && latestAuction?.bidderComment
+  }, [latestAuction?.bidderComment, latestAuction?.bidderReview])
+
+  const shouldDisplayReviewForm = useMemo(() => {
+    return (
+      // User is the seller and they had not reviewed the bidder yet
+      (product?.sellerId === userDetails?.uuid &&
+        !latestAuction?.sellerComment &&
+        !latestAuction?.sellerReview) ||
+      // OR
+      // User is the Bidder and they had not reviewed the seller yet
+      (latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid &&
+        !latestAuction?.bidderComment &&
+        !latestAuction?.bidderReview)
+    )
+  }, [
+    latestAuction?.bidderComment,
+    latestAuction?.bidderReview,
+    latestAuction?.sellerComment,
+    latestAuction?.sellerReview,
+    latestAuction?.winningBid?.bidder.uuid,
+    product?.sellerId,
+    userDetails?.uuid,
+  ])
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.currentTarget.value)
-  }
+  }, [])
 
-  const handleButtonChange = (e: SyntheticEvent, newPoint: boolean) => {
-    setPoint(newPoint)
-  }
+  const handleButtonChange = useCallback(
+    (e: SyntheticEvent, newPoint: boolean) => {
+      setPoint(newPoint)
+    },
+    [],
+  )
 
-  const handleSaveButton = () => {
-    async function addReview () {
-      if(product) {
-        if (product.sellerId === userDetails?.uuid) {
-          const payload = {
-            "sellerComment": comment,
-            "sellerReview": point
-          }
-          const res = await auctionService.addSellerReview(product.id, payload)
-          product.latestAuction = res
-          dispatch({
-            type: 'UPDATE_CURRENT_PRODUCT',
-            payload: product,
-          })
+  const handleSaveButton = useCallback(async () => {
+    if (product) {
+      if (product.sellerId === userDetails?.uuid) {
+        const payload = {
+          sellerComment: comment,
+          sellerReview: point ?? true,
         }
-        else if (latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid) {
-          const payload = {
-            "bidderComment": comment,
-            "bidderReview": point
-          }
-          const res = await auctionService.addBidderReview(product.id, payload)
-          product.latestAuction = res
-          dispatch({
-            type: 'UPDATE_CURRENT_PRODUCT',
-            payload: product,
-          })
+        const res = await auctionService.addSellerReview(product.id, payload)
+        dispatch({
+          type: 'UPDATE_AUCTION',
+          payload: res,
+        })
+      } else if (latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid) {
+        const payload = {
+          bidderComment: comment,
+          bidderReview: point ?? true,
         }
+        const res = await auctionService.addBidderReview(product.id, payload)
+        dispatch({
+          type: 'UPDATE_AUCTION',
+          payload: res,
+        })
       }
+    } else {
       setComment('')
-      setPoint(null)
+      setPoint(undefined)
     }
-    addReview()
-  }
+  }, [
+    comment,
+    dispatch,
+    latestAuction?.winningBid?.bidder.uuid,
+    point,
+    product,
+    userDetails?.uuid,
+  ])
 
   if (!product || !latestAuction) return null
   if (latestAuction) {
-    if(new Date(latestAuction.closeTime) > new Date()) {
+    if (new Date(latestAuction.closeTime) > new Date()) {
       return null
     }
   }
+
   return (
     <>
       <Paper
@@ -96,6 +132,7 @@ const ProductComment = (): JSX.Element | null => {
         flexDirection='row'
         xs={12}
         p={2}
+        my={2}
         px={3}
       >
         <Grid item container xs={12} flexDirection='row'>
@@ -105,14 +142,13 @@ const ProductComment = (): JSX.Element | null => {
 
           <Box flexGrow={1} />
 
-          {(product.sellerId === userDetails?.uuid && !latestAuction.sellerComment && latestAuction.sellerReview === null ||
-            latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid && !latestAuction.bidderComment && latestAuction.bidderReview === null)
-            && <BorderButton onClick={handleSaveButton}>💾️ Save</BorderButton>}
+          {shouldDisplayReviewForm && (
+            <BorderButton onClick={handleSaveButton}>💾️ Save</BorderButton>
+          )}
         </Grid>
+
         <Grid item container xs={12} flexDirection='row'>
-          {(product.sellerId === userDetails?.uuid && !latestAuction.sellerComment && latestAuction.sellerReview === null ||
-            latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid && !latestAuction.bidderComment && latestAuction.bidderReview === null)
-            && (
+          {shouldDisplayReviewForm && (
             <>
               <Grid
                 item
@@ -163,102 +199,91 @@ const ProductComment = (): JSX.Element | null => {
         </Grid>
 
         <List>
-          {
-            latestAuction.sellerReview !== null && latestAuction.sellerComment
-            && (
-              <ListItem alignItems='flex-start'>
-                <ListItemAvatar>
-                  <BackgroundLetterAvatars
-                    name={product?.seller?.name || 'Tuan Cuong'}
-                    fontSize={`${theme.typography.body1.fontSize}`}
-                    sx={{
-                      width: minSize,
-                      height: minSize,
-                    }}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={
-                    <Box display='flex' flexDirection='row' alignItems='center'>
-                      <Typography variant='h6' color='text.primary'>
-                        {product?.seller?.name || 'Tuan Cuong'}
-                      </Typography>
-                      <Chip
-                        sx={{
-                          mx: 1,
-                        }}
-                        color='success'
-                        label={
-                          <Typography fontWeight={550} variant='body1'>
-                            SELLER
-                          </Typography>
-                        }
-                      />
-                      <Typography variant='h6' color='text.primary'>
-                        {latestAuction.sellerReview ? '+1' : '-1'}
-                      </Typography>
-
-                    </Box>
-                  }
-                  secondary={
-                    <Typography variant='body1'>
-                      {latestAuction.sellerComment}
-                    </Typography>
-                  }
+          {hasSellerReview && (
+            <ListItem alignItems='flex-start'>
+              <ListItemAvatar>
+                <BackgroundLetterAvatars
+                  name={product?.seller?.name || 'Tuan Cuong'}
+                  fontSize={`${theme.typography.body1.fontSize}`}
+                  sx={{
+                    width: minSize,
+                    height: minSize,
+                  }}
                 />
-              </ListItem>
-            )
-          }
-
-          {
-            latestAuction.bidderReview !== null && latestAuction.bidderComment
-            && (
-              <ListItem alignItems='flex-start'>
-                <ListItemAvatar>
-                  <BackgroundLetterAvatars
-                    name={
-                      latestAuction?.winningBid?.bidder?.name ||
-                      'Tuan Cuong'
-                    }
-                    fontSize={`${theme.typography.body1.fontSize}`}
-                    sx={{
-                      width: minSize,
-                      height: minSize,
-                    }}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={
-                    <Box display='flex' flexDirection='row' alignItems='center'>
-                      <Typography variant='h6' color='text.primary'>
-                        {latestAuction?.winningBid?.bidder?.name ||
-                          'Tuan Cuong'}
-                      </Typography>
-                      <Chip
-                        sx={{
-                          mx: 1,
-                        }}
-                        color='info'
-                        label={
-                          <Typography fontWeight={550} variant='body1'>
-                            BIDDER
-                          </Typography>
-                        }
-                      />
-                      <Typography variant='h6' color='text.primary'>
-                        {latestAuction.bidderReview ? '+1' : '-1'}
-                      </Typography>
-                    </Box>
-                  }
-                  secondary={
-                    <Typography variant='body1' color='text.primary'>
-                      {latestAuction.bidderComment}
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <Box display='flex' flexDirection='row' alignItems='center'>
+                    <Typography variant='h6' color='text.primary'>
+                      {product?.seller?.name || 'Tuan Cuong'}
                     </Typography>
-                  }
+                    <Chip
+                      sx={{
+                        mx: 1,
+                      }}
+                      color='success'
+                      label={
+                        <Typography fontWeight={550} variant='body1'>
+                          SELLER
+                        </Typography>
+                      }
+                    />
+                    <Typography variant='h6' color='text.primary'>
+                      {latestAuction.sellerReview ? '+1' : '-1'}
+                    </Typography>
+                  </Box>
+                }
+                secondary={
+                  <Typography variant='body1'>
+                    {latestAuction.sellerComment}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          )}
+
+          {hasBidderReview && (
+            <ListItem alignItems='flex-start'>
+              <ListItemAvatar>
+                <BackgroundLetterAvatars
+                  name={latestAuction?.winningBid?.bidder?.name || 'Tuan Cuong'}
+                  fontSize={`${theme.typography.body1.fontSize}`}
+                  sx={{
+                    width: minSize,
+                    height: minSize,
+                  }}
                 />
-              </ListItem>
-            )
-          }
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <Box display='flex' flexDirection='row' alignItems='center'>
+                    <Typography variant='h6' color='text.primary'>
+                      {latestAuction?.winningBid?.bidder?.name || 'Tuan Cuong'}
+                    </Typography>
+                    <Chip
+                      sx={{
+                        mx: 1,
+                      }}
+                      color='info'
+                      label={
+                        <Typography fontWeight={550} variant='body1'>
+                          BIDDER
+                        </Typography>
+                      }
+                    />
+                    <Typography variant='h6' color='text.primary'>
+                      {latestAuction.bidderReview ? '+1' : '-1'}
+                    </Typography>
+                  </Box>
+                }
+                secondary={
+                  <Typography variant='body1' color='text.primary'>
+                    {latestAuction.bidderComment}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          )}
         </List>
       </Paper>
     </>

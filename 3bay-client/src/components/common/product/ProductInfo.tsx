@@ -116,18 +116,18 @@ const ProductInfo = (): JSX.Element | null => {
 
   const showRemaining = useCallback(() => {
     if (!closeTime) return
-    const now = moment()
+    // const now = moment()
 
-    if (!closeTime.isAfter(now)) {
+    if (!closeTime.isAfter()) {
       if (timer.current) {
         clearInterval(timer.current)
       }
-      setEndTimeCountDownText('🔴 ENDED')
+      setEndTimeCountDownText(`🔴 ENDED ${moment().from(closeTime)} (${closeTimeFormattedStr})`)
       return
     }
 
     setEndTimeCountDownText(
-      `🟢 ${now.to(closeTime)} (${closeTimeFormattedStr})`,
+      `🟢 ${moment().to(closeTime)} (${closeTimeFormattedStr})`,
     )
   }, [closeTime, closeTimeFormattedStr])
 

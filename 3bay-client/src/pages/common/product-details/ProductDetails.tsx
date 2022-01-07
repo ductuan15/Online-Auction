@@ -142,6 +142,8 @@ const ProductDetails = (): JSX.Element | null => {
 
         <BidHistoryTable />
 
+        <ProductComment />
+
         <>
           {!isLoading
             ? state.currentProduct && (
@@ -156,8 +158,6 @@ const ProductDetails = (): JSX.Element | null => {
               )
             : null}
         </>
-
-        <ProductComment />
       </Grid>
 
       <ProductBidDialog />
