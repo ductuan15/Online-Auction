@@ -1,8 +1,8 @@
 import axiosApiInstance from './api'
 import { SignUpFormInputs } from '../models/sign-up'
 import TokenService from './token.service'
-import {ChangeEmailForm} from '../pages/user/auth/ChangeEmail'
-import {UserDetails} from '../models/user'
+import { ChangeEmailForm } from '../pages/user/auth/ChangeEmail'
+import { UserDetails } from '../models/user'
 
 export type AuthData = {
   user: string
@@ -13,7 +13,7 @@ export type AuthData = {
 }
 
 async function signIn(email: string, pwd: string): Promise<AuthData> {
-  const response = await axiosApiInstance.post('/auth/signin', {
+  const response = await axiosApiInstance.post('/api/auth/signin', {
     email,
     pwd,
   })
@@ -24,11 +24,11 @@ async function signIn(email: string, pwd: string): Promise<AuthData> {
 }
 
 async function startVerifyingProcess(id: string): Promise<unknown> {
-  return await axiosApiInstance.get(`/auth/verify/${id}`)
+  return await axiosApiInstance.get(`/api/auth/verify/${id}`)
 }
 
 async function verify(id: string, otp: string): Promise<AuthData> {
-  const response = await axiosApiInstance.post(`/auth/verify/${id}`, {
+  const response = await axiosApiInstance.post(`/api/auth/verify/${id}`, {
     otp,
   })
   // if (response.data) {
@@ -38,18 +38,18 @@ async function verify(id: string, otp: string): Promise<AuthData> {
 }
 
 async function resendVerifyOTP(id: string): Promise<void> {
-  await axiosApiInstance.get(`/auth/verify/resend/${id}`)
+  await axiosApiInstance.get(`/api/auth/verify/resend/${id}`)
 }
 
 async function checkEmailBeforeResetPassword(email: string): Promise<void> {
   //console.log('axios email', email)
-  await axiosApiInstance.post('/auth/reset-pwd/request', {
+  await axiosApiInstance.post('/api/auth/reset-pwd/request', {
     email,
   })
 }
 
 async function resendResetPasswordOTP(email: string): Promise<void> {
-  await axiosApiInstance.post('auth/reset-pwd/resend', {
+  await axiosApiInstance.post('/api/auth/reset-pwd/resend', {
     email,
   })
 }
@@ -59,7 +59,7 @@ async function resetPassword(
   pwd: string,
   otp: string,
 ): Promise<AuthData> {
-  const response = await axiosApiInstance.post('auth/reset-pwd/', {
+  const response = await axiosApiInstance.post('/api/auth/reset-pwd/', {
     email,
     pwd,
     otp,
@@ -72,25 +72,28 @@ function signOut(): void {
 }
 
 async function register(user: SignUpFormInputs): Promise<{ uuid: string }> {
-  const response = await axiosApiInstance.post('/auth/signup', user)
+  const response = await axiosApiInstance.post('/api/auth/signup', user)
   return response.data
 }
 
 async function startChangingEmail(email: string): Promise<void> {
   // const authData = TokenService.getAuthData()
   if (email /*&& authData*/) {
-    await axiosApiInstance.post(`/auth/change-email/`, {
-      email
+    await axiosApiInstance.post(`/api/auth/change-email/`, {
+      email,
     })
   }
 }
 
 async function resendChangeEmailOTP(): Promise<void> {
-  await axiosApiInstance.post('auth/change-email/resend')
+  await axiosApiInstance.post('/api/auth/change-email/resend')
 }
 
 async function verifyNewEmail(data: ChangeEmailForm): Promise<UserDetails> {
-  const response = await axiosApiInstance.post(`/auth/change-email/verify/`, data)
+  const response = await axiosApiInstance.post(
+    `/api/auth/change-email/verify/`,
+    data,
+  )
   return response.data as UserDetails
 }
 

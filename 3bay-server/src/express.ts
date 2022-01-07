@@ -69,7 +69,7 @@ function mountRoutes() {
   app.use('/api/category', categoryRoute)
   app.use('/api/images', imagesRoute)
   app.use('/api/user', userRoute)
-  app.use('/auth', authRoute)
+  app.use('/api/auth', authRoute)
   app.use('/api/admin', adminRoute)
   app.use('/api/watchlist', watchlistRoute)
 }

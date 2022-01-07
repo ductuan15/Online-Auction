@@ -36,8 +36,8 @@ axiosApiInstance.interceptors.response.use(
     const originalRequest = error.config
 
     if (
-      originalUrl !== '/auth/signin' &&
-      originalUrl !== '/auth/rf' &&
+      originalUrl !== 'api/auth/signin' &&
+      originalUrl !== 'api/auth/rf' &&
       authData?.refreshToken &&
       error.response &&
       (error.response.status === 401 || // unauthorized
