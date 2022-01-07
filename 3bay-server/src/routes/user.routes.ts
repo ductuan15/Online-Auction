@@ -19,15 +19,15 @@ import {
 
 const router = express.Router()
 
-router.use(
-  passport.authenticate('jwt', { session: false }),
-  // ensureParamIdSameWithJWTPayload,
-)
-
 router
   .route('/account/:id')
-  .get(ensureParamIdSameWithJWTPayload, getAccountInfo)
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    ensureParamIdSameWithJWTPayload,
+    getAccountInfo,
+  )
   .post(
+    passport.authenticate('jwt', { session: false }),
     validate(accountSchema),
     ensureParamIdSameWithJWTPayload,
     updateAccountInfo,
@@ -36,14 +36,24 @@ router
 router
   .route('/password/:id')
   .post(
+    passport.authenticate('jwt', { session: false }),
     validate(passwordSchema),
     ensureParamIdSameWithJWTPayload,
     hashPasswordField('newPwd'),
     updatePassword,
   )
 
+router
+  .route('/request-to-seller')
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    requireBidderRole,
+    requestToSeller,
+  )
 
-router.route('/request-to-seller').post(requireBidderRole, requestToSeller)
+router.route('/score/:id').get(getUserScore)
+// router
+//   .route('/score/')
+//   .get(passport.authenticate('jwt', { session: false }), getUserScore)
 
-router.route('/score').get(getUserScore)
 export default router

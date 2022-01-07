@@ -121,7 +121,11 @@ export async function getUserScore(
   next: NextFunction,
 ) {
   try {
-    const score = await getScore(req.user?.uuid || '')
+    let score
+    if (req.params.id) {
+      score = await getScore(req.params.id)
+    }
+
     res.json({ score })
   } catch (e) {
     if (e instanceof Error) {
