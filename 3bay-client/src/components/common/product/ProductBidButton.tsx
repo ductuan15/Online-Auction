@@ -12,7 +12,7 @@ const RejectButton = (
   </BorderButton>
 )
 
-const MINIMUM_POINT = 8.0
+const MINIMUM_POINT = 0.8
 
 function ProductBidButton(): JSX.Element | null {
   const {

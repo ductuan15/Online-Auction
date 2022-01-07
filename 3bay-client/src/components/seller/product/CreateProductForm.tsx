@@ -1,7 +1,7 @@
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { ProductFormInput } from '../../../models/product'
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
   Divider,
@@ -83,43 +83,48 @@ export default function CreateProductForm({
     }
   }, [detailFiles, isMounted])
 
-  const submitHandler: SubmitHandler<ProductFormInput> = async (data) => {
-    // console.log(data)
-    const formData = new FormData()
-    const { thumbnail: thumbnailFileList, detail, ...jsonData } = data
+  console.log(watch('openPrice'))
 
-    for (const [key, value] of Object.entries(jsonData)) {
-      formData.set(key, value)
-    }
-    try {
-      formData.set('thumbnail', thumbnailFileList[0])
+  const submitHandler: SubmitHandler<ProductFormInput> = useCallback(
+    async (data) => {
+      // console.log(data)
+      const formData = new FormData()
+      const { thumbnail: thumbnailFileList, detail, ...jsonData } = data
 
-      for (let i = 0; i < detail.length && i < MAX_DETAILS_FILE; i++) {
-        formData.append('detail', detail[i])
+      for (const [key, value] of Object.entries(jsonData)) {
+        formData.set(key, value)
+      }
+      try {
+        formData.set('thumbnail', thumbnailFileList[0])
+
+        for (let i = 0; i < detail.length && i < MAX_DETAILS_FILE; i++) {
+          formData.append('detail', detail[i])
+        }
+
+        const buyoutPrice = formData.get('buyoutPrice')
+        if (typeof buyoutPrice === 'string' && buyoutPrice.length === 0) {
+          formData.set('buyoutPrice', 'undefined')
+        }
+      } catch (e) {
+        onError(e)
+        return
       }
 
-      const buyoutPrice = formData.get('buyoutPrice')
-      if (typeof buyoutPrice === 'string' && buyoutPrice.length === 0) {
-        formData.set('buyoutPrice', 'undefined')
+      // console.log(data)
+      // formData.forEach((value, key) => {
+      //   console.log(key + ' ' + value)
+      // })
+      setDisableAllElement(true)
+      try {
+        await onSubmit(formData)
+      } finally {
+        if (isMounted()) {
+          setDisableAllElement(false)
+        }
       }
-    } catch (e) {
-      onError(e)
-      return
-    }
-
-    // console.log(data)
-    // formData.forEach((value, key) => {
-    //   console.log(key + ' ' + value)
-    // })
-    setDisableAllElement(true)
-    try {
-      await onSubmit(formData)
-    } finally {
-      if (isMounted()) {
-        setDisableAllElement(false)
-      }
-    }
-  }
+    },
+    [isMounted, onError, onSubmit],
+  )
 
   return (
     <Grid

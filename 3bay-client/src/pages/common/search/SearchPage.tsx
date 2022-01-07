@@ -20,7 +20,7 @@ import {
   SORT_BY,
   SORT_TYPE,
 } from '../../../services/product.service'
-import ProductList from '../product-list/ProductList'
+import ProductList from '../../../components/common/product/ProductList'
 import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
 import ProductCardSkeleton from '../../../components/common/product/ProductCardSkeleton'
 

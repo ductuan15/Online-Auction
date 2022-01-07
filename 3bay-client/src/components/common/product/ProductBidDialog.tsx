@@ -24,6 +24,8 @@ import AuctionService from '../../../services/auction.service'
 import { setErrorTextMsg } from '../../../utils/error'
 import BidderService from '../../../services/bidder.service'
 import { useIsMounted } from '../../../hooks'
+import formatNumberToVND from '../../../utils/currency-format'
+import NumberFormat from 'react-number-format'
 
 const dialogName = 'dialog-set-bid-price'
 
@@ -103,7 +105,9 @@ function ProductBidDialog(): JSX.Element {
     // console.log(data)
     if (
       confirm(
-        `Are you sure you want to bid this product with ₫${data.bidPrice}?`,
+        `Are you sure you want to bid this product with ${formatNumberToVND(
+          data.bidPrice,
+        )}?`,
       )
     ) {
       // console.log(data)
@@ -179,9 +183,12 @@ function ProductBidDialog(): JSX.Element {
                 Current Price
               </Typography>
 
-              <TextField
+              <NumberFormat
+                thousandSeparator
+                customInput={TextField}
                 margin='normal'
                 fullWidth
+                displayType={'input'}
                 value={latestAuction.currentPrice}
                 InputProps={{
                   startAdornment: (
@@ -253,9 +260,12 @@ function ProductBidDialog(): JSX.Element {
                     Increment price
                   </Typography>
 
-                  <TextField
+                  <NumberFormat
+                    thousandSeparator
+                    customInput={TextField}
                     margin='normal'
                     fullWidth
+                    displayType={'input'}
                     value={latestAuction.incrementPrice}
                     InputProps={{
                       startAdornment: (
@@ -274,9 +284,12 @@ function ProductBidDialog(): JSX.Element {
                 Your price = Current Price + Step × Increment price
               </Typography>
 
-              <TextField
+              <NumberFormat
+                thousandSeparator
+                customInput={TextField}
                 margin='normal'
                 fullWidth
+                displayType={'input'}
                 value={price}
                 InputProps={{
                   startAdornment: (
@@ -289,8 +302,8 @@ function ProductBidDialog(): JSX.Element {
 
           {latestAuction?.buyoutPrice && (
             <BorderButton color='success' fullWidth sx={{ mt: 2 }}>
-              💵 DEAL: Buy the product instantly with ₫
-              {latestAuction?.buyoutPrice}
+              💵 DEAL: Buy the product instantly with{' '}
+              {formatNumberToVND(latestAuction?.buyoutPrice || 0)}
             </BorderButton>
           )}
         </Grid>

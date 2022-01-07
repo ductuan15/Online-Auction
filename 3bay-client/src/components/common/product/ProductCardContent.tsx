@@ -8,6 +8,7 @@ import { Box } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useIsMounted } from '../../../hooks'
+import formatNumberToVND from '../../../utils/currency-format'
 
 type CardContentProps = {
   product: Product
@@ -73,7 +74,7 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
         variant='button'
         fontSize={`${theme.typography.body1.fontSize}`}
       >
-        💵 {product.latestAuction?.currentPrice || '0,000,000'} VND
+        💵 {formatNumberToVND(product.latestAuction?.currentPrice || 0)}
       </Typography>
 
       {/* Buy out price */}
@@ -86,8 +87,8 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
         {product.latestAuction?.buyoutPrice && (
           <>
             {' '}
-            Instant buy with
-            <b> {product.latestAuction?.buyoutPrice} </b> VND
+            Instant buy with {' '}
+            <b> {formatNumberToVND(product.latestAuction?.buyoutPrice)} </b>
           </>
         )}
       </Typography>

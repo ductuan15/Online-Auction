@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import ProductCard from '../../../components/common/product/ProductCard'
+import ProductCard from './ProductCard'
 import Product from '../../../models/product'
 interface ProductListProps {
   items: Product[]

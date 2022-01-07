@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import {useCallback, useState} from 'react'
 import { Alert, Container, Grid, LinearProgress, Paper } from '@mui/material'
 import CreateProductForm from '../../components/seller/product/CreateProductForm'
 import Typography from '@mui/material/Typography'
@@ -12,14 +12,14 @@ export default function CreateProduct(): JSX.Element {
   const [errorText, setErrorText] = useState<string | null>(null)
   const [isLoading, setLoading] = useState(false)
 
-  const onError = (e: unknown) => {
+  const onError = useCallback((e: unknown) => {
     setErrorTextMsg(e, setErrorText)
-  }
+  }, [])
 
   const navigate = useNavigate()
   const isMounted = useIsMounted()
 
-  const onSubmit = async (formData: FormData) => {
+  const onSubmit = useCallback(async (formData: FormData) => {
     try {
       setLoading(true)
       const response = await SellerService.addNewProduct(formData)
@@ -32,7 +32,7 @@ export default function CreateProduct(): JSX.Element {
         setLoading(false)
       }
     }
-  }
+  }, [isMounted, navigate])
 
   return (
     <Container maxWidth='lg' sx={{ my: 2 }}>

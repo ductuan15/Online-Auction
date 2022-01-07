@@ -18,6 +18,7 @@ import { useTheme } from '@mui/material/styles'
 import BorderIconButton from '../button/BorderIconButton'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import ProductBidButton from './ProductBidButton'
+import formatNumberToVND from '../../../utils/currency-format'
 
 type UserWithRatingProps = {
   name: string
@@ -122,7 +123,9 @@ const ProductInfo = (): JSX.Element | null => {
       if (timer.current) {
         clearInterval(timer.current)
       }
-      setEndTimeCountDownText(`🔴 ENDED ${moment().from(closeTime)} (${closeTimeFormattedStr})`)
+      setEndTimeCountDownText(
+        `🔴 ENDED ${moment().from(closeTime)} (${closeTimeFormattedStr})`,
+      )
       return
     }
 
@@ -183,7 +186,7 @@ const ProductInfo = (): JSX.Element | null => {
       <Grid item xs={12}>
         <Link
           component={RouterLink}
-          to={`/products/search/?key=&categoryId=${product.categoryId}&sortBy=closeTime&sortType=desc&page=1`}
+          to={`/products/search/?key=&categoryId=${product.categoryId}`}
           underline='none'
           color='primary.main'
         >
@@ -193,7 +196,7 @@ const ProductInfo = (): JSX.Element | null => {
 
       <Grid item xs={12}>
         <Typography variant='h3' color='text.primary' fontWeight={600}>
-          💵 ₫{latestAuction?.currentPrice}
+          💵 {formatNumberToVND(latestAuction?.currentPrice || 0)}
         </Typography>
       </Grid>
 
@@ -204,7 +207,8 @@ const ProductInfo = (): JSX.Element | null => {
             color='text.primary'
             fontStyle='italic'
           >
-            💨 Instant buy with ₫{latestAuction?.buyoutPrice}
+            💨 Buy instantly with {' '}
+            <b>{formatNumberToVND(latestAuction?.buyoutPrice)}</b>
           </Typography>
         </Grid>
       )}
