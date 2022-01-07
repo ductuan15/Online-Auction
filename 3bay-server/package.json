@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "nodemon",
     "start": "npx node --loader ts-node/esm src/index.ts",
-    "build": "tsc -p ."
+    "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@prisma/client": "^3.7.0",

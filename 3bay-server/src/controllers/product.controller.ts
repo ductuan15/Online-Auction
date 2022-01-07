@@ -451,9 +451,7 @@ export const getTopPrice = async (
       },
       orderBy: {
         latestAuction: {
-          winningBid: {
-            bidPrice: 'desc',
-          },
+          currentPrice: 'desc',
         },
       },
       include: includeProductDetailInfo,
@@ -611,7 +609,7 @@ export const getTopCloseTime = async (
       },
       orderBy: {
         latestAuction: {
-          closeTime: Prisma.Prisma.SortOrder.desc,
+          closeTime: Prisma.Prisma.SortOrder.asc,
         },
       },
       include: includeProductDetailInfo,
