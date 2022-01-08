@@ -13,10 +13,18 @@
 }
 
 .fullscreen .image-gallery-slide img {
-  height: calc(100vh - 80px);
+  height: calc(100vh);
 }
 
 .image-gallery-thumbnail img {
   width: auto;
   height: 80px;
+}
+
+.fullscreen .image-gallery-thumbnails-wrapper {
+  display: none;
+}
+
+.fullscreen .image-gallery-slide-wrapper {
+  width: 100%;
 }

@@ -2,6 +2,7 @@ import * as React from 'react'
 import { useMemo } from 'react'
 import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
+import './ProductImage.css'
 
 const ProductImage = (): JSX.Element | null => {
 

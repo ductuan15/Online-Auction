@@ -11,7 +11,6 @@ import { useParams } from 'react-router-dom'
 import ProductCarousel from '../../../components/common/carousel/ProductCarousel'
 
 import ProductDescription from '../../../components/common/product/ProductDesciption'
-import './ProductDetails.css'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import ProductInfoSkeleton from '../../../components/common/product/ProductInfoSkeleton'
 import { useTitle } from '../../../hooks'

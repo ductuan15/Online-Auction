@@ -101,7 +101,7 @@ const ProductCarousel = ({
   })
 
   return (
-    <Container sx={{ pb: 2 }}>
+    <Container sx={{ pb: 2 }} maxWidth={'xl'}>
       <Divider />
       <Typography
         pt={2}
@@ -125,8 +125,8 @@ const ProductCarousel = ({
         customTransition='transform 300ms ease-in-out'
         transitionDuration={300}
         containerClass='container-with-dots'
-        itemClass='carousel-item-padding-20-px'
-        removeArrowOnDeviceType={['sm', 'md']}
+        itemClass='carousel-item-padding-x-10-px'
+        removeArrowOnDeviceType={['xs', 'sm', 'md']}
         customDot={<CustomDots theme={theme} />}
       >
         {isLoading && showLoading
