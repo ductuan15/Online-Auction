@@ -1,8 +1,8 @@
 import Grid from '@mui/material/Grid'
-import ProductCard from '../../../components/common/product/ProductCard'
 import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import { useUserContext } from '../../../contexts/user/UserContext'
+import ProductItem from '../../../components/common/product/ProductItem'
 
 const WatchListPage = (): JSX.Element => {
   const {
@@ -21,7 +21,7 @@ const WatchListPage = (): JSX.Element => {
         watchlist.map((product, index) => {
           return (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <ProductCard product={product} />
+              <ProductItem product={product} />
             </Grid>
           )
         })

@@ -1,17 +1,17 @@
 import Grid from '@mui/material/Grid'
-import ProductCard from '../../../components/common/product/ProductCard'
 import * as React from 'react'
+import { useEffect, useState } from 'react'
 import Typography from '@mui/material/Typography'
-import UserService from "../../../services/user.service";
-import {useEffect, useState} from "react";
+import UserService from '../../../services/user.service'
 import Product from '../../../models/product'
+import ProductItem from '../../../components/common/product/ProductItem'
 
 const AuctionListPage = (): JSX.Element => {
-  const [auctionlist, setAuctionlist] = useState<Product[]>([])
+  const [auctionList, setAuctionList] = useState<Product[]>([])
   useEffect(() => {
     ;(async () => {
       const auctionList = await UserService.getUserAuctionList()
-      setAuctionlist(auctionList)
+      setAuctionList(auctionList)
     })()
   }, [])
 
@@ -23,11 +23,11 @@ const AuctionListPage = (): JSX.Element => {
       flexDirection='row'
       spacing={{ xs: 2, md: 3, lg: 2 }}
     >
-      {auctionlist.length > 0 ? (
-        auctionlist.map((product, index) => {
+      {auctionList.length > 0 ? (
+        auctionList.map((product, index) => {
           return (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <ProductCard product={product} />
+              <ProductItem product={product} />
             </Grid>
           )
         })

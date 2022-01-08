@@ -1,21 +1,19 @@
 import * as React from 'react'
-import {useEffect, useState} from "react";
+import { useEffect, useState } from 'react'
 import Product from '../../models/product'
-import sellerService from "../../services/seller.service";
-import Grid from "@mui/material/Grid";
-import ProductCard from "../../components/common/product/ProductCard";
-import Typography from "@mui/material/Typography";
+import sellerService from '../../services/seller.service'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
+import ProductItem from '../../components/common/product/ProductItem'
 
 const AuctionHaveWinnerPage = (): JSX.Element => {
-
   const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
-    async function getWonAuction () {
+    ;(async function getWonAuction() {
       const res = await sellerService.getAllAuctionHasWinner()
       setProducts(res.data)
-    }
-    getWonAuction()
+    })()
   }, [])
 
   return (
@@ -30,7 +28,7 @@ const AuctionHaveWinnerPage = (): JSX.Element => {
         products.map((product, index) => {
           return (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <ProductCard product={product} />
+              <ProductItem product={product} />
             </Grid>
           )
         })

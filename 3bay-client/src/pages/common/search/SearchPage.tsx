@@ -1,5 +1,4 @@
 import {
-  Box,
   FormControl,
   Grid,
   InputLabel,
@@ -24,6 +23,83 @@ import ProductList from '../../../components/common/product/ProductList'
 import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
 import ProductCardSkeleton from '../../../components/common/product/ProductCardSkeleton'
 
+type TimeSelectProp = {
+  params: { sortBy: string; sortType: string }
+  handlePriceSortChange: (e: SelectChangeEvent) => void
+}
+
+type SortByCategoryProp = {
+  params: { categoryId: string }
+  handleCategoryChange: (e: SelectChangeEvent) => void
+}
+
+const SortByTimeSelect = ({
+  params,
+  handlePriceSortChange,
+}: TimeSelectProp): JSX.Element => {
+  return (
+    <FormControl sx={{ minWidth: 240 }}>
+      <InputLabel id='sort-price-label'>Sort</InputLabel>
+
+      <Select
+        labelId='sort-price-label'
+        id='demo-simple-select'
+        value={`${params.sortBy}-${params.sortType}`}
+        label='Price'
+        onChange={handlePriceSortChange}
+      >
+        <ListSubheader>Close time</ListSubheader>
+
+        <MenuItem value={`${SORT_BY.closeTime}-${SORT_TYPE.desc}`}>
+          Close time: ↓
+        </MenuItem>
+
+        <MenuItem value={`${SORT_BY.closeTime}-${SORT_TYPE.asc}`}>
+          Close time: ↑
+        </MenuItem>
+
+        <ListSubheader>Price</ListSubheader>
+
+        <MenuItem value={`${SORT_BY.currentPrice}-${SORT_TYPE.desc}`}>
+          Price: ↓
+        </MenuItem>
+
+        <MenuItem value={`${SORT_BY.currentPrice}-${SORT_TYPE.asc}`}>
+          Price: ↑
+        </MenuItem>
+      </Select>
+    </FormControl>
+  )
+}
+
+const SortByCategorySelect = ({
+  params,
+  handleCategoryChange,
+}: SortByCategoryProp): JSX.Element => {
+  const {
+    state: { allCategories },
+  } = useCategoryContext()
+
+  return (
+    <FormControl sx={{ minWidth: 240 }}>
+      <InputLabel id='category-select-label'>Category</InputLabel>
+      <Select
+        labelId='category-select-label'
+        id='category-select'
+        value={params.categoryId + ''}
+        label='Category'
+        onChange={handleCategoryChange}
+      >
+        <MenuItem value=''>
+          <em>None</em>
+        </MenuItem>
+
+        {renderCategorySelection(allCategories)}
+      </Select>
+    </FormControl>
+  )
+}
+
 const SearchPage = (): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -46,8 +122,6 @@ const SearchPage = (): JSX.Element => {
   const [hasNextPage, setHasNextPage] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const { state } = useCategoryContext()
-  const { allCategories } = state
 
   const fetchData = useCallback(async () => {
     try {
@@ -108,57 +182,34 @@ const SearchPage = (): JSX.Element => {
   }
 
   return (
-    <Grid sx={{ m: 5 }}>
-      <FormControl sx={{ minWidth: 240, mr: 4 }}>
-        <InputLabel id='sort-price-label'>Sort</InputLabel>
+    <Grid container spacing={2}>
+      <Grid
+        container
+        item
+        xs={12}
+        component={Grid}
+        display='flex'
+        direction='row'
+        columnSpacing={2}
+        rowSpacing={2}
+        my={1}
+      >
+        <Grid item xs={'auto'}>
+          <SortByTimeSelect
+            params={params}
+            handlePriceSortChange={handlePriceSortChange}
+          />
+        </Grid>
 
-        <Select
-          labelId='sort-price-label'
-          id='demo-simple-select'
-          value={`${params.sortBy}-${params.sortType}`}
-          label='Price'
-          onChange={handlePriceSortChange}
-        >
-          <ListSubheader>Close time</ListSubheader>
+        <Grid item xs={'auto'}>
+          <SortByCategorySelect
+            params={params}
+            handleCategoryChange={handleCategoryChange}
+          />
+        </Grid>
+      </Grid>
 
-          <MenuItem value={`${SORT_BY.closeTime}-${SORT_TYPE.desc}`}>
-            Close time: ↓
-          </MenuItem>
-
-          <MenuItem value={`${SORT_BY.closeTime}-${SORT_TYPE.asc}`}>
-            Close time: ↑
-          </MenuItem>
-
-          <ListSubheader>Price</ListSubheader>
-
-          <MenuItem value={`${SORT_BY.currentPrice}-${SORT_TYPE.desc}`}>
-            Price: ↓
-          </MenuItem>
-
-          <MenuItem value={`${SORT_BY.currentPrice}-${SORT_TYPE.asc}`}>
-            Price: ↑
-          </MenuItem>
-        </Select>
-      </FormControl>
-
-      <FormControl sx={{ minWidth: 240 }}>
-        <InputLabel id='category-select-label'>Category</InputLabel>
-        <Select
-          labelId='category-select-label'
-          id='category-select'
-          value={params.categoryId + ''}
-          label='Category'
-          onChange={handleCategoryChange}
-        >
-          <MenuItem value=''>
-            <em>None</em>
-          </MenuItem>
-
-          {renderCategorySelection(allCategories)}
-        </Select>
-      </FormControl>
-
-      <Box sx={{ my: 4 }} minHeight={400}>
+      <Grid item xs={12} sx={{ my: 1 }} minHeight={400}>
         <Typography
           color='text.primary'
           variant='h4'
@@ -218,7 +269,7 @@ const SearchPage = (): JSX.Element => {
             )
           }
         })()}
-      </Box>
+      </Grid>
     </Grid>
   )
 }

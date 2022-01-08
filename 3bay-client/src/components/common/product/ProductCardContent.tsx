@@ -13,9 +13,10 @@ import formatNumberToVND from '../../../utils/currency-format'
 type CardContentProps = {
   product: Product
   sx?: SxProps
+  rowMode?: boolean
 }
 
-function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
+function ProductCardContent({ product, sx, rowMode }: CardContentProps): JSX.Element {
   const theme = useTheme()
   const isMounted = useIsMounted()
   const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
@@ -87,7 +88,7 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
         {product.latestAuction?.buyoutPrice && (
           <>
             {' '}
-            Instant buy with {' '}
+            Instant buy with{' '}
             <b> {formatNumberToVND(product.latestAuction?.buyoutPrice)} </b>
           </>
         )}
@@ -118,7 +119,9 @@ function ProductCardContent({ product, sx }: CardContentProps): JSX.Element {
                     height: `25px`,
                   }}
                 />
-                <Box flexGrow={1} />
+                {
+                  rowMode ? <Box mx={1} /> : <Box flexGrow={1} />
+                }
               </>
             )}
 

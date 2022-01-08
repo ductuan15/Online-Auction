@@ -3,8 +3,12 @@ import { useMemo } from 'react'
 import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import './ProductImage.css'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material'
 
 const ProductImage = (): JSX.Element | null => {
+  const theme = useTheme()
+  const xsScreen = useMediaQuery(theme.breakpoints.only('xs'))
 
   const {
     state: { currentProduct: product },
@@ -46,7 +50,7 @@ const ProductImage = (): JSX.Element | null => {
       showPlayButton={false}
       showFullscreenButton
       items={images}
-      thumbnailPosition={'left'}
+      thumbnailPosition={xsScreen ? undefined : 'left'}
     />
   )
 }

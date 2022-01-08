@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import ProductCard from '../product/ProductCard'
 import Carousel, { DotProps } from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import './ProductCarousel.css'
@@ -10,6 +9,7 @@ import { useEffectOnce } from '../../../hooks'
 import { styled, Theme, useTheme } from '@mui/material/styles'
 import { GREY } from '../../../theme/palette'
 import ProductCardSkeleton from '../product/ProductCardSkeleton'
+import ProductItem from '../product/ProductItem'
 
 type CarouselProps = {
   name: string
@@ -43,13 +43,14 @@ const responsive = {
 const StyledButton = styled('button')({})
 
 const CustomDots = ({
-  index,
+  // index,
   active,
   onClick,
-  carouselState,
+  // carouselState,
+  nItems,
   theme,
-}: DotProps & { theme: Theme }) => {
-  const totalItems = carouselState?.totalItems ?? 1
+}: DotProps & { theme: Theme; nItems: number }) => {
+  const totalItems = nItems > 0 ? nItems : 1
   const widthPercent = 100 / totalItems
   return (
     <StyledButton
@@ -59,20 +60,20 @@ const CustomDots = ({
       }}
       sx={{
         width: `${widthPercent}%`,
-        marginLeft: index === 0 ? 0 : '4px',
-        marginRight: index === totalItems - 1 ? 0 : '4px',
+        // marginLeft: index === 0 ? 0 : '4px',
+        // marginRight: index === totalItems - 1 ? 0 : '4px',
         backgroundColor: active
           ? `${theme.palette.primary.main}`
           : `${GREY[500_48]}`,
         border: 'none',
         outline: 'none',
-        borderRadius: '8px',
+        // borderRadius: '8px',
         height: '6px',
         '&:hover': {
           backgroundColor: active
             ? `${theme.palette.primary.main}`
             : `${GREY[500_80]}`,
-          transform: 'scale(1, 2)',
+          // transform: 'scale(1, 2)',
         },
       }}
     />
@@ -127,14 +128,14 @@ const ProductCarousel = ({
         containerClass='container-with-dots'
         itemClass='carousel-item-padding-x-10-px'
         removeArrowOnDeviceType={['xs', 'sm', 'md']}
-        customDot={<CustomDots theme={theme} />}
+        customDot={<CustomDots theme={theme} nItems={products.length} />}
       >
         {isLoading && showLoading
           ? [1, 2, 3, 4, 5].map((key) => {
               return <ProductCardSkeleton key={key} />
             })
           : products.map((product) => {
-              return <ProductCard key={product.id} product={product} />
+              return <ProductItem key={product.id} product={product} />
             })}
       </Carousel>
     </Container>
