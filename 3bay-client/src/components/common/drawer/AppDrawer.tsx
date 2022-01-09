@@ -1,5 +1,5 @@
 import Drawer from '@mui/material/Drawer'
-import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
+import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 import Box from '@mui/material/Box'
 import { APPBAR_LARGE, APPBAR_SMALL } from '../appbar/AppBar'
 import AppName from '../appname/AppName'
@@ -20,7 +20,7 @@ const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
   const {
     state: { openDrawer },
     toggleDrawer,
-  } = useAppBarContext()
+  } = useLayoutContext()
   const { addAllCategories } = useCategoryContext()
 
   useEffect(() => {

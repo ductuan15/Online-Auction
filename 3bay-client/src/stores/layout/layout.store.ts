@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-export type AppbarState = {
+export type LayoutState = {
   anchorEl: null | HTMLElement
   mobileMoreAnchorEl: null | HTMLElement
   notifyAnchorEl: null | HTMLElement
@@ -12,9 +12,10 @@ export type AppbarState = {
   notifyMenuId: string
   notifyBadgeContent: number
   openDrawer: boolean
+  listLayout: 'row' | 'card'
 }
 
-export type AppBarActionType =
+export type LayoutActionType =
   | {
       type: 'OPEN_PROFILE_MENU'
       payload: React.MouseEvent<HTMLElement>
@@ -26,8 +27,9 @@ export type AppBarActionType =
   | { type: 'CLOSE_NOTIFY_MENU' }
   | { type: 'TOGGLE_DRAWER'; payload: boolean }
   | { type: 'NOTIFY_BADGE_CONTENT'; payload: number }
+  | { type: 'CHANGE_LIST_LAYOUT'; payload: 'card' | 'row' }
 
-export const initialAppBarState = {
+export const initialLayoutState: LayoutState = {
   anchorEl: null,
   mobileMoreAnchorEl: null,
   notifyAnchorEl: null,
@@ -39,12 +41,13 @@ export const initialAppBarState = {
   notifyMenuId: '',
   notifyBadgeContent: 2,
   openDrawer: false,
+  listLayout: 'card',
 }
 
-const AppbarReducer = (
-  state: AppbarState,
-  action: AppBarActionType,
-): AppbarState => {
+const LayoutReducer = (
+  state: LayoutState,
+  action: LayoutActionType,
+): LayoutState => {
   switch (action.type) {
     case 'OPEN_PROFILE_MENU':
       return { ...state, anchorEl: action.payload.currentTarget }
@@ -70,8 +73,10 @@ const AppbarReducer = (
     case 'TOGGLE_DRAWER':
       return { ...state, openDrawer: action.payload }
 
+    case 'CHANGE_LIST_LAYOUT':
+      return { ...state, listLayout: action.payload }
     default:
       return state
   }
 }
-export default AppbarReducer
+export default LayoutReducer

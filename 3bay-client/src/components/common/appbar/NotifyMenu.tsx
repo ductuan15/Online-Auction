@@ -1,6 +1,6 @@
 import Menu from '@mui/material/Menu'
 import * as React from 'react'
-import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
+import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 import MenuItem from '@mui/material/MenuItem'
 import DeadlineCountDown from './DeadlineCountDown'
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
@@ -36,7 +36,7 @@ export const NotifyMenu = (): JSX.Element => {
   const {
     state: { notifyAnchorEl },
     dispatch,
-  } = useAppBarContext()
+  } = useLayoutContext()
   const handleNotifyMenuClose = () => {
     dispatch({ type: 'CLOSE_NOTIFY_MENU' })
   }

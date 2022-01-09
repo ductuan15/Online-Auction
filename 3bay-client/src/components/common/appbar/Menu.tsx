@@ -5,7 +5,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import Logout from '@mui/icons-material/Logout'
 import * as React from 'react'
-import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
+import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
@@ -52,7 +52,7 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
   const {
     state: { mobileMoreAnchorEl },
     dispatch,
-  } = useAppBarContext()
+  } = useLayoutContext()
 
   const navigate = useNavigate()
   const { isAuth, signOut } = useAuth()
@@ -144,7 +144,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
   const {
     state: { anchorEl },
     dispatch,
-  } = useAppBarContext()
+  } = useLayoutContext()
 
   const navigate = useNavigate()
   const { isAuth, signOut, user } = useAuth()

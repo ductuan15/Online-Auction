@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
+import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
@@ -16,7 +16,7 @@ const NotifyMenuButton = ({
   const {
     state: { notifyBadgeContent },
     dispatch,
-  } = useAppBarContext()
+  } = useLayoutContext()
 
   return (
     <Box

@@ -15,7 +15,7 @@ import { ThemeChangeButton } from './ThemeChangeButton'
 import { HideOnScroll } from './HideOnScroll'
 import NotifyMenuButton from './NotifyMenuButton'
 import { NotifyMenu } from './NotifyMenu'
-import { useAppBarContext } from '../../../contexts/layout/AppBarContext'
+import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import RoleLabel from '../../user/profile/RoleLabel'
 import WatchListButton from './WatchListButton'
@@ -137,7 +137,7 @@ export default function SearchAppBar(): JSX.Element {
   const resolved = useResolvedPath(createProductPath)
   const match = useMatch({ path: resolved.pathname, end: true })
 
-  const { toggleDrawer, dispatch } = useAppBarContext()
+  const { toggleDrawer, dispatch } = useLayoutContext()
 
   const { isAuth, user } = useAuth()
   const theme = useTheme()

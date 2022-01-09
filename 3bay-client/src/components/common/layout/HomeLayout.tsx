@@ -3,7 +3,7 @@ import React from 'react'
 
 import AppFooter from '../footer/AppFooter'
 import StyledDiv from '../StyledDiv'
-import { AppBarCtxProvider } from '../../../contexts/layout/AppBarContext'
+import { LayoutCtxProvider } from '../../../contexts/layout/LayoutContext'
 import { AppDrawer } from '../drawer'
 import { Outlet } from 'react-router-dom'
 import { CategoryProvider } from '../../../contexts/admin/CategoryContext'
@@ -18,10 +18,10 @@ export default function HomeLayout({ children }: Props): JSX.Element {
     <StyledDiv>
       <CategoryProvider>
         {/* app bar */}
-        <AppBarCtxProvider>
+        <LayoutCtxProvider>
           <AppBar />
           <AppDrawer />
-        </AppBarCtxProvider>
+        </LayoutCtxProvider>
 
         <StyledToolbar sx={(theme) => ({ marginBottom: theme.spacing(1) })} />
 

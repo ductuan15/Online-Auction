@@ -9,43 +9,43 @@ import {
   useMemo,
   useReducer,
 } from 'react'
-import AppbarReducer, {
-  AppBarActionType,
-  AppbarState,
-  initialAppBarState,
-} from '../../stores/layout/appbar.store'
+import LayoutReducer, {
+  LayoutActionType,
+  LayoutState,
+  initialLayoutState,
+} from '../../stores/layout/layout.store'
 
-type AppBarContextProps = {
+type LayoutContextProps = {
   children: ReactNode
 }
 
-type AppBarContextType = {
-  state: AppbarState
-  dispatch: Dispatch<AppBarActionType>
+type LayoutContextType = {
+  state: LayoutState
+  dispatch: Dispatch<LayoutActionType>
   toggleDrawer: (
     open: boolean,
   ) => (event: KeyboardEvent | MouseEvent | SyntheticEvent) => void
 }
 
-const appBarInitialValue: AppBarContextType = {
-  state: initialAppBarState,
+const layoutInitialValue: LayoutContextType = {
+  state: initialLayoutState,
   dispatch: () => null,
   toggleDrawer: (): never => {
     throw new Error('Forgot to wrap component in `AppBarCtxProvider`')
   },
 }
 
-export const AppBarContext =
-  createContext<AppBarContextType>(appBarInitialValue)
+export const LayoutContext =
+  createContext<LayoutContextType>(layoutInitialValue)
 
-export const useAppBarContext = (): AppBarContextType => {
-  return useContext(AppBarContext)
+export const useLayoutContext = (): LayoutContextType => {
+  return useContext(LayoutContext)
 }
 
-export const AppBarCtxProvider = ({
+export const LayoutCtxProvider = ({
   children,
-}: AppBarContextProps): JSX.Element => {
-  const [state, dispatch] = useReducer(AppbarReducer, initialAppBarState)
+}: LayoutContextProps): JSX.Element => {
+  const [state, dispatch] = useReducer(LayoutReducer, initialLayoutState)
   const toggleDrawer = useCallback(
     (open: boolean) => (event: KeyboardEvent | MouseEvent | SyntheticEvent) => {
       //console.log(event)
@@ -72,8 +72,8 @@ export const AppBarCtxProvider = ({
   )
 
   return (
-    <AppBarContext.Provider value={contextValue}>
+    <LayoutContext.Provider value={contextValue}>
       {children}
-    </AppBarContext.Provider>
+    </LayoutContext.Provider>
   )
 }
