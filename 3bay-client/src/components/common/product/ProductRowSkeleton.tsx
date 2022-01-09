@@ -1,17 +1,9 @@
 import Card from '@mui/material/Card'
-import {
-  Box,
-  CardActionArea,
-  CardHeader,
-  Grid,
-  IconButton,
-} from '@mui/material'
+import { Box, CardActionArea, CardHeader, Grid } from '@mui/material'
 import { SxProps } from '@mui/system'
 import { Theme, useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { Skeleton } from '@mui/lab'
-import { useUserContext } from '../../../contexts/user/UserContext'
 import ProductCardContentSkeleton from './ProductCardContentSkeleton'
 
 const imageSx: SxProps<Theme> = (theme) => ({
@@ -70,10 +62,6 @@ const ProductRowSkeleton = (): JSX.Element => {
   const theme = useTheme()
   const xsScreen = useMediaQuery(theme.breakpoints.only('xs'))
 
-  const {
-    state: { userDetails },
-  } = useUserContext()
-
   return (
     <Card
       variant='outlined'
@@ -118,26 +106,6 @@ const ProductRowSkeleton = (): JSX.Element => {
                   }
             }
           />
-          {userDetails && (
-            <Box
-              sx={
-                xsScreen
-                  ? { pb: 0 }
-                  : {
-                      py: 0.75,
-                      px: 1,
-                    }
-              }
-            >
-              <IconButton
-                aria-label='add to watchlist'
-                color='inherit'
-                size='small'
-              >
-                <FavoriteBorderOutlinedIcon />
-              </IconButton>
-            </Box>
-          )}
         </Box>
       </CardActionArea>
     </Card>

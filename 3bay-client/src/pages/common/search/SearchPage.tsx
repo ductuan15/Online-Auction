@@ -21,7 +21,8 @@ import {
 } from '../../../services/product.service'
 import ProductList from '../../../components/common/product/ProductList'
 import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
-import ProductItemSkeleton from '../../../components/common/product/ProductItemSkeleton'
+import ChangeLayoutButtonGroup from '../../../components/common/button/ChangeLayoutButtonGroup'
+import ProductListSkeleton from '../../../components/common/product/ProductListSkeleton'
 
 type TimeSelectProp = {
   params: { sortBy: string; sortType: string }
@@ -137,8 +138,9 @@ const SearchPage = (): JSX.Element => {
       setHasNextPage(res.data.hasNextPage)
       setProducts([...res.data.items])
     } finally {
-      // set is error
-      setIsLoading(false)
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 1000)
     }
   }, [
     params.key,
@@ -210,27 +212,32 @@ const SearchPage = (): JSX.Element => {
       </Grid>
 
       <Grid item xs={12} sx={{ my: 1 }} minHeight={400}>
-        <Typography
-          color='text.primary'
-          variant='h4'
-          fontWeight={600}
-          gutterBottom
+        <Grid
+          container
+          columnSpacing={2}
+          alignItems='center'
+          justifyContent='space-between'
+          my={1}
         >
-          {`Search result ${params.key ? `for 「${params.key}」` : ''}`}
-        </Typography>
+          <Grid item xs='auto'>
+            <Typography
+              color='text.primary'
+              variant='h4'
+              fontWeight={600}
+              gutterBottom
+            >
+              {`Search result ${params.key ? `for 「${params.key}」` : ''}`}
+            </Typography>
+          </Grid>
+
+          <Grid item xs='auto'>
+            <ChangeLayoutButtonGroup />
+          </Grid>
+        </Grid>
 
         {(() => {
           if (isLoading) {
-            return (
-              <Grid container justifyContent='center' spacing={2}>
-                {/*<CircularProgress color='secondary' />*/}
-                {[1, 2, 3, 4].map((i) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
-                    <ProductItemSkeleton />
-                  </Grid>
-                ))}
-              </Grid>
-            )
+            return <ProductListSkeleton />
           } else if (products.length === 0) {
             return (
               <Typography
