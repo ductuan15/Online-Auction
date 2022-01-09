@@ -34,7 +34,7 @@ function ProductCardContentSkeleton({ sx }: CardContentProps): JSX.Element {
         my={1}
         minHeight={25}
       >
-        <Skeleton variant='text' />
+        <Skeleton variant='text' width='auto' />
 
         {/*<Typography variant='body1'>Bid by</Typography>*/}
 
@@ -48,8 +48,6 @@ function ProductCardContentSkeleton({ sx }: CardContentProps): JSX.Element {
           }}
         />
 
-        <Box flexGrow={1} />
-
         {/*Display total number of people (excluding 1 person) are currently bidding */}
         {/*{totalBidder >= 0 && (*/}
         {/*  <Typography variant='body2' color='text.secondary'>*/}
@@ -57,7 +55,10 @@ function ProductCardContentSkeleton({ sx }: CardContentProps): JSX.Element {
         {/*  </Typography>*/}
         {/*)}*/}
 
-        <Skeleton variant='text' />
+        <Skeleton variant='text' sx={{
+          ml: 1,
+          width: '100%'
+        }} />
       </Box>
 
       <Skeleton

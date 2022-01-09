@@ -21,7 +21,7 @@ import {
 } from '../../../services/product.service'
 import ProductList from '../../../components/common/product/ProductList'
 import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
-import ProductCardSkeleton from '../../../components/common/product/ProductCardSkeleton'
+import ProductItemSkeleton from '../../../components/common/product/ProductItemSkeleton'
 
 type TimeSelectProp = {
   params: { sortBy: string; sortType: string }
@@ -226,7 +226,7 @@ const SearchPage = (): JSX.Element => {
                 {/*<CircularProgress color='secondary' />*/}
                 {[1, 2, 3, 4].map((i) => (
                   <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
-                    <ProductCardSkeleton />
+                    <ProductItemSkeleton />
                   </Grid>
                 ))}
               </Grid>
