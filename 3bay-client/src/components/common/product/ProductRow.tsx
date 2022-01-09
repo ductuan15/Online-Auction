@@ -4,6 +4,7 @@ import {
   CardActionArea,
   CardHeader,
   CardMedia,
+  Grid,
   IconButton,
   Link,
   Menu,
@@ -20,6 +21,8 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 import { CardProps } from './ProductCard'
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
+import { SyntheticEvent } from 'react'
+import { UserDetails } from '../../../models/user'
 
 type CardRow = CardProps
 
@@ -48,12 +51,11 @@ const imageSx: SxProps<Theme> = (theme) => ({
   },
   [theme.breakpoints.up('xs')]: {
     width: 175,
+    height: 175,
   },
   [theme.breakpoints.up('lg')]: {
     width: 200,
-  },
-  [theme.breakpoints.up('xl')]: {
-    width: 200,
+    height: 200,
   },
   overflow: 'hidden',
 })
@@ -62,25 +64,56 @@ const CardHeaderRow = ({
   name,
   color,
   xsScreen,
+  toggleWatchlistButton,
+  userDetails,
+  isInWatchlist,
 }: {
   name: string
   color: string
   xsScreen: boolean
+  toggleWatchlistButton: (e: SyntheticEvent) => void
+  userDetails?: UserDetails
+  isInWatchlist: boolean
 }): JSX.Element => {
   return (
     <CardHeader
       title={
-        <Box>
-          <Typography
-            variant={xsScreen ? 'body1' : 'h6'}
-            style={titleStyle}
-            fontWeight={600}
-            color={color}
-            sx={titleSx}
-          >
-            {name || ' '}
-          </Typography>
-        </Box>
+        <Grid
+          container
+          columnSpacing={2}
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <Grid item xs='auto'>
+            <Typography
+              variant={xsScreen ? 'body1' : 'h6'}
+              style={titleStyle}
+              fontWeight={600}
+              color={color}
+              sx={titleSx}
+            >
+              {name || ' '}
+            </Typography>
+          </Grid>
+          <Grid item xs='auto'>
+            {userDetails && (
+              <Box>
+                <IconButton
+                  aria-label='add to watchlist'
+                  color='inherit'
+                  size='small'
+                  onClick={toggleWatchlistButton}
+                >
+                  {isInWatchlist ? (
+                    <FavoriteOutlinedIcon />
+                  ) : (
+                    <FavoriteBorderOutlinedIcon />
+                  )}
+                </IconButton>
+              </Box>
+            )}
+          </Grid>
+        </Grid>
       }
       sx={
         xsScreen
@@ -169,6 +202,9 @@ const ProductRow = ({
                 name={product.name}
                 color={color}
                 xsScreen={xsScreen}
+                toggleWatchlistButton={toggleWatchlistButton}
+                userDetails={userDetails}
+                isInWatchlist={isInWatchlist}
               />
               <ProductCardContent
                 product={product}
@@ -183,31 +219,6 @@ const ProductRow = ({
                 }
                 rowMode
               />
-              {userDetails && (
-                <Box
-                  sx={
-                    xsScreen
-                      ? { pb: 0 }
-                      : {
-                          py: 0.75,
-                          px: 1,
-                        }
-                  }
-                >
-                  <IconButton
-                    aria-label='add to watchlist'
-                    color='inherit'
-                    size='small'
-                    onClick={toggleWatchlistButton}
-                  >
-                    {isInWatchlist ? (
-                      <FavoriteOutlinedIcon />
-                    ) : (
-                      <FavoriteBorderOutlinedIcon />
-                    )}
-                  </IconButton>
-                </Box>
-              )}
             </Box>
           </CardActionArea>
         </Link>

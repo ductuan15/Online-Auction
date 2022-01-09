@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import moment from 'moment'
 import CardContent from '@mui/material/CardContent'
-import { Box } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useIsMounted } from '../../../hooks'
@@ -16,7 +16,11 @@ type CardContentProps = {
   rowMode?: boolean
 }
 
-function ProductCardContent({ product, sx, rowMode }: CardContentProps): JSX.Element {
+function ProductCardContent({
+  product,
+  sx,
+  rowMode,
+}: CardContentProps): JSX.Element {
   const theme = useTheme()
   const isMounted = useIsMounted()
   const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
@@ -70,29 +74,35 @@ function ProductCardContent({ product, sx, rowMode }: CardContentProps): JSX.Ele
 
   return (
     <CardContent component={Box} display='flex' flexDirection='column' sx={sx}>
-      {/* Current price */}
-      <Typography
-        variant='button'
-        fontSize={`${theme.typography.body1.fontSize}`}
-      >
-        💵 {formatNumberToVND(product.latestAuction?.currentPrice || 0)}
-      </Typography>
+      <Grid container flexDirection='row' columnSpacing={2}>
+        <Grid item xs={rowMode ? 'auto' : 12}>
+          {/* Current price */}
+          <Typography
+            variant='button'
+            fontSize={`${theme.typography.body1.fontSize}`}
+          >
+            💵 {formatNumberToVND(product.latestAuction?.currentPrice || 0)}
+          </Typography>
+        </Grid>
 
-      {/* Buy out price */}
-      <Typography
-        variant='caption'
-        color='text.secondary'
-        fontStyle='italic'
-        minHeight={`${theme.typography.caption.lineHeight}em`}
-      >
-        {product.latestAuction?.buyoutPrice && (
-          <>
-            {' '}
-            Instant buy with{' '}
-            <b> {formatNumberToVND(product.latestAuction?.buyoutPrice)} </b>
-          </>
-        )}
-      </Typography>
+        <Grid item xs={rowMode ? 'auto' : 12}>
+          {/* Buy out price */}
+          <Typography
+            variant='caption'
+            color='text.secondary'
+            fontStyle='italic'
+            minHeight={`${theme.typography.caption.lineHeight}em`}
+          >
+            {product.latestAuction?.buyoutPrice && (
+              <>
+                {' '}
+                Instant buy with{' '}
+                <b> {formatNumberToVND(product.latestAuction?.buyoutPrice)} </b>
+              </>
+            )}
+          </Typography>
+        </Grid>
+      </Grid>
 
       <Box
         display='flex'
@@ -119,9 +129,7 @@ function ProductCardContent({ product, sx, rowMode }: CardContentProps): JSX.Ele
                     height: `25px`,
                   }}
                 />
-                {
-                  rowMode ? <Box mx={1} /> : <Box flexGrow={1} />
-                }
+                {rowMode ? <Box mx={1} /> : <Box flexGrow={1} />}
               </>
             )}
 
@@ -141,30 +149,36 @@ function ProductCardContent({ product, sx, rowMode }: CardContentProps): JSX.Ele
         )}
       </Box>
 
-      {dateCreated && (
-        <Typography
-          variant='body2'
-          color='text.secondary'
-          minHeight={`${theme.typography.body2.lineHeight}em`}
-        >
-          {dateCreatedText}
-        </Typography>
-      )}
+      <Grid container flexDirection='row' columnSpacing={2}>
+        {dateCreated && (
+          <Grid item xs={rowMode ? 'auto' : 12}>
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              minHeight={`${theme.typography.body2.lineHeight}em`}
+            >
+              {dateCreatedText}
+            </Typography>
+          </Grid>
+        )}
 
-      {endTimeCountDownText && (
-        <Typography
-          variant='body2'
-          color='text.secondary'
-          height={`${theme.typography.body2.lineHeight}em`}
-          style={{
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {endTimeCountDownText}
-        </Typography>
-      )}
+        {endTimeCountDownText && (
+          <Grid item xs={rowMode ? 'auto' : 12}>
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              height={`${theme.typography.body2.lineHeight}em`}
+              style={{
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {endTimeCountDownText}
+            </Typography>
+          </Grid>
+        )}
+      </Grid>
     </CardContent>
   )
 }
