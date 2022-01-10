@@ -34,7 +34,7 @@ import PostedProductList from './pages/seller/PostedProductList'
 import { SocketProvider } from './contexts/socket/SocketContext'
 import AuctionList from "./pages/user/auctionlist/AuctionList";
 import WonAuctionList from "./pages/user/wonauctionlist/WonAuctionList";
-import AuctionHasWinner from "./pages/seller/AuctionHasWinner";
+import AuctionHasWinner from "./pages/seller/AuctionsHaveWinner";
 
 function GlobalRouter(): JSX.Element {
   return (

@@ -2,30 +2,19 @@ import Grid from '@mui/material/Grid'
 import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import { useUserContext } from '../../../contexts/user/UserContext'
-import ProductItem from '../../../components/common/product/ProductItem'
+import ProductListLayout from '../../../components/common/product/ProductListLayout'
+import { useTitle } from '../../../hooks'
 
 const WatchListPage = (): JSX.Element => {
+  useTitle('3bay | Watchlist')
   const {
     state: { watchlist },
   } = useUserContext()
 
   return (
-    <Grid
-      container
-      display='flex'
-      alignItems='center'
-      flexDirection='row'
-      spacing={{ xs: 2, md: 3, lg: 2 }}
-    >
-      {watchlist.length > 0 ? (
-        watchlist.map((product, index) => {
-          return (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <ProductItem product={product} />
-            </Grid>
-          )
-        })
-      ) : (
+    <ProductListLayout
+      items={watchlist}
+      emptyListComponent={
         <Grid item xs={12}>
           <Typography variant='h1' color='text.primary' align='center'>
             ❤️
@@ -42,8 +31,9 @@ const WatchListPage = (): JSX.Element => {
             home page to search your favorite products
           </Typography>
         </Grid>
-      )}
-    </Grid>
+      }
+      titleComponent={'My watchlist'}
+    />
   )
 }
 export default WatchListPage

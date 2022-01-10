@@ -96,7 +96,7 @@ function ProductCardContent({
             {product.latestAuction?.buyoutPrice && (
               <>
                 {' '}
-                Instant buy with{' '}
+                Buy instantly with{' '}
                 <b> {formatNumberToVND(product.latestAuction?.buyoutPrice)} </b>
               </>
             )}

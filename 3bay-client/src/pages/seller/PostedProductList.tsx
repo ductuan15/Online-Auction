@@ -4,38 +4,30 @@ import Product from '../../models/product'
 import sellerService from '../../services/seller.service'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import ProductItem from '../../components/common/product/ProductItem'
+import ProductListLayout from '../../components/common/product/ProductListLayout'
+import { useTitle } from '../../hooks'
 
 const PostedProductListPage = (): JSX.Element => {
+  useTitle('3bay | Posted products')
   const [products, setProducts] = useState<Product[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    (async function getPostedProduct() {
+    ;(async function getPostedProduct() {
       const res = await sellerService.getAllPostedProduct()
       setProducts(res.data)
+      setIsLoading(false)
     })()
   }, [])
 
   return (
-    <Grid
-      container
-      display='flex'
-      alignItems='center'
-      flexDirection='row'
-      spacing={{ xs: 2, md: 3, lg: 2 }}
-    >
-      {products.length > 0 ? (
-        products.map((product, index) => {
-          return (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <ProductItem product={product} />
-            </Grid>
-          )
-        })
-      ) : (
+    <ProductListLayout
+      items={products}
+      isLoading={isLoading}
+      emptyListComponent={
         <Grid item xs={12}>
           <Typography variant='h1' color='text.primary' align='center'>
-            ❤️
+            📦
           </Typography>
 
           <Typography
@@ -48,8 +40,9 @@ const PostedProductListPage = (): JSX.Element => {
             You haven&apos;t posted any products.
           </Typography>
         </Grid>
-      )}
-    </Grid>
+      }
+      titleComponent={'Posted products'}
+    />
   )
 }
 export default PostedProductListPage

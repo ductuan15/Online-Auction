@@ -9,6 +9,7 @@ import {
   Select,
   SelectChangeEvent,
   Typography,
+  TypographyStyle,
 } from '@mui/material'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
@@ -19,10 +20,16 @@ import {
   SORT_BY,
   SORT_TYPE,
 } from '../../../services/product.service'
-import ProductList from '../../../components/common/product/ProductList'
 import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
-import ChangeLayoutButtonGroup from '../../../components/common/button/ChangeLayoutButtonGroup'
-import ProductListSkeleton from '../../../components/common/product/ProductListSkeleton'
+import ProductListLayout from '../../../components/common/product/ProductListLayout'
+
+const titleStyle: TypographyStyle = {
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+}
 
 type TimeSelectProp = {
   params: { sortBy: string; sortType: string }
@@ -184,7 +191,7 @@ const SearchPage = (): JSX.Element => {
   }
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} flexDirection='column' sx={{ my: 1 }}>
       <Grid
         container
         item
@@ -194,7 +201,6 @@ const SearchPage = (): JSX.Element => {
         direction='row'
         columnSpacing={2}
         rowSpacing={2}
-        my={1}
       >
         <Grid item xs={'auto'}>
           <SortByTimeSelect
@@ -211,72 +217,40 @@ const SearchPage = (): JSX.Element => {
         </Grid>
       </Grid>
 
-      <Grid item xs={12} sx={{ my: 1 }} minHeight={400}>
-        <Grid
-          container
-          columnSpacing={2}
-          alignItems='center'
-          justifyContent='space-between'
-          my={1}
-        >
-          <Grid item xs='auto'>
-            <Typography
-              color='text.primary'
-              variant='h4'
-              fontWeight={600}
-              gutterBottom
-            >
-              {`Search result ${params.key ? `for 「${params.key}」` : ''}`}
-            </Typography>
-          </Grid>
+      <ProductListLayout
+        items={products}
+        isLoading={isLoading}
+        titleComponent={
+          <Typography
+            color='text.primary'
+            variant='h4'
+            fontWeight={600}
+            sx={titleStyle}
+          >
+            {`Search result ${params.key ? `for 「${params.key}」` : ''}`}
+          </Typography>
+        }
+      />
 
-          <Grid item xs='auto'>
-            <ChangeLayoutButtonGroup />
-          </Grid>
+      {products.length !== 0 && (
+        <Grid container justifyContent='center' sx={{ mt: 2 }}>
+          <Pagination
+            page={params.page}
+            count={params.page + (hasNextPage ? 1 : 0)}
+            onChange={handlePageChange}
+            renderItem={(item) => {
+              if (
+                item.page === params.page + (hasNextPage ? 1 : 0) &&
+                item.type === 'page' &&
+                hasNextPage
+              ) {
+                return <PaginationItem type='end-ellipsis' disabled />
+              }
+              return <PaginationItem {...item} />
+            }}
+          />
         </Grid>
-
-        {(() => {
-          if (isLoading) {
-            return <ProductListSkeleton />
-          } else if (products.length === 0) {
-            return (
-              <Typography
-                color='text.primary'
-                variant='h4'
-                fontWeight={600}
-                textAlign='center'
-                gutterBottom
-              >
-                Empty results :(
-              </Typography>
-            )
-          } else {
-            return (
-              <>
-                <ProductList items={products} />
-
-                <Grid container justifyContent='center' sx={{ mt: 2 }}>
-                  <Pagination
-                    page={params.page}
-                    count={params.page + (hasNextPage ? 1 : 0)}
-                    onChange={handlePageChange}
-                    renderItem={(item) => {
-                      if (
-                        item.page === params.page + (hasNextPage ? 1 : 0) &&
-                        item.type === 'page' &&
-                        hasNextPage
-                      ) {
-                        return <PaginationItem type='end-ellipsis' disabled />
-                      }
-                      return <PaginationItem {...item} />
-                    }}
-                  />
-                </Grid>
-              </>
-            )
-          }
-        })()}
-      </Grid>
+      )}
     </Grid>
   )
 }

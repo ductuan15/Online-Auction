@@ -13,8 +13,10 @@ export default function ChangeLayoutButtonGroup() {
   } = useLayoutContext()
 
   const handleChange = useCallback(
-    (event: React.MouseEvent<HTMLElement>, nextLayout: 'row' | 'card') => {
-      dispatch({ type: 'CHANGE_LIST_LAYOUT', payload: nextLayout })
+    (event: React.MouseEvent<HTMLElement>, nextLayout: 'row' | 'card' | null) => {
+      if (nextLayout) {
+        dispatch({ type: 'CHANGE_LIST_LAYOUT', payload: nextLayout })
+      }
     },
     [dispatch],
   )
