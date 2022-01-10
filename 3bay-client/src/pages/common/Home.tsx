@@ -2,12 +2,12 @@ import * as React from 'react'
 import MainBanner from '../../components/common/home/MainBanner'
 import { Grid, Typography } from '@mui/material'
 import ProductCarousel from '../../components/common/carousel/ProductCarousel'
-import Link from '@mui/material/Link'
-import { Link as RouterLink } from 'react-router-dom'
 import AdminMenu from '../../components/admin/home/AdminMenu'
 import { getTop } from '../../services/product.service'
+import { useTitle } from '../../hooks'
 
 const Home = (): JSX.Element => {
+  useTitle('3bay')
   const banner = {
     title: "Hello world! I'm a banner",
     description:

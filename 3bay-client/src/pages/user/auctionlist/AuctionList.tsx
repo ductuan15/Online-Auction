@@ -1,40 +1,33 @@
 import Grid from '@mui/material/Grid'
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 import Typography from '@mui/material/Typography'
 import UserService from '../../../services/user.service'
 import Product from '../../../models/product'
-import ProductItem from '../../../components/common/product/ProductItem'
+import ProductListLayout from '../../../components/common/product/ProductListLayout'
+import {useTitle} from '../../../hooks'
 
 const AuctionListPage = (): JSX.Element => {
+  useTitle('3bay | Auction list')
   const [auctionList, setAuctionList] = useState<Product[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
     ;(async () => {
       const auctionList = await UserService.getUserAuctionList()
       setAuctionList(auctionList)
+      setIsLoading(false)
     })()
   }, [])
 
   return (
-    <Grid
-      container
-      display='flex'
-      alignItems='center'
-      flexDirection='row'
-      spacing={{ xs: 2, md: 3, lg: 2 }}
-    >
-      {auctionList.length > 0 ? (
-        auctionList.map((product, index) => {
-          return (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <ProductItem product={product} />
-            </Grid>
-          )
-        })
-      ) : (
+    <ProductListLayout
+      items={auctionList}
+      isLoading={isLoading}
+      emptyListComponent={
         <Grid item xs={12}>
           <Typography variant='h1' color='text.primary' align='center'>
-            ❤️
+            📦
           </Typography>
 
           <Typography
@@ -44,12 +37,12 @@ const AuctionListPage = (): JSX.Element => {
             color='text.primary'
             align='center'
           >
-            You don&apos;t have any products in auction list. Please return to
-            home page to search & bid your favorite products
+            You haven&apos;t posted any products.
           </Typography>
         </Grid>
-      )}
-    </Grid>
+      }
+      titleComponent={'Auction list'}
+    />
   )
 }
 export default AuctionListPage

@@ -1,5 +1,5 @@
 import Product from '../../../models/product'
-import { Grid, Stack, Typography, TypographyStyle } from '@mui/material'
+import {Box, Grid, Stack, Typography, TypographyStyle} from '@mui/material'
 import ChangeLayoutButtonGroup from '../button/ChangeLayoutButtonGroup'
 import ProductListSkeleton from './ProductListSkeleton'
 import ProductList from './ProductList'
@@ -72,6 +72,7 @@ const ProductListLayout = ({
           {titleComponent && typeof titleComponent !== 'string' && (
             <>{titleComponent}</>
           )}
+          {!titleComponent && <Box />}
           <ChangeLayoutButtonGroup />
         </Stack>
         {content}

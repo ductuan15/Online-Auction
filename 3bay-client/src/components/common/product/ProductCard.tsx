@@ -126,7 +126,7 @@ const ProductCard = ({
               <Box sx={imageSx} position='relative'>
                 <CardMedia
                   component='img'
-                  image={product.thumbnails.md || ''}
+                  image={product.thumbnails.lg || ''}
                   sx={cardMediaSx(scale)}
                 />
               </Box>
