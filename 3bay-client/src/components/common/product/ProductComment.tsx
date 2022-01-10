@@ -19,9 +19,10 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import * as React from 'react'
-import { SyntheticEvent, useCallback, useMemo, useState } from 'react'
+import { SyntheticEvent, useCallback, useMemo, useState, useEffect } from 'react'
 import BorderButton from '../button/BorderButton'
 import auctionService from '../../../services/auction.service'
+import _ from "lodash";
 
 const ProductComment = (): JSX.Element | null => {
   const {
@@ -29,7 +30,7 @@ const ProductComment = (): JSX.Element | null => {
   } = useUserContext()
 
   const {
-    state: { latestAuction, currentProduct: product },
+    state: { latestAuction, currentProduct: product, bidStatus },
   } = useProductContext()
   const theme = useTheme()
   const minSize = '40px'
@@ -66,6 +67,23 @@ const ProductComment = (): JSX.Element | null => {
     userDetails?.uuid,
   ])
 
+  useEffect(() => {
+    if(bidStatus?.status === 'REJECT') {
+      ;(async () => {
+        if (product) {
+          if (latestAuction?.sellerComment !== 'Người thắng không thanh toán' && latestAuction?.sellerReview !== false) {
+            const payload = {
+              sellerComment: 'Người thắng không thanh toán',
+              sellerReview: false,
+            }
+            await auctionService.addSellerReview(product.id, payload)
+          }
+        }
+      })()
+    }
+  }, [bidStatus?.status]);
+
+
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.currentTarget.value)
   }, [])
@@ -84,7 +102,6 @@ const ProductComment = (): JSX.Element | null => {
           sellerComment: comment,
           sellerReview: point ?? true,
         }
-
         await auctionService.addSellerReview(product.id, payload)
       } else if (latestAuction?.winningBid?.bidder.uuid === userDetails?.uuid) {
         const payload = {
