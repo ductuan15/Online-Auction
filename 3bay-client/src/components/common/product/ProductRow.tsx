@@ -4,11 +4,11 @@ import {
   CardActionArea,
   CardHeader,
   CardMedia,
-  Grid,
   IconButton,
   Link,
   Menu,
   MenuItem,
+  Stack,
   Typography,
   TypographyStyle,
 } from '@mui/material'
@@ -36,20 +36,20 @@ const titleStyle: TypographyStyle = {
 
 const titleSx: SxProps<Theme> = (theme) => ({
   fontStyle: 'normal',
-  fontWeight: 500,
+  fontWeight: 600,
   lineHeight: 'normal',
   '&:hover': {
     color: theme.palette.primary.dark,
   },
 })
 
-const imageSx: SxProps<Theme> = (theme) => ({
-  [theme.breakpoints.only('xs')]: {
+export const imageSx: SxProps<Theme> = (theme) => ({
+  [theme.breakpoints.up('xs')]: {
     width: 120,
     height: 120,
     overflow: 'visible',
   },
-  [theme.breakpoints.up('xs')]: {
+  [theme.breakpoints.up('sm')]: {
     width: 175,
     height: 175,
   },
@@ -57,7 +57,8 @@ const imageSx: SxProps<Theme> = (theme) => ({
     width: 200,
     height: 200,
   },
-  overflow: 'hidden',
+  width: 250,
+  height: 250,
 })
 
 const CardHeaderRow = ({
@@ -78,42 +79,36 @@ const CardHeaderRow = ({
   return (
     <CardHeader
       title={
-        <Grid
-          container
-          columnSpacing={2}
+        <Stack
+          direction='row'
           alignItems='center'
           justifyContent='space-between'
         >
-          <Grid item xs='auto'>
-            <Typography
-              variant={xsScreen ? 'body1' : 'h6'}
-              style={titleStyle}
-              fontWeight={600}
-              color={color}
-              sx={titleSx}
-            >
-              {name || ' '}
-            </Typography>
-          </Grid>
-          <Grid item xs='auto'>
-            {userDetails && (
-              <Box>
-                <IconButton
-                  aria-label='add to watchlist'
-                  color='inherit'
-                  size='small'
-                  onClick={toggleWatchlistButton}
-                >
-                  {isInWatchlist ? (
-                    <FavoriteOutlinedIcon />
-                  ) : (
-                    <FavoriteBorderOutlinedIcon />
-                  )}
-                </IconButton>
-              </Box>
-            )}
-          </Grid>
-        </Grid>
+          <Typography
+            variant={xsScreen ? 'body1' : 'h6'}
+            style={titleStyle}
+            color={color}
+            sx={titleSx}
+          >
+            {name || ' '}
+          </Typography>
+          {userDetails && (
+            <Box>
+              <IconButton
+                aria-label='add to watchlist'
+                color='inherit'
+                size='small'
+                onClick={toggleWatchlistButton}
+              >
+                {isInWatchlist ? (
+                  <FavoriteOutlinedIcon />
+                ) : (
+                  <FavoriteBorderOutlinedIcon />
+                )}
+              </IconButton>
+            </Box>
+          )}
+        </Stack>
       }
       sx={
         xsScreen
@@ -183,8 +178,8 @@ const ProductRow = ({
                 component='img'
                 image={product.thumbnails.md || ''}
                 sx={{
-                  width: xsScreen ? 120 : '100%',
-                  height: xsScreen ? 120 : '100%',
+                  width: 'inherit',
+                  height: 'inherit',
                   transition: `transform .3s`,
                   transform: `scale(${scale})`,
                 }}

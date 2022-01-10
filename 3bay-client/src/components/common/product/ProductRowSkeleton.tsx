@@ -1,31 +1,10 @@
 import Card from '@mui/material/Card'
 import { Box, CardActionArea, CardHeader, Grid } from '@mui/material'
-import { SxProps } from '@mui/system'
-import { Theme, useTheme } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { Skeleton } from '@mui/lab'
 import ProductCardContentSkeleton from './ProductCardContentSkeleton'
-
-const imageSx: SxProps<Theme> = (theme) => ({
-  [theme.breakpoints.only('xs')]: {
-    width: 120,
-    height: 120,
-    overflow: 'visible',
-  },
-  [theme.breakpoints.up('xs')]: {
-    width: 175,
-    height: 175,
-  },
-  [theme.breakpoints.up('lg')]: {
-    width: 200,
-    height: 200,
-  },
-
-  width: 200,
-  height: 200,
-
-  overflow: 'hidden',
-})
+import { imageSx } from './ProductRow'
 
 const CardHeaderRow = ({ xsScreen }: { xsScreen?: boolean }): JSX.Element => {
   const theme = useTheme()
