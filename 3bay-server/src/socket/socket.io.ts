@@ -23,23 +23,45 @@ export function getSocket() {
   return io ?? null
 }
 
+// key: user's uuid, value: a set of socket ids
+const users = new Map<string, Set<string>>()
+
 const onConnect = (socket: Socket) => {
-  console.log(c.bgMagenta(`new connection ${socket.id}`))
+  console.log(c.bgMagenta(`[Socket] New connection ${socket.id}`))
   // console.log(socket.request.user)
 
   socket.on('whoami', () => {
     // cb(socket.request.user ? socket.request.user.uuid : '')
     console.log(
       c.red(
-        `${socket.request.user.uuid} - ${socket.request.user.name} greeted you <3`,
+        `[Socket] ${socket.request.user.uuid} - ${socket.request.user.name} greeted you <3`,
       ),
     )
+    const uuid = socket.request.user.uuid
+    if (!users.has(uuid)) {
+      users.set(uuid, new Set([socket.id]))
+      console.log(
+        c.blue(`[Socket] User map: add ${uuid}, add socket ID ${socket.id}`),
+      )
+    } else {
+      users.get(uuid)?.add(socket.id)
+      console.log(
+        c.blue(`[Socket] User map: update ${uuid}, add socket ID ${socket.id}`),
+      )
+    }
   })
 
   socket.on('disconnect', () => {
     console.log(
       c.magenta(`${socket.id} - ${socket.request.user.name} disconnected`),
     )
+    const uuid = socket.request.user.uuid
+    if (users.has(uuid)) {
+      const result = users.get(uuid)?.delete(socket.id)
+      if (result) {
+        console.log(c.blue(`[Socket] Remove ${socket.id} from users map`))
+      }
+    }
   })
 }
 
@@ -66,7 +88,31 @@ export function emitEvent(
   if (!io) {
     return null
   }
-  return io.emit(event, data, cb)
+  const result = io.emit(event, data, cb)
+  console.log(c.blue(`[Socket] Event ${event}`))
+  return result
+}
+
+export function emitEventToUsers(
+  uuids: string[],
+  event: SocketEvent,
+  data: unknown,
+  cb?: (err: unknown, data: unknown) => void,
+) {
+  const io = getSocket()
+  if (!io) {
+    return
+  }
+
+  for (const uuid of uuids) {
+    const socketIds = users.get(uuid)
+    if (socketIds) {
+      for (const socketId of socketIds) {
+        io.to(socketId).emit(event, data, cb)
+        console.log(c.blue(`[Socket] Event ${SocketEvent} -> ${socketId}`))
+      }
+    }
+  }
 }
 
 export default initSocketIo

@@ -12,6 +12,7 @@ import { getAllThumbnailLink } from './images-product.controller.js'
 import { ProductRes } from '../types/ProductRes'
 import c from 'ansi-colors'
 import { emitAuctionDetails } from '../socket/auction.io.js'
+import moment from 'moment'
 
 export const AUCTION_EXTEND_MINUTES = 10
 export const MINUTES_TO_EXTEND_AUCTION = 5
@@ -73,6 +74,12 @@ export async function getDetailsAuctionById(auctionId: number | undefined) {
       //     },
       //   },
       // },
+      product: {
+        select: {
+          sellerId: true,
+          name: true,
+        }
+      },
       winningBid: {
         include: {
           bidder: {
@@ -650,15 +657,20 @@ export const extendAuctionTime = async (auctionId: number) => {
     auction &&
     auction.autoExtendAuctionTiming &&
     auction.closeTime &&
-    auction.closeTime.getTime() - new Date().getTime() <=
-      MINUTES_TO_EXTEND_AUCTION * 1000 * 60 // to ms
+    moment().isBetween(
+      moment(auction.closeTime).subtract(MINUTES_TO_EXTEND_AUCTION, 'm'),
+      moment(auction.closeTime),
+      undefined,
+      '[]'
+    )
+    // auction.closeTime.getTime() - new Date().getTime() <=
+    //   MINUTES_TO_EXTEND_AUCTION * 1000 * 60 // to ms
   ) {
-    const extendTime = new Date()
-    extendTime.setMinutes(extendTime.getMinutes() + AUCTION_EXTEND_MINUTES)
+    const extendTime = moment().add(AUCTION_EXTEND_MINUTES, 'm')
     await prisma.auction.update({
       where: { id: auction.id },
       data: {
-        closeTime: extendTime,
+        closeTime: extendTime.toDate(),
       },
     })
     await emitAuctionDetails(auctionId)
