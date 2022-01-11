@@ -71,9 +71,9 @@ const ProductComment = (): JSX.Element | null => {
     if(bidStatus?.status === 'REJECT') {
       ;(async () => {
         if (product) {
-          if (latestAuction?.sellerComment !== 'Người thắng không thanh toán' && latestAuction?.sellerReview !== false) {
+          if (latestAuction?.sellerComment !== 'The winner didn&apos;t pay the order' && latestAuction?.sellerReview !== false) {
             const payload = {
-              sellerComment: 'Người thắng không thanh toán',
+              sellerComment: 'The winner didn&apos;t pay the order',
               sellerReview: false,
             }
             await auctionService.addSellerReview(product.id, payload)
