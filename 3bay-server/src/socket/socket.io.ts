@@ -53,7 +53,7 @@ const onConnect = (socket: Socket) => {
 
   socket.on('disconnect', () => {
     console.log(
-      c.magenta(`${socket.id} - ${socket.request.user.name} disconnected`),
+      c.magenta(`[Socket] ${socket.id} - ${socket.request.user.name} disconnected`),
     )
     const uuid = socket.request.user.uuid
     if (users.has(uuid)) {
@@ -109,7 +109,7 @@ export function emitEventToUsers(
     if (socketIds) {
       for (const socketId of socketIds) {
         io.to(socketId).emit(event, data, cb)
-        console.log(c.blue(`[Socket] Event ${SocketEvent} -> ${socketId}`))
+        console.log(c.blue(`[Socket] Event ${event} -> ${socketId}`))
       }
     }
   }

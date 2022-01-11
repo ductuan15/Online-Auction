@@ -4,6 +4,7 @@ import prisma from '../db/prisma.js'
 import { BidErrorCode } from '../error/error-code.js'
 import { BidError } from '../error/error-exception.js'
 import c from 'ansi-colors'
+import { emitAuctionDetails } from '../socket/auction.io.js'
 
 // total reviews / total auctions
 const VALID_SCORE = 0.8
@@ -151,7 +152,9 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
       next()
     } else {
       res.json(req.auction)
-      next()
+      if (req.auction?.id) {
+        await emitAuctionDetails(req.auction.id)
+      }
     }
   } catch (err) {
     if (err instanceof Error) {
@@ -287,7 +290,9 @@ export const isWinningBid = async (
       next()
     } else {
       res.json(req.auction)
-      next()
+      if (req.auction?.id) {
+        await emitAuctionDetails(req.auction.id)
+      }
     }
   } catch (err) {
     if (err instanceof Error) {

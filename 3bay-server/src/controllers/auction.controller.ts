@@ -78,7 +78,7 @@ export async function getDetailsAuctionById(auctionId: number | undefined) {
         select: {
           sellerId: true,
           name: true,
-        }
+        },
       },
       winningBid: {
         include: {
@@ -347,7 +347,6 @@ export const updateSellerReview = async (
       await emitAuctionDetails(auction.id)
     }
     return next()
-
   } catch (err) {
     if (err instanceof Error) {
       next(err)
@@ -420,7 +419,7 @@ export const isAuctionClosed = async (
       req.auction.closeTime &&
       req.auction.closeTime.getTime() <= new Date().getTime()
     ) {
-      return next(new AuctionError({code: AuctionErrorCode.ClosedAuction}))
+      return next(new AuctionError({ code: AuctionErrorCode.ClosedAuction }))
     } else {
       return next()
     }
@@ -661,7 +660,7 @@ export const extendAuctionTime = async (auctionId: number) => {
       moment(auction.closeTime).subtract(MINUTES_TO_EXTEND_AUCTION, 'm'),
       moment(auction.closeTime),
       undefined,
-      '[]'
+      '[]',
     )
     // auction.closeTime.getTime() - new Date().getTime() <=
     //   MINUTES_TO_EXTEND_AUCTION * 1000 * 60 // to ms
