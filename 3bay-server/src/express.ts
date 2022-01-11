@@ -46,7 +46,7 @@ declare global {
 const app = express()
 
 function initializeMiddlewares() {
-  app.use(morgan('dev'))
+  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
   // parse body params and attache them to req.body
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))

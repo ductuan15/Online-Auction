@@ -4,6 +4,7 @@ import prisma from './db/prisma.js'
 import c from 'ansi-colors'
 import { createServer } from 'http'
 import initSocketIo from './socket/socket.io.js'
+import scheduler from './services/auction.service.js'
 
 const PORT = process.env.PORT || config.PORT || 3030
 
@@ -17,6 +18,7 @@ async function main() {
     console.log(c.magenta(`Hope you're having a great day :>`))
     console.log(c.magenta(`Happy coding!`))
   })
+  // await scheduler.init()
 }
 
 main()
