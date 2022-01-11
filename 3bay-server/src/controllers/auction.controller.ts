@@ -332,7 +332,7 @@ export const updateSellerReview = async (
   next: NextFunction,
 ) => {
   try {
-    if (req.auction?.closeTime && req.auction.closeTime) {
+    if (req.auction?.closeTime && req.auction.closeTime > new Date()) {
       return next(new AuctionError({ code: AuctionErrorCode.NotClosedAuction }))
     } else {
       const auction = await prisma.auction.update({
