@@ -276,21 +276,23 @@ const ProductInfo = (): JSX.Element | null => {
 
           <Box flexGrow={1} />
 
-          <BorderIconButton
-            size='large'
-            onClick={onWatchlistButtonClicked}
-            isSelected={isInWatchlist}
-            color='error'
-            sx={{ mt: 1 }}
-          >
-            <Tooltip title='Add to watchlist'>
-              {isInWatchlist ? (
-                <FavoriteOutlinedIcon color='error' />
-              ) : (
-                <FavoriteBorderOutlinedIcon color='error' />
-              )}
-            </Tooltip>
-          </BorderIconButton>
+          {latestAuction && moment(latestAuction?.closeTime).isAfter() && (
+            <BorderIconButton
+              size='large'
+              onClick={onWatchlistButtonClicked}
+              isSelected={isInWatchlist}
+              color='error'
+              sx={{ mt: 1 }}
+            >
+              <Tooltip title='Add to watchlist'>
+                {isInWatchlist ? (
+                  <FavoriteOutlinedIcon color='error' />
+                ) : (
+                  <FavoriteBorderOutlinedIcon color='error' />
+                )}
+              </Tooltip>
+            </BorderIconButton>
+          )}
         </Grid>
       )}
     </Grid>

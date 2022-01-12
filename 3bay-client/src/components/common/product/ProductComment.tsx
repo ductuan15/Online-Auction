@@ -19,10 +19,16 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import * as React from 'react'
-import { SyntheticEvent, useCallback, useMemo, useState, useEffect } from 'react'
+import {
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import BorderButton from '../button/BorderButton'
 import auctionService from '../../../services/auction.service'
-import moment from "moment";
+import moment from 'moment'
 
 const ProductComment = (): JSX.Element | null => {
   const {
@@ -108,15 +114,16 @@ const ProductComment = (): JSX.Element | null => {
   const closeTimeStr = latestAuction?.closeTime || null
   const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
 
-  if (!product || !latestAuction) return null
-  if (latestAuction) {
-    if (closeTime?.isAfter()) {     //closeTime > now => not end auction => null
-      return null
+  return useMemo(() => {
+    if (!product || !latestAuction) return null
+    if (latestAuction) {
+      if (closeTime?.isAfter()) {
+        //closeTime > now => not end auction => null
+        return null
+      }
     }
-  }
 
-  return (
-    <>
+    return (
       <Paper
         elevation={0}
         component={Grid}
@@ -280,7 +287,20 @@ const ProductComment = (): JSX.Element | null => {
           )}
         </List>
       </Paper>
-    </>
-  )
+    )
+  }, [
+    closeTime,
+    comment,
+    handleButtonChange,
+    handleChange,
+    handleSaveButton,
+    hasBidderReview,
+    hasSellerReview,
+    latestAuction,
+    point,
+    product,
+    shouldDisplayReviewForm,
+    theme.typography.body1.fontSize,
+  ])
 }
 export default ProductComment
