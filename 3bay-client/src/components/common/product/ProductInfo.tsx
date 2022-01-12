@@ -264,7 +264,7 @@ const ProductInfo = (): JSX.Element | null => {
         )}
       </Grid>
 
-      {product && closeTime?.isAfter() && (
+      {product && (
         <Grid
           item
           container

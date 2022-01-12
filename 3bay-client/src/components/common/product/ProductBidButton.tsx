@@ -5,6 +5,8 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 import BorderButton from '../button/BorderButton'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Link } from '@mui/material'
+import moment from 'moment'
+import { BidStatus } from '../../../models/bidder'
 
 const RejectButton = (
   <BorderButton color='error' isSelected={true} disableRipple sx={{ mt: 1 }}>
@@ -16,7 +18,7 @@ const MINIMUM_POINT = 0.8
 
 function ProductBidButton(): JSX.Element | null {
   const {
-    state: { currentProduct: product, bidStatus, userPoint },
+    state: { currentProduct: product, bidStatus, userPoint, latestAuction },
     dispatch,
   } = useProductContext()
 
@@ -32,6 +34,9 @@ function ProductBidButton(): JSX.Element | null {
   }, [product?.sellerId, userDetails])
 
   let button: JSX.Element | null
+
+  const closeTimeStr = latestAuction?.closeTime || null
+  const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
 
   if (!userPoint || (userPoint && userPoint >= MINIMUM_POINT)) {
     switch (bidStatus?.status) {
@@ -104,7 +109,29 @@ function ProductBidButton(): JSX.Element | null {
     button = null
   }
 
+  // seller can cancel the transaction when auction had winner
+  if (!canBidThis && userDetails && latestAuction) {
+    if (closeTime?.isBefore() && latestAuction.winningBid) {      //closeTime < now => end auction && winningBid
+      button = (
+        <BorderButton
+          sx={{ mt: 1 }}
+          color='error'
+          onClick={() => {
+            dispatch({
+              type: 'UPDATE_BID_STATUS',
+              payload: {
+                status: "REJECT"
+              },
+            })
+          }}
+        >
+          ❌ Cancel the transaction
+        </BorderButton>
+      )
+    }
+  }
+
   return button
 }
 
-export default ProductBidButton 
+export default ProductBidButton

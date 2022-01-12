@@ -22,7 +22,7 @@ import * as React from 'react'
 import { SyntheticEvent, useCallback, useMemo, useState, useEffect } from 'react'
 import BorderButton from '../button/BorderButton'
 import auctionService from '../../../services/auction.service'
-import _ from "lodash";
+import moment from "moment";
 
 const ProductComment = (): JSX.Element | null => {
   const {
@@ -81,7 +81,7 @@ const ProductComment = (): JSX.Element | null => {
         }
       })()
     }
-  }, [bidStatus?.status]);
+  }, [bidStatus?.status, product, latestAuction?.sellerComment, latestAuction?.sellerReview]);
 
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,9 +122,12 @@ const ProductComment = (): JSX.Element | null => {
     userDetails?.uuid,
   ])
 
+  const closeTimeStr = latestAuction?.closeTime || null
+  const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
+
   if (!product || !latestAuction) return null
   if (latestAuction) {
-    if (new Date(latestAuction.closeTime) > new Date()) {
+    if (closeTime?.isAfter()) {     //closeTime > now => not end auction => null
       return null
     }
   }
