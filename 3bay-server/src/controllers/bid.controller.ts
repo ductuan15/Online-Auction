@@ -5,6 +5,11 @@ import { BidErrorCode } from '../error/error-code.js'
 import { BidError } from '../error/error-exception.js'
 import c from 'ansi-colors'
 import { emitAuctionDetails } from '../socket/auction.io.js'
+import { sellerInfoSelection } from './product.controller.js'
+import { emitEventToUsers } from '../socket/socket.io.js'
+import { SocketEvent } from '../socket/socket-event.js'
+import sendMailTemplate from '../services/mail.service.js'
+import MailType from '../const/mail.js'
 
 // total reviews / total auctions
 const VALID_SCORE = 0.8
@@ -513,5 +518,77 @@ export const recalculateNewWinningBid = async (
     if (err instanceof Error) {
       next(err)
     }
+  }
+}
+
+async function getInvolvedBidders(auctionId: number | undefined) {
+  return await prisma.bid.findMany({
+    include: {
+      bidder: {
+        select: {
+          ...sellerInfoSelection,
+          email: true,
+        },
+      },
+    },
+    where: {
+      // return accepted bids only
+      NOT: {
+        bidder: {
+          userBidStatus: {
+            none: {
+              auctionId: auctionId,
+              status: Prisma.BidStatus.ACCEPTED,
+            },
+          },
+        },
+      },
+    },
+  })
+}
+
+export const notifyWhenBidAccepted = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  console.log(c.yellow('bidController.notifyWhenBidAccepted'))
+  try {
+    const product = await prisma.product.findFirst({
+      where: {
+        latestAuctionId: req.auction?.id,
+      },
+      rejectOnNotFound: true,
+    })
+
+    const involvedBidders = await getInvolvedBidders(req.auction?.id)
+
+    emitEventToUsers(
+      [
+        ...involvedBidders.map((bid) => {
+          return bid.bidder.uuid
+        }),
+      ],
+      SocketEvent.AUCTION_NOTIFY,
+      { type: 'AUCTION_NEW_BID', data: product },
+    )
+
+    for (const {
+      bidder: { email, name },
+    } of involvedBidders) {
+      await sendMailTemplate(
+        [email],
+        MailType.AUCTION_NEW_BID_TO_BIDDER,
+        {
+          productName: product.name,
+          name: name,
+        },
+        [product.name],
+      )
+    }
+
+    next()
+  } catch (e) {
+    next(e)
   }
 }

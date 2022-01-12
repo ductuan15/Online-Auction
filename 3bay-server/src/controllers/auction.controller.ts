@@ -233,6 +233,8 @@ export const update = async (
     })
     await emitAuctionDetails(auction.id)
     res.json(auction)
+
+    next()
   } catch (err) {
     if (err instanceof Error) {
       next(err)

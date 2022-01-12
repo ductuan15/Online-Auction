@@ -18,6 +18,7 @@ router
     bidController.executeAutoBid,
     bidController.recalculateNewWinningBid,
     auctionController.update,
+    bidController.notifyWhenBidAccepted,
   )
 
 router

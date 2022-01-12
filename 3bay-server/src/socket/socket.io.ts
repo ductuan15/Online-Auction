@@ -4,7 +4,8 @@ import { ExtendedError } from 'socket.io/dist/namespace.js'
 import passport from '../auth/passport.js'
 import Prisma from '@prisma/client'
 import c from 'ansi-colors'
-import { SocketEvent } from './socket-event.js'
+import { NotifyData, SocketEvent } from './socket-event.js'
+import { AuctionFromGetDetails } from './auction.io.js'
 
 let io: Server
 
@@ -18,6 +19,8 @@ declare module 'http' {
     user: Prisma.User
   }
 }
+
+type SocketData = AuctionFromGetDetails | NotifyData
 
 export function getSocket() {
   return io ?? null
@@ -53,7 +56,9 @@ const onConnect = (socket: Socket) => {
 
   socket.on('disconnect', () => {
     console.log(
-      c.magenta(`[Socket] ${socket.id} - ${socket.request.user.name} disconnected`),
+      c.magenta(
+        `[Socket] ${socket.id} - ${socket.request.user.name} disconnected`,
+      ),
     )
     const uuid = socket.request.user.uuid
     if (users.has(uuid)) {
@@ -96,7 +101,7 @@ export function emitEvent(
 export function emitEventToUsers(
   uuids: string[],
   event: SocketEvent,
-  data: unknown,
+  data: SocketData,
   cb?: (err: unknown, data: unknown) => void,
 ) {
   const io = getSocket()

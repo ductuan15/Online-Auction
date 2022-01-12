@@ -1,27 +1,28 @@
-import { emitEvent, emitEventToUsers } from './socket.io.js'
+import { emitEvent } from './socket.io.js'
 import { SocketEvent } from './socket-event.js'
 import { getDetailsAuctionById } from '../controllers/auction.controller.js'
 import c from 'ansi-colors'
 
-export async function emitAuctionDetails(auctionId: number | undefined) {
+export type AuctionFromGetDetails = Awaited<
+  Promise<PromiseLike<ReturnType<typeof getDetailsAuctionById>>>
+>
+
+async function getAuctionAndEmit(
+  auctionObj: number | undefined,
+  emitCb: (auction: AuctionFromGetDetails) => void,
+) {
   try {
-    console.log(c.blue(`Emitting auction details ${auctionId}`))
-    const auction = await getDetailsAuctionById(auctionId)
-
-    emitEventToUsers(
-      [
-        auction.product.sellerId,
-        ...auction.bids.map((bid) => {
-          return bid.bidderId
-        }),
-      ],
-      SocketEvent.NOTIFY_UPDATE_AUCTION,
-      auction,
-    )
-
-    emitEvent(SocketEvent.UPDATE_AUCTION, auction)
+    console.log(c.blue(`[Socket] Emitting auction details ${auctionObj}`))
+    const auction = await getDetailsAuctionById(auctionObj)
+    await emitCb(auction)
   } catch (e) {
-    console.log(c.red(`Cannot emit auction details ${auctionId}`))
+    console.log(c.red(`[Socket] Cannot emit auction details ${auctionObj}`))
     console.log(e)
   }
+}
+
+export async function emitAuctionDetails(auctionId: number | undefined) {
+  await getAuctionAndEmit(auctionId, (auction) => {
+    emitEvent(SocketEvent.AUCTION_UPDATE, auction)
+  })
 }
