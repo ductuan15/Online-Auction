@@ -71,9 +71,10 @@ const ProductComment = (): JSX.Element | null => {
     if(bidStatus?.status === 'REJECT') {
       ;(async () => {
         if (product) {
-          if (latestAuction?.sellerComment !== 'The winner didn&apos;t pay the order' && latestAuction?.sellerReview !== false) {
+          if (latestAuction?.sellerComment !== "The winner didn't pay the order" && latestAuction?.sellerReview !== false) {
+            console.log("re")
             const payload = {
-              sellerComment: 'The winner didn&apos;t pay the order',
+              sellerComment: "The winner didn't pay the order",
               sellerReview: false,
             }
             await auctionService.addSellerReview(product.id, payload)
