@@ -42,11 +42,11 @@
           <br/>
           Thank you for submitting the product 「{{productName}}」 to our website.
           <br/>
-          Unfortunately, the auction time of your product has been ended without any bids.
+
         </mj-text>
 
         <mj-text mj-class="text">
-          <!--TODO -->
+
         </mj-text>
 
         <mj-text mj-class="text">

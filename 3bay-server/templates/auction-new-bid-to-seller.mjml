@@ -14,7 +14,9 @@
                 line-height='1.25'/>
     </mj-attributes>
 
-    <mj-preview>Your product's Auction time has been ended</mj-preview>
+    <mj-preview>
+      <!--      TODO add preview-->
+    </mj-preview>
 
   </mj-head>
 
@@ -34,19 +36,16 @@
       <mj-column width="600px">
 
         <mj-text mj-class="title">
-          <b>Your product's Auction time has been ended</b>
+          <b>Your auction「{{productName}}」has been updated</b>
         </mj-text>
 
         <mj-text mj-class="text">Hello
           <b>{{name}}</b>,
-          <br/>
-          Thank you for submitting the product 「{{productName}}」 to our website.
-          <br/>
-          Unfortunately, the auction time of your product has been ended without any bids.
+
         </mj-text>
 
         <mj-text mj-class="text">
-          <!--TODO -->
+
         </mj-text>
 
         <mj-text mj-class="text">

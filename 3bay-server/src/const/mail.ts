@@ -4,8 +4,10 @@ export enum MailType {
   RESET_PWD,
   AUCTION_BID_REJECTED,
   AUCTION_CLOSED_NO_WINNER,
-  AUCTION_CLOSED_HAD_WINNER,
-  AUCTION_NEW_BID,
+  AUCTION_CLOSED_TO_BIDDER,
+  AUCTION_CLOSED_TO_SELLER,
+  AUCTION_NEW_BID_TO_BIDDER,
+  AUCTION_NEW_BID_TO_SELLER,
 }
 
 export const mailFileNames: ReadonlyMap<MailType, string> = new Map([
@@ -17,8 +19,10 @@ export const mailFileNames: ReadonlyMap<MailType, string> = new Map([
     MailType.AUCTION_CLOSED_NO_WINNER,
     'auction-closed-no-winner.mjml',
   ],
-  [MailType.AUCTION_CLOSED_HAD_WINNER, 'test.mjml'],
-  [MailType.AUCTION_NEW_BID, 'test.mjml'],
+  [MailType.AUCTION_CLOSED_TO_BIDDER, 'auction-closed-to-bidder.mjml'],
+  [MailType.AUCTION_CLOSED_TO_SELLER, 'auction-closed-to-seller.mjml'],
+  [MailType.AUCTION_NEW_BID_TO_BIDDER, 'auction-new-bid-to-bidder.mjml'],
+  [MailType.AUCTION_NEW_BID_TO_SELLER, 'auction-new-bid-to-seller.mjml'],
 ])
 
 export const mailTitles: ReadonlyMap<
@@ -39,7 +43,7 @@ export const mailTitles: ReadonlyMap<
     },
   ],
   [
-    MailType.AUCTION_CLOSED_HAD_WINNER,
+    MailType.AUCTION_CLOSED_TO_BIDDER,
     (values) => {
       if (values.length !== 0) {
         return `Your auction for the product 「${values[0]}」has been closed`
@@ -47,8 +51,34 @@ export const mailTitles: ReadonlyMap<
       return `One of your auctions has been closed`
     },
   ],
+  [
+    MailType.AUCTION_CLOSED_TO_SELLER,
+    (values) => {
+      if (values.length !== 0) {
+        return `You won the auction 「${values[0]}」`
+      }
+      return `You won an auction at 3bay`
+    },
+  ],
   // TODO update title
-  [MailType.AUCTION_NEW_BID, 'New bid'],
+  [
+    MailType.AUCTION_NEW_BID_TO_BIDDER,
+    (values) => {
+      if (values.length !== 0) {
+        return `The price of「${values[0]}」has been updated`
+      }
+      return `Product update`
+    },
+  ],
+  [
+    MailType.AUCTION_NEW_BID_TO_SELLER,
+    (values) => {
+      if (values.length !== 0) {
+        return `Your auction「${values[0]}」has been updated`
+      }
+      return `Product update`
+    },
+  ],
 ])
 
 export default MailType
