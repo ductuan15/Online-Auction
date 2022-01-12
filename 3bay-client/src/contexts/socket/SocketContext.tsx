@@ -16,7 +16,7 @@ const SocketContext = createContext<SocketContextType>({
 })
 
 export enum SocketEvent {
-  UPDATE_AUCTION = 'update_auction'
+  AUCTION_UPDATE = 'auction_update',
 }
 
 const useSocketContext = (): SocketContextType => {
@@ -27,10 +27,11 @@ export default useSocketContext
 
 export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
   const { user } = useAuth()
+
   const socket = useMemo(() => {
-    if (user) {
+    if (user?.token) {
       try {
-        // console.log('connect')
+        console.log('connect')
         const socket = connect(config.API_HOST_NAME, {
           extraHeaders: {
             Authorization: `Bearer ${user.token}`,
@@ -49,7 +50,7 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
     } else {
       return null
     }
-  }, [user])
+  }, [user?.token])
 
   useEffect(() => {
     if (socket) {
@@ -57,7 +58,7 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
     }
     return () => {
       if (socket) {
-        // console.log('disconnect')
+        console.log('disconnect')
         socket?.disconnect()
       }
     }

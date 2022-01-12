@@ -157,7 +157,7 @@ export default function BidRequestTable() {
           able to bid your product.
         </Typography>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={'auto'}>
           <div style={{ height: 300, width: '100%' }}>
             <DataGrid columns={columns} rows={rows} />
           </div>

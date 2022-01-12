@@ -32,9 +32,9 @@ import EditProduct from './pages/seller/EditProduct'
 import ProductProvider from './contexts/product/ProductDetailsContext'
 import PostedProductList from './pages/seller/PostedProductList'
 import { SocketProvider } from './contexts/socket/SocketContext'
-import AuctionList from "./pages/user/auctionlist/AuctionList";
-import WonAuctionList from "./pages/user/wonauctionlist/WonAuctionList";
-import AuctionHasWinner from "./pages/seller/AuctionsHaveWinner";
+import AuctionList from './pages/user/auctionlist/AuctionList'
+import WonAuctionList from './pages/user/wonauctionlist/WonAuctionList'
+import AuctionHasWinner from './pages/seller/AuctionsHaveWinner'
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -45,8 +45,16 @@ function GlobalRouter(): JSX.Element {
         <Route path='/' element={<HomeLayout />}>
           <Route index element={<Home />} />
 
-          <Route path='product/create' element={<RequireRole role={'SELLER'}/>}>
-            <Route index element={<CreateProduct/>}/>
+          <Route
+            path='product/create'
+            element={<RequireRole role={'SELLER'} />}
+          >
+            <Route index element={<CreateProduct />} />
+          </Route>
+
+          <Route path='seller/' element={<RequireRole role={'SELLER'} />}>
+            <Route path='postedproductlist' element={<PostedProductList />} />
+            <Route path='auctionhaswinner' element={<AuctionHasWinner />} />
           </Route>
 
           <Route
@@ -66,20 +74,11 @@ function GlobalRouter(): JSX.Element {
             <Route path='user/watchlist' element={<WatchList />} />
             <Route path='user/auctionlist' element={<AuctionList />} />
             <Route path='user/wonauctionlist' element={<WonAuctionList />} />
-            <Route
-              path='user/postedproductlist'
-              element={<PostedProductList />}
-            />
-            <Route
-              path='user/auctionhaswinner'
-              element={<AuctionHasWinner />}
-            />
 
             <Route path='user/' element={<UserLayout />}>
               <Route index element={<Home />} />
               <Route path='account' element={<Account />} />
               <Route path='password' element={<Password />} />
-              <Route path='*' />
             </Route>
           </Route>
 

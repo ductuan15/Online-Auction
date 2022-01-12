@@ -194,7 +194,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       )}
 
       {user && user.role === 'SELLER' && (
-        <MenuItem component={RouterLink} to='/user/postedproductlist'>
+        <MenuItem component={RouterLink} to='/seller/postedproductlist'>
           <ListItemIcon>
             <Inventory2OutlinedIcon fontSize='small' />
           </ListItemIcon>
@@ -203,7 +203,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       )}
 
       {user && user.role === 'SELLER' && (
-        <MenuItem component={RouterLink} to='/user/auctionhaswinner'>
+        <MenuItem component={RouterLink} to='/seller/auctionhaswinner'>
           <ListItemIcon>
             <InventoryOutlinedIcon fontSize='small' />
           </ListItemIcon>
