@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Link } from '@mui/material'
 import moment from 'moment'
 import { BidStatus } from '../../../models/bidder'
+import auctionService from "../../../services/auction.service";
 
 const RejectButton = (
   <BorderButton color='error' isSelected={true} disableRipple sx={{ mt: 1 }}>
@@ -37,6 +38,18 @@ function ProductBidButton(): JSX.Element | null {
 
   const closeTimeStr = latestAuction?.closeTime || null
   const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
+
+  const onCancelTransactionButtonClicked = async () => {
+    if (product) {
+      if (latestAuction?.sellerComment !== "The winner didn't pay the order" && latestAuction?.sellerReview !== false) {    //if the seller haven't cancel the transaction before
+        const payload = {
+          sellerComment: "The winner didn't pay the order",
+          sellerReview: false,
+        }
+        await auctionService.addSellerReview(product.id, payload)
+      }
+    }
+  }
 
   if (!userPoint || (userPoint && userPoint >= MINIMUM_POINT)) {
     switch (bidStatus?.status) {
@@ -111,19 +124,12 @@ function ProductBidButton(): JSX.Element | null {
 
   // seller can cancel the transaction when auction had winner
   if (!canBidThis && userDetails && latestAuction) {
-    if (closeTime?.isBefore() && latestAuction.winningBid) {      //closeTime < now => end auction && winningBid
+    if (closeTime?.isBefore() && latestAuction.winningBid && latestAuction.sellerComment !== "The winner didn't pay the order" && latestAuction.sellerReview !== false) {      //closeTime < now => end auction && winningBid && review are not cancel
       button = (
         <BorderButton
           sx={{ mt: 1 }}
           color='error'
-          onClick={() => {
-            dispatch({
-              type: 'UPDATE_BID_STATUS',
-              payload: {
-                status: "REJECT"
-              },
-            })
-          }}
+          onClick={onCancelTransactionButtonClicked}
         >
           ❌ Cancel the transaction
         </BorderButton>

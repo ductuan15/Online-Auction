@@ -30,7 +30,7 @@ const ProductComment = (): JSX.Element | null => {
   } = useUserContext()
 
   const {
-    state: { latestAuction, currentProduct: product, bidStatus },
+    state: { latestAuction, currentProduct: product },
   } = useProductContext()
   const theme = useTheme()
   const minSize = '40px'
@@ -66,24 +66,6 @@ const ProductComment = (): JSX.Element | null => {
     product?.sellerId,
     userDetails?.uuid,
   ])
-
-  useEffect(() => {
-    if(bidStatus?.status === 'REJECT') {
-      ;(async () => {
-        if (product) {
-          if (latestAuction?.sellerComment !== "The winner didn't pay the order" && latestAuction?.sellerReview !== false) {
-            console.log("re")
-            const payload = {
-              sellerComment: "The winner didn't pay the order",
-              sellerReview: false,
-            }
-            await auctionService.addSellerReview(product.id, payload)
-          }
-        }
-      })()
-    }
-  }, [bidStatus?.status, product, latestAuction?.sellerComment, latestAuction?.sellerReview]);
-
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.currentTarget.value)
