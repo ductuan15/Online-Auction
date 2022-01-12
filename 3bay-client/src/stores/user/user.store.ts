@@ -1,9 +1,13 @@
 import { UpgradeToSellerRequest, UserDetails } from '../../models/user'
 import Product from '../../models/product'
+import { NotifyData } from '../../models/notification'
+
+const MAX_NOTIFICATIONS = 20
 
 export type UserState = {
   userDetails?: UserDetails
-  watchlist: Product[],
+  watchlist: Product[]
+  notifyList: NotifyData[]
 }
 
 export type UserAction =
@@ -12,10 +16,12 @@ export type UserAction =
   | { type: 'UPDATE_WATCH_LIST'; payload: Product[] }
   | { type: 'ADD_WATCH_LIST'; payload: Product }
   | { type: 'DELETE_WATCH_LIST'; payload: number }
+  | { type: 'ADD_NOTIFICATION'; payload: NotifyData }
 
-export const initialUserState = {
+export const initialUserState: UserState = {
   //
   watchlist: [],
+  notifyList: [],
 }
 
 export const userReducer = (
@@ -27,6 +33,7 @@ export const userReducer = (
       return {
         ...state,
         userDetails: action.payload,
+        notifyList: !action.payload ? [] : state.notifyList,
       }
     case 'UPGRADE_TO_SELLER_REQUEST': {
       let newData = state.userDetails
@@ -58,6 +65,17 @@ export const userReducer = (
           return product.id !== action.payload
         }),
       }
+    case 'ADD_NOTIFICATION': {
+      const newNotifyList = [...state.notifyList, action.payload]
+      if (newNotifyList.length > MAX_NOTIFICATIONS) {
+        newNotifyList.shift()
+      }
+      // console.log(newNotifyList)
+      return {
+        ...state,
+        notifyList: newNotifyList,
+      }
+    }
     default:
       return state
   }

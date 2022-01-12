@@ -53,6 +53,7 @@ function GlobalRouter(): JSX.Element {
           </Route>
 
           <Route path='seller/' element={<RequireRole role={'SELLER'} />}>
+            {/* TODO: change path name of these 2 route*/}
             <Route path='postedproductlist' element={<PostedProductList />} />
             <Route path='auctionhaswinner' element={<AuctionHasWinner />} />
           </Route>

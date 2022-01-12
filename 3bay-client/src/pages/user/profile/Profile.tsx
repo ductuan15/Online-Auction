@@ -83,7 +83,7 @@ const Profile = (): JSX.Element => {
           </Grid>
           <Grid item>
             <Typography color='text.secondary'>
-              {user?.dob ? moment(new Date(user?.dob)).format('L') : ''}
+              {user?.dob ? moment(new Date(user?.dob)).utc().format('L') : ''}
             </Typography>
           </Grid>
         </Grid>
