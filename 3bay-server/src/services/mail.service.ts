@@ -5,9 +5,26 @@ import fs from 'fs-extra'
 import mjml from 'mjml'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
+import Handlebars from 'handlebars'
+import c from 'ansi-colors'
+import MailType, { mailFileNames, mailTitles } from '../const/mail.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
+const mailTemplates = new Map<MailType, HandlebarsTemplateDelegate>()
+
+function initMailTemplates() {
+  console.log(c.yellow('Start loading email templates'))
+  for (const [key, value] of mailFileNames) {
+    console.log(c.yellow(value))
+    const mjmlContent = fs.readFileSync(
+      path.join(__dirname, `../../templates/${value}`),
+    )
+    const template = Handlebars.compile(mjml(mjmlContent.toString()).html)
+    mailTemplates.set(key, template)
+  }
+}
 
 const transporter = nodemailer.createTransport({
   host: mailConfig.HOST,
@@ -24,23 +41,53 @@ const transporter = nodemailer.createTransport({
 
 const sendMail = async (to: string[], subject: string, html: string) => {
   if (!mailConfig.IS_ENABLED) return
+
+  const filteredMails = to.filter((mail) => {
+    return mail.indexOf('@example') === -1
+  })
+
+  if (filteredMails.length === 0) return
+
   const options: Mail.Options = {
     // from: `"3bay" <${mailConfig.USER}>`,
-    to,
+    to: filteredMails,
     subject,
     html,
   }
   return await transporter.sendMail(options)
 }
 
+const sendMailTemplate = async (
+  to: string[],
+  type: MailType,
+  templateData?: unknown,
+  titleData?: string[],
+) => {
+  let subject = ''
+  const mailTitle = mailTitles.get(type)
+  if (mailTitle) {
+    if (typeof mailTitle === 'string') {
+      subject = mailTitle
+    } else {
+      subject = mailTitle(titleData ?? [])
+    }
+  }
+
+  let html = ''
+  const template = mailTemplates.get(type)
+  if (template) {
+    html = template(templateData)
+  }
+
+  return await sendMail(to, subject, html)
+}
+
 export const test = async (to: string) => {
   if (!mailConfig.IS_ENABLED) return
 
-  const testFile = path.join(__dirname, '../templates/test.mjml')
-  const mjmlContent = await fs.readFile(testFile)
-  const html = mjml(mjmlContent.toString()).html
-
-  return await sendMail([to], '[3bay]　テスト', html)
+  return await sendMailTemplate([to], MailType.TEST)
 }
 
-export default sendMail
+initMailTemplates()
+
+export default sendMailTemplate

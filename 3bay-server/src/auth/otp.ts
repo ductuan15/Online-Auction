@@ -3,45 +3,27 @@ import Prisma from '@prisma/client'
 import prisma from '../db/prisma.js'
 import { AuthError } from '../error/error-exception.js'
 import { AuthErrorCode } from '../error/error-code.js'
-import path, { dirname } from 'path'
-import fs from 'fs-extra'
-import Handlebars from 'handlebars'
-import mjml from 'mjml'
-import sendMail from '../services/mail.service.js'
-import { fileURLToPath } from 'url'
+import sendMailTemplate from '../services/mail.service.js'
+import MailType from '../const/mail.js'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const verifyMjmlFile = path.join(__dirname, '../../templates/verify.mjml')
-const verifyMjmlContent = await fs.readFile(verifyMjmlFile)
-const verifyTemplate = Handlebars.compile(
-  mjml(verifyMjmlContent.toString()).html,
-)
-
-const sendVerifyEmail = async (otp: string, user: {
-  email: string,
-  name: string
-}) => {
-  const subject = `Please verify your 3bay account`
-  await sendMail(
-    [user.email],
-    subject,
-    verifyTemplate({ otp: otp, name: user.name }),
-  )
+const sendVerifyEmail = async (
+  otp: string,
+  user: {
+    email: string
+    name: string
+  },
+) => {
+  await sendMailTemplate([user.email], MailType.VERIFY, {
+    otp: otp,
+    name: user.name,
+  })
 }
 
-const rpMjmlFile = path.join(__dirname, '../../templates/reset-password.mjml')
-const rpMjmlContent = await fs.readFile(rpMjmlFile)
-const rpTemplate = Handlebars.compile(mjml(rpMjmlContent.toString()).html)
-
 const sendResetPasswordEmail = async (otp: string, user: Prisma.User) => {
-  const subject = `Reset your 3bay account password`
-  await sendMail(
-    [user.email],
-    subject,
-    rpTemplate({ otp: otp, name: user.name }),
-  )
+  await sendMailTemplate([user.email], MailType.RESET_PWD, {
+    otp: otp,
+    name: user.name,
+  })
 }
 
 export function generateOtp(
@@ -172,7 +154,6 @@ export async function verifyOTP(
   otpType: Prisma.OtpType,
   data?: string | null,
 ): Promise<boolean> {
-
   let whereClause = {
     id: user.uuid,
     type: otpType,
