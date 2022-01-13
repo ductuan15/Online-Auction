@@ -29,6 +29,7 @@ router
     auctionController.isAuctionClosed,
     bidController.isProductOwner,
     bidController.setBidStatusToRejected,
+    bidController.notifyWhenBidRejected, //
     bidController.isWinningBid,
     bidController.executeAutoBid,
     bidController.recalculateNewWinningBid,

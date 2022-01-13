@@ -134,6 +134,15 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
           bidderId: req.user?.uuid || '',
           bidPrice: req.body.bidPrice,
         },
+        include: {
+          bidder: {
+            select: {
+              email: true,
+              name: true,
+              uuid: true,
+            },
+          },
+        },
       }),
       prisma.userBidStatus.upsert({
         where: {
@@ -258,19 +267,35 @@ export const setBidStatusToRejected = async (
   }
 }
 
+export async function getBidById(
+  bidId: number | undefined,
+  auctionId: number | undefined,
+) {
+  return await prisma.bid.findFirst({
+    include: {
+      bidder: {
+        select: {
+          uuid: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+    where: {
+      id: +(bidId || NaN),
+      auctionId: auctionId,
+    },
+    rejectOnNotFound: true,
+  })
+}
+
 export const bidById = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    req.bid = await prisma.bid.findFirst({
-      where: {
-        id: +(req.params.bidId || NaN),
-        auctionId: req.auction?.id,
-      },
-      rejectOnNotFound: true,
-    })
+    req.bid = await getBidById(+(req.params.bidId || NaN), req.auction?.id)
     next()
   } catch (err) {
     if (err instanceof Error) {
@@ -511,6 +536,15 @@ export const recalculateNewWinningBid = async (
         },
         auctionId: req.auction?.id || NaN,
       },
+      include: {
+        bidder: {
+          select: {
+            email: true,
+            name: true,
+            uuid: true,
+          },
+        },
+      },
     })
     req.bid = winningBid
     next()
@@ -587,6 +621,45 @@ export const notifyWhenBidAccepted = async (
       )
     }
 
+    next()
+  } catch (e) {
+    next(e)
+  }
+}
+
+export const notifyWhenBidRejected = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  console.log(c.yellow('bidController.notifyWhenBidRejected'))
+  try {
+    if (!req.bid) {
+      return next(new BidError({ code: BidErrorCode.BidderNotFound }))
+    }
+
+    const product = await prisma.product.findFirst({
+      where: {
+        latestAuctionId: req.auction?.id,
+      },
+      rejectOnNotFound: true,
+    })
+
+    emitEventToUsers([req.bid.bidder.uuid], SocketEvent.AUCTION_NOTIFY, {
+      type: 'AUCTION_BID_REJECTED',
+      data: req.bid,
+    })
+
+    await sendMailTemplate(
+      [req.bid.bidder.email],
+      MailType.AUCTION_BID_REJECTED,
+      {
+        productName: product.name,
+        name: req.bid.bidder.name,
+      },
+      [], // TODO: add titleData if necessary
+    )
+    console.log(c.green(`Send email to ${req.bid.bidder.email}`))
     next()
   } catch (e) {
     next(e)
