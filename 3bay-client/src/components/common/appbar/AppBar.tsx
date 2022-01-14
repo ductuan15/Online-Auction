@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -19,7 +19,7 @@ import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import RoleLabel from '../../user/profile/RoleLabel'
 import WatchListButton from './WatchListButton'
-import { Link, Stack, useTheme } from '@mui/material'
+import { Link, Stack } from '@mui/material'
 import BorderButton from '../button/BorderButton'
 import {
   Link as RouterLink,
@@ -128,31 +128,39 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }))
 
-export default function SearchAppBar(): JSX.Element {
-  const menuId = 'primary-search-account-menu'
-  const mobileMenuId = 'primary-search-account-menu-mobile'
-  const notifyMenuId = 'primary-search-account-menu-Notify'
+const menuId = 'primary-search-account-menu'
+const mobileMenuId = 'primary-search-account-menu-mobile'
+const notifyMenuId = 'primary-search-account-menu-Notify'
 
-  const createProductPath = '/product/create'
+const createProductPath = '/product/create'
+
+export default function SearchAppBar(): JSX.Element {
   const resolved = useResolvedPath(createProductPath)
   const match = useMatch({ path: resolved.pathname, end: true })
 
-  const { toggleDrawer, dispatch } = useLayoutContext()
+  const { state, toggleDrawer, dispatch } = useLayoutContext()
 
   const { isAuth, user } = useAuth()
-  const theme = useTheme()
+
   useEffect(() => {
-    dispatch({ type: 'CLOSE_PROFILE_MENU' })
-  }, [dispatch, theme])
+    return () => {
+      dispatch({ type: 'CLOSE_PROFILE_MENU' })
+    }
+  }, [dispatch])
 
   const [searchKey, setSearchKey] = useState('')
   const navigate = useNavigate()
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key == 'Enter') {
-      navigate(`/products/search/?key=${searchKey.trim()}&categoryId=&sortBy=closeTime&sortType=desc&page=1`)
-    }
-  }
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key == 'Enter') {
+        navigate(
+          `/products/search/?key=${searchKey.trim()}&categoryId=&sortBy=closeTime&sortType=desc&page=1`,
+        )
+      }
+    },
+    [navigate, searchKey],
+  )
 
   const onSearchKeyChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchKey(e.currentTarget.value)

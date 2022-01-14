@@ -10,7 +10,6 @@ export type LayoutState = {
   menuId: string
   mobileMenuId: string
   notifyMenuId: string
-  notifyBadgeContent: number
   openDrawer: boolean
   listLayout: 'row' | 'card'
 }
@@ -39,7 +38,6 @@ export const initialLayoutState: LayoutState = {
   menuId: '',
   mobileMenuId: '',
   notifyMenuId: '',
-  notifyBadgeContent: 2,
   openDrawer: false,
   listLayout: 'card',
 }
@@ -59,7 +57,6 @@ const LayoutReducer = (
       return {
         ...state,
         notifyAnchorEl: action.payload.currentTarget,
-        notifyBadgeContent: 0,
       }
     case 'CLOSE_MOBILE_MENU':
       return { ...state, mobileMoreAnchorEl: null }

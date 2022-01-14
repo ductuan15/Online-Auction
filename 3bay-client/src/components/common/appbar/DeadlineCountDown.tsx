@@ -1,10 +1,11 @@
 import * as React from 'react'
-import {useCallback, useEffect, useRef, useState} from 'react'
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { SxProps } from '@mui/system'
 import moment from 'moment'
+import { ListItemIcon } from '@mui/material'
 
 type Props = {
   date: string
@@ -14,7 +15,9 @@ type Props = {
 const DeadlineCountDown = ({ date, sx }: Props): JSX.Element => {
   const [countDownText, setCountDownText] = useState('')
 
-  const endDate = moment(date)
+  const endDate = useMemo(() => {
+    return moment(date)
+  }, [date])
 
   const timer = useRef<NodeJS.Timeout>()
 
@@ -39,7 +42,9 @@ const DeadlineCountDown = ({ date, sx }: Props): JSX.Element => {
 
   return (
     <Box sx={sx}>
-      <AccessTimeOutlinedIcon color='error' sx={{ mr: 1 }} />
+      <ListItemIcon color='inherit'>
+        <AccessTimeOutlinedIcon/>
+      </ListItemIcon>
       <Typography>Countdown: {countDownText} </Typography>
     </Box>
   )
