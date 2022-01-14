@@ -34,19 +34,28 @@
       <mj-column width="600px">
 
         <mj-text mj-class="title">
-          <b>Your product's Auction time has been ended</b>
+          <b>The auction time of your product has been ended</b>
         </mj-text>
 
         <mj-text mj-class="text">Hello
           <b>{{name}}</b>,
-          <br/>
-          Thank you for submitting the product 「{{productName}}」 to our website.
-          <br/>
-
         </mj-text>
 
         <mj-text mj-class="text">
+          Thank you for submitting the product 「{{productName}}」 to our website.
+        </mj-text>
 
+        <mj-text mj-class="text">
+          We are excited to inform you that the auction time of your product 「{{productName}}」 on our website has been ended
+          and the product has been sold successfully.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          Please contact the winner to make complete your transaction.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          We hope you will enjoy your sale on 3bay and look forward to seeing more such products by you in the future.
         </mj-text>
 
         <mj-text mj-class="text">

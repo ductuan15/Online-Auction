@@ -36,19 +36,23 @@
       <mj-column width="600px">
 
         <mj-text mj-class="title">
-          <b>You won the auction「{{productName}}」</b>
+          <b>You have won the auction for the product「{{productName}}」</b>
         </mj-text>
 
         <mj-text mj-class="text">Hello
           <b>{{name}}</b>,
-          <br/>
-          Thank you for placing bids for the product 「{{productName}}」 to our website.
-          <br/>
-
         </mj-text>
 
         <mj-text mj-class="text">
+          We are excited to inform you that your bid has won the product 「{{productName}}」 on our website.
+        </mj-text>
 
+        <mj-text mj-class="text">
+          Please contact the seller to make the agreement on product shipping and complete your transaction.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          We hope you enjoy your purchase on 3bay and look forward to many such transactions with you in the future.
         </mj-text>
 
         <mj-text mj-class="text">

@@ -34,19 +34,23 @@
       <mj-column width="600px">
 
         <mj-text mj-class="title">
-          <b>Your product's Auction time has been ended</b>
+          <b>The auction time of your product has been ended</b>
         </mj-text>
 
         <mj-text mj-class="text">Hello
           <b>{{name}}</b>,
-          <br/>
-          Thank you for submitting the product 「{{productName}}」 to our website.
-          <br/>
-          Unfortunately, the auction time of your product has been ended without any bids.
         </mj-text>
 
         <mj-text mj-class="text">
-          <!--TODO -->
+          Thank you for submitting the product 「{{productName}}」 to our website.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          We are sorry to announce that the auction time of your product has been ended without any bids.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          We appreciate your product and hope to have more proposals with you for other products on our website.
         </mj-text>
 
         <mj-text mj-class="text">

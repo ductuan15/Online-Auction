@@ -36,16 +36,19 @@
       <mj-column width="600px">
 
         <mj-text mj-class="title">
-          <b>The price of「{{productName}}」has been updated</b>
+          <b>The price of product has been updated</b>
         </mj-text>
 
         <mj-text mj-class="text">Hello
           <b>{{name}}</b>,
-
         </mj-text>
 
         <mj-text mj-class="text">
+          We would like to announce that the product 「{{productName}}」 you has bid on our website has been updated by the seller.
+        </mj-text>
 
+        <mj-text mj-class="text">
+          Please check the product again and confirm if you want to continue bid this product.
         </mj-text>
 
         <mj-text mj-class="text">

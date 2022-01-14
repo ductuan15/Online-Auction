@@ -34,21 +34,24 @@
       <mj-column width="600px">
 
         <mj-text mj-class="title">
-          <b>Your bid has been rejected by the seller</b>
+          <b>Your bid has been rejected</b>
         </mj-text>
 
         <mj-text mj-class="text">Hello
           <b>{{name}}</b>,
-          <br/>
-          Thank you for submitting a bid for the product 「{{productName}}」 from our website.
-          <br/>
-          We regret to inform you that on this occasion your bid has been unsuccessful.
-          The seller have decided to offer the product to one of the other bidders.
         </mj-text>
 
         <mj-text mj-class="text">
-          While you were not successful on this occasion,
-          we would encourage you to check our other products and apply again if you find one that is suitable.
+          We would like to thank you for your interest in the product 「{{productName}}」 from our website.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          We are sorry to announce that your bid has been rejected.
+          The seller has decided to award the product to another bidder.
+        </mj-text>
+
+        <mj-text mj-class="text">
+          Thank you again for your interest in our product and we do hope you will consider bidding on the others in our websites.
         </mj-text>
 
         <mj-text mj-class="text">

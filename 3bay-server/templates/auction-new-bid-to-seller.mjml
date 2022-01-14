@@ -36,17 +36,21 @@
       <mj-column width="600px">
 
         <mj-text mj-class="title">
-          <b>Your auction「{{productName}}」has been updated</b>
+          <b>Your product has been bid by new bidder</b>
         </mj-text>
 
         <mj-text mj-class="text">Hello
           <b>{{name}}</b>,
-
         </mj-text>
 
         <mj-text mj-class="text">
-
+          We would like to announce that the product 「{{productName}}」 has been bid by new bidder.
         </mj-text>
+
+        <mj-text mj-class="text">
+          To get more information about new bidder, please comeback to our website and check her/his information.
+        </mj-text>
+
 
         <mj-text mj-class="text">
           Thanks,
