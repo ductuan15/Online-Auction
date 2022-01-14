@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { styled } from '@mui/material/styles'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -19,7 +19,7 @@ import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import RoleLabel from '../../user/profile/RoleLabel'
 import WatchListButton from './WatchListButton'
-import { Link, Stack } from '@mui/material'
+import { Link, Snackbar, Stack } from '@mui/material'
 import BorderButton from '../button/BorderButton'
 import {
   Link as RouterLink,
@@ -30,6 +30,9 @@ import {
 import { GREY } from '../../../theme/palette'
 import JoiningAuction from './JoiningAuctionButton'
 import WonAuctionButton from './WonAuctionButton'
+import { useUserContext } from '../../../contexts/user/UserContext'
+import { getNotificationDescription } from '../../../models/notification'
+import CloseIcon from '@mui/icons-material/Close'
 
 export const APPBAR_LARGE = 92
 export const APPBAR_SMALL = 80
@@ -139,6 +142,10 @@ export default function SearchAppBar(): JSX.Element {
   const match = useMatch({ path: resolved.pathname, end: true })
 
   const { toggleDrawer, dispatch } = useLayoutContext()
+  const {
+    state: { latestUnreadNotification, userDetails },
+    dispatch: userDispatch,
+  } = useUserContext()
 
   const { isAuth, user } = useAuth()
 
@@ -150,6 +157,12 @@ export default function SearchAppBar(): JSX.Element {
 
   const [searchKey, setSearchKey] = useState('')
   const navigate = useNavigate()
+
+  const notifyDescription = useMemo(() => {
+    return latestUnreadNotification
+      ? getNotificationDescription(latestUnreadNotification, userDetails?.uuid)
+      : ''
+  }, [latestUnreadNotification, userDetails?.uuid])
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -164,6 +177,17 @@ export default function SearchAppBar(): JSX.Element {
 
   const onSearchKeyChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchKey(e.currentTarget.value)
+  }
+
+  const onSnackbarClosed = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string,
+  ) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    userDispatch({ type: 'CLOSE_RECENT_NOTIFICATION' })
   }
 
   return (
@@ -258,6 +282,23 @@ export default function SearchAppBar(): JSX.Element {
       <MobileMenu mobileMenuId={mobileMenuId} />
       <AppBarMenu id={menuId} />
       <NotifyMenu />
+      <Snackbar
+        open={!!latestUnreadNotification}
+        autoHideDuration={60000}
+        onClose={onSnackbarClosed}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        message={notifyDescription}
+        action={
+          <IconButton
+            size='small'
+            aria-label='close'
+            color='inherit'
+            onClick={onSnackbarClosed}
+          >
+            <CloseIcon fontSize='small' />
+          </IconButton>
+        }
+      />
     </Box>
   )
 }

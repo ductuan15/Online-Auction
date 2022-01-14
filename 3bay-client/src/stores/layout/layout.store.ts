@@ -4,9 +4,10 @@ export type LayoutState = {
   anchorEl: null | HTMLElement
   mobileMoreAnchorEl: null | HTMLElement
   notifyAnchorEl: null | HTMLElement
-  isMenuOpened: boolean
-  isMobileMenuOpened: boolean
-  isNotifyMenuOpened: boolean
+  // isMenuOpened: boolean
+  // isMobileMenuOpened: boolean
+  // isNotifyMenuOpened: boolean
+  // isSnackbarOpened: boolean
   menuId: string
   mobileMenuId: string
   notifyMenuId: string
@@ -32,9 +33,10 @@ export const initialLayoutState: LayoutState = {
   anchorEl: null,
   mobileMoreAnchorEl: null,
   notifyAnchorEl: null,
-  isMenuOpened: false,
-  isMobileMenuOpened: false,
-  isNotifyMenuOpened: false,
+  // isMenuOpened: false,
+  // isMobileMenuOpened: false,
+  // isNotifyMenuOpened: false,
+  // isSnackbarOpened: false,
   menuId: '',
   mobileMenuId: '',
   notifyMenuId: '',
