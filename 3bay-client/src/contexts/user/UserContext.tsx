@@ -15,6 +15,8 @@ import {
 } from '../../stores/user/user.store'
 import { useAuth } from './AuthContext'
 import UserService from '../../services/user.service'
+import useSocketContext, { SocketEvent } from '../socket/SocketContext'
+import { NotifyData } from '../../models/notification'
 
 type UserProviderProps = {
   children: ReactNode
@@ -40,6 +42,8 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
   const [state, dispatch] = useReducer(userReducer, initialUserState)
 
   const { user: authData } = useAuth()
+
+  const { socket } = useSocketContext()
 
   useEffect(() => {
     ;(async () => {
@@ -69,6 +73,22 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
       }
     })()
   }, [authData])
+
+  useEffect(() => {
+    if (socket) {
+      socket?.on(SocketEvent.AUCTION_NOTIFY, (data: NotifyData) => {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: data,
+        })
+      })
+    }
+    return () => {
+      if (socket) {
+        socket?.off(SocketEvent.AUCTION_NOTIFY)
+      }
+    }
+  }, [socket])
 
   const contextValue = useMemo(
     () => ({

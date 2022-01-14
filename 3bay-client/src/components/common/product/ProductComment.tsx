@@ -19,16 +19,129 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import * as React from 'react'
-import {
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { SyntheticEvent, useCallback, useMemo, useState } from 'react'
 import BorderButton from '../button/BorderButton'
 import auctionService from '../../../services/auction.service'
 import moment from 'moment'
+
+type ReviewFormProps = {
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleButtonChanged: (e: SyntheticEvent, newPoint: boolean) => void
+  point: boolean | undefined
+  comment: string
+}
+
+type CommentRowProps = {
+  name: string
+  role: 'BIDDER' | 'SELLER'
+  review: boolean | undefined
+  comment: string
+}
+
+const ReviewForm = ({
+  handleChange,
+  handleButtonChanged,
+  point,
+  comment,
+}: ReviewFormProps): JSX.Element => {
+  return (
+    <>
+      <Grid
+        item
+        xs={12}
+        container
+        flexDirection='row'
+        alignItems='center'
+        my={2}
+      >
+        <ToggleButtonGroup
+          color='primary'
+          sx={{ mr: 2 }}
+          size='large'
+          onChange={handleButtonChanged}
+          value={point}
+          exclusive
+        >
+          <ToggleButton color='info' value={false}>
+            -1
+          </ToggleButton>
+
+          <ToggleButton color='error' value={true}>
+            +1
+          </ToggleButton>
+        </ToggleButtonGroup>
+
+        <Typography variant='h6' color='text.primary'>
+          {point === true && 'Liked this '}
+          {point === false && 'Not okay :('}
+        </Typography>
+      </Grid>
+
+      <Grid item xs={12}>
+        <TextField
+          multiline
+          minRows={2}
+          value={comment}
+          onChange={handleChange}
+          fullWidth
+        />
+      </Grid>
+    </>
+  )
+}
+
+const CommentRowProps = ({
+  name,
+  role,
+  review,
+  comment,
+}: CommentRowProps): JSX.Element => {
+  const theme = useTheme()
+  const minSize = '40px'
+
+  return (
+    <ListItem alignItems='flex-start'>
+      <ListItemAvatar>
+        <BackgroundLetterAvatars
+          name={name || 'Tuan Cuong'}
+          fontSize={`${theme.typography.body1.fontSize}`}
+          sx={{
+            width: minSize,
+            height: minSize,
+          }}
+        />
+      </ListItemAvatar>
+      <ListItemText
+        primary={
+          <Box display='flex' flexDirection='row' alignItems='center'>
+            <Typography variant='h6' color='text.primary'>
+              {name || 'Tuan Cuong'}
+            </Typography>
+            <Chip
+              sx={{
+                mx: 1,
+              }}
+              color={role === 'BIDDER' ? 'info' : 'success'}
+              label={
+                <Typography fontWeight={550} variant='body1'>
+                  {role}
+                </Typography>
+              }
+            />
+            <Typography variant='h6' color='text.primary'>
+              {review ? '+1' : '-1'}
+            </Typography>
+          </Box>
+        }
+        secondary={
+          <Typography variant='body1' color='text.primary'>
+            {comment}
+          </Typography>
+        }
+      />
+    </ListItem>
+  )
+}
 
 const ProductComment = (): JSX.Element | null => {
   const {
@@ -38,8 +151,7 @@ const ProductComment = (): JSX.Element | null => {
   const {
     state: { latestAuction, currentProduct: product },
   } = useProductContext()
-  const theme = useTheme()
-  const minSize = '40px'
+
   const [comment, setComment] = useState('')
   const [point, setPoint] = useState<undefined | boolean>(undefined)
 
@@ -115,7 +227,7 @@ const ProductComment = (): JSX.Element | null => {
   const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
 
   return useMemo(() => {
-    if (!product || !latestAuction) return null
+    if (!product || !latestAuction?.winningBid) return null
     if (latestAuction) {
       if (closeTime?.isAfter()) {
         //closeTime > now => not end auction => null
@@ -150,48 +262,12 @@ const ProductComment = (): JSX.Element | null => {
 
         <Grid item container xs={12} flexDirection='row'>
           {shouldDisplayReviewForm && (
-            <>
-              <Grid
-                item
-                xs={12}
-                container
-                flexDirection='row'
-                alignItems='center'
-                my={2}
-              >
-                <ToggleButtonGroup
-                  color='primary'
-                  sx={{ mr: 2 }}
-                  size='large'
-                  onChange={handleButtonChange}
-                  value={point}
-                  exclusive
-                >
-                  <ToggleButton color='info' value={false}>
-                    -1
-                  </ToggleButton>
-
-                  <ToggleButton color='error' value={true}>
-                    +1
-                  </ToggleButton>
-                </ToggleButtonGroup>
-
-                <Typography variant='h6' color='text.primary'>
-                  {point === true && 'Liked this '}
-                  {point === false && 'Not okay :('}
-                </Typography>
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  multiline
-                  minRows={2}
-                  value={comment}
-                  onChange={handleChange}
-                  fullWidth
-                />
-              </Grid>
-            </>
+            <ReviewForm
+              handleChange={handleChange}
+              handleButtonChanged={handleButtonChange}
+              point={point}
+              comment={comment}
+            />
           )}
         </Grid>
 
@@ -201,89 +277,21 @@ const ProductComment = (): JSX.Element | null => {
 
         <List>
           {hasSellerReview && (
-            <ListItem alignItems='flex-start'>
-              <ListItemAvatar>
-                <BackgroundLetterAvatars
-                  name={product?.seller?.name || 'Tuan Cuong'}
-                  fontSize={`${theme.typography.body1.fontSize}`}
-                  sx={{
-                    width: minSize,
-                    height: minSize,
-                  }}
-                />
-              </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <Box display='flex' flexDirection='row' alignItems='center'>
-                    <Typography variant='h6' color='text.primary'>
-                      {product?.seller?.name || 'Tuan Cuong'}
-                    </Typography>
-                    <Chip
-                      sx={{
-                        mx: 1,
-                      }}
-                      color='success'
-                      label={
-                        <Typography fontWeight={550} variant='body1'>
-                          SELLER
-                        </Typography>
-                      }
-                    />
-                    <Typography variant='h6' color='text.primary'>
-                      {latestAuction.sellerReview ? '+1' : '-1'}
-                    </Typography>
-                  </Box>
-                }
-                secondary={
-                  <Typography variant='body1'>
-                    {latestAuction.sellerComment}
-                  </Typography>
-                }
-              />
-            </ListItem>
+            <CommentRowProps
+              name={product?.seller?.name}
+              role={'SELLER'}
+              review={latestAuction?.sellerReview}
+              comment={latestAuction?.sellerComment}
+            />
           )}
 
           {hasBidderReview && (
-            <ListItem alignItems='flex-start'>
-              <ListItemAvatar>
-                <BackgroundLetterAvatars
-                  name={latestAuction?.winningBid?.bidder?.name || 'Tuan Cuong'}
-                  fontSize={`${theme.typography.body1.fontSize}`}
-                  sx={{
-                    width: minSize,
-                    height: minSize,
-                  }}
-                />
-              </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <Box display='flex' flexDirection='row' alignItems='center'>
-                    <Typography variant='h6' color='text.primary'>
-                      {latestAuction?.winningBid?.bidder?.name || 'Tuan Cuong'}
-                    </Typography>
-                    <Chip
-                      sx={{
-                        mx: 1,
-                      }}
-                      color='info'
-                      label={
-                        <Typography fontWeight={550} variant='body1'>
-                          BIDDER
-                        </Typography>
-                      }
-                    />
-                    <Typography variant='h6' color='text.primary'>
-                      {latestAuction.bidderReview ? '+1' : '-1'}
-                    </Typography>
-                  </Box>
-                }
-                secondary={
-                  <Typography variant='body1' color='text.primary'>
-                    {latestAuction.bidderComment}
-                  </Typography>
-                }
-              />
-            </ListItem>
+            <CommentRowProps
+              name={latestAuction?.winningBid?.bidder?.name}
+              role={'BIDDER'}
+              review={latestAuction?.bidderReview}
+              comment={latestAuction?.bidderComment}
+            />
           )}
         </List>
       </Paper>
@@ -300,7 +308,6 @@ const ProductComment = (): JSX.Element | null => {
     point,
     product,
     shouldDisplayReviewForm,
-    theme.typography.body1.fontSize,
   ])
 }
 export default ProductComment

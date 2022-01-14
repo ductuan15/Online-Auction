@@ -1,28 +1,29 @@
 import DOMPurify from 'isomorphic-dompurify'
 import Prisma from '@prisma/client'
 
-const productMdw: Prisma.Prisma.Middleware<any> = async (params, next) => {
+const productMdw: Prisma.Prisma.Middleware = async (params, next) => {
   if (params.model === 'ProductDescriptionHistory') {
-    if (
-      params.action === 'update' ||
-      params.action === 'upsert' ||
-      params.action === 'create'
-    ) {
-      if (params.args.data.description) {
-        params.args.data.description = DOMPurify.sanitize(
-          params.args.data.description,
-        )
+    switch (params.action) {
+      case 'update':
+      case 'create':
+      case 'upsert': {
+        if (params.args.data.description) {
+          params.args.data.description = DOMPurify.sanitize(
+            params.args.data.description,
+          )
+        }
+        break
       }
-    } else if (
-      params.action === 'createMany' ||
-      params.action === 'updateMany'
-    ) {
-      if (params.args.data) {
-        params.args.data.forEach((row: Partial<{ description: string }>) => {
-          if (row.description) {
-            row.description = DOMPurify.sanitize(row.description)
-          }
-        })
+      case 'updateMany':
+      case 'createMany': {
+        if (params.args.data) {
+          params.args.data.forEach((row: Partial<{ description: string }>) => {
+            if (row.description) {
+              row.description = DOMPurify.sanitize(row.description)
+            }
+          })
+        }
+        break
       }
     }
   }

@@ -65,14 +65,14 @@ const ProductDetails = (): JSX.Element | null => {
   }, [dispatch, id])
 
   useEffect(() => {
-    socket?.on(SocketEvent.UPDATE_AUCTION, (data: Auction) => {
+    socket?.on(SocketEvent.AUCTION_UPDATE, (data: Auction) => {
       // console.log(data)
       if (state.currentProduct?.latestAuctionId === data.id) {
         dispatch({ type: 'UPDATE_AUCTION', payload: data })
       }
     })
     return () => {
-      socket?.off(SocketEvent.UPDATE_AUCTION)
+      socket?.off(SocketEvent.AUCTION_UPDATE)
     }
   }, [dispatch, socket, state.currentProduct?.latestAuctionId])
 

@@ -26,6 +26,7 @@ import { ProductRes } from './types/ProductRes.js'
 import { prismaErrorHandler } from './error/error-prisma.js'
 import { AuctionRes } from './types/AuctionRes.js'
 import Prisma from '@prisma/client'
+import { getBidById } from './controllers/bid.controller.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -36,9 +37,10 @@ declare global {
       category?: any | null
       product?: ProductRes | null
       auction?: AuctionRes | null
-      bid?: Prisma.Bid | null
+      bid?: Prisma.Prisma.PromiseReturnType<typeof getBidById> | null
       id?: string | number | null
     }
+
     interface User extends Prisma.User {}
   }
 }

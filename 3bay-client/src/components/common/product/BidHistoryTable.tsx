@@ -145,7 +145,7 @@ export default function BidHistoryTable() {
           Bids
         </Typography>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={'auto'}>
           <DataGrid columns={columns} rows={rows} autoHeight />
         </Grid>
       </Grid>

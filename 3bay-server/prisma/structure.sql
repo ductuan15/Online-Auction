@@ -26,7 +26,7 @@ CREATE TABLE `auctions`
 (
     `id`                      int(11)        NOT NULL AUTO_INCREMENT,
     `startTime`               datetime       NOT NULL                 DEFAULT current_timestamp(),
-    `closeTime`               datetime                                DEFAULT NULL,
+    `closeTime`               datetime       NOT NULL                 DEFAULT current_timestamp(),
     `openPrice`               decimal(19, 4) NOT NULL,
     `incrementPrice`          decimal(19, 4) NOT NULL,
     `buyoutPrice`             decimal(19, 4)                          DEFAULT NULL,
@@ -355,4 +355,4 @@ CREATE TABLE `users`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-06 15:49:18
+-- Dump completed on 2022-01-13 20:51:06

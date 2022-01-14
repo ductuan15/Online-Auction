@@ -46,6 +46,7 @@ export class BidErrorCode {
   public static readonly ClosedAuction = 'AuctionHasBeenClosed'
   public static readonly SelfBid = 'SelfBid'
   public static readonly AlreadyWinningAuction = 'AlreadyWinningAuction'
+  public static readonly BidderNotFound = 'BidBidderNotFound'
 }
 
 export class AuctionErrorCode {

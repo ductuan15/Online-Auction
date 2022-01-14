@@ -21,7 +21,7 @@ class AuctionScheduler {
       })
 
       for (const auction of auctions) {
-        console.log(auction.id)
+        // console.log(auction.id)
         if (auction.closeTime) {
           const job = scheduleJob(
             new Date(auction.closeTime),
@@ -30,8 +30,12 @@ class AuctionScheduler {
           this.jobs.set(auction.id, job)
         }
       }
+
+      console.log(
+        c.blue(`[AuctionScheduler] Scheduled ${this.jobs.size} auction(s)`),
+      )
     } catch (e) {
-      console.error(c.red(`Could not init AuctionScheduler`))
+      console.error(c.red(`[AuctionScheduler] Could not init AuctionScheduler`))
       console.error(e)
     }
   }
@@ -41,7 +45,13 @@ class AuctionScheduler {
     if (!job) {
       return false
     }
-    return !!rescheduleJob(job, newDate)
+    const result = !!rescheduleJob(job, newDate)
+    console.log(
+      c.blue(
+        `[AuctionScheduler] update ${auctionId} to ${newDate.toUTCString()}: ${result}`,
+      ),
+    )
+    return result
   }
 
   add(auctionId: number, date: Date): boolean {
@@ -51,13 +61,22 @@ class AuctionScheduler {
 
     const job = scheduleJob(date, this.onAuctionClosedCb(auctionId))
     this.jobs.set(auctionId, job)
+    console.log(
+      c.blue(`[AuctionScheduler] add ${auctionId} - ${date.toUTCString()}`),
+    )
     return true
+  }
+
+  remove(auctionId: number): boolean {
+    const result = this.jobs.delete(auctionId)
+    console.log(c.blue(`[AuctionScheduler] remove ${auctionId}: ${result}`))
+    return result
   }
 
   onAuctionClosedCb(auctionId: number) {
     return () => {
       // send email
-      console.log(`Auction ${auctionId} closed`)
+      console.log(c.blue(`[AuctionScheduler] Auction ${auctionId} closed`))
     }
   }
 }

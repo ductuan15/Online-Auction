@@ -10,7 +10,7 @@ const PORT = process.env.PORT || config.PORT || 3030
 
 async function main() {
   const server = createServer(app)
-  const io = initSocketIo(server)
+  initSocketIo(server)
 
   server.listen(PORT, () => {
     console.log(c.magenta(`App listening on the port`), c.bgMagenta(`${PORT}`))
@@ -18,7 +18,7 @@ async function main() {
     console.log(c.magenta(`Hope you're having a great day :>`))
     console.log(c.magenta(`Happy coding!`))
   })
-  // await scheduler.init()
+  await scheduler.init()
 }
 
 main()
