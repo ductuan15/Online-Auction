@@ -602,7 +602,7 @@ export const notifyWhenBidAccepted = async (
         }),
       ],
       SocketEvent.AUCTION_NOTIFY,
-      { type: 'AUCTION_NEW_BID', data: product },
+      { type: 'AUCTION_NEW_BID', data: product, date: new Date() },
     )
 
     for (const {
@@ -636,16 +636,12 @@ export const notifyWhenBidRejected = async (
       return next(new BidError({ code: BidErrorCode.BidderNotFound }))
     }
 
-    const product = await prisma.product.findFirst({
-      where: {
-        latestAuctionId: req.auction?.id,
-      },
-      rejectOnNotFound: true,
-    })
+    const product = await getProductByAuction(req.auction)
 
     emitEventToUsers([req.bid.bidder.uuid], SocketEvent.AUCTION_NOTIFY, {
       type: 'AUCTION_BID_REJECTED',
-      data: req.bid,
+      data: product,
+      date: new Date(),
     })
 
     await sendMailTemplate(

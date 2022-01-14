@@ -113,7 +113,6 @@ class AuctionScheduler {
           console.log(c.blue(`[AuctionScheduler] onAuctionClosedNoWinner`))
           await this.onAuctionClosedNoWinner(auction, product, seller)
         }
-
       } catch (e) {
         console.error(c.red(`[AuctionScheduler] Error occurred`))
         console.error(e)
@@ -129,6 +128,7 @@ class AuctionScheduler {
     emitEventToUsers([auction.product.sellerId], SocketEvent.AUCTION_NOTIFY, {
       type: 'AUCTION_CLOSED_NO_WINNER',
       data: product,
+      date: new Date(),
     })
     await sendMailTemplate(
       [seller.email],
@@ -165,6 +165,7 @@ class AuctionScheduler {
       {
         type: 'AUCTION_CLOSED_HAD_WINNER',
         data: product,
+        date: new Date(),
       },
     )
 
