@@ -367,60 +367,90 @@ export const search = async (
     const categoryId = +(req.query?.categoryId || 0)
     const limit = +(req.query?.limit || 0)
     // get all searched ProductsId,
-    const queryResultRows = await prisma.$queryRaw<any[]>(Prisma.Prisma
-      .sql`SELECT products.id
-           FROM products
-                    JOIN auctions on auctions.id = products.latestAuctionId
-           WHERE products.deletedAt IS NULL
-               ${
-                 key !== '' && key !== undefined
-                   ? Prisma.Prisma
-                       .sql`AND MATCH (products.name) AGAINST (${key}) `
-                   : Prisma.Prisma.empty
-               } ${
-      categoryId !== 0
-        ? Prisma.Prisma.sql`AND products.categoryId = ${categoryId}`
-        : Prisma.Prisma.empty
-    }
-           ORDER BY ${
-             sortBy === SORT_BY.currentPrice
-               ? Prisma.Prisma.sql`auctions.currentPrice ${
-                   sortType === 'desc'
-                     ? Prisma.Prisma.sql`desc`
-                     : Prisma.Prisma.empty
-                 }`
-               : Prisma.Prisma.empty
-           } ${
-      sortBy === SORT_BY.closeTime
-        ? Prisma.Prisma.sql`auctions.closeTime ${
-            sortType === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
-          }`
-        : Prisma.Prisma.empty
-    }
-               LIMIT ${limit + 1}
-           OFFSET ${(page - 1) * limit};`)
+    // const queryResultRows = await prisma.$queryRaw<any[]>(Prisma.Prisma
+    //   .sql`SELECT products.id
+    //        FROM products
+    //                 JOIN auctions on auctions.id = products.latestAuctionId
+    //        WHERE products.deletedAt IS NULL
+    //            ${
+    //              key !== '' && key !== undefined
+    //                ? Prisma.Prisma
+    //                    .sql`AND MATCH (products.name) AGAINST (${key}) `
+    //                : Prisma.Prisma.empty
+    //            } ${
+    //   categoryId !== 0
+    //     ? Prisma.Prisma.sql`AND products.categoryId = ${categoryId}`
+    //     : Prisma.Prisma.empty
+    // }
+    //        ORDER BY ${
+    //          sortBy === SORT_BY.currentPrice
+    //            ? Prisma.Prisma.sql`auctions.currentPrice ${
+    //                sortType === 'desc'
+    //                  ? Prisma.Prisma.sql`desc`
+    //                  : Prisma.Prisma.empty
+    //              }`
+    //            : Prisma.Prisma.empty
+    //        } ${
+    //   sortBy === SORT_BY.closeTime
+    //     ? Prisma.Prisma.sql`auctions.closeTime ${
+    //         sortType === 'desc' ? Prisma.Prisma.sql`desc` : Prisma.Prisma.empty
+    //       }`
+    //     : Prisma.Prisma.empty
+    // }
+    //            LIMIT ${limit + 1}
+    //        OFFSET ${(page - 1) * limit};`)
 
-    // get all info for products
-    const productsId = queryResultRows.map((row) => row.id as number)
-    productsId.slice(0, limit)
+    // // get all info for products
+    // const productsId = queryResultRows.map((row) => row.id as number)
+    // productsId.slice(0, limit)
 
+    // const products: ProductRes[] = await prisma.product.findMany({
+    //   where: {
+    //     id: {
+    //       in: productsId,
+    //     },
+    //   },
+    //   orderBy: {
+    //     latestAuction: {
+    //       currentPrice: sortBy === SORT_BY.currentPrice ? sortType : undefined,
+    //       closeTime: sortBy === SORT_BY.closeTime ? sortType : undefined,
+    //     },
+    //   },
+    //   include: includeProductDetailInfo,
+    // })
+  
     const products: ProductRes[] = await prisma.product.findMany({
       where: {
-        id: {
-          in: productsId,
-        },
+        name: key?.length == 0 ? undefined : { search: `${key}` },
+        deletedAt: null,
+        OR: categoryId == 0 ? undefined : [
+          {
+            categoryId: categoryId,
+          },
+          {
+            category: {
+              categories: {
+                id: categoryId,
+              },
+            },
+          },
+        ],
+        
       },
+      include: includeProductDetailInfo,
       orderBy: {
         latestAuction: {
           currentPrice: sortBy === SORT_BY.currentPrice ? sortType : undefined,
           closeTime: sortBy === SORT_BY.closeTime ? sortType : undefined,
         },
       },
-      include: includeProductDetailInfo,
+      skip: (page - 1) * limit,
+      take: limit + 1,
     })
     products.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
     })
+    console.log(products.length)
     const result: PaginationRes<ProductRes> = {
       items: products.slice(0, limit),
       hasNextPage: products.length > limit,
