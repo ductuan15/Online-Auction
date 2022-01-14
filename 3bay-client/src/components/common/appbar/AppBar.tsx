@@ -138,7 +138,7 @@ export default function SearchAppBar(): JSX.Element {
   const resolved = useResolvedPath(createProductPath)
   const match = useMatch({ path: resolved.pathname, end: true })
 
-  const { state, toggleDrawer, dispatch } = useLayoutContext()
+  const { toggleDrawer, dispatch } = useLayoutContext()
 
   const { isAuth, user } = useAuth()
 

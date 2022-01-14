@@ -8,6 +8,7 @@ export type UserState = {
   userDetails?: UserDetails
   watchlist: Product[]
   notifyList: NotifyData[]
+  unreadNotifications: number
 }
 
 export type UserAction =
@@ -17,11 +18,13 @@ export type UserAction =
   | { type: 'ADD_WATCH_LIST'; payload: Product }
   | { type: 'DELETE_WATCH_LIST'; payload: number }
   | { type: 'ADD_NOTIFICATION'; payload: NotifyData }
+  | { type: 'READ_NOTIFICATIONS' }
 
 export const initialUserState: UserState = {
   //
   watchlist: [],
   notifyList: [],
+  unreadNotifications: 0,
 }
 
 export const userReducer = (
@@ -66,7 +69,7 @@ export const userReducer = (
         }),
       }
     case 'ADD_NOTIFICATION': {
-      const newNotifyList = [...state.notifyList, action.payload]
+      const newNotifyList = [action.payload, ...state.notifyList]
       if (newNotifyList.length > MAX_NOTIFICATIONS) {
         newNotifyList.shift()
       }
@@ -74,8 +77,14 @@ export const userReducer = (
       return {
         ...state,
         notifyList: newNotifyList,
+        unreadNotifications: state.unreadNotifications + 1,
       }
     }
+    case 'READ_NOTIFICATIONS':
+      return {
+        ...state,
+        unreadNotifications: 0,
+      }
     default:
       return state
   }

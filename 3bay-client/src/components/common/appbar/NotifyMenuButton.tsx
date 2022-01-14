@@ -18,7 +18,7 @@ const NotifyMenuButton = ({
 }: NotifyMenuButtonProps): JSX.Element => {
   const { state, dispatch } = useLayoutContext()
   const {
-    state: { notifyList },
+    state: { unreadNotifications },
   } = useUserContext()
 
   return (
@@ -52,7 +52,7 @@ const NotifyMenuButton = ({
               : undefined,
           })}
         >
-          <Badge badgeContent={notifyList.length} color='error'>
+          <Badge badgeContent={unreadNotifications} color='error'>
             {state.notifyAnchorEl ? (
               <NotificationsRoundedIcon
                 sx={{
