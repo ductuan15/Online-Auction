@@ -65,15 +65,6 @@ export async function getDetailsAuctionById(auctionId: number | undefined) {
     select: {
       ...includeProductDetailInfo.latestAuction.select,
       autoExtendAuctionTiming: true,
-      // userBidStatus: {
-      //   select: {
-      //     user: {
-      //       select: {
-      //         ...sellerInfoSelection,
-      //       },
-      //     },
-      //   },
-      // },
       product: {
         select: {
           sellerId: true,

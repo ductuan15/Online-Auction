@@ -574,7 +574,7 @@ export const getTopNumberBid = async (
       orderBy: {
         latestAuction: {
           bids: {
-            _count: Prisma.Prisma.SortOrder.asc,
+            _count: Prisma.Prisma.SortOrder.desc,
           },
         },
       },
