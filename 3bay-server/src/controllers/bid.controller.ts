@@ -5,7 +5,10 @@ import { BidErrorCode } from '../error/error-code.js'
 import { BidError } from '../error/error-exception.js'
 import c from 'ansi-colors'
 import { emitAuctionDetails } from '../socket/auction.io.js'
-import { sellerInfoSelection } from './product.controller.js'
+import {
+  getProductByAuction,
+  sellerInfoSelection,
+} from './product.controller.js'
 import { emitEventToUsers } from '../socket/socket.io.js'
 import { SocketEvent } from '../socket/socket-event.js'
 import sendMailTemplate from '../services/mail.service.js'
@@ -588,12 +591,7 @@ export const notifyWhenBidAccepted = async (
 ) => {
   console.log(c.yellow('bidController.notifyWhenBidAccepted'))
   try {
-    const product = await prisma.product.findFirst({
-      where: {
-        latestAuctionId: req.auction?.id,
-      },
-      rejectOnNotFound: true,
-    })
+    const product = await getProductByAuction(req.auction)
 
     const involvedBidders = await getInvolvedBidders(req.auction?.id)
 

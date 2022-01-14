@@ -8,6 +8,8 @@ import { SocketEvent } from '../socket/socket-event.js'
 import sendMailTemplate from './mail.service.js'
 import MailType from '../const/mail.js'
 import { emitAuctionDetails } from '../socket/auction.io.js'
+import { ProductRes } from '../types/ProductRes.js'
+import { getProductByAuction } from '../controllers/product.controller.js'
 
 type AuctionResponse = Prisma.Prisma.PromiseReturnType<
   typeof getDetailsAuctionById
@@ -100,12 +102,7 @@ class AuctionScheduler {
           rejectOnNotFound: true,
         })
 
-        const product = await prisma.product.findFirst({
-          where: {
-            latestAuctionId: auction.id,
-          },
-          rejectOnNotFound: true,
-        })
+        const product = await getProductByAuction(auction)
 
         await emitAuctionDetails(auction)
 
@@ -126,7 +123,7 @@ class AuctionScheduler {
 
   async onAuctionClosedNoWinner(
     auction: AuctionResponse,
-    product: Prisma.Product,
+    product: ProductRes,
     seller: { email: string; name: string },
   ) {
     emitEventToUsers([auction.product.sellerId], SocketEvent.AUCTION_NOTIFY, {

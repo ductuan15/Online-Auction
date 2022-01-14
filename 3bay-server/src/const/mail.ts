@@ -60,7 +60,6 @@ export const mailTitles: ReadonlyMap<
       return `You won an auction at 3bay`
     },
   ],
-  // TODO update title
   [
     MailType.AUCTION_NEW_BID_TO_BIDDER,
     (values) => {
