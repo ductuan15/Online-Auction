@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import { Grid, InputAdornment, TextField, Typography } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -7,7 +7,6 @@ import { ProductBidFormInput } from '../../../models/bids'
 import GenericTextField from '../form/GenericTextField'
 import AuctionService from '../../../services/auction.service'
 import { setErrorTextMsg } from '../../../utils/error'
-import BidderService from '../../../services/bidder.service'
 import { useIsMounted } from '../../../hooks'
 import formatNumberToVND from '../../../utils/currency-format'
 import NumberFormat from 'react-number-format'
@@ -17,11 +16,13 @@ const dialogName = 'dialog-set-bid-price'
 type BidFormProps = {
   setLoading: (value: boolean) => void
   setErrorText: (value: string | null) => void
+  onClose: () => void
 }
 
 function BidForm({
   setLoading,
   setErrorText,
+  onClose,
 }: BidFormProps): JSX.Element | null {
   const {
     control,
@@ -38,7 +39,6 @@ function BidForm({
 
   const {
     state: { currentProduct: product, latestAuction },
-    dispatch,
   } = useProductContext()
 
   const step = watch('step')
@@ -65,18 +65,11 @@ function BidForm({
     }
   }, [product, setValue])
 
-  const onClose = useCallback(() => {
-    // if (isMounted()) {
-    setErrorText(null)
-    // }
-    dispatch({ type: 'CLOSE_BID_DIALOG' })
-  }, [dispatch, setErrorText])
-
   const onSubmit: SubmitHandler<ProductBidFormInput> = async (data) => {
     if (!product) {
       setErrorTextMsg('Unknown product', setErrorText)
       return
-    } else if (!product?.latestAuctionId) {
+    } else if (!latestAuction) {
       setErrorTextMsg('Auction is not opened', setErrorText)
       return
     }
@@ -93,10 +86,6 @@ function BidForm({
       try {
         const response = await AuctionService.newBid(data)
         if (response) {
-          const newStatus = await BidderService.getAuctionStatus(
-            product?.latestAuctionId,
-          )
-          dispatch({ type: 'UPDATE_BID_STATUS', payload: newStatus })
           onClose()
         } else {
           setErrorTextMsg('Invalid auction id', setErrorText)

@@ -38,7 +38,7 @@ function BidDialog(): JSX.Element {
     setErrorText(null)
     // }
     dispatch({ type: 'CLOSE_BID_DIALOG' })
-  }, [dispatch])
+  }, [dispatch, setErrorText])
 
   const onButtonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAutomaticBidding(e.target.checked)
@@ -91,9 +91,17 @@ function BidDialog(): JSX.Element {
         </Grid>
 
         {isAutomaticBidding ? (
-          <AutoBidForm setLoading={setLoading} setErrorText={setErrorText} />
+          <AutoBidForm
+            setLoading={setLoading}
+            setErrorText={setErrorText}
+            onClose={onClose}
+          />
         ) : (
-          <BidForm setLoading={setLoading} setErrorText={setErrorText} />
+          <BidForm
+            setLoading={setLoading}
+            setErrorText={setErrorText}
+            onClose={onClose}
+          />
         )}
 
         <Grid container>

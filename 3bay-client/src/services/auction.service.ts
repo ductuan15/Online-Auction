@@ -1,9 +1,8 @@
 import { Auction } from '../models/auctions'
 import axiosApiInstance from './api'
 import { ProductBidFormInput } from '../models/bids'
-import { CreateProductResponse } from '../models/product'
-import {AxiosResponse} from 'axios'
-import {BidderComment, SellerComment} from '../models/user'
+import { AxiosResponse } from 'axios'
+import { BidderComment, SellerComment } from '../models/user'
 
 async function newBid(
   bidInput: ProductBidFormInput,
@@ -14,6 +13,19 @@ async function newBid(
   const response = await axiosApiInstance.post<Auction>(
     `/api/bid/${bidInput.auctionId}`,
     bidInput,
+  )
+  return response.data
+}
+
+async function newAutoBid(
+  auctionId: number,
+  maximumPrice: number,
+): Promise<Auction> {
+  const response = await axiosApiInstance.post<Auction>(
+    `/api/bid/auto/${auctionId}`,
+    {
+      bidPrice: maximumPrice,
+    },
   )
   return response.data
 }
@@ -45,7 +57,8 @@ async function addBidderReview(
 const AuctionService = {
   newBid,
   addSellerReview,
-  addBidderReview
+  addBidderReview,
+  newAutoBid,
 }
 
 export default AuctionService

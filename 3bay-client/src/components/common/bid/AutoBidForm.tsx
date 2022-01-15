@@ -1,14 +1,19 @@
 import * as React from 'react'
-import { useMemo, useState } from 'react'
+import { FormEventHandler, useMemo, useState } from 'react'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import { Grid, Slider, TextField, Typography } from '@mui/material'
 import NumberFormat from 'react-number-format'
+import { setErrorTextMsg } from '../../../utils/error'
+import formatNumberToVND from '../../../utils/currency-format'
+import AuctionService from '../../../services/auction.service'
+import { useIsMounted } from '../../../hooks'
 
 const dialogName = 'dialog-set-bid-price'
 
 type AutoBidFormProps = {
   setLoading: (value: boolean) => void
   setErrorText: (value: string | null) => void
+  onClose: () => void
 }
 
 interface CustomProps {
@@ -43,10 +48,13 @@ const NumberFormatCustom = React.forwardRef<NumberFormat<number>, CustomProps>(
 function AutoBidForm({
   setLoading,
   setErrorText,
+  onClose,
 }: AutoBidFormProps): JSX.Element | null {
   const {
     state: { latestAuction },
   } = useProductContext()
+
+  const isMounted = useIsMounted()
 
   const initialPrice = useMemo(() => {
     if (latestAuction?.currentPrice && latestAuction?.incrementPrice) {
@@ -77,12 +85,46 @@ function AutoBidForm({
     }
   }
 
+  const handleSubmit: FormEventHandler = async (event) => {
+    event.preventDefault()
+
+    if (isNaN(+value)) return
+
+    if (!latestAuction) {
+      setErrorTextMsg('Auction is not opened', setErrorText)
+      return
+    }
+    const maximumPrice = +value
+    if (
+      confirm(
+        `Are you sure you want to perform automatic bidding for this product with` +
+        ` a maximum price of ${formatNumberToVND(maximumPrice)}?`,
+      )
+    ) {
+      setLoading(true)
+
+      try {
+        await AuctionService.newAutoBid(latestAuction.id, maximumPrice)
+        onClose()
+      } catch (e) {
+        if (isMounted()) {
+          setErrorTextMsg(e, setErrorText)
+        }
+      } finally {
+        if (isMounted()) {
+          setLoading(false)
+        }
+      }
+    }
+  }
+
   return latestAuction ? (
     <Grid
       id={`auto-bid-form-${dialogName}`}
       container
-      component='form'
       direction='column'
+      component='form'
+      onSubmit={handleSubmit}
     >
       <Typography color='text.primary' variant='subtitle1' fontWeight={600}>
         Maximum price
