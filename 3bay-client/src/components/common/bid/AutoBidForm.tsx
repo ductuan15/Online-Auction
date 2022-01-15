@@ -40,7 +40,7 @@ const NumberFormatCustom = React.forwardRef<NumberFormat<number>, CustomProps>(
   },
 )
 
-function BidFormProps({
+function AutoBidForm({
   setLoading,
   setErrorText,
 }: AutoBidFormProps): JSX.Element | null {
@@ -84,10 +84,6 @@ function BidFormProps({
       component='form'
       direction='column'
     >
-      <Typography color='text.primary' variant='h6'>
-        Automatic bidding
-      </Typography>
-
       <Typography color='text.primary' variant='subtitle1' fontWeight={600}>
         Maximum price
       </Typography>
@@ -123,4 +119,4 @@ function BidFormProps({
   ) : null
 }
 
-export default BidFormProps
+export default AutoBidForm

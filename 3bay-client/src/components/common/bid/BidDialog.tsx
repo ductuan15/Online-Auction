@@ -9,9 +9,10 @@ import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import BidForm from './BidForm'
-import { Alert, Grid, LinearProgress } from '@mui/material'
+import { Alert, Grid, LinearProgress, Switch, Typography } from '@mui/material'
 import BorderButton from '../button/BorderButton'
 import formatNumberToVND from '../../../utils/currency-format'
+import AutoBidForm from './AutoBidForm'
 
 const dialogName = 'dialog-set-bid-price'
 
@@ -30,6 +31,7 @@ function BidDialog(): JSX.Element {
 
   const [errorText, setErrorText] = useState<string | null>(null)
   const [isLoading, setLoading] = useState(false)
+  const [isAutomaticBidding, setAutomaticBidding] = useState(false)
 
   const onClose = useCallback(() => {
     // if (isMounted()) {
@@ -37,6 +39,17 @@ function BidDialog(): JSX.Element {
     // }
     dispatch({ type: 'CLOSE_BID_DIALOG' })
   }, [dispatch])
+
+  const onButtonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAutomaticBidding(e.target.checked)
+  }
+
+  const formId = useMemo(() => {
+    if (isAutomaticBidding) {
+      return `auto-bid-form-${dialogName}`
+    }
+    return `bid-form-${dialogName}`
+  }, [isAutomaticBidding])
 
   return (
     <Dialog
@@ -64,8 +77,24 @@ function BidDialog(): JSX.Element {
           </Alert>
         )}
 
-        <BidForm setLoading={setLoading} setErrorText={setErrorText} />
-        {/*<AutoBidForm setLoading={setLoading} setErrorText={setErrorText} />*/}
+        <Grid
+          container
+          flexDirection='row'
+          alignItems='center'
+          justifyContent='space-between'
+        >
+          <Typography color='text.primary' variant='subtitle1' fontWeight={600}>
+            Automatic bidding
+          </Typography>
+
+          <Switch onChange={onButtonChange} checked={isAutomaticBidding} />
+        </Grid>
+
+        {isAutomaticBidding ? (
+          <AutoBidForm setLoading={setLoading} setErrorText={setErrorText} />
+        ) : (
+          <BidForm setLoading={setLoading} setErrorText={setErrorText} />
+        )}
 
         <Grid container>
           {latestAuction?.buyoutPrice && (
@@ -82,11 +111,7 @@ function BidDialog(): JSX.Element {
           Cancel
         </Button>
 
-        <Button
-          type='submit'
-          form={`bid-form-${dialogName}`}
-          disabled={isLoading}
-        >
+        <Button type='submit' form={formId} disabled={isLoading}>
           Place bid
         </Button>
       </DialogActions>
