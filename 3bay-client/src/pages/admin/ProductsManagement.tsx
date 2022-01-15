@@ -6,8 +6,8 @@ import Box from '@mui/material/Box'
 import useTitle from '../../hooks/use-title'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import { setErrorTextMsg } from '../../utils/error'
-import ProductTable from '../../components/admin/products/ProductTable'
 import { useIsMounted } from '../../hooks'
+import ProductTable2 from '../../components/admin/products/ProductTable2'
 
 const UsersManagement = (): JSX.Element => {
   useTitle('3bay | Manage products')
@@ -75,10 +75,16 @@ const UsersManagement = (): JSX.Element => {
         )}
         {isLoading && <LinearProgress variant='indeterminate' />}
 
-        <ProductTable
+        {/*<ProductTable*/}
+        {/*  onLoadingData={onLoadingData}*/}
+        {/*  onDataLoaded={onDataLoaded}*/}
+        {/*  onError={onTableError}*/}
+        {/*/>*/}
+        <ProductTable2
           onLoadingData={onLoadingData}
           onDataLoaded={onDataLoaded}
           onError={onTableError}
+          isLoading={isLoading}
         />
       </Grid>
     </Grid>

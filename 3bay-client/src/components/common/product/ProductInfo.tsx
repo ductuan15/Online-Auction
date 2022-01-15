@@ -271,6 +271,8 @@ const ProductInfo = (): JSX.Element | null => {
           xs={12}
           justifyContent='space-between'
           alignItems='center'
+          alignContent='center'
+          my={1}
         >
           <BidButton />
 
