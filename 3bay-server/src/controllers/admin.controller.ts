@@ -5,6 +5,8 @@ import { ErrorException, UserError } from '../error/error-exception.js'
 import { ErrorCode, UserErrorCode } from '../error/error-code.js'
 import Prisma from '@prisma/client'
 import { generateRefreshToken } from './auth.controller.js'
+import { getAllThumbnailLink } from './images-product.controller.js'
+import { ProductRes } from '../types/ProductRes.js'
 
 const userDefaultSelection = {
   uuid: true,
@@ -160,6 +162,11 @@ export async function getProducts(
         where: where,
       }),
     ])
+
+    for (const product of products as ProductRes[]) {
+      product.thumbnails = getAllThumbnailLink(product.id)
+    }
+
     return res.json({ total, page, limit, products })
   } catch (e) {
     return next(e)

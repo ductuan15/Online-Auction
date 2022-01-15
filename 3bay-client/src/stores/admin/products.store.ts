@@ -9,13 +9,16 @@ export type ProductsState = {
   }
 }
 
-export type ProductsAction = { type: 'ADD_ALL'; payload: AdminProductListResponse }
+export type ProductsAction =
+  | { type: 'ADD_ALL'; payload: AdminProductListResponse }
+  | { type: 'SET_PAGE'; payload: number }
+  | { type: 'SET_PAGE_SIZE'; payload: number }
 
 export const initialProductsState: ProductsState = {
   products: [],
   productsTable: {
     page: 1,
-    limit: 5,
+    limit: 10,
     total: 0,
   },
 }
@@ -33,7 +36,22 @@ export const productsReducer = (
         productsTable: tableData,
       }
     }
-
+    case 'SET_PAGE':
+      return {
+        ...state,
+        productsTable: {
+          ...state.productsTable,
+          page: action.payload,
+        },
+      }
+    case 'SET_PAGE_SIZE':
+      return {
+        ...state,
+        productsTable: {
+          ...state.productsTable,
+          limit: action.payload,
+        },
+      }
     default:
       return state
   }
