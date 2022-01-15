@@ -105,7 +105,8 @@ export default function BidHistoryTable() {
           >
             <Typography>
               {nameMasking(params.value)}
-              {latestAuction?.winningBid?.bidderId === params.row.bidder.uuid
+              {latestAuction?.winningBid?.bidderId === params.row.bidder.uuid &&
+              latestAuction?.winningBid?.bidPrice === params.row.bidPrice
                 ? ' 👑'
                 : ''}
             </Typography>

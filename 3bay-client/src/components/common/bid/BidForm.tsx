@@ -1,15 +1,7 @@
 import * as React from 'react'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
-import {
-  Alert,
-  Grid,
-  InputAdornment,
-  LinearProgress,
-  TextField,
-  Typography,
-} from '@mui/material'
-import BorderButton from '../button/BorderButton'
+import { Grid, InputAdornment, TextField, Typography } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { ProductBidFormInput } from '../../../models/bids'
 import GenericTextField from '../form/GenericTextField'
@@ -22,19 +14,15 @@ import NumberFormat from 'react-number-format'
 
 const dialogName = 'dialog-set-bid-price'
 
-type BidDialogProps = {
-  isLoading: boolean
+type BidFormProps = {
   setLoading: (value: boolean) => void
-  errorText: string | null
   setErrorText: (value: string | null) => void
 }
 
-function BidDialog({
-  isLoading,
+function BidForm({
   setLoading,
-  errorText,
   setErrorText,
-}: BidDialogProps): JSX.Element | null {
+}: BidFormProps): JSX.Element | null {
   const {
     control,
     watch,
@@ -49,7 +37,7 @@ function BidDialog({
   })
 
   const {
-    state: { currentProduct: product, userPoint, bidStatus, latestAuction },
+    state: { currentProduct: product, latestAuction },
     dispatch,
   } = useProductContext()
 
@@ -68,10 +56,6 @@ function BidDialog({
   useEffect(() => {
     setValue('bidPrice', price)
   }, [price, setValue])
-
-  const hasPoint = useMemo(() => {
-    return userPoint !== undefined
-  }, [userPoint])
 
   const isMounted = useIsMounted()
 
@@ -136,22 +120,6 @@ function BidDialog({
       component='form'
       onSubmit={handleSubmit(onSubmit)}
     >
-      {isLoading && (
-        <LinearProgress variant='indeterminate' sx={{ width: 1 }} />
-      )}
-
-      {errorText && (
-        <Alert severity='error' sx={{ width: 1, mb: 1 }}>
-          {errorText}
-        </Alert>
-      )}
-
-      {!hasPoint && bidStatus?.status !== 'ACCEPT' && (
-        <Alert severity='warning' sx={{ width: 1 }}>
-          You need permission from seller in order to bid this product
-        </Alert>
-      )}
-
       {/*{!hasPoint && (*/}
       {/*  <BorderButton color='warning' fullWidth sx={{ mt: 2 }}>*/}
       {/*    Request permission from the seller*/}
@@ -262,15 +230,8 @@ function BidDialog({
           readOnly: true,
         }}
       />
-
-      {latestAuction?.buyoutPrice && (
-        <BorderButton color='success' fullWidth sx={{ mt: 2 }}>
-          💵 DEAL: Buy the product instantly with{' '}
-          {formatNumberToVND(latestAuction?.buyoutPrice || 0)}
-        </BorderButton>
-      )}
     </Grid>
   ) : null
 }
 
-export default BidDialog
+export default BidForm
