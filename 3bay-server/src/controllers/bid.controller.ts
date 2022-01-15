@@ -5,10 +5,7 @@ import { BidErrorCode } from '../error/error-code.js'
 import { BidError } from '../error/error-exception.js'
 import c from 'ansi-colors'
 import { emitAuctionDetails } from '../socket/auction.io.js'
-import {
-  getProductByAuction,
-  sellerInfoSelection,
-} from './product.controller.js'
+import { getProductByAuction } from './product.controller.js'
 import { emitEventToUsers } from '../socket/socket.io.js'
 import { SocketEvent } from '../socket/socket-event.js'
 import sendMailTemplate from '../services/mail.service.js'
@@ -97,7 +94,7 @@ export const isValidScore = async (
   try {
     const score = await getScore(req.user?.uuid || '')
     if (score) {
-      if (score <= VALID_SCORE) {
+      if (score < VALID_SCORE) {
         return next(new BidError({ code: BidErrorCode.InvalidScore }))
       } else {
         req.userStatusInAuction = Prisma.BidStatus.ACCEPTED
@@ -449,12 +446,12 @@ export const addAutoBid = async (
             auctionId: req.auction?.id,
             userId: req.user.uuid,
           },
-          where:{
-            auctionId_userId:{
+          where: {
+            auctionId_userId: {
               auctionId: req.auction.id,
-              userId: req.user.uuid
-            }
-          }
+              userId: req.user.uuid,
+            },
+          },
         })
       }
     }
@@ -579,24 +576,24 @@ export const getWinningBid = async (
 }
 
 async function getInvolvedBidders(auctionId: number | undefined) {
-  return await prisma.bid.findMany({
-    include: {
-      bidder: {
-        select: {
-          ...sellerInfoSelection,
-          email: true,
+  return await prisma.user.findMany({
+    select: {
+      uuid: true,
+      name: true,
+      email: true,
+    },
+    distinct: 'uuid',
+    where: {
+      bids: {
+        some: {
+          auctionId: auctionId,
         },
       },
-    },
-    where: {
-      // return accepted bids only
       NOT: {
-        bidder: {
-          userBidStatus: {
-            none: {
-              auctionId: auctionId,
-              status: Prisma.BidStatus.ACCEPTED,
-            },
+        userBidStatus: {
+          none: {
+            auctionId: auctionId,
+            status: Prisma.BidStatus.ACCEPTED,
           },
         },
       },
@@ -626,8 +623,8 @@ export const notifyWhenNewBidPlaced = async (
 
     emitEventToUsers(
       [
-        ...involvedBidders.map((bid) => {
-          return bid.bidder.uuid
+        ...involvedBidders.map((user) => {
+          return user.uuid
         }),
         product.sellerId,
       ],
@@ -635,12 +632,10 @@ export const notifyWhenNewBidPlaced = async (
       { type: 'AUCTION_NEW_BID', data: product, date: new Date() },
     )
 
-    for (const {
-      bidder: { email, name }, bidderId
-    } of involvedBidders) {
+    for (const { email, name, uuid } of involvedBidders) {
       // no need to send notification to the user
       // who placed this bid
-      if (req.user.uuid === bidderId) {
+      if (req.user.uuid === uuid) {
         continue
       }
       await sendMailTemplate(
@@ -683,17 +678,15 @@ export const notifyWhenBidAccepted = async (
 
     emitEventToUsers(
       [
-        ...involvedBidders.map((bid) => {
-          return bid.bidder.uuid
+        ...involvedBidders.map((user) => {
+          return user.uuid
         }),
       ],
       SocketEvent.AUCTION_NOTIFY,
       { type: 'AUCTION_NEW_BID', data: product, date: new Date() },
     )
 
-    for (const {
-      bidder: { email, name },
-    } of involvedBidders) {
+    for (const { email, name } of involvedBidders) {
       await sendMailTemplate(
         [email],
         MailType.AUCTION_NEW_BID_TO_BIDDER,

@@ -50,6 +50,7 @@ router
     bidController.executeAutoBid,
     bidController.getWinningBid,
     auctionController.update,
+    bidController.notifyWhenNewBidPlaced,
   )
 
 router
