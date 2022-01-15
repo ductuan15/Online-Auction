@@ -2,6 +2,7 @@ import Prisma from '@prisma/client'
 import bidMdw from './bid.prisma.mdw.js'
 import productMdw from './product.prisma.mdw.js'
 import auctionMdw from './auction.prisma.mdw.js'
+import userMdw from './user.prisma.mdw.js'
 
 const prisma = new Prisma.PrismaClient({
   log: [
@@ -65,6 +66,7 @@ const prisma = new Prisma.PrismaClient({
 prisma.$use(bidMdw)
 prisma.$use(productMdw)
 prisma.$use(auctionMdw)
+prisma.$use(userMdw)
 
 // prisma.$on('query', (e) => {
 //   // const color = '\u001B[38;5;33m'

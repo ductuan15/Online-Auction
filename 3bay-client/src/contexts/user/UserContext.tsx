@@ -41,7 +41,7 @@ export const useUserContext = (): UserContextType => {
 export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
   const [state, dispatch] = useReducer(userReducer, initialUserState)
 
-  const { user: authData } = useAuth()
+  const { user: authData, signOut } = useAuth()
 
   const { socket } = useSocketContext()
 
@@ -82,13 +82,20 @@ export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
           payload: data,
         })
       })
+
+      socket?.on(SocketEvent.USER_LOGOUT, () => {
+        signOut(() => {
+          window.location.href = '/'
+        })
+      })
     }
     return () => {
       if (socket) {
         socket?.off(SocketEvent.AUCTION_NOTIFY)
+        socket?.off(SocketEvent.USER_LOGOUT)
       }
     }
-  }, [socket])
+  }, [signOut, socket])
 
   const contextValue = useMemo(
     () => ({

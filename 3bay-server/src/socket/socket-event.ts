@@ -1,9 +1,9 @@
-import Prisma from '@prisma/client'
 import { ProductRes } from '../types/ProductRes.js'
 
 export enum SocketEvent {
   AUCTION_UPDATE = 'auction_update',
   AUCTION_NOTIFY = 'auction_notify',
+  USER_LOGOUT = 'user_logout',
 }
 
 export type NotifyData =

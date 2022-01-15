@@ -2,7 +2,7 @@ import Prisma from '@prisma/client'
 import prisma from './prisma.js'
 import scheduler from '../services/auction.service.js'
 
-const auctionMdw: Prisma.Prisma.Middleware<any> = async (param, next) => {
+const auctionMdw: Prisma.Prisma.Middleware = async (param, next) => {
   if (param.model === 'Auction') {
     switch (param.action) {
       case 'update':

@@ -18,6 +18,7 @@ const SocketContext = createContext<SocketContextType>({
 export enum SocketEvent {
   AUCTION_UPDATE = 'auction_update',
   AUCTION_NOTIFY = 'auction_notify',
+  USER_LOGOUT = 'user_logout',
 }
 
 const useSocketContext = (): SocketContextType => {
@@ -40,9 +41,11 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
           reconnection: false,
           reconnectionAttempts: 5,
         })
+
         socket.io.on('reconnect_error', () => {
           socket.disconnect()
         })
+
         return socket
       } catch (e) {
         console.log(e)

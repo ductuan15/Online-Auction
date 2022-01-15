@@ -101,6 +101,7 @@ export async function getDetailsAuctionById(auctionId: number | undefined) {
         },
         orderBy: {
           bidTime: 'desc',
+          bidPrice: 'desc',
         },
       },
     },

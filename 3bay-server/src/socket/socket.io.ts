@@ -101,7 +101,7 @@ export function emitEvent(
 export function emitEventToUsers(
   uuids: string[],
   event: SocketEvent,
-  data: SocketData,
+  data?: SocketData,
   cb?: (err: unknown, data: unknown) => void,
 ) {
   const io = getSocket()
