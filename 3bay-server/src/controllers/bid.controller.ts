@@ -186,6 +186,74 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     }
   }
 }
+export const isBidOwner = (req: Request, res: Response, next: NextFunction) => {
+  if (req.bid?.bidderId !== req.user.uuid) {
+    throw new BidError({ code: BidErrorCode.NotBidOwner })
+  }
+  next()
+}
+
+export const deleteAutoBid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (req.auction) {
+      const autoBid = await prisma.autoBid.delete({
+        where: {
+          auctionId_userId: {
+            auctionId: req.auction?.id,
+            userId: req.user.uuid,
+          },
+        },
+      })
+      res.json(autoBid)
+    }
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const deleteBid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    await prisma.bid.delete({
+      where: {
+        id: req.bid?.id,
+      },
+    })
+    next()
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const resetWinningAuction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    req.auction = await prisma.auction.update({
+      where: {
+        id: req.bid?.auctionId,
+      },
+      data: {
+        winningBid: {
+          disconnect: true,
+        },
+        currentPrice: 0,
+      },
+    })
+    next()
+  } catch (err) {
+    next(err)
+  }
+}
 
 export const setBidStatusToAccepted = async (
   req: Request,
@@ -434,7 +502,7 @@ export const addAutoBid = async (
 ) => {
   try {
     if (!req.userStatusInAuction) {
-      throw new Error()
+      throw new BidError({ code: BidErrorCode.NotAcceptedYet })
     } else {
       if (req.auction) {
         await prisma.autoBid.upsert({

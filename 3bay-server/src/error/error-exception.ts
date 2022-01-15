@@ -200,6 +200,14 @@ export class BidError extends ErrorException {
         this.message = 'Has already been winning this auction'
         this.status = 400
         break
+      case BidErrorCode.NotAcceptedYet:
+        this.message = 'Seller has not accepted you to join this auction yet. Bid this auction and waiting for the seller to accept your bid'
+        this.status = 400
+        break
+      case BidErrorCode.NotBidOwner:
+        this.message = 'Not own this bid'
+        this.status = 400
+        break
     }
   }
 }
