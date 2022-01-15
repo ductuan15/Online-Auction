@@ -29,7 +29,7 @@ import NumberFormat from 'react-number-format'
 
 const dialogName = 'dialog-set-bid-price'
 
-function ProductBidDialog(): JSX.Element {
+function BidDialog(): JSX.Element {
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
   const {
@@ -194,6 +194,7 @@ function ProductBidDialog(): JSX.Element {
                   startAdornment: (
                     <InputAdornment position='start'>₫</InputAdornment>
                   ),
+                  readOnly: true,
                 }}
               />
 
@@ -265,14 +266,15 @@ function ProductBidDialog(): JSX.Element {
                     customInput={TextField}
                     margin='normal'
                     fullWidth
-                    displayType={'input'}
                     value={latestAuction.incrementPrice}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position='start'>₫</InputAdornment>
                       ),
+                      readOnly: true,
                     }}
                   />
+
                 </Grid>
               </Grid>
               <Typography
@@ -295,6 +297,7 @@ function ProductBidDialog(): JSX.Element {
                   startAdornment: (
                     <InputAdornment position='start'>₫</InputAdornment>
                   ),
+                  readOnly: true,
                 }}
               />
             </>
@@ -327,4 +330,4 @@ function ProductBidDialog(): JSX.Element {
   )
 }
 
-export default ProductBidDialog
+export default BidDialog

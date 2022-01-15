@@ -17,7 +17,7 @@ import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useTheme } from '@mui/material/styles'
 import BorderIconButton from '../button/BorderIconButton'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
-import ProductBidButton from './ProductBidButton'
+import BidButton from '../bid/BidButton'
 import formatNumberToVND from '../../../utils/currency-format'
 
 type UserWithRatingProps = {
@@ -272,7 +272,7 @@ const ProductInfo = (): JSX.Element | null => {
           justifyContent='space-between'
           alignItems='center'
         >
-          <ProductBidButton />
+          <BidButton />
 
           <Box flexGrow={1} />
 

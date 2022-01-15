@@ -27,7 +27,7 @@ const NotifyMenuItem = ({ notifyData }: NotifyMenuItemProps): JSX.Element => {
   }, [notifyData, userDetails?.uuid])
 
   const date = useMemo(() => {
-    return moment(notifyData?.date || new Date()).format('L')
+    return moment(notifyData?.date || new Date()).format('L LT')
   }, [notifyData.date])
 
   return (
