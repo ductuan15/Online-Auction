@@ -17,6 +17,7 @@ import { useAuth } from '../../../contexts/user/AuthContext'
 import { Bid } from '../../../models/bids'
 import { useIsAuctionClosed } from '../../../hooks/use-is-auction-closed'
 import NumberFormat from 'react-number-format'
+import { nameMasking } from '../../../utils/name-mask'
 
 // type BidRequestTableProps = {
 //   sx?: SxProps
@@ -103,7 +104,7 @@ export default function BidHistoryTable() {
             width={1}
           >
             <Typography>
-              {params.value}
+              {nameMasking(params.value)}
               {latestAuction?.winningBid?.bidderId === params.row.bidder.uuid
                 ? ' 👑'
                 : ''}
