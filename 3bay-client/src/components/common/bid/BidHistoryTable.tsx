@@ -4,6 +4,7 @@ import {
   GridColumns,
   GridRenderCellParams,
   GridRowParams,
+  GridSortModel,
 } from '@mui/x-data-grid'
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, Grid, Typography } from '@mui/material'
@@ -23,6 +24,17 @@ import { nameMasking } from '../../../utils/name-mask'
 //   sx?: SxProps
 // }
 
+const DEFAULT_SORT_MODEL: GridSortModel = [
+  {
+    field: 'bidTime',
+    sort: 'desc',
+  },
+  {
+    field: 'bidPrice',
+    sort: 'desc',
+  },
+]
+
 export default function BidHistoryTable() {
   const {
     state: { currentProduct, latestAuction },
@@ -34,6 +46,7 @@ export default function BidHistoryTable() {
     }
     return []
   })
+  const [sortModel, setSortModel] = useState(DEFAULT_SORT_MODEL)
   const isAuctionClosed = useIsAuctionClosed(latestAuction)
 
   useEffect(() => {
@@ -150,10 +163,15 @@ export default function BidHistoryTable() {
     [
       isAuctionClosed,
       isProductSeller,
+      latestAuction?.winningBid?.bidPrice,
       latestAuction?.winningBid?.bidderId,
       rejectBidder,
     ],
   )
+
+  const onSortModelChange = (sort: GridSortModel) => {
+    setSortModel(sort)
+  }
 
   return (
     <>
@@ -168,7 +186,13 @@ export default function BidHistoryTable() {
         </Typography>
 
         <Grid item xs={12} md={'auto'}>
-          <DataGrid columns={columns} rows={rows} autoHeight />
+          <DataGrid
+            columns={columns}
+            rows={rows}
+            autoHeight
+            sortModel={sortModel}
+            onSortModelChange={onSortModelChange}
+          />
         </Grid>
       </Grid>
     </>
