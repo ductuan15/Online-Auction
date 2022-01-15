@@ -88,6 +88,10 @@ const SortByCategorySelect = ({
     state: { allCategories },
   } = useCategoryContext()
 
+  const categories = useMemo(() => {
+    return renderCategorySelection(allCategories, true)
+  }, [allCategories])
+
   return (
     <FormControl sx={{ minWidth: 240 }}>
       <InputLabel id='category-select-label'>Category</InputLabel>
@@ -102,7 +106,7 @@ const SortByCategorySelect = ({
           <em>None</em>
         </MenuItem>
 
-        {renderCategorySelection(allCategories)}
+        {categories}
       </Select>
     </FormControl>
   )
@@ -145,9 +149,7 @@ const SearchPage = (): JSX.Element => {
       setHasNextPage(res.data.hasNextPage)
       setProducts([...res.data.items])
     } finally {
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 1000)
+      setIsLoading(false)
     }
   }, [
     params.key,
@@ -163,32 +165,38 @@ const SearchPage = (): JSX.Element => {
     })()
   }, [fetchData])
 
-  const handlePriceSortChange = (event: SelectChangeEvent) => {
-    const [sortBy, sortType] = event.target.value.split('-')
-    setSearchParams({
-      ...Object.fromEntries(new URLSearchParams(searchParams)),
-      sortBy: sortBy,
-      sortType: sortType,
-    })
-  }
+  const handlePriceSortChange = useCallback(
+    (event: SelectChangeEvent) => {
+      const [sortBy, sortType] = event.target.value.split('-')
+      setSearchParams({
+        ...Object.fromEntries(new URLSearchParams(searchParams)),
+        sortBy: sortBy,
+        sortType: sortType,
+      })
+    },
+    [searchParams, setSearchParams],
+  )
 
-  const handleCategoryChange = (event: SelectChangeEvent) => {
-    setSearchParams({
-      ...Object.fromEntries(new URLSearchParams(searchParams)),
-      page: '1',
-      categoryId: event.target.value || '',
-    })
-  }
+  const handleCategoryChange = useCallback(
+    (event: SelectChangeEvent) => {
+      setSearchParams({
+        ...Object.fromEntries(new URLSearchParams(searchParams)),
+        page: '1',
+        categoryId: event.target.value || '',
+      })
+    },
+    [searchParams, setSearchParams],
+  )
 
-  const handlePageChange = (
-    event: ChangeEvent<unknown>,
-    pageNumber: number,
-  ) => {
-    setSearchParams({
-      ...Object.fromEntries(new URLSearchParams(searchParams)),
-      page: `${pageNumber}`,
-    })
-  }
+  const handlePageChange = useCallback(
+    (event: ChangeEvent<unknown>, pageNumber: number) => {
+      setSearchParams({
+        ...Object.fromEntries(new URLSearchParams(searchParams)),
+        page: `${pageNumber}`,
+      })
+    },
+    [searchParams, setSearchParams],
+  )
 
   return (
     <Grid container spacing={2} flexDirection='column' sx={{ my: 1 }}>

@@ -1,22 +1,25 @@
-import Menu from '@mui/material/Menu'
 import * as React from 'react'
 import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
-import MenuItem from '@mui/material/MenuItem'
-import DeadlineCountDown from './DeadlineCountDown'
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
 import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import { Divider, Grid, Link } from '@mui/material'
-import GitHubIcon from '@mui/icons-material/GitHub'
+import { Box, Divider, PaperProps, Popover } from '@mui/material'
+import { useUserContext } from '../../../contexts/user/UserContext'
+import { GREY } from '../../../theme/palette'
+import NotifyMenuItem from './NotifyMenuItem'
 
-const notifyMenu = {
+const width = 360
+const height = width * 1.61803398875
+
+const notifyMenu: PaperProps = {
   elevation: 0,
   sx: {
-    overflow: 'visible',
+    overflowY: 'auto',
+    overflowX: 'hidden',
     filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-    minWidth: 240,
-    maxWidth: 600,
     mt: 1.5,
+    ml: 0.5,
+    maxHeight: height,
+    border: `solid 1px ${GREY[500_8]}`,
+    width: `100%`,
     '&:before': {
       content: '""',
       display: 'block',
@@ -32,82 +35,64 @@ const notifyMenu = {
   },
 }
 
+// const dl = '01/20/2022 01:30 PM'
 export const NotifyMenu = (): JSX.Element => {
   const {
     state: { notifyAnchorEl },
     dispatch,
   } = useLayoutContext()
+
+  const {
+    state: { notifyList },
+    dispatch: userDispatch,
+  } = useUserContext()
+
   const handleNotifyMenuClose = () => {
+    userDispatch({ type: 'READ_NOTIFICATIONS' })
     dispatch({ type: 'CLOSE_NOTIFY_MENU' })
   }
 
-  const dl = '01/06/2022 01:00 PM'
-
   return (
-    <Menu
+    <Popover
       anchorEl={notifyAnchorEl}
       open={Boolean(notifyAnchorEl)}
       onClose={handleNotifyMenuClose}
-      onClick={handleNotifyMenuClose}
       PaperProps={notifyMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      sx={{ width: width }}
     >
-      <MenuItem sx={{ m: 1.5 }}>
-        <Grid container spacing={1} display='flex' flexDirection='column' p={1}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              px: 0.5,
-              py: 1,
-            }}
-          >
-            <CalendarTodayOutlinedIcon sx={{ mr: 1 }} />
-            <Typography>{dl}</Typography>
-          </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'start',
+          py: 1,
+          px: 0.5,
+        }}
+      >
+        <Box sx={{ width: 1, px: 1, my: 1 }}>
+          <Typography variant='subtitle1' fontWeight={600}>
+            🔔 Notifications
+          </Typography>
 
-          <DeadlineCountDown
-            date={dl}
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              px: 0.5,
-              pt: 1,
-              pb: 0,
-            }}
-          />
-        </Grid>
-      </MenuItem>
+          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+            {notifyList.length === 0
+              ? "You don't have any notifications"
+              : `You have ${notifyList.length} notification(s)`}
+          </Typography>
+        </Box>
 
-      <Divider variant='middle' />
+        <Box width={1}>
+          <Divider />
+        </Box>
 
-      <MenuItem sx={{ m: 1.5 }}>
-        <Link
-          target='_blank'
-          rel='noopener'
-          href='https://github.com/ductuan15/Online-Auction'
-          color='inherit'
-          underline='none'
-        >
-          <Grid
-            container
-            spacing={1}
-            display='flex'
-            flexDirection='row'
-            alignItems='center'
-            py={1.5}
-            px={1}
-          >
-            <GitHubIcon sx={{ mr: 1 }} />
-            <Typography variant='body1' color='text.primary'>
-              Online Auction
-            </Typography>
-          </Grid>
-        </Link>
-      </MenuItem>
-    </Menu>
+        {notifyList?.map((notification, idx) => {
+          return <NotifyMenuItem notifyData={notification} key={idx} />
+        })}
+        {/*<Divider />*/}
+        {/*<NotifyMenuItem />*/}
+      </Box>
+    </Popover>
   )
 }

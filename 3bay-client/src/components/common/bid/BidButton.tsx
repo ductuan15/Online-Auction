@@ -17,7 +17,7 @@ const RejectButton = (
 const MINIMUM_POINT = 0.8
 const TRANSACTION_REJECT_COMMENT = "The winner didn't pay the order"
 
-function ProductBidButton(): JSX.Element | null {
+function BidButton(): JSX.Element | null {
   const {
     state: { currentProduct: product, bidStatus, userPoint, latestAuction },
     dispatch,
@@ -168,4 +168,4 @@ function ProductBidButton(): JSX.Element | null {
   ])
 }
 
-export default ProductBidButton
+export default BidButton

@@ -59,6 +59,21 @@ export const includeProductDetailInfo = {
   },
 }
 
+export async function getProductByAuction(
+  auction: Partial<Prisma.Auction> | null | undefined,
+): Promise<ProductRes> {
+  const product = await prisma.product.findFirst({
+    where: {
+      latestAuctionId: auction?.id,
+    },
+    rejectOnNotFound: true,
+  })
+  return {
+    ...product,
+    thumbnails: getAllThumbnailLink(product.id),
+  }
+}
+
 export const productById = async (
   req: Request,
   res: Response,
@@ -418,7 +433,6 @@ export const search = async (
     //   },
     //   include: includeProductDetailInfo,
     // })
-  
     const products: ProductRes[] = await prisma.product.findMany({
       where: {
         name: key?.length == 0 ? undefined : { search: `${key}` },
@@ -436,7 +450,7 @@ export const search = async (
             },
           },
         ],
-        
+
       },
       include: includeProductDetailInfo,
       orderBy: {
@@ -451,7 +465,7 @@ export const search = async (
     products.forEach((product) => {
       product.thumbnails = getAllThumbnailLink(product.id)
     })
-    console.log(products.length)
+    // console.log(products.length)
     const result: PaginationRes<ProductRes> = {
       items: products.slice(0, limit),
       hasNextPage: products.length > limit,

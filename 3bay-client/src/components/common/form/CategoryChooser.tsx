@@ -1,6 +1,7 @@
 import { UseControllerProps } from 'react-hook-form/dist/types/controller'
 import { Controller, FieldError } from 'react-hook-form'
 import * as React from 'react'
+import { useMemo } from 'react'
 import {
   FormControl,
   InputLabel,
@@ -13,7 +14,6 @@ import { SxProps } from '@mui/system'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 import Category from '../../../models/category'
 import { ProductFormInput } from '../../../models/product'
-import {useMemo} from 'react'
 
 type CategoryChooserProps<T> = {
   error: FieldError | undefined
@@ -23,15 +23,38 @@ type CategoryChooserProps<T> = {
   selectFieldProps?: SelectProps
 } & UseControllerProps<T>
 
-export function renderCategorySelection(categories: Category[]): JSX.Element[] {
+export function renderCategorySelection(
+  categories: Category[],
+  isParentCategorySelectable?: boolean,
+): JSX.Element[] {
   const components: JSX.Element[] = []
 
   categories.forEach((category) => {
     if (category.otherCategories) {
-      components.push(<ListSubheader key={category.id}>{category.title}</ListSubheader>)
+      if (isParentCategorySelectable) {
+        components.push(
+          <MenuItem
+            value={category.id}
+            key={category.id}
+            sx={{
+              fontWeight: 600,
+            }}
+          >
+            {category.title}
+          </MenuItem>,
+        )
+      } else {
+        components.push(
+          <ListSubheader key={category.id}>{category.title}</ListSubheader>,
+        )
+      }
       components.push(...renderCategorySelection(category.otherCategories))
     } else {
-      components.push(<MenuItem value={category.id} key={category.id}>{category.title}</MenuItem>)
+      components.push(
+        <MenuItem value={category.id} key={category.id}>
+          {category.title}
+        </MenuItem>,
+      )
     }
   })
 
@@ -74,8 +97,7 @@ const CategoryChooser = ({
             {...field}
             {...selectFieldProps}
           >
-            {
-              allCategories.length === 0 ? (
+            {allCategories.length === 0 ? (
               <MenuItem value={''}>
                 <em>None</em>
               </MenuItem>

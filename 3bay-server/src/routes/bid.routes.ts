@@ -14,7 +14,7 @@ router
     auctionController.isAuctionClosed,
     bidController.isProductOwner,
     bidController.setBidStatusToAccepted,
-    bidController.isWinningBid,
+    bidController.isWinningBid,             // might send header
     bidController.executeAutoBid,
     bidController.getWinningBid,
     auctionController.update,
@@ -29,11 +29,12 @@ router
     auctionController.isAuctionClosed,
     bidController.isProductOwner,
     bidController.setBidStatusToRejected,
-    bidController.notifyWhenBidRejected,
-    bidController.isWinningBid,
+    bidController.notifyWhenBidRejected, //
+    bidController.isWinningBid,          // might send header
     bidController.executeAutoBid,
     bidController.getWinningBid,
     auctionController.update,
+    bidController.notifyWhenBidAccepted,
   )
 
 router
@@ -64,6 +65,7 @@ router
     bidController.executeAutoBid,
     bidController.getWinningBid,
     auctionController.update,
+    bidController.notifyWhenNewBidPlaced,
   )
 // check auctions is exist and opening
 router.param('auctionId', auctionController.auctionById)

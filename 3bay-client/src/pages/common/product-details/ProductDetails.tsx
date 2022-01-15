@@ -14,10 +14,10 @@ import ProductDescription from '../../../components/common/product/ProductDescip
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import ProductInfoSkeleton from '../../../components/common/product/ProductInfoSkeleton'
 import { useTitle } from '../../../hooks'
-import ProductBidDialog from '../../../components/common/product/ProductBidDialog'
+import BidDialog from '../../../components/common/bid/BidDialog'
 import BidRequestTable from '../../../components/seller/product/BidRequestTable'
 import { useAuth } from '../../../contexts/user/AuthContext'
-import BidHistoryTable from '../../../components/common/product/BidHistoryTable'
+import BidHistoryTable from '../../../components/common/bid/BidHistoryTable'
 import ProductComment from '../../../components/common/product/ProductComment'
 import useSocketContext, {
   SocketEvent,
@@ -159,7 +159,7 @@ const ProductDetails = (): JSX.Element | null => {
         </>
       </Grid>
 
-      <ProductBidDialog />
+      <BidDialog />
     </>
   )
 }

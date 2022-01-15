@@ -8,6 +8,8 @@ import { SocketEvent } from '../socket/socket-event.js'
 import sendMailTemplate from './mail.service.js'
 import MailType from '../const/mail.js'
 import { emitAuctionDetails } from '../socket/auction.io.js'
+import { ProductRes } from '../types/ProductRes.js'
+import { getProductByAuction } from '../controllers/product.controller.js'
 
 type AuctionResponse = Prisma.Prisma.PromiseReturnType<
   typeof getDetailsAuctionById
@@ -100,12 +102,7 @@ class AuctionScheduler {
           rejectOnNotFound: true,
         })
 
-        const product = await prisma.product.findFirst({
-          where: {
-            latestAuctionId: auction.id,
-          },
-          rejectOnNotFound: true,
-        })
+        const product = await getProductByAuction(auction)
 
         await emitAuctionDetails(auction)
 
@@ -116,7 +113,6 @@ class AuctionScheduler {
           console.log(c.blue(`[AuctionScheduler] onAuctionClosedNoWinner`))
           await this.onAuctionClosedNoWinner(auction, product, seller)
         }
-
       } catch (e) {
         console.error(c.red(`[AuctionScheduler] Error occurred`))
         console.error(e)
@@ -126,12 +122,13 @@ class AuctionScheduler {
 
   async onAuctionClosedNoWinner(
     auction: AuctionResponse,
-    product: Prisma.Product,
+    product: ProductRes,
     seller: { email: string; name: string },
   ) {
     emitEventToUsers([auction.product.sellerId], SocketEvent.AUCTION_NOTIFY, {
       type: 'AUCTION_CLOSED_NO_WINNER',
       data: product,
+      date: new Date(),
     })
     await sendMailTemplate(
       [seller.email],
@@ -168,6 +165,7 @@ class AuctionScheduler {
       {
         type: 'AUCTION_CLOSED_HAD_WINNER',
         data: product,
+        date: new Date(),
       },
     )
 

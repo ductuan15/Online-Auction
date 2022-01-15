@@ -9,12 +9,14 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Box, Grid, Typography } from '@mui/material'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
+import * as React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import SellerService from '../../../services/seller.service'
 import _ from 'lodash'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { Bid } from '../../../models/bids'
 import { useIsAuctionClosed } from '../../../hooks/use-is-auction-closed'
+import NumberFormat from 'react-number-format'
 
 // type BidRequestTableProps = {
 //   sx?: SxProps
@@ -100,7 +102,12 @@ export default function BidHistoryTable() {
             alignItems='center'
             width={1}
           >
-            <Typography>{params.value}</Typography>
+            <Typography>
+              {params.value}
+              {latestAuction?.winningBid?.bidderId === params.row.bidder.uuid
+                ? ' 👑'
+                : ''}
+            </Typography>
 
             <BackgroundLetterAvatars name={params.value} sx={{ mx: 2 }} />
           </Box>
@@ -111,6 +118,14 @@ export default function BidHistoryTable() {
         type: 'number',
         headerName: 'Amount',
         flex: 1,
+        renderCell: (params: GridRenderCellParams<string>) => (
+          <NumberFormat
+            thousandSeparator
+            displayType={'text'}
+            value={params.value}
+            prefix='₫'
+          />
+        ),
       },
       {
         field: 'actions',
@@ -130,7 +145,12 @@ export default function BidHistoryTable() {
         ],
       },
     ],
-    [isAuctionClosed, isProductSeller, rejectBidder],
+    [
+      isAuctionClosed,
+      isProductSeller,
+      latestAuction?.winningBid?.bidderId,
+      rejectBidder,
+    ],
   )
 
   return (

@@ -90,7 +90,7 @@ const ReviewForm = ({
   )
 }
 
-const CommentRowProps = ({
+const CommentRow = ({
   name,
   role,
   review,
@@ -277,7 +277,7 @@ const ProductComment = (): JSX.Element | null => {
 
         <List>
           {hasSellerReview && (
-            <CommentRowProps
+            <CommentRow
               name={product?.seller?.name}
               role={'SELLER'}
               review={latestAuction?.sellerReview}
@@ -286,7 +286,7 @@ const ProductComment = (): JSX.Element | null => {
           )}
 
           {hasBidderReview && (
-            <CommentRowProps
+            <CommentRow
               name={latestAuction?.winningBid?.bidder?.name}
               role={'BIDDER'}
               review={latestAuction?.bidderReview}

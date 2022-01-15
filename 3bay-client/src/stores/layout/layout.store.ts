@@ -4,13 +4,13 @@ export type LayoutState = {
   anchorEl: null | HTMLElement
   mobileMoreAnchorEl: null | HTMLElement
   notifyAnchorEl: null | HTMLElement
-  isMenuOpened: boolean
-  isMobileMenuOpened: boolean
-  isNotifyMenuOpened: boolean
+  // isMenuOpened: boolean
+  // isMobileMenuOpened: boolean
+  // isNotifyMenuOpened: boolean
+  // isSnackbarOpened: boolean
   menuId: string
   mobileMenuId: string
   notifyMenuId: string
-  notifyBadgeContent: number
   openDrawer: boolean
   listLayout: 'row' | 'card'
 }
@@ -33,13 +33,13 @@ export const initialLayoutState: LayoutState = {
   anchorEl: null,
   mobileMoreAnchorEl: null,
   notifyAnchorEl: null,
-  isMenuOpened: false,
-  isMobileMenuOpened: false,
-  isNotifyMenuOpened: false,
+  // isMenuOpened: false,
+  // isMobileMenuOpened: false,
+  // isNotifyMenuOpened: false,
+  // isSnackbarOpened: false,
   menuId: '',
   mobileMenuId: '',
   notifyMenuId: '',
-  notifyBadgeContent: 2,
   openDrawer: false,
   listLayout: 'card',
 }
@@ -59,7 +59,6 @@ const LayoutReducer = (
       return {
         ...state,
         notifyAnchorEl: action.payload.currentTarget,
-        notifyBadgeContent: 0,
       }
     case 'CLOSE_MOBILE_MENU':
       return { ...state, mobileMoreAnchorEl: null }
