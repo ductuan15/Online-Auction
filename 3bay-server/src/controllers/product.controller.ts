@@ -423,6 +423,7 @@ export const search = async (
       where: {
         name: key?.length == 0 ? undefined : { search: `${key}` },
         deletedAt: null,
+        // get by category and parent category
         OR: categoryId == 0 ? undefined : [
           {
             categoryId: categoryId,

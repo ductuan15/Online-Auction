@@ -37,6 +37,8 @@ declare global {
       category?: any | null
       product?: ProductRes | null
       auction?: AuctionRes | null
+      userScore?: number
+      userStatusInAuction?: Prisma.BidStatus 
       bid?: Prisma.Prisma.PromiseReturnType<typeof getBidById> | null
       id?: string | number | null
     }

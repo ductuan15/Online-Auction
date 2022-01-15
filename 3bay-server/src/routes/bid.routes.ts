@@ -16,7 +16,7 @@ router
     bidController.setBidStatusToAccepted,
     bidController.isWinningBid,
     bidController.executeAutoBid,
-    bidController.recalculateNewWinningBid,
+    bidController.getWinningBid,
     auctionController.update,
     bidController.notifyWhenBidAccepted,
   )
@@ -29,10 +29,10 @@ router
     auctionController.isAuctionClosed,
     bidController.isProductOwner,
     bidController.setBidStatusToRejected,
-    bidController.notifyWhenBidRejected, //
+    bidController.notifyWhenBidRejected,
     bidController.isWinningBid,
     bidController.executeAutoBid,
-    bidController.recalculateNewWinningBid,
+    bidController.getWinningBid,
     auctionController.update,
   )
 
@@ -41,13 +41,13 @@ router
   .post(
     passport.authenticate('jwt', { session: false }),
     bidController.isSelfBid,
-    bidController.checkUserBidStatus,
     bidController.isValidBidAmount,
     bidController.isValidScore,
+    bidController.checkUserBidStatus,
     bidController.addAutoBid,
-    bidController.add,
+    bidController.getWinningBid,
     bidController.executeAutoBid,
-    bidController.recalculateNewWinningBid,
+    bidController.getWinningBid,
     auctionController.update,
   )
 
@@ -57,12 +57,12 @@ router
     passport.authenticate('jwt', { session: false }),
     bidController.isSelfBid,
     bidController.isWinningBidder,
-    bidController.checkUserBidStatus,
     bidController.isValidBidAmount,
     bidController.isValidScore,
+    bidController.checkUserBidStatus,
     bidController.add,
     bidController.executeAutoBid,
-    bidController.recalculateNewWinningBid,
+    bidController.getWinningBid,
     auctionController.update,
   )
 // check auctions is exist and opening

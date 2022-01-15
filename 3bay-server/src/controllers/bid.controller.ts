@@ -14,6 +14,18 @@ import MailType from '../const/mail.js'
 // total reviews / total auctions
 const VALID_SCORE = 0.8
 
+const getMaximumBidPrice = (auction: Prisma.Auction) => {
+  return auction.buyoutPrice || new Prisma.Prisma.Decimal(Infinity)
+}
+
+const getMinimumBidPrice = (auction: Prisma.Auction) => {
+  let minimumPrice = auction.currentPrice.add(auction.incrementPrice)
+  if (minimumPrice.greaterThan(getMaximumBidPrice(auction))) {
+    minimumPrice = getMaximumBidPrice(auction)
+  }
+  return minimumPrice
+}
+
 export const getWonAuction = async (userId: string) => {
   return await prisma.auction.findMany({
     include: {
@@ -81,10 +93,12 @@ export const isValidScore = async (
   console.log(c.yellow('bidController.isValidScore'))
   try {
     const score = await getScore(req.user?.uuid || '')
-    if (score && score <= VALID_SCORE) {
-      return next(new BidError({ code: BidErrorCode.InvalidScore }))
-    } else {
-      req.body.score = score
+    if (score) {
+      if (score <= VALID_SCORE) {
+        return next(new BidError({ code: BidErrorCode.InvalidScore }))
+      } else {
+        req.userStatusInAuction = Prisma.BidStatus.ACCEPTED
+      }
     }
     next()
   } catch (err) {
@@ -102,13 +116,11 @@ export const isValidBidAmount = async (
   console.log(c.yellow('bidController.isValidBidAmount'))
   try {
     // console.log(req.body.bidPrice)
-
+    // minimumPrice<= bidPrice <= maximumPrice
     if (
       req.auction &&
-      +req.body.bidPrice >=
-        req.auction?.currentPrice
-          .add(req.auction?.incrementPrice || 0)
-          .toNumber()
+      getMinimumBidPrice(req.auction).lessThanOrEqualTo(+req.body.bidPrice) &&
+      getMaximumBidPrice(req.auction).greaterThanOrEqualTo(+req.body.bidPrice)
     ) {
       return next()
     } else {
@@ -124,9 +136,7 @@ export const isValidBidAmount = async (
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   console.log(c.yellow('bidController.add'))
   try {
-    const status = req.body.score
-      ? Prisma.BidStatus.ACCEPTED
-      : Prisma.BidStatus.PENDING
+    const status = req.userStatusInAuction || Prisma.BidStatus.PENDING
     const [bid] = await prisma.$transaction([
       prisma.bid.create({
         data: {
@@ -346,13 +356,16 @@ export const checkUserBidStatus = async (
         },
       },
     })
-    if (userBidStatus?.status === Prisma.BidStatus.PENDING) {
-      return next(new BidError({ code: BidErrorCode.HavingPendingBid }))
-    } else if (userBidStatus?.status === Prisma.BidStatus.REJECTED) {
-      return next(new BidError({ code: BidErrorCode.InBlacklist }))
-    } else {
-      next()
+    if (userBidStatus) {
+      if (userBidStatus.status === Prisma.BidStatus.PENDING) {
+        return next(new BidError({ code: BidErrorCode.HavingPendingBid }))
+      } else if (userBidStatus.status === Prisma.BidStatus.REJECTED) {
+        return next(new BidError({ code: BidErrorCode.InBlacklist }))
+      } else {
+        req.userStatusInAuction = userBidStatus.status
+      }
     }
+    next()
   } catch (err) {
     if (err instanceof Error) {
       next(err)
@@ -420,29 +433,28 @@ export const addAutoBid = async (
   next: NextFunction,
 ) => {
   try {
-    const status = req.body.score
-      ? Prisma.BidStatus.ACCEPTED
-      : Prisma.BidStatus.PENDING
-    await prisma.userBidStatus.upsert({
-      update: {
-        status: status,
-      },
-      create: {
-        auctionId: req.auction?.id || NaN,
-        userId: req.user.uuid,
-        status: status,
-      },
-      where: {
-        auctionId_userId: {
-          auctionId: req.auction?.id || NaN,
-          userId: req.user.uuid,
-        },
-      },
-    })
-
-    req.body.bidPrice = req.auction?.currentPrice.add(
-      req.auction.incrementPrice,
-    )
+    if (!req.userStatusInAuction) {
+      throw new Error()
+    } else {
+      if (req.auction) {
+        await prisma.autoBid.upsert({
+          update: {
+            maximumPrice: req.body.bidPrice,
+          },
+          create: {
+            maximumPrice: req.body.bidPrice,
+            auctionId: req.auction?.id,
+            userId: req.user.uuid,
+          },
+          where:{
+            auctionId_userId:{
+              auctionId: req.auction.id,
+              userId: req.user.uuid
+            }
+          }
+        })
+      }
+    }
     next()
   } catch (err) {
     if (err instanceof Error) {
@@ -475,37 +487,45 @@ export const executeAutoBid = async (
       },
     })
     // add auto bid to bid table
-    const newBids: Prisma.Prisma.BidCreateManyInput[] = []
-    let curWinningBidder = req.bid?.bidderId
-    let curWinningPrice = req.bid?.bidPrice
-    while (true) {
-      let isFoundNewWinner = false
-      autoBids.forEach((autoBid) => {
-        if (
-          req.bid &&
-          autoBid.maximumPrice.greaterThan(req.bid?.bidPrice) &&
-          autoBid.userId !== curWinningBidder
-        ) {
-          newBids.push({
-            auctionId: req.bid.auctionId,
-            bidPrice: curWinningPrice?.add(autoBid.auctions.incrementPrice),
-            bidderId: autoBid.userId,
-            bidTime: new Date(),
-          })
-          curWinningBidder = autoBid.userId
-          curWinningPrice = curWinningPrice?.add(
-            autoBid.auctions.incrementPrice,
-          )
-          isFoundNewWinner = true
+    if (req.bid) {
+      const newBids: Prisma.Prisma.BidCreateManyInput[] = []
+      let curWinningBidder = req.bid.bidderId
+      let curWinningPrice = req.bid.bidPrice
+      while (true) {
+        let isFoundNewWinner = false
+        autoBids.forEach((autoBid) => {
+          if (
+            req.auction &&
+            autoBid.maximumPrice.greaterThan(curWinningPrice) &&
+            autoBid.userId !== curWinningBidder
+          ) {
+            //create new bid
+            const newBid = {
+              auctionId: autoBid.auctionId,
+              bidPrice: curWinningPrice
+                .add(req.auction.incrementPrice)
+                .clamp(
+                  getMinimumBidPrice(req.auction),
+                  getMaximumBidPrice(req.auction),
+                ),
+              bidderId: autoBid.userId,
+              bidTime: new Date(),
+            }
+            newBids.push(newBid)
+
+            curWinningBidder = newBid.bidderId
+            curWinningPrice = newBid.bidPrice
+            isFoundNewWinner = true
+          }
+        })
+        if (!isFoundNewWinner) {
+          break
         }
-      })
-      if (!isFoundNewWinner) {
-        break
       }
+      await prisma.bid.createMany({
+        data: [...newBids],
+      })
     }
-    await prisma.bid.createMany({
-      data: [...newBids],
-    })
     next()
   } catch (err) {
     if (err instanceof Error) {
@@ -514,12 +534,12 @@ export const executeAutoBid = async (
   }
 }
 
-export const recalculateNewWinningBid = async (
+export const getWinningBid = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  console.log(c.yellow('bidController.recalculateNewWinningBid'))
+  console.log(c.yellow('bidController.getWinningBid'))
   try {
     const winningBid = await prisma.bid.findFirst({
       orderBy: {
