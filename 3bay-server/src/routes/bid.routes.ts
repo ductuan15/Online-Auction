@@ -65,7 +65,7 @@ router
     bidController.executeAutoBid,
     bidController.recalculateNewWinningBid,
     auctionController.update,
-    bidController.notifyWhenBidAccepted,
+    bidController.notifyWhenNewBidPlaced,
   )
 // check auctions is exist and opening
 router.param('auctionId', auctionController.auctionById)

@@ -584,6 +584,72 @@ async function getInvolvedBidders(auctionId: number | undefined) {
   })
 }
 
+export const notifyWhenNewBidPlaced = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  console.log(c.yellow('bidController.notifyWhenNewBidPlaced'))
+  try {
+    const product = await getProductByAuction(req.auction)
+    const involvedBidders = await getInvolvedBidders(req.auction?.id)
+    const seller = await prisma.user.findUnique({
+      select: {
+        email: true,
+        name: true,
+      },
+      where: {
+        uuid: product.sellerId,
+      },
+      rejectOnNotFound: true,
+    })
+
+    emitEventToUsers(
+      [
+        ...involvedBidders.map((bid) => {
+          return bid.bidder.uuid
+        }),
+        product.sellerId,
+      ],
+      SocketEvent.AUCTION_NOTIFY,
+      { type: 'AUCTION_NEW_BID', data: product, date: new Date() },
+    )
+
+    for (const {
+      bidder: { email, name }, bidderId
+    } of involvedBidders) {
+      // no need to send notification to the user
+      // who placed this bid
+      if (req.user.uuid === bidderId) {
+        continue
+      }
+      await sendMailTemplate(
+        [email],
+        MailType.AUCTION_NEW_BID_TO_BIDDER,
+        {
+          productName: product.name,
+          name: name,
+        },
+        [product.name],
+      )
+    }
+
+    await sendMailTemplate(
+      [seller.email],
+      MailType.AUCTION_CLOSED_TO_SELLER,
+      {
+        productName: product.name,
+        name: seller.name,
+      },
+      [product.name],
+    )
+
+    next()
+  } catch (e) {
+    next(e)
+  }
+}
+
 export const notifyWhenBidAccepted = async (
   req: Request,
   res: Response,
