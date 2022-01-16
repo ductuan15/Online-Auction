@@ -13,12 +13,13 @@ import { useProductContext } from '../../../contexts/product/ProductDetailsConte
 import * as React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import SellerService from '../../../services/seller.service'
-import _ from 'lodash'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { Bid } from '../../../models/bids'
 import { useIsAuctionClosed } from '../../../hooks/use-is-auction-closed'
 import NumberFormat from 'react-number-format'
 import { nameMasking } from '../../../utils/name-mask'
+import AuctionService from '../../../services/auction.service'
+import BlockIcon from '@mui/icons-material/Block';
 
 // type BidRequestTableProps = {
 //   sx?: SxProps
@@ -66,17 +67,11 @@ export default function BidHistoryTable() {
   }, [currentProduct, user])
 
   const rejectBidder = useCallback(
-    async (params: GridRowParams) => {
+    async (params: GridRowParams<Bid>) => {
       try {
-        const idx = _.findIndex(rows, (row) => {
-          return row.id === params.id
-        })
-        if (idx === -1) {
-          return
-        }
         const response = await SellerService.rejectBid(
           latestAuction?.id,
-          rows[idx].id,
+          params.row.id,
         )
         if (response) {
           setRows((prevRows) => prevRows.filter((row) => row.id !== params.id))
@@ -85,8 +80,20 @@ export default function BidHistoryTable() {
         //
       }
     },
-    [latestAuction?.id, rows],
+    [latestAuction?.id],
   )
+
+  const removeBid = async (params: GridRowParams<Bid>) => {
+    try {
+      const response = await AuctionService.removeBid(params.row.id)
+
+      if (response) {
+        setRows((prevRows) => prevRows.filter((row) => row.id !== params.id))
+      }
+    } catch (e) {
+      //
+    }
+  }
 
   const columns: GridColumns = useMemo(
     () => [
@@ -148,13 +155,30 @@ export default function BidHistoryTable() {
         getActions: (params) => [
           <GridActionsCellItem
             key={params.id}
-            icon={<CloseIcon />}
+            icon={<BlockIcon />}
             label='Deny'
             sx={{
               display: !isProductSeller || isAuctionClosed ? 'none' : undefined,
             }}
             onClick={async () => {
-              await rejectBidder(params)
+              await rejectBidder(params as GridRowParams<Bid>)
+            }}
+          />,
+          <GridActionsCellItem
+            key={params.id}
+            icon={<CloseIcon />}
+            label='Cancel'
+            sx={{
+              display:
+                isProductSeller ||
+                isAuctionClosed ||
+                !user?.user ||
+                params.row.bidder.uuid !== user?.user
+                  ? 'none'
+                  : undefined,
+            }}
+            onClick={async () => {
+              await removeBid(params as GridRowParams<Bid>)
             }}
           />,
         ],
@@ -166,6 +190,7 @@ export default function BidHistoryTable() {
       latestAuction?.winningBid?.bidPrice,
       latestAuction?.winningBid?.bidderId,
       rejectBidder,
+      user?.user,
     ],
   )
 
