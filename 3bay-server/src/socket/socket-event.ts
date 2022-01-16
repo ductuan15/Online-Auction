@@ -6,8 +6,12 @@ export enum SocketEvent {
   USER_LOGOUT = 'user_logout',
 }
 
-export type NotifyData =
-  | { type: 'AUCTION_NEW_BID'; data: ProductRes; date: Date }
-  | { type: 'AUCTION_BID_REJECTED'; data: ProductRes; date: Date }
-  | { type: 'AUCTION_CLOSED_NO_WINNER'; data: ProductRes; date: Date }
-  | { type: 'AUCTION_CLOSED_HAD_WINNER'; data: ProductRes; date: Date }
+export interface NotifyData {
+  type:
+    | 'AUCTION_NEW_BID'
+    | 'AUCTION_BID_REJECTED'
+    | 'AUCTION_CLOSED_NO_WINNER'
+    | 'AUCTION_CLOSED_HAD_WINNER'
+  data: ProductRes
+  date: Date
+}

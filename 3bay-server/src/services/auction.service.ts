@@ -4,7 +4,7 @@ import c from 'ansi-colors'
 import { getDetailsAuctionById } from '../controllers/auction.controller.js'
 import Prisma from '@prisma/client'
 import { emitEventToUsers } from '../socket/socket.io.js'
-import { SocketEvent } from '../socket/socket-event.js'
+import { NotifyData, SocketEvent } from '../socket/socket-event.js'
 import sendMailTemplate from './mail.service.js'
 import MailType from '../const/mail.js'
 import { emitAuctionDetails } from '../socket/auction.io.js'
@@ -125,11 +125,27 @@ class AuctionScheduler {
     product: ProductRes,
     seller: { email: string; name: string },
   ) {
-    emitEventToUsers([auction.product.sellerId], SocketEvent.AUCTION_NOTIFY, {
+    const notifyData: NotifyData = {
       type: 'AUCTION_CLOSED_NO_WINNER',
       data: product,
       date: new Date(),
+    }
+
+    emitEventToUsers(
+      [auction.product.sellerId],
+      SocketEvent.AUCTION_NOTIFY,
+      notifyData,
+    )
+
+    await prisma.notifications.create({
+      data: {
+        uuid: auction.product.sellerId,
+        type: notifyData.type,
+        productId: product.id,
+        date: notifyData.date,
+      },
     })
+
     await sendMailTemplate(
       [seller.email],
       MailType.AUCTION_CLOSED_NO_WINNER,
@@ -159,15 +175,32 @@ class AuctionScheduler {
       rejectOnNotFound: true,
     })
 
+    const notifyData: NotifyData = {
+      type: 'AUCTION_CLOSED_HAD_WINNER',
+      data: product,
+      date: new Date(),
+    }
+
     emitEventToUsers(
       [auction.product.sellerId, auction.winningBid.bidder.uuid],
       SocketEvent.AUCTION_NOTIFY,
-      {
-        type: 'AUCTION_CLOSED_HAD_WINNER',
-        data: product,
-        date: new Date(),
-      },
+      notifyData,
     )
+
+    await prisma.notifications.createMany({
+      data: [
+        ...[auction.product.sellerId, auction.winningBid.bidder.uuid].map(
+          (uuid) => {
+            return {
+              uuid,
+              type: notifyData.type,
+              productId: product.id,
+              date: notifyData.date,
+            }
+          },
+        ),
+      ],
+    })
 
     for (const user of [
       { ...seller, type: MailType.AUCTION_CLOSED_TO_SELLER },

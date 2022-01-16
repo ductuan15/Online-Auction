@@ -7,10 +7,9 @@ import c from 'ansi-colors'
 import { emitAuctionDetails } from '../socket/auction.io.js'
 import { getProductByAuction } from './product.controller.js'
 import { emitEventToUsers } from '../socket/socket.io.js'
-import { SocketEvent } from '../socket/socket-event.js'
+import { NotifyData, SocketEvent } from '../socket/socket-event.js'
 import sendMailTemplate from '../services/mail.service.js'
 import MailType from '../const/mail.js'
-import { getUserBidStatus } from './auction.controller.js'
 
 // total reviews / total auctions
 const VALID_SCORE = 0.8
@@ -690,6 +689,12 @@ export const notifyWhenNewBidPlaced = async (
       rejectOnNotFound: true,
     })
 
+    const notifyData: NotifyData = {
+      type: 'AUCTION_NEW_BID',
+      data: product,
+      date: new Date(),
+    }
+
     emitEventToUsers(
       [
         ...involvedBidders.map((user) => {
@@ -698,8 +703,27 @@ export const notifyWhenNewBidPlaced = async (
         product.sellerId,
       ],
       SocketEvent.AUCTION_NOTIFY,
-      { type: 'AUCTION_NEW_BID', data: product, date: new Date() },
+      notifyData,
     )
+
+    await prisma.notifications.createMany({
+      data: [
+        ...involvedBidders.map((user) => {
+          return {
+            uuid: user.uuid,
+            type: notifyData.type,
+            productId: product.id,
+            date: notifyData.date,
+          }
+        }),
+        {
+          uuid: product.sellerId,
+          type: notifyData.type,
+          productId: product.id,
+          date: notifyData.date,
+        },
+      ],
+    })
 
     for (const { email, name, uuid } of involvedBidders) {
       // no need to send notification to the user
@@ -745,6 +769,12 @@ export const notifyWhenBidAccepted = async (
 
     const involvedBidders = await getInvolvedBidders(req.auction?.id)
 
+    const notifyData: NotifyData = {
+      type: 'AUCTION_NEW_BID',
+      data: product,
+      date: new Date(),
+    }
+
     emitEventToUsers(
       [
         ...involvedBidders.map((user) => {
@@ -752,8 +782,21 @@ export const notifyWhenBidAccepted = async (
         }),
       ],
       SocketEvent.AUCTION_NOTIFY,
-      { type: 'AUCTION_NEW_BID', data: product, date: new Date() },
+      notifyData,
     )
+
+    await prisma.notifications.createMany({
+      data: [
+        ...involvedBidders.map((user) => {
+          return {
+            uuid: user.uuid,
+            type: notifyData.type,
+            productId: product.id,
+            date: notifyData.date,
+          }
+        }),
+      ],
+    })
 
     for (const { email, name } of involvedBidders) {
       await sendMailTemplate(
@@ -786,10 +829,24 @@ export const notifyWhenBidRejected = async (
 
     const product = await getProductByAuction(req.auction)
 
-    emitEventToUsers([req.bid.bidder.uuid], SocketEvent.AUCTION_NOTIFY, {
+    const notifyData: NotifyData = {
       type: 'AUCTION_BID_REJECTED',
       data: product,
       date: new Date(),
+    }
+
+    emitEventToUsers(
+      [req.bid.bidder.uuid],
+      SocketEvent.AUCTION_NOTIFY,
+      notifyData,
+    )
+    await prisma.notifications.create({
+      data: {
+        uuid: req.bid.bidder.uuid,
+        type: notifyData.type,
+        productId: product.id,
+        date: notifyData.date,
+      },
     })
 
     await sendMailTemplate(
