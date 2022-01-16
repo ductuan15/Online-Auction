@@ -10,6 +10,7 @@ import { emitEventToUsers } from '../socket/socket.io.js'
 import { SocketEvent } from '../socket/socket-event.js'
 import sendMailTemplate from '../services/mail.service.js'
 import MailType from '../const/mail.js'
+import { getUserBidStatus } from './auction.controller.js'
 
 // total reviews / total auctions
 const VALID_SCORE = 0.8
@@ -200,7 +201,7 @@ export const deleteAutoBid = async (
 ) => {
   try {
     if (req.auction) {
-      const autoBid = await prisma.autoBid.delete({
+      await prisma.autoBid.delete({
         where: {
           auctionId_userId: {
             auctionId: req.auction?.id,
@@ -208,7 +209,7 @@ export const deleteAutoBid = async (
           },
         },
       })
-      res.json(autoBid)
+      return next()
     }
   } catch (err) {
     next(err)

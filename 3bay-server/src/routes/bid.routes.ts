@@ -50,7 +50,8 @@ router
   )
   .delete(
     passport.authenticate('jwt', { session: false }),
-    bidController.deleteAutoBid
+    bidController.deleteAutoBid,
+    auctionController.getUserBidStatus,
   )
 
 router

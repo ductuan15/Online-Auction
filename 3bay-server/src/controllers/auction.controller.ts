@@ -83,14 +83,14 @@ export async function getDetailsAuctionById(auctionId: number | undefined) {
           bidder: {
             select: {
               ...sellerInfoSelection,
-              autoBids:{
+              autoBids: {
                 select: {
-                  maximumPrice: true
+                  maximumPrice: true,
                 },
-                where:{
-                  auctionId:auctionId
-                }
-              }
+                where: {
+                  auctionId: auctionId,
+                },
+              },
             },
           },
         },
@@ -279,19 +279,31 @@ export const getUserBidStatus = async (
   next: NextFunction,
 ) => {
   try {
-    const userBidStatus = await prisma.userBidStatus.findUnique({
-      where: {
-        auctionId_userId: {
-          auctionId: req.auction?.id || NaN,
-          userId: req.user.uuid,
+    const [userBidStatus, hasAutoBid] = await prisma.$transaction([
+      prisma.userBidStatus.findUnique({
+        where: {
+          auctionId_userId: {
+            auctionId: req.auction?.id || NaN,
+            userId: req.user.uuid,
+          },
         },
-      },
-    })
+      }),
+      prisma.autoBid.findUnique({
+        where: {
+          auctionId_userId: {
+            auctionId: req.auction?.id || NaN,
+            userId: req.user.uuid,
+          },
+        },
+      }),
+    ])
     const response: {
       auctionId: number
       status?: string
+      hasAutoBid: boolean
     } = {
       auctionId: req.auction?.id || NaN,
+      hasAutoBid: !!hasAutoBid
     }
     switch (userBidStatus?.status) {
       case undefined:
