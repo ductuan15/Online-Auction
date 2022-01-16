@@ -96,6 +96,7 @@ model Product {
   latestAuction             Auction?                    @relation("auctionsToproducts_latestAuctionId", fields: [latestAuctionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "products_fk2")
   seller                    User                        @relation("productsTousers", fields: [sellerId], references: [uuid], map: "products_fk1")
   auctions                  Auction[]                   @relation("auctionsToproducts")
+  notifications             Notifications[]             @relation("notificationsToproducts")
   productDescriptionHistory ProductDescriptionHistory[] @relation("product_des_historyToproducts")
   productImages             ProductImage[]              @relation("product_imagesToproducts")
   userWatchlist             UserWatchlist[]             @relation("productsTouser_watchlist")
@@ -139,6 +140,7 @@ model User {
   address                String?                 @db.VarChar(255)
   autoBids               autoBid[]               @relation("auto_bidTousers")
   bids                   Bid[]                   @relation("bidsTousers")
+  notifications          Notifications?          @relation("notificationsTousers")
   products               Product[]               @relation("productsTousers")
   upgradeToSellerRequest UpgradeToSellerRequest? @relation("upgrade_to_seller_requestsTousers")
   userBidStatus          UserBidStatus[]         @relation("user_bid_statusTousers")
@@ -181,6 +183,19 @@ model autoBid {
   @@map("auto_bid")
 }
 
+model Notifications {
+  id        Int              @id @default(autoincrement())
+  uuid      String           @unique(map: "notifications_uuid_uindex") @db.VarChar(255)
+  type      NotificationType
+  productId Int?
+  date      DateTime         @default(now()) @db.DateTime(0)
+  products  Product?         @relation("notificationsToproducts", fields: [productId], references: [id], onDelete: Cascade, map: "notifications_products_id_fk")
+  users     User             @relation("notificationsTousers", fields: [uuid], references: [uuid], onDelete: Cascade, map: "notifications_users_uuid_fk")
+
+  @@index([productId], map: "notifications_products_id_fk")
+  @@map("notifications")
+}
+
 enum Role {
   BIDDER
   SELLER
@@ -201,4 +216,13 @@ enum BidStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+enum NotificationType {
+  AUCTION_NEW_BID
+  AUCTION_BID_REJECTED
+  AUCTION_CLOSED_NO_WINNER
+  AUCTION_CLOSED_HAD_WINNER
+
+  @@map("notifications_type")
 }

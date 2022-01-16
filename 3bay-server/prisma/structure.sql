@@ -171,6 +171,30 @@ CREATE TABLE `categories`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `notifications`
+--
+
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifications`
+(
+    `id`        int(11)                                                                                                                           NOT NULL AUTO_INCREMENT,
+    `uuid`      varchar(255) COLLATE utf8mb4_unicode_ci                                                                                           NOT NULL,
+    `type`      enum ('AUCTION_NEW_BID','AUCTION_BID_REJECTED','AUCTION_CLOSED_NO_WINNER','AUCTION_CLOSED_HAD_WINNER') COLLATE utf8mb4_unicode_ci NOT NULL,
+    `productId` int(11)                                                                                                                                    DEFAULT NULL,
+    `date`      datetime                                                                                                                          NOT NULL DEFAULT current_timestamp(),
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `notifications_uuid_uindex` (`uuid`),
+    KEY `notifications_products_id_fk` (`productId`),
+    CONSTRAINT `notifications_products_id_fk` FOREIGN KEY (`productId`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `notifications_users_uuid_fk` FOREIGN KEY (`uuid`) REFERENCES `users` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `otp`
 --
 
@@ -355,4 +379,4 @@ CREATE TABLE `users`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-13 20:51:06
+-- Dump completed on 2022-01-17  2:42:35
