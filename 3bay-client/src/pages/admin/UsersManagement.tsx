@@ -7,7 +7,6 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import Box from '@mui/material/Box'
 import GroupIcon from '@mui/icons-material/Group'
 import { useEffectOnce, useIsMounted } from '../../hooks'
-import UserTable from '../../components/admin/users/UserTable'
 import { setErrorTextMsg } from '../../utils/error'
 import { useAdminUsersContext } from '../../contexts/admin/UsersContext'
 import AdminService from '../../services/admin.service'
@@ -17,6 +16,7 @@ import useTitle from '../../hooks/use-title'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import AddUserDialog from '../../components/admin/users/AddUserDialog'
 import UpgradeToSellerRequestTable from '../../components/admin/users/UpgradeToSellerRequestTable'
+import UserTable2 from '../../components/admin/users/UserTable2'
 
 const UsersManagement = (): JSX.Element => {
   useTitle('3bay | Manage users')
@@ -147,11 +147,18 @@ const UsersManagement = (): JSX.Element => {
                 </TabList>
               </Box>
               <TabPanel value='1'>
-                <UserTable
+                {/*<UserTable*/}
+                {/*  tab='1'*/}
+                {/*  onLoadingData={onLoadingData}*/}
+                {/*  onDataLoaded={onDataLoaded}*/}
+                {/*  onError={onTableError}*/}
+                {/*/>*/}
+                <UserTable2
                   tab='1'
                   onLoadingData={onLoadingData}
                   onDataLoaded={onDataLoaded}
                   onError={onTableError}
+                  isLoading={isLoading}
                 />
               </TabPanel>
               <TabPanel value='2'>

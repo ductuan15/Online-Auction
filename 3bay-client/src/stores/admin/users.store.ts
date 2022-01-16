@@ -29,18 +29,20 @@ export type UsersAction =
   | { type: 'CLOSE_ADD_USER_DIALOG' }
   | { type: 'NEW_USER_ADDED' }
   | { type: 'HANDLED_NEW_USER_ADDED' }
+  | { type: 'SET_PAGE'; payload: number }
+  | { type: 'SET_PAGE_SIZE'; payload: number }
 
 export const initialUsersState: UsersState = {
   users: [],
   requestSellerUsers: [],
   usersTable: {
     page: 1,
-    limit: 5,
+    limit: 10,
     total: 0,
   },
   requestSellerTable: {
     page: 1,
-    limit: 5,
+    limit: 10,
     total: 0,
   },
   isAddUserDialogOpened: false,
@@ -116,6 +118,22 @@ export const usersReducer = (
       return {
         ...state,
         currentTab: action.payload,
+      }
+    case 'SET_PAGE':
+      return {
+        ...state,
+        usersTable: {
+          ...state.usersTable,
+          page: action.payload,
+        },
+      }
+    case 'SET_PAGE_SIZE':
+      return {
+        ...state,
+        usersTable: {
+          ...state.usersTable,
+          limit: action.payload,
+        },
       }
     default:
       return state
