@@ -6,36 +6,32 @@ import * as authMdw from '../middlewares/auth.mdw.js'
 
 const router = Router()
 
-router
-  .route('/setAccepted/:auctionId/:bidId')
-  .patch(
-    passport.authenticate('jwt', { session: false }),
-    authMdw.requireSellerRole,
-    auctionController.isAuctionClosed,
-    bidController.isProductOwner,
-    bidController.setBidStatusToAccepted,
-    bidController.isWinningBid,             // might send header
-    bidController.executeAutoBid,
-    bidController.getWinningBid,
-    auctionController.update,
-    bidController.notifyWhenBidAccepted,
-  )
+router.route('/setAccepted/:auctionId/:bidId').patch(
+  passport.authenticate('jwt', { session: false }),
+  authMdw.requireSellerRole,
+  auctionController.isAuctionClosed,
+  bidController.isProductOwner,
+  bidController.setBidStatusToAccepted,
+  bidController.isWinningBid, // might send header
+  bidController.executeAutoBid,
+  bidController.getWinningBid,
+  auctionController.update,
+  bidController.notifyWhenBidAccepted,
+)
 
-router
-  .route('/setRejected/:auctionId/:bidId')
-  .patch(
-    passport.authenticate('jwt', { session: false }),
-    authMdw.requireSellerRole,
-    auctionController.isAuctionClosed,
-    bidController.isProductOwner,
-    bidController.setBidStatusToRejected,
-    bidController.notifyWhenBidRejected, //
-    bidController.isWinningBid,          // might send header
-    bidController.executeAutoBid,
-    bidController.getWinningBid,
-    auctionController.update,
-    bidController.notifyWhenBidAccepted,
-  )
+router.route('/setRejected/:auctionId/:bidId').patch(
+  passport.authenticate('jwt', { session: false }),
+  authMdw.requireSellerRole,
+  auctionController.isAuctionClosed,
+  bidController.isProductOwner,
+  bidController.setBidStatusToRejected,
+  bidController.notifyWhenBidRejected, //
+  bidController.isWinningBid, // might send header
+  bidController.executeAutoBid,
+  bidController.getWinningBid,
+  auctionController.update,
+  bidController.notifyWhenBidAccepted,
+)
 
 router
   .route('/auto/:auctionId')
@@ -52,6 +48,10 @@ router
     auctionController.update,
     bidController.notifyWhenNewBidPlaced,
   )
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    bidController.deleteAutoBid
+  )
 
 router
   .route('/:auctionId')
@@ -67,6 +67,19 @@ router
     bidController.getWinningBid,
     auctionController.update,
     bidController.notifyWhenNewBidPlaced,
+  )
+
+router
+  .route('/:bidId')
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    bidController.isBidOwner,
+    bidController.resetWinningAuction,
+    bidController.deleteBid,
+    bidController.getWinningBid,
+    bidController.executeAutoBid,
+    bidController.getWinningBid,
+    auctionController.update,
   )
 // check auctions is exist and opening
 router.param('auctionId', auctionController.auctionById)

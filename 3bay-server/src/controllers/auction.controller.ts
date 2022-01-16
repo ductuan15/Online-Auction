@@ -83,6 +83,14 @@ export async function getDetailsAuctionById(auctionId: number | undefined) {
           bidder: {
             select: {
               ...sellerInfoSelection,
+              autoBids:{
+                select: {
+                  maximumPrice: true
+                },
+                where:{
+                  auctionId:auctionId
+                }
+              }
             },
           },
         },
@@ -101,7 +109,6 @@ export async function getDetailsAuctionById(auctionId: number | undefined) {
         },
         orderBy: {
           bidTime: 'desc',
-          bidPrice: 'desc',
         },
       },
     },
