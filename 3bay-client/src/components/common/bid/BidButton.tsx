@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import BorderButton from '../button/BorderButton'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Link } from '@mui/material'
+import { Link, Stack } from '@mui/material'
 import moment from 'moment'
 import auctionService from '../../../services/auction.service'
 
@@ -57,6 +57,18 @@ function BidButton(): JSX.Element | null {
     }
   }, [hasRejectComment, product?.id])
 
+  const onCancelAutoBidButtonClicked = useCallback(async () => {
+    if (latestAuction?.id) {
+      try {
+        const bidStatus = await auctionService.removeAutoBid(latestAuction?.id)
+        console.log(bidStatus)
+        dispatch({ type: 'UPDATE_BID_STATUS', payload: bidStatus })
+      } catch (e) {
+        //
+      }
+    }
+  }, [dispatch, latestAuction?.id])
+
   return useMemo(() => {
     let button: JSX.Element | null
     if (!userPoint || (userPoint && userPoint >= MINIMUM_POINT)) {
@@ -88,15 +100,25 @@ function BidButton(): JSX.Element | null {
           break
         case 'ACCEPT':
           button = (
-            <BorderButton
-              sx={{ mt: 1 }}
-              color='info'
-              onClick={() => {
-                dispatch({ type: 'OPEN_BID_DIALOG' })
-              }}
-            >
-              ➕ Increase bid price
-            </BorderButton>
+            <Stack direction='row' spacing={1} sx={{ mt: 1 }}>
+              <BorderButton
+                color='info'
+                onClick={() => {
+                  dispatch({ type: 'OPEN_BID_DIALOG' })
+                }}
+              >
+                ➕ Increase bid price
+              </BorderButton>
+
+              {bidStatus?.hasAutoBid && (
+                <BorderButton
+                  color='error'
+                  onClick={onCancelAutoBidButtonClicked}
+                >
+                  ❌ Cancel automatic bidding
+                </BorderButton>
+              )}
+            </Stack>
           )
           break
         case 'REJECT':
@@ -152,6 +174,7 @@ function BidButton(): JSX.Element | null {
 
     return button
   }, [
+    bidStatus?.hasAutoBid,
     bidStatus?.status,
     canBidThis,
     closeTime,
@@ -161,6 +184,7 @@ function BidButton(): JSX.Element | null {
     latestAuction?.winningBid,
     location,
     navigate,
+    onCancelAutoBidButtonClicked,
     onCancelTransactionButtonClicked,
     product?.sellerId,
     userDetails,

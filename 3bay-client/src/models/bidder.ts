@@ -1,5 +1,6 @@
 export type BidStatus = {
   status: 'NOT_BID' | 'ACCEPT' | 'PENDING' | 'REJECT'
+  hasAutoBid: boolean
 }
 
 export type BidRequest = {

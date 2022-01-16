@@ -3,7 +3,7 @@ import { AdminUserDetail } from '../../../models/admin-user'
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import '@fontsource/jetbrains-mono'
 import * as React from 'react'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import CloseIcon from '@mui/icons-material/Close'
 import {
@@ -14,7 +14,6 @@ import {
 } from '@mui/x-data-grid'
 import AdminService from '../../../services/admin.service'
 import CheckIcon from '@mui/icons-material/Check'
-import { useEffectOnce } from '../../../hooks'
 
 type UpgradeToSellerRequestTableProps = {
   onLoadingData?: () => void
@@ -77,9 +76,9 @@ const UpgradeToSellerRequestTable = ({
     userState.requestSellerTable.page,
   ])
 
-  useEffectOnce(() => {
+  useEffect(() => {
     ;(async () => await loadData())()
-  })
+  }, [loadData])
 
   // useEffect(() => {
   //   ;(async () => {

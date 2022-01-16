@@ -3,6 +3,7 @@ import axiosApiInstance from './api'
 import { ProductBidFormInput } from '../models/bids'
 import { AxiosResponse } from 'axios'
 import { BidderComment, SellerComment } from '../models/user'
+import { BidStatus } from '../models/bidder'
 
 async function newBid(
   bidInput: ProductBidFormInput,
@@ -54,11 +55,25 @@ async function addBidderReview(
   )
 }
 
+async function removeBid(bidId: number): Promise<Auction> {
+  const response = await axiosApiInstance.delete<Auction>(`/api/bid/${bidId}`)
+  return response.data
+}
+
+async function removeAutoBid(auctionId: number): Promise<BidStatus> {
+  const response = await axiosApiInstance.delete<BidStatus>(
+    `/api/bid/auto/${auctionId}`,
+  )
+  return response.data
+}
+
 const AuctionService = {
   newBid,
   addSellerReview,
   addBidderReview,
   newAutoBid,
+  removeBid,
+  removeAutoBid,
 }
 
 export default AuctionService
