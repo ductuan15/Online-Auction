@@ -93,6 +93,9 @@ const UserTable = ({
           ...userState.users[idx],
           [params['field']]: params.value,
         }
+        if (JSON.stringify(data) === JSON.stringify(userState.users[idx])) {
+          return
+        }
 
         const userResponse = await AdminService.updateUser(data)
         dispatch({ type: 'UPDATE', payload: userResponse })
@@ -240,7 +243,9 @@ const UserTable = ({
         onPageSizeChange={(pageSize) =>
           dispatch({ type: 'SET_PAGE_SIZE', payload: pageSize })
         }
-        isCellEditable={(params) => !!(authData && params.row.uuid !== authData.user)}
+        isCellEditable={(params) =>
+          !!(authData && params.row.uuid !== authData.user)
+        }
         onCellEditCommit={handleCellEditCommit}
         autoHeight
       />

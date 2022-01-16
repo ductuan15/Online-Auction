@@ -15,8 +15,8 @@ import { AddUserFormInputs } from '../../models/sign-up'
 import useTitle from '../../hooks/use-title'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import AddUserDialog from '../../components/admin/users/AddUserDialog'
-import UpgradeToSellerRequestTable from '../../components/admin/users/UpgradeToSellerRequestTable'
 import UserTable2 from '../../components/admin/users/UserTable2'
+import UpgradeToSellerRequestTable2 from '../../components/admin/users/UpgradeToSellerRequestTable2'
 
 const UsersManagement = (): JSX.Element => {
   useTitle('3bay | Manage users')
@@ -162,11 +162,18 @@ const UsersManagement = (): JSX.Element => {
                 />
               </TabPanel>
               <TabPanel value='2'>
-                <UpgradeToSellerRequestTable
+                {/*<UpgradeToSellerRequestTable*/}
+                {/*  tab='2'*/}
+                {/*  onLoadingData={onLoadingData}*/}
+                {/*  onDataLoaded={onDataLoaded}*/}
+                {/*  onError={onTableError}*/}
+                {/*/>*/}
+                <UpgradeToSellerRequestTable2
                   tab='2'
                   onLoadingData={onLoadingData}
                   onDataLoaded={onDataLoaded}
                   onError={onTableError}
+                  isLoading={isLoading}
                 />
               </TabPanel>
             </TabContext>
