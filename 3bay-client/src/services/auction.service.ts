@@ -67,6 +67,13 @@ async function removeAutoBid(auctionId: number): Promise<BidStatus> {
   return response.data
 }
 
+async function buyout(auctionId: number): Promise<Auction> {
+  const response = await axiosApiInstance.post<Auction>(
+    `/api/bid/buyout/${auctionId}`,
+  )
+  return response.data
+}
+
 const AuctionService = {
   newBid,
   addSellerReview,
@@ -74,6 +81,7 @@ const AuctionService = {
   newAutoBid,
   removeBid,
   removeAutoBid,
+  buyout,
 }
 
 export default AuctionService

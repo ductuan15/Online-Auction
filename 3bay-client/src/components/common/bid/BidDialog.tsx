@@ -13,6 +13,7 @@ import { Alert, Grid, LinearProgress, Switch, Typography } from '@mui/material'
 import BorderButton from '../button/BorderButton'
 import formatNumberToVND from '../../../utils/currency-format'
 import AutoBidForm from './AutoBidForm'
+import AuctionService from '../../../services/auction.service'
 
 const dialogName = 'dialog-set-bid-price'
 
@@ -43,6 +44,25 @@ function BidDialog(): JSX.Element {
   const onButtonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAutomaticBidding(e.target.checked)
   }
+
+  const onBuyoutButtonClicked = useCallback(async () => {
+    if (!latestAuction || !latestAuction.id || !latestAuction?.buyoutPrice)
+      return
+    if (
+      confirm(
+        `Are you sure you want to buy this product with` +
+          ` ${formatNumberToVND(latestAuction.buyoutPrice)}?`,
+      )
+    ) {
+      try {
+        setLoading(true)
+        await AuctionService.buyout(latestAuction?.id)
+      } finally {
+        setLoading(false)
+        dispatch({ type: 'CLOSE_BID_DIALOG' })
+      }
+    }
+  }, [dispatch, latestAuction])
 
   const formId = useMemo(() => {
     if (isAutomaticBidding) {
@@ -106,7 +126,13 @@ function BidDialog(): JSX.Element {
 
         <Grid container>
           {latestAuction?.buyoutPrice && (
-            <BorderButton color='success' fullWidth sx={{ mt: 2 }}>
+            <BorderButton
+              color='success'
+              fullWidth
+              sx={{ mt: 2 }}
+              disabled={isLoading}
+              onClick={onBuyoutButtonClicked}
+            >
               💵 DEAL: Buy the product instantly with{' '}
               {formatNumberToVND(latestAuction?.buyoutPrice || 0)}
             </BorderButton>

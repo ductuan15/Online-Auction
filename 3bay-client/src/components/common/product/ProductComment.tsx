@@ -111,6 +111,7 @@ const CommentRow = ({
           }}
         />
       </ListItemAvatar>
+
       <ListItemText
         primary={
           <Box display='flex' flexDirection='row' alignItems='center'>
@@ -156,12 +157,12 @@ const ProductComment = (): JSX.Element | null => {
   const [point, setPoint] = useState<undefined | boolean>(undefined)
 
   const hasSellerReview = useMemo(() => {
-    return latestAuction?.sellerReview !== null && latestAuction?.sellerComment
-  }, [latestAuction?.sellerComment, latestAuction?.sellerReview])
+    return latestAuction?.sellerReview !== null // && latestAuction?.sellerComment
+  }, [latestAuction?.sellerReview])
 
   const hasBidderReview = useMemo(() => {
-    return latestAuction?.bidderReview !== null && latestAuction?.bidderComment
-  }, [latestAuction?.bidderComment, latestAuction?.bidderReview])
+    return latestAuction?.bidderReview !== null // && latestAuction?.bidderComment
+  }, [latestAuction?.bidderReview])
 
   const shouldDisplayReviewForm = useMemo(() => {
     return (
