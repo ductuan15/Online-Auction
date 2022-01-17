@@ -34,7 +34,7 @@ import PostedProductList from './pages/seller/PostedProductList'
 import { SocketProvider } from './contexts/socket/SocketContext'
 import AuctionList from './pages/user/auctionlist/AuctionList'
 import WonAuctionList from './pages/user/wonauctionlist/WonAuctionList'
-import AuctionHasWinner from './pages/seller/AuctionsHaveWinner'
+import AuctionsHaveWinner from './pages/seller/AuctionsHaveWinner'
 
 function GlobalRouter(): JSX.Element {
   return (
@@ -53,9 +53,11 @@ function GlobalRouter(): JSX.Element {
           </Route>
 
           <Route path='seller/' element={<RequireRole role={'SELLER'} />}>
-            {/* TODO: change path name of these 2 route*/}
-            <Route path='postedproductlist' element={<PostedProductList />} />
-            <Route path='auctionhaswinner' element={<AuctionHasWinner />} />
+            <Route path='posted-product-list' element={<PostedProductList />} />
+            <Route
+              path='auctions-have-winner'
+              element={<AuctionsHaveWinner />}
+            />
           </Route>
 
           <Route
@@ -73,8 +75,8 @@ function GlobalRouter(): JSX.Element {
           <Route element={<RequireLogin />}>
             <Route path='user/view' element={<Profile />} />
             <Route path='user/watchlist' element={<WatchList />} />
-            <Route path='user/auctionlist' element={<AuctionList />} />
-            <Route path='user/wonauctionlist' element={<WonAuctionList />} />
+            <Route path='user/auction-list' element={<AuctionList />} />
+            <Route path='user/won-auction-list' element={<WonAuctionList />} />
 
             <Route path='user/' element={<UserLayout />}>
               <Route index element={<Home />} />

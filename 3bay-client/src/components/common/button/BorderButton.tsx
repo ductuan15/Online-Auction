@@ -2,12 +2,15 @@ import { Button, ButtonProps } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { GREY } from '../../../theme/palette'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BorderButton = styled(
-  ({ isSelected, ...props }: ButtonProps & { isSelected?: boolean }) => (
+  ({
+    isSelected,
+    padding,
+    ...props
+  }: ButtonProps & { isSelected?: boolean; padding?: number | string }) => (
     <Button variant='outlined' size='large' color='inherit' {...props} />
   ),
-)(({ theme, color, isSelected }) => {
+)(({ theme, color, isSelected, padding }) => {
   const colorMode = color ?? 'primary'
   let selectedColor
   if (colorMode !== 'inherit') {
@@ -29,7 +32,9 @@ const BorderButton = styled(
     border: `1.75px solid ${borderColor}`,
     color: isSelected ? selectedColor : undefined,
     borderRadius: 8,
-    padding: theme.spacing(1.5 - letterSpacing, 2, 1.25 - letterSpacing, 2),
+    padding: padding
+      ? padding
+      : theme.spacing(1.5 - letterSpacing, 2, 1.25 - letterSpacing, 2),
     ['&:hover']: {
       border: `1.75px solid ${selectedColor}`,
       color: selectedColor,

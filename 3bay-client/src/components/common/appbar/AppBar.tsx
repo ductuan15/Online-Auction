@@ -28,8 +28,6 @@ import {
   useResolvedPath,
 } from 'react-router-dom'
 import { GREY } from '../../../theme/palette'
-import JoiningAuction from './JoiningAuctionButton'
-import WonAuctionButton from './WonAuctionButton'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import { getNotificationDescription } from '../../../models/notification'
 import CloseIcon from '@mui/icons-material/Close'
@@ -267,10 +265,10 @@ export default function SearchAppBar(): JSX.Element {
               {isAuth ? <WatchListButton /> : null}
 
               {/*JoiningAuction Button*/}
-              {isAuth ? <JoiningAuction /> : null}
+              {/*{isAuth ? <JoiningAuction /> : null}*/}
 
-              {/*WonAuction Button*/}
-              {isAuth ? <WonAuctionButton /> : null}
+              {/*/!*WonAuction Button*!/*/}
+              {/*{isAuth ? <WonAuctionButton /> : null}*/}
             </Stack>
 
             {/* Profile */}

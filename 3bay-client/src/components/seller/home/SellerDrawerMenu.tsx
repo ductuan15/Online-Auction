@@ -1,27 +1,37 @@
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { Divider, List } from '@mui/material'
 import * as React from 'react'
-import { ADMIN_MENU_ITEMS } from './AdminMenu'
 import StyledMenuItem from '../../common/menu/StyledMenuItem'
 import StyledListSubheader from '../../common/drawer/StyledListSubheader'
 
-const AdminDrawerMenu = (): JSX.Element | null => {
+export const SELLER_MENU_ITEMS = [
+  {
+    title: '🧰️ Posted product list',
+    link: '/seller/posted-product-list',
+  },
+  {
+    title: '👑 Auctions have winner',
+    link: '/seller/auctions-have-winner',
+  },
+]
+
+const SellerDrawerMenu = (): JSX.Element | null => {
   const { user } = useAuth()
-  if (!user || user.role !== 'ADMINISTRATOR') {
+  if (!user || user.role !== 'SELLER') {
     return null
   }
 
   return (
     <List
-      aria-labelledby='admin-list-subheader'
+      aria-labelledby='seller-list-subheader'
       subheader={
-        <StyledListSubheader id='admin-list-subheader'>
-          🔑 Administration tasks
+        <StyledListSubheader id='seller-list-subheader'>
+          📦 Seller
         </StyledListSubheader>
       }
     >
       <Divider variant='middle' />
-      {ADMIN_MENU_ITEMS.map((item) => {
+      {SELLER_MENU_ITEMS.map((item) => {
         return (
           <StyledMenuItem
             to={item.link}
@@ -35,4 +45,4 @@ const AdminDrawerMenu = (): JSX.Element | null => {
   )
 }
 
-export default AdminDrawerMenu
+export default SellerDrawerMenu

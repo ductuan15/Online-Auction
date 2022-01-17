@@ -4,9 +4,8 @@ import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import { useNavigate } from 'react-router-dom'
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
-import UserService from "../../../services/user.service";
 
-const JoiningAuctionButton = (): JSX.Element => {
+const WonAuctionButton = (): JSX.Element => {
   const navigate = useNavigate()
   // const wonAuctionList = await UserService.getUserWonAuctionList()
   // dispatch({
@@ -18,7 +17,7 @@ const JoiningAuctionButton = (): JSX.Element => {
     <Box>
       <Tooltip title='Won Auctions list'>
         <IconButton
-          onClick={() => navigate('/user/wonauctionlist')}
+          onClick={() => navigate('/user/won-auction-list')}
           size='large'
           edge='end'
           aria-label='Won Auctions'
@@ -31,4 +30,4 @@ const JoiningAuctionButton = (): JSX.Element => {
   )
 }
 
-export default JoiningAuctionButton
+export default WonAuctionButton

@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography'
 import ProductListLayout from '../../components/common/product/ProductListLayout'
 import { useTitle } from '../../hooks'
 
-const AuctionHaveWinnerPage = (): JSX.Element => {
+const AuctionsHaveWinnerPage = (): JSX.Element => {
   useTitle('3bay | Auctions have winners')
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -45,4 +45,4 @@ const AuctionHaveWinnerPage = (): JSX.Element => {
     />
   )
 }
-export default AuctionHaveWinnerPage
+export default AuctionsHaveWinnerPage

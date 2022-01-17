@@ -9,6 +9,8 @@ import axiosApiInstance from '../../../services/api'
 import Category from '../../../models/category'
 import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
 import AdminDrawerMenu from '../../admin/home/AdminDrawerMenu'
+import SellerDrawerMenu from '../../seller/home/SellerDrawerMenu'
+import BidderDrawerMenu from './BidderDrawerMenu'
 
 type AppDrawerProps = {
   anchor?: 'left' | 'top' | 'right' | 'bottom'
@@ -66,6 +68,8 @@ const AppDrawer = ({ anchor }: AppDrawerProps): JSX.Element => {
 
       <Box>
         <AdminDrawerMenu />
+        <BidderDrawerMenu />
+        <SellerDrawerMenu />
       </Box>
 
       <Box>

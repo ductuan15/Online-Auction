@@ -12,7 +12,7 @@ const JoiningAuctionButton = (): JSX.Element => {
     <Box>
       <Tooltip title='Auctions list'>
         <IconButton
-          onClick={() => navigate('/user/auctionlist')}
+          onClick={() => navigate('/user/won-auction-list')}
           size='large'
           edge='end'
           aria-label='Auctions'

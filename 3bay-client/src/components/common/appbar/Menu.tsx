@@ -12,8 +12,11 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 import { useDarkMode } from '../../../hooks'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
-import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
-import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
+import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
+import { Box, Typography } from '@mui/material'
+import { useUserContext } from '../../../contexts/user/UserContext'
+import BorderButton from '../button/BorderButton'
 
 const profileMenu = {
   elevation: 0,
@@ -102,8 +105,6 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
         </MenuItem>
       )}
 
-      <Divider />
-
       {isAuth && (
         <MenuItem component={RouterLink} to='/user/watchlist'>
           <ListItemIcon>
@@ -113,16 +114,12 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
         </MenuItem>
       )}
 
-      {isAuth && <Divider />}
-
       <MenuItem onClick={toggle}>
         <ListItemIcon>
           <Brightness4OutlinedIcon />
         </ListItemIcon>
         Change theme
       </MenuItem>
-
-      <Divider />
 
       {isAuth && (
         <MenuItem onClick={() => onSignOutButtonClicked()}>
@@ -148,6 +145,9 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
 
   const navigate = useNavigate()
   const { isAuth, signOut, user } = useAuth()
+  const {
+    state: { userDetails },
+  } = useUserContext()
 
   function onSignOutButtonClicked() {
     signOut(() => {
@@ -163,11 +163,6 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       id={id}
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
-      onClick={() =>
-        dispatch({
-          type: 'CLOSE_PROFILE_MENU',
-        })
-      }
       onClose={() =>
         dispatch({
           type: 'CLOSE_PROFILE_MENU',
@@ -177,6 +172,17 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
+      <Box sx={{ my: 1.5, px: 2.5 }}>
+        <Typography variant='subtitle1' fontWeight={600} noWrap>
+          {userDetails?.name}
+        </Typography>
+        <Typography variant='body2' sx={{ color: 'text.secondary' }} noWrap>
+          {userDetails?.email}
+        </Typography>
+      </Box>
+
+      <Divider />
+
       {isAuth ? (
         <MenuItem component={RouterLink} to='/user/view'>
           <ListItemIcon>
@@ -193,8 +199,22 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
         </MenuItem>
       )}
 
+      <MenuItem component={RouterLink} to='/user/auction-list'>
+        <ListItemIcon>
+          <InventoryOutlinedIcon fontSize='small' />
+        </ListItemIcon>
+        Auctions list
+      </MenuItem>
+
+      <MenuItem component={RouterLink} to='/user/auction-list'>
+        <ListItemIcon>
+          <InventoryOutlinedIcon fontSize='small' />
+        </ListItemIcon>
+        Won Auctions list
+      </MenuItem>
+
       {user && user.role === 'SELLER' && (
-        <MenuItem component={RouterLink} to='/seller/postedproductlist'>
+        <MenuItem component={RouterLink} to='/seller/posted-product-list'>
           <ListItemIcon>
             <Inventory2OutlinedIcon fontSize='small' />
           </ListItemIcon>
@@ -203,7 +223,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       )}
 
       {user && user.role === 'SELLER' && (
-        <MenuItem component={RouterLink} to='/seller/auctionhaswinner'>
+        <MenuItem component={RouterLink} to='/seller/auctions-have-winner'>
           <ListItemIcon>
             <InventoryOutlinedIcon fontSize='small' />
           </ListItemIcon>
@@ -211,15 +231,19 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
         </MenuItem>
       )}
 
-      <Divider />
-
       {isAuth && (
-        <MenuItem onClick={() => onSignOutButtonClicked()}>
-          <ListItemIcon>
-            <Logout fontSize='small' />
-          </ListItemIcon>
-          Sign out
-        </MenuItem>
+        <Box mx={2} mt={1}>
+          <BorderButton
+            sx={{ width: 1 }}
+            onClick={() => onSignOutButtonClicked()}
+            padding={`4px 4px`}
+          >
+            <ListItemIcon sx={{ minWidth: 0, mr: 1 }}>
+              <Logout fontSize='small' />
+            </ListItemIcon>
+            Sign out
+          </BorderButton>
+        </Box>
       )}
     </Menu>
   )
