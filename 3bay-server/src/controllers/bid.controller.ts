@@ -1,8 +1,8 @@
 import Prisma from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
-import { BidErrorCode } from '../error/error-code.js'
-import { BidError } from '../error/error-exception.js'
+import { AuctionErrorCode, BidErrorCode } from '../error/error-code.js'
+import { AuctionError, BidError } from '../error/error-exception.js'
 import c from 'ansi-colors'
 import { emitAuctionDetails } from '../socket/auction.io.js'
 import { getProductByAuction } from './product.controller.js'
@@ -11,6 +11,8 @@ import { NotifyData, SocketEvent } from '../socket/socket-event.js'
 import sendMailTemplate from '../services/mail.service.js'
 import MailType from '../const/mail.js'
 import { AuctionRes } from '../types/AuctionRes.js'
+import moment from 'moment'
+import { Decimal } from '@prisma/client/runtime'
 
 // total reviews / total auctions
 const VALID_SCORE = 0.8
@@ -134,44 +136,58 @@ export const isValidBidAmount = async (
   }
 }
 
+async function addABid(
+  auction: AuctionRes | undefined | null,
+  user: Prisma.User | undefined | null,
+  status: Prisma.BidStatus,
+  bidPrice: Decimal | number | string,
+) {
+  return await prisma.$transaction([
+    prisma.bid.create({
+      data: {
+        auctionId: auction?.id || NaN,
+        bidderId: user?.uuid || '',
+        bidPrice: bidPrice,
+      },
+      include: {
+        bidder: {
+          select: {
+            email: true,
+            name: true,
+            uuid: true,
+          },
+        },
+      },
+    }),
+    prisma.userBidStatus.upsert({
+      where: {
+        auctionId_userId: {
+          auctionId: auction?.id || NaN,
+          userId: user?.uuid || '',
+        },
+      },
+      update: {
+        status: status,
+      },
+      create: {
+        auctionId: auction?.id || NaN,
+        userId: user?.uuid || '',
+        status: status,
+      },
+    }),
+  ])
+}
+
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   console.log(c.yellow('bidController.add'))
   try {
     const status = req.userStatusInAuction || Prisma.BidStatus.PENDING
-    const [bid] = await prisma.$transaction([
-      prisma.bid.create({
-        data: {
-          auctionId: req.auction?.id || NaN,
-          bidderId: req.user?.uuid || '',
-          bidPrice: req.body.bidPrice,
-        },
-        include: {
-          bidder: {
-            select: {
-              email: true,
-              name: true,
-              uuid: true,
-            },
-          },
-        },
-      }),
-      prisma.userBidStatus.upsert({
-        where: {
-          auctionId_userId: {
-            auctionId: req.auction?.id || NaN,
-            userId: req.user?.uuid || '',
-          },
-        },
-        update: {
-          status: status,
-        },
-        create: {
-          auctionId: req.auction?.id || NaN,
-          userId: req.user?.uuid || '',
-          status: status,
-        },
-      }),
-    ])
+    const [bid] = await addABid(
+      req.auction,
+      req.user,
+      status,
+      req.body.bidPrice,
+    )
     if (status === Prisma.BidStatus.ACCEPTED) {
       req.bid = bid
       next()
@@ -646,6 +662,28 @@ export const getWinningBid = async (
     if (err instanceof Error) {
       next(err)
     }
+  }
+}
+
+export async function buyout(req: Request, res: Response, next: NextFunction) {
+  if (!req.auction || !req.auction.buyoutPrice) {
+    return next(new AuctionError({ code: AuctionErrorCode.BuyoutNotAvailable }))
+  }
+  if (req.auction && moment(req.auction.closeTime).isBefore()) {
+    return next(new AuctionError({ code: AuctionErrorCode.ClosedAuction }))
+  }
+
+  try {
+    const [bid] = await addABid(
+      req.auction,
+      req.user,
+      Prisma.BidStatus.ACCEPTED,
+      req.auction.buyoutPrice,
+    )
+    req.bid = bid
+    next()
+  } catch (e) {
+    next(e)
   }
 }
 

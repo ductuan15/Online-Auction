@@ -55,6 +55,17 @@ router
   )
 
 router
+  .route('/buyout/:auctionId')
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    bidController.isSelfBid,
+    bidController.buyout,
+    bidController.getWinningBid,
+    auctionController.update,
+    auctionController.closeAuction,
+  )
+
+router
   .route('/:auctionId')
   .post(
     passport.authenticate('jwt', { session: false }),

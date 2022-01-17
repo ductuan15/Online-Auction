@@ -56,4 +56,5 @@ export class AuctionErrorCode {
   public static readonly NotClosedAuction = 'AuctionsNotClosed'
   public static readonly NotProductOwner = 'NotProductOwner'
   public static readonly ClosedAuction = 'ClosedAuction'
+  public static readonly BuyoutNotAvailable = 'BuyoutNotAvailable'
 }

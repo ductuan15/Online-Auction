@@ -13,6 +13,7 @@ import { ProductRes } from '../types/ProductRes'
 import c from 'ansi-colors'
 import { emitAuctionDetails } from '../socket/auction.io.js'
 import moment from 'moment'
+import { onAuctionClosedCallback } from '../services/auction.service.js'
 
 export const AUCTION_EXTEND_MINUTES = 10
 export const MINUTES_TO_EXTEND_AUCTION = 5
@@ -544,11 +545,14 @@ export const closeAuction = async (
           id: req.auction?.id,
         },
         data: {
-          closeTime: new Date(),
+          // hack: move close time one second before the current time
+          // in order not to schedule auction events
+          closeTime: moment().add(-1, 's').toDate(),
         },
       })
-      await emitAuctionDetails(auction.id)
-      res.json(auction)
+      // await emitAuctionDetails(auction.id)
+      await onAuctionClosedCallback(auction.id)()
+      next()
     } else {
       return next(new AuctionError({ code: AuctionErrorCode.ClosedAuction }))
     }

@@ -208,6 +208,8 @@ export class BidError extends ErrorException {
         this.message = 'Not own this bid'
         this.status = 400
         break
+      default:
+        this.status = 500
     }
   }
 }
@@ -232,7 +234,12 @@ export class AuctionError extends ErrorException {
         this.message = 'Auctions has been closed'
         this.status = 400
         break
+      case AuctionErrorCode.BuyoutNotAvailable:
+        this.message = 'Instant buy not available for this auction'
+        this.status = 400
+        break
       default:
+        this.status = 500
         break
     }
   }
