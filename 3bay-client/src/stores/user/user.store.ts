@@ -38,7 +38,7 @@ export const userReducer = (
       return {
         ...state,
         userDetails: action.payload,
-        notifyList: !action.payload ? [] : state.notifyList,
+        notifyList: !action.payload?.notifications ? [] : action.payload.notifications,
       }
     case 'UPGRADE_TO_SELLER_REQUEST': {
       let newData = state.userDetails

@@ -1,3 +1,5 @@
+import { NotifyData } from './notification'
+
 export type UpgradeToSellerRequest = {
   userId: string
 }
@@ -10,6 +12,7 @@ export type UserDetails = {
   address: string
   role: string
   upgradeToSellerRequest?: UpgradeToSellerRequest
+  notifications?: NotifyData[]
 }
 
 export type Bidder = {

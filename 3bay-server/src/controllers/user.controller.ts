@@ -5,6 +5,9 @@ import { AuthErrorCode, ErrorCode } from '../error/error-code.js'
 import prisma from '../db/prisma.js'
 import { verifyPassword } from '../auth/passport.js'
 import { getScore } from './bid.controller.js'
+import config from '../config/config.js'
+import { ProductRes } from '../types/ProductRes.js'
+import { getAllThumbnailLink } from './images-product.controller.js'
 
 function removePrivateData(user: Partial<Prisma.User>) {
   delete user.verified
@@ -15,10 +18,34 @@ function removePrivateData(user: Partial<Prisma.User>) {
 
 export async function getAccountInfo(req: Request, res: Response) {
   const user: Partial<Prisma.User> = req.user as Prisma.User
+  const notifications = await prisma.notifications.findMany({
+    include: {
+      data: {
+        select: {
+          id: true,
+          sellerId: true,
+          name: true,
+        },
+      },
+    },
+    where: {
+      uuid: user.uuid,
+    },
+    take: config.NOTIFICATION_LIMIT,
+    orderBy: [
+      {
+        date: 'desc',
+      },
+    ],
+  })
+
+  for (const { data } of notifications) {
+    (data as ProductRes).thumbnails = getAllThumbnailLink(data.id)
+  }
 
   removePrivateData(user)
 
-  return res.json(user)
+  return res.json({ ...user, notifications })
 }
 
 export async function updateAccountInfo(

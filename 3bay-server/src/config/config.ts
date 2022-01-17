@@ -10,6 +10,7 @@ const {
   SALT_ROUND,
   PAGE_LIMIT,
   TOP_LIMIT,
+  NOTIFICATION_LIMIT,
 
   // email service configurations
   MAIL_ENABLE_SERVICE,
@@ -29,10 +30,11 @@ const config = {
   HOST_NAME: HOST_NAME || `http://localhost:${PORT || 3030}`,
   JWT: JWT || 'JWT',
   DATABASE: DATABASE_URL || '3bay',
-  SALT_ROUND: +(SALT_ROUND || '10') || 10,
-  PAGE_LIMIT: +(PAGE_LIMIT || '20') || 20,
-  TOP_LIMIT: +(TOP_LIMIT || '5') || 5,
-  USER_PAGE_LIMIT: +(PAGE_LIMIT || '25') || 25,
+  SALT_ROUND: +(SALT_ROUND || 10) || 10,
+  PAGE_LIMIT: +(PAGE_LIMIT || 20) || 20,
+  TOP_LIMIT: +(TOP_LIMIT || 5) || 5,
+  USER_PAGE_LIMIT: +(PAGE_LIMIT || 25) || 25,
+  NOTIFICATION_LIMIT: +(NOTIFICATION_LIMIT || 20) || 20,
 }
 
 export const mailConfig = {

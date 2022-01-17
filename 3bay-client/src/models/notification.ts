@@ -1,10 +1,21 @@
-import Product from './product'
-
-export type NotifyData =
-  | { type: 'AUCTION_NEW_BID'; data: Product; date: Date }
-  | { type: 'AUCTION_BID_REJECTED'; data: Product; date: Date }
-  | { type: 'AUCTION_CLOSED_NO_WINNER'; data: Product; date: Date }
-  | { type: 'AUCTION_CLOSED_HAD_WINNER'; data: Product; date: Date }
+export type NotifyData = {
+  type:
+    | 'AUCTION_NEW_BID'
+    | 'AUCTION_BID_REJECTED'
+    | 'AUCTION_CLOSED_NO_WINNER'
+    | 'AUCTION_CLOSED_HAD_WINNER'
+  data: {
+    id: number
+    name: string
+    sellerId: string
+    thumbnails: {
+      lg: string
+      md: string
+      sm: string
+    }
+  }
+  date: Date
+}
 
 export function getNotificationDescription(
   notifyData: NotifyData,
