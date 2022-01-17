@@ -146,6 +146,7 @@ model User {
   userBidStatus          UserBidStatus[]         @relation("user_bid_statusTousers")
   userWatchlist          UserWatchlist[]         @relation("user_watchlistTousers")
 
+  @@fulltext([name], map: "name")
   @@map("users")
 }
 
@@ -187,10 +188,10 @@ model Notifications {
   id        Int              @id @default(autoincrement())
   uuid      String           @unique(map: "notifications_uuid_uindex") @db.VarChar(255)
   type      NotificationType
-  productId Int?
+  productId Int
   date      DateTime         @default(now()) @db.DateTime(0)
-  products  Product?         @relation("notificationsToproducts", fields: [productId], references: [id], onDelete: Cascade, map: "notifications_products_id_fk")
-  users     User             @relation("notificationsTousers", fields: [uuid], references: [uuid], onDelete: Cascade, map: "notifications_users_uuid_fk")
+  data      Product          @relation("notificationsToproducts", fields: [productId], references: [id], onDelete: Cascade, map: "notifications_products_id_fk")
+  user      User             @relation("notificationsTousers", fields: [uuid], references: [uuid], onDelete: Cascade, map: "notifications_users_uuid_fk")
 
   @@index([productId], map: "notifications_products_id_fk")
   @@map("notifications")

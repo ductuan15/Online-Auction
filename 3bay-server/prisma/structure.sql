@@ -182,7 +182,7 @@ CREATE TABLE `notifications`
     `id`        int(11)                                                                                                                           NOT NULL AUTO_INCREMENT,
     `uuid`      varchar(255) COLLATE utf8mb4_unicode_ci                                                                                           NOT NULL,
     `type`      enum ('AUCTION_NEW_BID','AUCTION_BID_REJECTED','AUCTION_CLOSED_NO_WINNER','AUCTION_CLOSED_HAD_WINNER') COLLATE utf8mb4_unicode_ci NOT NULL,
-    `productId` int(11)                                                                                                                                    DEFAULT NULL,
+    `productId` int(11)                                                                                                                           NOT NULL,
     `date`      datetime                                                                                                                          NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
     UNIQUE KEY `notifications_uuid_uindex` (`uuid`),
@@ -364,7 +364,8 @@ CREATE TABLE `users`
     `refreshToken` varchar(512) COLLATE utf8mb4_unicode_ci                             NOT NULL,
     `address`      varchar(255) COLLATE utf8mb4_unicode_ci                                      DEFAULT NULL,
     PRIMARY KEY (`uuid`),
-    UNIQUE KEY `email` (`email`)
+    UNIQUE KEY `email` (`email`),
+    FULLTEXT KEY `name` (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -379,4 +380,4 @@ CREATE TABLE `users`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-17  2:42:35
+-- Dump completed on 2022-01-17 11:29:01
