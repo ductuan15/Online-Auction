@@ -217,14 +217,25 @@ export const deleteAutoBid = async (
 ) => {
   try {
     if (req.auction) {
-      await prisma.autoBid.delete({
+      const autoBid = await prisma.autoBid.findUnique({
         where: {
           auctionId_userId: {
             auctionId: req.auction?.id,
             userId: req.user.uuid,
-          },
-        },
+          }
+        }
       })
+      
+      if (autoBid) {
+        await prisma.autoBid.delete({
+          where: {
+            auctionId_userId: {
+              auctionId: req.auction?.id,
+              userId: req.user.uuid,
+            },
+          },
+        })
+      }
       return next()
     }
   } catch (err) {
@@ -538,7 +549,18 @@ export const addAutoBid = async (
             },
           },
         })
+        if (!req.auction?.winningBidId && 
+          req.userStatusInAuction === Prisma.BidStatus.ACCEPTED)  {
+            const bid = await prisma.bid.create({
+              data: {
+                bidPrice: req.auction?.openPrice.add(req.auction?.incrementPrice),
+                auctionId: req.auction?.id,
+                bidderId: req.user.uuid,
+              }
+            })
+        }
       }
+  
     }
     next()
   } catch (err) {
@@ -610,6 +632,8 @@ export const executeAutoBid = async (
       await prisma.bid.createMany({
         data: [...newBids],
       })
+    } else {
+      
     }
     next()
   } catch (err) {

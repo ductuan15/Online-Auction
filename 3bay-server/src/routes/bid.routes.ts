@@ -88,6 +88,7 @@ router
     bidController.isBidOwner,
     bidController.resetWinningAuction,
     bidController.deleteBid,
+    bidController.deleteAutoBid,
     bidController.getWinningBid,
     bidController.executeAutoBid,
     bidController.getWinningBidAndNotifyWhenPriceChanged,
