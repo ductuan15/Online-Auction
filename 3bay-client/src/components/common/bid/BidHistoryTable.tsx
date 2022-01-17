@@ -19,7 +19,7 @@ import { useIsAuctionClosed } from '../../../hooks/use-is-auction-closed'
 import NumberFormat from 'react-number-format'
 import { nameMasking } from '../../../utils/name-mask'
 import AuctionService from '../../../services/auction.service'
-import BlockIcon from '@mui/icons-material/Block';
+import BlockIcon from '@mui/icons-material/Block'
 
 // type BidRequestTableProps = {
 //   sx?: SxProps
@@ -84,14 +84,21 @@ export default function BidHistoryTable() {
   )
 
   const removeBid = async (params: GridRowParams<Bid>) => {
-    try {
-      const response = await AuctionService.removeBid(params.row.id)
+    if (
+      confirm(
+        `Do you really want to remove your bid?\n` +
+          `Your automatic bidding will also be removed. `,
+      )
+    ) {
+      try {
+        const response = await AuctionService.removeBid(params.row.id)
 
-      if (response) {
-        setRows((prevRows) => prevRows.filter((row) => row.id !== params.id))
+        if (response) {
+          setRows((prevRows) => prevRows.filter((row) => row.id !== params.id))
+        }
+      } catch (e) {
+        //
       }
-    } catch (e) {
-      //
     }
   }
 
