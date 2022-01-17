@@ -6,8 +6,10 @@ import {
   Alert,
   Divider,
   Grid,
+  IconButton,
   ImageList,
   ImageListItem,
+  ImageListItemBar,
   InputAdornment,
   Switch,
 } from '@mui/material'
@@ -23,6 +25,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 import DateTimeInputField from '../../common/form/DateTimeInputField'
 import moment from 'moment'
 import CategoryChooser from '../../common/form/CategoryChooser'
+import CloseIcon from '@mui/icons-material/Close'
 
 const Input = styled('input')({
   display: 'none',
@@ -33,13 +36,14 @@ const Label = styled('label')({})
 const MIN_THUMBNAIL_FILE = 1
 const MIN_DETAILS_FILE = 2
 const MAX_DETAILS_FILE = 6
+const MAX_THUMBNAIL_FILE = 1
 
 type CreateProductFormProps = {
   onSubmit: (formData: FormData) => void
   onError: (e: unknown) => void
 }
 
-// TODO refactor me
+// TODO refactor this mess
 export default function CreateProductForm({
   onSubmit,
   onError,
@@ -49,11 +53,37 @@ export default function CreateProductForm({
     register,
     handleSubmit,
     watch,
+    getValues,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors, isValid },
   } = useForm<ProductFormInput>({
     mode: 'all',
     shouldFocusError: true,
   })
+
+  const detailsField = register('detail', {
+    required: 'This field is required',
+  })
+
+  const onDetailFilesChanged = useCallback(
+    (e) => {
+      if (e.target.files) {
+        const details = getValues('detail')
+        let files = [
+          ...(Array.from(details) as File[]),
+          ...Array.from(e.target.files),
+        ] as File[]
+        if (files.length > MAX_DETAILS_FILE) {
+          files = files.slice(0, MAX_DETAILS_FILE)
+        }
+        // detailsField.onChange(e)
+        setValue('detail', files)
+      }
+    },
+    [getValues, setValue],
+  )
 
   const [disableAllElement, setDisableAllElement] = useState(false)
 
@@ -80,8 +110,15 @@ export default function CreateProductForm({
         imgFiles.push(URL.createObjectURL(detailFiles[i]))
       }
       setDetailImages(imgFiles)
+      if (imgFiles && imgFiles.length < MIN_DETAILS_FILE) {
+        setError('detail', {
+          message: `You must choose at least ${MIN_DETAILS_FILE} photos`,
+        })
+      } else {
+        clearErrors('detail')
+      }
     }
-  }, [detailFiles, isMounted])
+  }, [clearErrors, detailFiles, isMounted, setError])
 
   const submitHandler: SubmitHandler<ProductFormInput> = useCallback(
     async (data) => {
@@ -95,8 +132,8 @@ export default function CreateProductForm({
       try {
         formData.set('thumbnail', thumbnailFileList[0])
 
-        for (let i = 0; i < detail.length && i < MAX_DETAILS_FILE; i++) {
-          formData.append('detail', detail[i])
+        for (const detailFile of detail) {
+          formData.append('detail', detailFile)
         }
 
         const buyoutPrice = formData.get('buyoutPrice')
@@ -213,7 +250,11 @@ export default function CreateProductForm({
           </Typography>
 
           <Typography color='text.secondary' variant='body1'>
-            Choose at least 3 photos (maximum of 7 photos)
+            {`Choose at least ${
+              MIN_THUMBNAIL_FILE + MIN_DETAILS_FILE
+            } photos (maximum of ${
+              MAX_DETAILS_FILE + MAX_THUMBNAIL_FILE
+            } photos)`}
           </Typography>
         </Grid>
 
@@ -296,7 +337,7 @@ export default function CreateProductForm({
         <Grid item container xs={12} md={6} px={2} rowSpacing={2}>
           {errors.detail && (
             <Grid item xs={12}>
-              <Alert severity='error'>{errors.detail.message}</Alert>
+              <Alert severity='error'>{(errors.detail as any).message}</Alert>
             </Grid>
           )}
 
@@ -313,19 +354,8 @@ export default function CreateProductForm({
                   display: 'none',
                 }}
                 // onChange={onImageChange}
-                {...register('detail', {
-                  required: 'This field is required',
-                  validate: {
-                    minFile: (value) => {
-                      if (
-                        value instanceof FileList &&
-                        value.length < MIN_DETAILS_FILE
-                      ) {
-                        return 'You must choose at least 2 photos'
-                      }
-                    },
-                  },
-                })}
+                {...detailsField}
+                onChange={onDetailFilesChanged}
               />
 
               <Button
@@ -352,9 +382,32 @@ export default function CreateProductForm({
           >
             {detailImages.length !== 0 && (
               <ImageList sx={{ height: 256 }} cols={3} rowHeight={128}>
-                {detailImages.map((item) => (
-                  <ImageListItem key={item}>
+                {detailImages.map((item, idx) => (
+                  <ImageListItem key={idx}>
                     <img src={item} alt={item} height={128} />
+                    <ImageListItemBar
+                      sx={{
+                        background:
+                          'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, ' +
+                          'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+                      }}
+                      position='top'
+                      actionIcon={
+                        <IconButton
+                          sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                          onClick={() => {
+                            setValue(
+                              'detail',
+                              getValues('detail').filter(
+                                (file, i) => i !== idx,
+                              ),
+                            )
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      }
+                    />
                   </ImageListItem>
                 ))}
               </ImageList>

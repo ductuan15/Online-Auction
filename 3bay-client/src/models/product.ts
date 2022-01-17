@@ -41,7 +41,7 @@ export type AdminProductListResponse = {
 export type ProductFormInput = {
   name: string
   thumbnail: FileList
-  detail: FileList
+  detail: File[]
   description: string
   categoryId: number
 
