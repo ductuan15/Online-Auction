@@ -140,7 +140,7 @@ model User {
   address                String?                 @db.VarChar(255)
   autoBids               autoBid[]               @relation("auto_bidTousers")
   bids                   Bid[]                   @relation("bidsTousers")
-  notifications          Notifications?          @relation("notificationsTousers")
+  notifications          Notifications[]         @relation("notificationsTousers")
   products               Product[]               @relation("productsTousers")
   upgradeToSellerRequest UpgradeToSellerRequest? @relation("upgrade_to_seller_requestsTousers")
   userBidStatus          UserBidStatus[]         @relation("user_bid_statusTousers")
@@ -186,7 +186,7 @@ model autoBid {
 
 model Notifications {
   id        Int              @id @default(autoincrement())
-  uuid      String           @unique(map: "notifications_uuid_uindex") @db.VarChar(255)
+  uuid      String           @db.VarChar(255)
   type      NotificationType
   productId Int
   date      DateTime         @default(now()) @db.DateTime(0)
@@ -194,6 +194,7 @@ model Notifications {
   user      User             @relation("notificationsTousers", fields: [uuid], references: [uuid], onDelete: Cascade, map: "notifications_users_uuid_fk")
 
   @@index([productId], map: "notifications_products_id_fk")
+  @@index([uuid], map: "notifications_users_uuid_fk")
   @@map("notifications")
 }
 

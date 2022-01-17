@@ -185,7 +185,6 @@ CREATE TABLE `notifications`
     `productId` int(11)                                                                                                                           NOT NULL,
     `date`      datetime                                                                                                                          NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
-    UNIQUE KEY `notifications_uuid_uindex` (`uuid`),
     KEY `notifications_products_id_fk` (`productId`),
     CONSTRAINT `notifications_products_id_fk` FOREIGN KEY (`productId`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `notifications_users_uuid_fk` FOREIGN KEY (`uuid`) REFERENCES `users` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE

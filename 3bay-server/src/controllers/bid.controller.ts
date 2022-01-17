@@ -10,6 +10,7 @@ import { emitEventToUsers } from '../socket/socket.io.js'
 import { NotifyData, SocketEvent } from '../socket/socket-event.js'
 import sendMailTemplate from '../services/mail.service.js'
 import MailType from '../const/mail.js'
+import { AuctionRes } from '../types/AuctionRes.js'
 
 // total reviews / total auctions
 const VALID_SCORE = 0.8
@@ -602,6 +603,36 @@ export const executeAutoBid = async (
   }
 }
 
+export async function getWinningBidFromAuction(
+  auction: AuctionRes | null | undefined,
+) {
+  return await prisma.bid.findFirst({
+    orderBy: {
+      bidPrice: Prisma.Prisma.SortOrder.desc,
+    },
+    where: {
+      bidder: {
+        userBidStatus: {
+          some: {
+            auctionId: auction?.id || NaN,
+            status: Prisma.BidStatus.ACCEPTED,
+          },
+        },
+      },
+      auctionId: auction?.id || NaN,
+    },
+    include: {
+      bidder: {
+        select: {
+          email: true,
+          name: true,
+          uuid: true,
+        },
+      },
+    },
+  })
+}
+
 export const getWinningBid = async (
   req: Request,
   res: Response,
@@ -609,33 +640,31 @@ export const getWinningBid = async (
 ) => {
   console.log(c.yellow('bidController.getWinningBid'))
   try {
-    const winningBid = await prisma.bid.findFirst({
-      orderBy: {
-        bidPrice: Prisma.Prisma.SortOrder.desc,
-      },
-      where: {
-        bidder: {
-          userBidStatus: {
-            some: {
-              auctionId: req.auction?.id || NaN,
-              status: Prisma.BidStatus.ACCEPTED,
-            },
-          },
-        },
-        auctionId: req.auction?.id || NaN,
-      },
-      include: {
-        bidder: {
-          select: {
-            email: true,
-            name: true,
-            uuid: true,
-          },
-        },
-      },
-    })
-    req.bid = winningBid
+    req.bid = await getWinningBidFromAuction(req.auction)
     next()
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export async function getWinningBidAndNotifyWhenPriceChanged(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  console.log(c.yellow('bidController.getWinningBidAndNotfiyWhenBidChanged'))
+  try {
+    req.bid = await getWinningBidFromAuction(req.auction)
+    if (
+      req.auction &&
+      (req.bid?.id !== req.auction.winningBidId ||
+        (req.bid === null && req.auction.winningBidId !== null))
+    ) {
+      return notifyWhenPriceChanged(req, res, next)
+    }
+    return next()
   } catch (err) {
     if (err instanceof Error) {
       next(err)
@@ -669,7 +698,7 @@ async function getInvolvedBidders(auctionId: number | undefined) {
   })
 }
 
-export const notifyWhenNewBidPlaced = async (
+export const notifyWhenPriceChanged = async (
   req: Request,
   res: Response,
   next: NextFunction,

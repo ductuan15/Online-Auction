@@ -46,7 +46,7 @@ router
     bidController.executeAutoBid,
     bidController.getWinningBid,
     auctionController.update,
-    bidController.notifyWhenNewBidPlaced,
+    bidController.notifyWhenPriceChanged,
   )
   .delete(
     passport.authenticate('jwt', { session: false }),
@@ -67,7 +67,7 @@ router
     bidController.executeAutoBid,
     bidController.getWinningBid,
     auctionController.update,
-    bidController.notifyWhenNewBidPlaced,
+    bidController.notifyWhenPriceChanged,
   )
 
 router
@@ -79,7 +79,7 @@ router
     bidController.deleteBid,
     bidController.getWinningBid,
     bidController.executeAutoBid,
-    bidController.getWinningBid,
+    bidController.getWinningBidAndNotifyWhenPriceChanged,
     auctionController.update,
   )
 // check auctions is exist and opening
