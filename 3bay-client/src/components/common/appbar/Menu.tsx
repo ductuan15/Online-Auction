@@ -12,11 +12,13 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 import { useDarkMode } from '../../../hooks'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
-import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
 import { Box, Typography } from '@mui/material'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import BorderButton from '../button/BorderButton'
+import LocalAtmOutlinedIcon from '@mui/icons-material/LocalAtmOutlined';
+import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 
 const profileMenu = {
   elevation: 0,
@@ -208,7 +210,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
 
       <MenuItem component={RouterLink} to='/user/auction-list'>
         <ListItemIcon>
-          <InventoryOutlinedIcon fontSize='small' />
+          <LocalAtmOutlinedIcon fontSize='small' />
         </ListItemIcon>
         Won Auctions list
       </MenuItem>
@@ -216,7 +218,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       {user && user.role === 'SELLER' && (
         <MenuItem component={RouterLink} to='/seller/posted-product-list'>
           <ListItemIcon>
-            <Inventory2OutlinedIcon fontSize='small' />
+            <SellOutlinedIcon fontSize='small' />
           </ListItemIcon>
           Posted product list
         </MenuItem>
@@ -225,7 +227,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
       {user && user.role === 'SELLER' && (
         <MenuItem component={RouterLink} to='/seller/auctions-have-winner'>
           <ListItemIcon>
-            <InventoryOutlinedIcon fontSize='small' />
+            <LocalShippingOutlinedIcon fontSize='small' />
           </ListItemIcon>
           Auctions have winner
         </MenuItem>
