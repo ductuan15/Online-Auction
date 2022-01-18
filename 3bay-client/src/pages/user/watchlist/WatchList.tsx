@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid'
 import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import { useUserContext } from '../../../contexts/user/UserContext'
-import ProductListLayout from '../../../components/common/product/ProductListLayout'
+import ProductListLayout from '../../../components/common/product-list/ProductListLayout'
 import { useTitle } from '../../../hooks'
 
 const WatchListPage = (): JSX.Element => {

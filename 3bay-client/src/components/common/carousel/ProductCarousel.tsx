@@ -8,8 +8,8 @@ import Product from '../../../models/product'
 import { useEffectOnce } from '../../../hooks'
 import { styled, Theme, useTheme } from '@mui/material/styles'
 import { GREY } from '../../../theme/palette'
-import ProductCardSkeleton from '../product/ProductCardSkeleton'
-import ProductItem from '../product/ProductItem'
+import ProductCardSkeleton from '../product-card/ProductCardSkeleton'
+import ProductItem from '../product-list/ProductItem'
 
 type CarouselProps = {
   name: string

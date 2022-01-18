@@ -4,7 +4,7 @@ import Product from '../../models/product'
 import sellerService from '../../services/seller.service'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-import ProductListLayout from '../../components/common/product/ProductListLayout'
+import ProductListLayout from '../../components/common/product-list/ProductListLayout'
 import { useTitle } from '../../hooks'
 
 const PostedProductListPage = (): JSX.Element => {
@@ -14,8 +14,8 @@ const PostedProductListPage = (): JSX.Element => {
 
   useEffect(() => {
     ;(async function getPostedProduct() {
-      const res = await sellerService.getAllPostedProduct()
-      setProducts(res.data)
+      const data = await sellerService.getAllPostedProduct()
+      setProducts(data)
       setIsLoading(false)
     })()
   }, [])

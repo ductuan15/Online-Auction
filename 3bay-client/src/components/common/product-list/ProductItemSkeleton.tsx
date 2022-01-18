@@ -1,5 +1,5 @@
-import ProductRowSkeleton from './ProductRowSkeleton'
-import ProductCardSkeleton from './ProductCardSkeleton'
+import ProductRowSkeleton from '../product-row/ProductRowSkeleton'
+import ProductCardSkeleton from '../product-card/ProductCardSkeleton'
 
 type ProductItemProps = {
   cardStyle?: 'row' | 'card'

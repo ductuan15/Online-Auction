@@ -21,7 +21,7 @@ import {
   SORT_TYPE,
 } from '../../../services/product.service'
 import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
-import ProductListLayout from '../../../components/common/product/ProductListLayout'
+import ProductListLayout from '../../../components/common/product-list/ProductListLayout'
 
 const titleStyle: TypographyStyle = {
   overflow: 'hidden',

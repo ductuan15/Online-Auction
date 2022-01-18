@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react'
 import Typography from '@mui/material/Typography'
 import UserService from '../../../services/user.service'
 import Product from '../../../models/product'
-import ProductListLayout from '../../../components/common/product/ProductListLayout'
+import ProductListLayout from '../../../components/common/product-list/ProductListLayout'
 import {useTitle} from '../../../hooks'
 
 const AuctionListPage = (): JSX.Element => {

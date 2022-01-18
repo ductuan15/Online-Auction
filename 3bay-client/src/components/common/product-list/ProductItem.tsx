@@ -14,8 +14,8 @@ import {
   deleteProdWatchList,
 } from '../../../services/product.service'
 import Product from '../../../models/product'
-import ProductRow from './ProductRow'
-import ProductCard from './ProductCard'
+import ProductRow from '../product-row/ProductRow'
+import ProductCard from '../product-card/ProductCard'
 
 type ProductItemProps = {
   product: Product

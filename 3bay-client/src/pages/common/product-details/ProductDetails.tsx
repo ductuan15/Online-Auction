@@ -18,7 +18,7 @@ import BidDialog from '../../../components/common/bid/BidDialog'
 import BidRequestTable from '../../../components/seller/product/BidRequestTable'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import BidHistoryTable from '../../../components/common/bid/BidHistoryTable'
-import ProductComment from '../../../components/common/product/ProductComment'
+import ProductComment from '../../../components/common/product-card/ProductComment'
 import useSocketContext, {
   SocketEvent,
 } from '../../../contexts/socket/SocketContext'

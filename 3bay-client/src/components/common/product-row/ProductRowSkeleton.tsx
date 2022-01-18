@@ -3,7 +3,7 @@ import { Box, CardActionArea, CardHeader, Grid } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { Skeleton } from '@mui/lab'
-import ProductCardContentSkeleton from './ProductCardContentSkeleton'
+import ProductCardContentSkeleton from '../product-card/ProductCardContentSkeleton'
 import { imageSx } from './ProductRow'
 
 const CardHeaderRow = ({ xsScreen }: { xsScreen?: boolean }): JSX.Element => {
