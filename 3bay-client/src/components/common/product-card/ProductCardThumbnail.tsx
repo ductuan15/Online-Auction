@@ -30,7 +30,7 @@ const ProductCardThumbnail = ({
           ...imageSx,
         }}
       />
-      {moment(product.createdAt).isBetween(moment().add(-1, 'd'), moment()) && (
+      {moment(product.createdAt).isBetween(moment().add(-1, 'h'), moment()) && (
         <NewLabel isSelected={isSelected} />
       )}
     </Box>
