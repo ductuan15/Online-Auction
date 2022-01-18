@@ -89,7 +89,7 @@ const UsersManagement = (): JSX.Element => {
         container
         marginTop={1}
         marginBottom={1}
-        spacing={4}
+        spacing={1}
         justifyContent='between'
       >
         <Grid display='flex' xs={12} item alignItems='center'>

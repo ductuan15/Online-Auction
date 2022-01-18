@@ -30,7 +30,7 @@ export async function getUsers(
   try {
     const page = +(req.query?.page || '/') || 1
     const limit = +(req.query?.limit || '/') || config.USER_PAGE_LIMIT
-    const key = req.query.key
+    const { name, isDisabled, verified, role } = req.query
 
     const [total, users] = await prisma.$transaction([
       prisma.user.count(),
@@ -39,8 +39,18 @@ export async function getUsers(
         skip: (page - 1) * limit,
         take: limit,
         where: {
-          name: !key ? undefined : { search: `${key}` }
-        }
+          name: !name ? undefined : { search: `${name}` },
+          isDisabled:
+            !isDisabled || isDisabled === 'any'
+              ? undefined
+              : isDisabled === 'true',
+          verified:
+            !verified || verified === 'any'
+              ? undefined
+              : verified === 'true',
+          role:
+            !role || !(role as Prisma.Role) ? undefined : (role as Prisma.Role),
+        },
       }),
     ])
     return res.json({ total, page, limit, users })

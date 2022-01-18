@@ -6,9 +6,13 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import {
   DataGrid,
+  getGridBooleanOperators,
+  getGridSingleSelectOperators,
+  getGridStringOperators,
   GridActionsCellItem,
   GridCellEditCommitParams,
-  GridColumns, GridFilterModel,
+  GridColumns,
+  GridFilterModel,
   GridRowParams,
 } from '@mui/x-data-grid'
 import CloseIcon from '@mui/icons-material/Close'
@@ -16,7 +20,7 @@ import AdminService from '../../../services/admin.service'
 import { AdminUserDetail } from '../../../models/admin-user'
 import { Alert, AlertProps, Snackbar } from '@mui/material'
 import _ from 'lodash'
-import {useDebounce} from '../../../hooks'
+import { useDebounce } from '../../../hooks'
 
 type UserTableProps = {
   onLoadingData?: () => void
@@ -26,6 +30,12 @@ type UserTableProps = {
   isLoading: boolean
 }
 
+type FilterData = | {
+  field: string
+  value: string | boolean
+}
+  | undefined
+
 const UserTable = ({
   onLoadingData,
   onDataLoaded,
@@ -33,8 +43,10 @@ const UserTable = ({
   tab,
   isLoading,
 }: UserTableProps): JSX.Element => {
-  const [filterValue, setFilterValue] = React.useState<string | undefined>()
-  const debounceFilterValue = useDebounce<string | undefined>(filterValue, 500)
+  const [filterValue, setFilterValue] = React.useState<FilterData>()
+  const debounceFilterValue = useDebounce<
+    FilterData
+  >(filterValue, 500)
 
   const { state: userState, dispatch } = useAdminUsersContext()
 
@@ -86,7 +98,10 @@ const UserTable = ({
   )
 
   const onFilterChange = React.useCallback((filterModel: GridFilterModel) => {
-    setFilterValue(filterModel.items[0].value)
+    setFilterValue({
+      field: filterModel.items[0].columnField,
+      value: filterModel.items[0].value,
+    })
   }, [])
 
   const handleCellEditCommit = useCallback(
@@ -165,6 +180,10 @@ const UserTable = ({
         flex: 1,
         headerName: 'Name',
         minWidth: 250,
+        filterable: true,
+        filterOperators: getGridStringOperators().filter(
+          (operator) => operator.value === 'contains',
+        ),
       },
       {
         field: 'thumbnail',
@@ -206,24 +225,32 @@ const UserTable = ({
         headerName: 'Role',
         field: 'role',
         type: 'singleSelect',
-        filterable: false,
         valueOptions: ['BIDDER', 'SELLER', 'ADMINISTRATOR'],
-        editable: true,
         minWidth: 145,
+        editable: true,
+        filterable: true,
+        filterOperators: getGridSingleSelectOperators().filter(
+          (operator) => operator.value === 'is',
+        ),
       },
       {
         headerName: 'verified',
         field: 'verified',
         type: 'boolean',
-        filterable: false,
         editable: true,
+        filterable: true,
+        filterOperators: getGridBooleanOperators().filter(
+          (operator) => operator.value === 'is',
+        ),
       },
       {
         headerName: 'disabled',
         field: 'isDisabled',
         type: 'boolean',
-        filterable: false,
-        editable: true,
+        filterable: true,
+        filterOperators: getGridBooleanOperators().filter(
+          (operator) => operator.value === 'is',
+        ),
       },
       {
         field: 'actions',

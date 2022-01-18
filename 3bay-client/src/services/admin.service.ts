@@ -6,14 +6,18 @@ import Product, { AdminProductListResponse } from '../models/product'
 async function getUserList(
   page: number,
   limit: number,
-  key?: string,
+  query?: { field: string; value: string | boolean } | undefined,
 ): Promise<AdminUserListResponse> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const params: any = {
+    page,
+    limit,
+  }
+  if (query) {
+    params[query.field] = query.value
+  }
   const userResponse = await axiosApiInstance.get(`/api/admin/users/`, {
-    params: {
-      page,
-      limit,
-      key,
-    },
+    params,
   })
   return userResponse.data as AdminUserListResponse
 }
