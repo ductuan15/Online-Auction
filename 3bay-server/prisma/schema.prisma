@@ -178,6 +178,7 @@ model autoBid {
   maximumPrice Decimal @db.Decimal(19, 4)
   auctions     Auction @relation("auctionsToauto_bid", fields: [auctionId], references: [id], onUpdate: Restrict, map: "auto_bid_fk0")
   user         User    @relation("auto_bidTousers", fields: [userId], references: [uuid], onUpdate: Restrict, map: "auto_bid_fk1")
+  createdTime  DateTime? @default(now()) @db.DateTime(0)
 
   @@id([auctionId, userId])
   @@index([userId], map: "auto_bid_fk1")

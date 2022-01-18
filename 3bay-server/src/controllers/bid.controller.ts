@@ -592,6 +592,9 @@ export const executeAutoBid = async (
       include: {
         auctions: true,
       },
+      orderBy:{
+        createdTime: Prisma.Prisma.SortOrder.asc
+      }
     })
     // add auto bid to bid table
     if (req.bid) {

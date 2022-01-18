@@ -114,6 +114,7 @@ CREATE TABLE `auto_bid`
     `auctionId`    int(11)                                 NOT NULL,
     `userId`       varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `maximumPrice` decimal(19, 4)                          NOT NULL,
+    `createdTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`auctionId`, `userId`),
     KEY `auto_bid_fk1` (`userId`),
     CONSTRAINT `auto_bid_fk0` FOREIGN KEY (`auctionId`) REFERENCES `auctions` (`id`),
