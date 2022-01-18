@@ -54,7 +54,6 @@ function ProductCardContent({
       setEndTimeCountDownText('🔴 ENDED')
       return
     }
-    // TODO: countdown when the time is less than 24h // NOT URGENT
     if (isMounted()) {
       setEndTimeCountDownText(
         `🟢 ${now.to(closeTime)} (${closeTimeFormattedStr})`,

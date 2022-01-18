@@ -1,6 +1,5 @@
 import { SyntheticEvent } from 'react'
 import Card from '@mui/material/Card'
-import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import {
   Box,
@@ -20,6 +19,7 @@ import ProductCardContent from './ProductCardContent'
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { useUserContext } from '../../../contexts/user/UserContext'
+import ProductCardThumbnail from './ProductCardThumbnail'
 
 export type CardProps = {
   product: Product
@@ -71,12 +71,6 @@ const cardAreaSx = {
   },
 }
 
-const cardMediaSx = {
-  width: '100%',
-  height: '100%',
-  transition: `transform .3s`,
-}
-
 const ProductCard = ({
   product,
   toggleWatchlistButton,
@@ -105,16 +99,15 @@ const ProductCard = ({
           style={{ cursor: 'context-menu' }}
         >
           <CardActionArea sx={cardAreaSx} component='div'>
-            <Box sx={imageSx} position='relative'>
-              <CardMedia
-                component='img'
-                image={product.thumbnails.lg || ''}
-                sx={{
-                  ...cardMediaSx,
-                  transform: `scale(${isSelected ? 1.1 : 1.0})`,
-                }}
-              />
-            </Box>
+            <ProductCardThumbnail
+              isSelected={isSelected}
+              boxSx={imageSx as SxProps}
+              product={product}
+              imageSx={{
+                width: '100%',
+                height: '100%',
+              }}
+            />
 
             <CardHeader
               title={

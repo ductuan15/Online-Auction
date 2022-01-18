@@ -1,5 +1,5 @@
 import Card from '@mui/material/Card'
-import { Box, CardActionArea, CardMedia, Link } from '@mui/material'
+import { Box, CardActionArea, Link } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import { SxProps } from '@mui/system'
 import { Theme, useTheme } from '@mui/material/styles'
@@ -8,6 +8,7 @@ import ProductCardContent from '../product-card/ProductCardContent'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import { CardProps } from '../product-card/ProductCard'
 import ProductHeaderRow from './ProductHeaderRow'
+import ProductCardThumbnail from '../product-card/ProductCardThumbnail'
 
 type CardRow = CardProps
 
@@ -73,18 +74,11 @@ const ProductRow = ({
           }}
           component='div'
         >
-          <Box sx={imageSx} position='relative'>
-            <CardMedia
-              component='img'
-              image={product.thumbnails.md || ''}
-              sx={{
-                width: 'inherit',
-                height: 'inherit',
-                transition: `transform .3s`,
-                transform: `scale(${isSelected ? 1.1 : 1.0})`,
-              }}
-            />
-          </Box>
+          <ProductCardThumbnail
+            isSelected={isSelected}
+            boxSx={imageSx as SxProps}
+            product={product}
+          />
 
           <Box
             sx={{
