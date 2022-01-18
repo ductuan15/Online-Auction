@@ -23,6 +23,7 @@ import { SyntheticEvent, useCallback, useMemo, useState } from 'react'
 import BorderButton from '../button/BorderButton'
 import auctionService from '../../../services/auction.service'
 import moment from 'moment'
+import { nameMasking } from '../../../utils/name-mask'
 
 type ReviewFormProps = {
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -116,7 +117,7 @@ const CommentRow = ({
         primary={
           <Box display='flex' flexDirection='row' alignItems='center'>
             <Typography variant='h6' color='text.primary'>
-              {name || 'Tuan Cuong'}
+              {role === 'SELLER' ? name : nameMasking(name) || 'Tuan Cuong'}
             </Typography>
             <Chip
               sx={{
