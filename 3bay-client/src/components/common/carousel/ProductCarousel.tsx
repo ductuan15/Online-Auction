@@ -2,14 +2,14 @@ import { useState } from 'react'
 import Carousel, { DotProps } from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import './ProductCarousel.css'
-import { Container, Divider } from '@mui/material'
+import { Container, Divider, useMediaQuery } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Product from '../../../models/product'
 import { useEffectOnce } from '../../../hooks'
 import { styled, Theme, useTheme } from '@mui/material/styles'
 import { GREY } from '../../../theme/palette'
-import ProductCardSkeleton from '../product-card/ProductCardSkeleton'
 import ProductItem from '../product-list/ProductItem'
+import ProductItemSkeleton from '../product-list/ProductItemSkeleton'
 
 type CarouselProps = {
   name: string
@@ -88,6 +88,7 @@ const ProductCarousel = ({
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setLoading] = useState(true)
   const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.only('xs'))
 
   useEffectOnce(() => {
     ;(async () => {
@@ -132,10 +133,21 @@ const ProductCarousel = ({
       >
         {isLoading && showLoading
           ? [1, 2, 3, 4, 5].map((key) => {
-              return <ProductCardSkeleton key={key} />
+              return (
+                <ProductItemSkeleton
+                  key={key}
+                  cardStyle={isMobile ? 'row' : 'card'}
+                />
+              )
             })
           : products.map((product) => {
-              return <ProductItem key={product.id} product={product} />
+              return (
+                <ProductItem
+                  key={product.id}
+                  product={product}
+                  cardStyle={isMobile ? 'row' : 'card'}
+                />
+              )
             })}
       </Carousel>
     </Container>

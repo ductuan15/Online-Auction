@@ -1,4 +1,4 @@
-import { MouseEventHandler, SyntheticEvent } from 'react'
+import { SyntheticEvent } from 'react'
 import Card from '@mui/material/Card'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
@@ -9,8 +9,6 @@ import {
   CardHeader,
   IconButton,
   Link,
-  Menu,
-  MenuItem,
   Tooltip,
   TypographyStyle,
 } from '@mui/material'
@@ -26,17 +24,10 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 export type CardProps = {
   product: Product
   toggleWatchlistButton: (e: SyntheticEvent) => void
-  handleContextMenu: MouseEventHandler<HTMLDivElement>
-  handleContextMenuClose: (e: SyntheticEvent) => void
   onMouseOver: () => void
   onMouseOut: () => void
   isInWatchlist: boolean
-  scale: number
-  color: string
-  contextMenu: {
-    mouseX: number
-    mouseY: number
-  } | null
+  isSelected: boolean
 }
 
 const titleStyle: TypographyStyle = {
@@ -47,14 +38,11 @@ const titleStyle: TypographyStyle = {
   WebkitBoxOrient: 'vertical',
 }
 
-const titleSx: SxProps<Theme> = (theme) => ({
+const titleSx: SxProps = {
   fontStyle: 'normal',
-  fontWeight: 500,
+  fontWeight: 600,
   lineHeight: 'normal',
-  '&:hover': {
-    color: theme.palette.secondary.dark,
-  },
-})
+}
 
 const imageSx: SxProps<Theme> = (theme) => ({
   [theme.breakpoints.up('xs')]: {
@@ -83,127 +71,102 @@ const cardAreaSx = {
   },
 }
 
-const cardMediaSx = (scale: number) => ({
+const cardMediaSx = {
   width: '100%',
   height: '100%',
   transition: `transform .3s`,
-  transform: `scale(${scale})`,
-})
+}
 
 const ProductCard = ({
   product,
   toggleWatchlistButton,
-  handleContextMenu,
-  handleContextMenuClose,
   onMouseOver,
   onMouseOut,
   isInWatchlist,
-  scale,
-  color,
-  contextMenu,
+  isSelected,
 }: CardProps): JSX.Element => {
   const {
     state: { userDetails },
   } = useUserContext()
 
   return (
-    <div onContextMenu={handleContextMenu}>
-      <Tooltip title={product.name}>
-        <Card
-          variant='outlined'
-          onMouseOver={onMouseOver}
-          onMouseOut={onMouseOut}
-          sx={cardSx}
+    <Tooltip title={product.name}>
+      <Card
+        variant='outlined'
+        onMouseOver={onMouseOver}
+        onMouseOut={onMouseOut}
+        sx={cardSx}
+      >
+        <Link
+          color='inherit'
+          underline='none'
+          component={RouterLink}
+          to={`/product/${product.id}`}
+          style={{ cursor: 'context-menu' }}
         >
-          <Link
-            color='inherit'
-            underline='none'
-            component={RouterLink}
-            to={`/product/${product.id}`}
-            style={{ cursor: 'context-menu' }}
-          >
-            <CardActionArea sx={cardAreaSx} component='div'>
-              <Box sx={imageSx} position='relative'>
-                <CardMedia
-                  component='img'
-                  image={product.thumbnails.lg || ''}
-                  sx={cardMediaSx(scale)}
-                />
-              </Box>
-
-              <CardHeader
-                title={
-                  <Box
-                    sx={(theme) => ({
-                      height: `${
-                        +(theme.typography.h6.lineHeight || 0) * 2.5
-                      }rem`,
-                    })}
-                  >
-                    <Typography
-                      variant='h6'
-                      style={titleStyle}
-                      color={color}
-                      sx={{
-                        ...titleSx,
-                      }}
-                    >
-                      {product.name || ' '}
-                    </Typography>
-                  </Box>
-                }
-                sx={{ pb: 0 }}
+          <CardActionArea sx={cardAreaSx} component='div'>
+            <Box sx={imageSx} position='relative'>
+              <CardMedia
+                component='img'
+                image={product.thumbnails.lg || ''}
+                sx={{
+                  ...cardMediaSx,
+                  transform: `scale(${isSelected ? 1.1 : 1.0})`,
+                }}
               />
+            </Box>
 
-              <ProductCardContent product={product} sx={{ pt: 1 }} />
-              {userDetails && (
-                <CardActions
-                  disableSpacing
-                  sx={{
-                    pt: 0,
-                  }}
+            <CardHeader
+              title={
+                <Box
+                  sx={(theme) => ({
+                    height: `${
+                      +(theme.typography.h6.lineHeight || 0) * 2.5
+                    }rem`,
+                  })}
                 >
-                  <IconButton
-                    aria-label='add to watchlist'
-                    color='inherit'
-                    onClick={toggleWatchlistButton}
+                  <Typography
+                    variant='h6'
+                    style={titleStyle}
+                    color={isSelected ? 'primary.dark' : 'auto'}
+                    sx={titleSx}
                   >
-                    {isInWatchlist ? (
-                      <FavoriteOutlinedIcon />
-                    ) : (
-                      <FavoriteBorderOutlinedIcon />
-                    )}
-                  </IconButton>
-                </CardActions>
-              )}
-            </CardActionArea>
-          </Link>
-        </Card>
-      </Tooltip>
+                    {product.name || ' '}
+                  </Typography>
+                </Box>
+              }
+              sx={{ pb: 0 }}
+            />
 
-      {userDetails && (
-        <Menu
-          open={contextMenu !== null}
-          onClose={handleContextMenuClose}
-          anchorReference='anchorPosition'
-          anchorPosition={
-            contextMenu !== null
-              ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-              : undefined
-          }
-        >
-          {!isInWatchlist ? (
-            <MenuItem onClick={handleContextMenuClose}>
-              Add to watchlist
-            </MenuItem>
-          ) : (
-            <MenuItem onClick={handleContextMenuClose}>
-              Remove from watchlist
-            </MenuItem>
-          )}
-        </Menu>
-      )}
-    </div>
+            <ProductCardContent product={product} sx={{ pt: 1 }} />
+            {userDetails && (
+              <CardActions
+                disableSpacing
+                sx={{
+                  pt: 0,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <IconButton
+                  aria-label='add to watchlist'
+                  color='inherit'
+                  onClick={toggleWatchlistButton}
+                >
+                  {isInWatchlist ? (
+                    <FavoriteOutlinedIcon />
+                  ) : (
+                    <FavoriteBorderOutlinedIcon />
+                  )}
+                </IconButton>
+              </CardActions>
+            )}
+          </CardActionArea>
+        </Link>
+      </Card>
+    </Tooltip>
   )
 }
 

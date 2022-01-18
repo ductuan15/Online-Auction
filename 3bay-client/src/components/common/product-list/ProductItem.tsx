@@ -1,9 +1,7 @@
-import { useTheme } from '@mui/material/styles'
 import {
   MouseEventHandler,
   SyntheticEvent,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -16,6 +14,7 @@ import {
 import Product from '../../../models/product'
 import ProductRow from '../product-row/ProductRow'
 import ProductCard from '../product-card/ProductCard'
+import { Menu, MenuItem } from '@mui/material'
 
 type ProductItemProps = {
   product: Product
@@ -26,9 +25,7 @@ export default function ProductItem({
   product,
   cardStyle,
 }: ProductItemProps): JSX.Element {
-  const theme = useTheme()
-  const [scale, setScale] = useState(1.0)
-  const [color, setColor] = useState<string>(theme.palette.text.primary)
+  const [isSelected, setSelected] = useState(false)
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number
     mouseY: number
@@ -97,45 +94,58 @@ export default function ProductItem({
     [toggleWatchlistButton],
   )
 
-  useEffect(() => {
-    setColor(theme.palette.text.primary)
-  }, [theme])
-
   const onMouseOver = useCallback(() => {
-    setColor(theme.palette.primary.dark)
-    setScale(1.1)
-  }, [theme.palette.primary.dark])
+    setSelected(true)
+  }, [])
 
   const onMouseOut = useCallback(() => {
-    setColor(theme.palette.text.primary)
-    setScale(1.0)
-  }, [theme.palette.text.primary])
+    setSelected(false)
+  }, [])
 
-  return cardStyle === 'row' ? (
-    <ProductRow
-      product={product}
-      toggleWatchlistButton={toggleWatchlistButton}
-      handleContextMenu={handleContextMenu}
-      handleContextMenuClose={handleContextMenuClose}
-      onMouseOver={onMouseOver}
-      onMouseOut={onMouseOut}
-      isInWatchlist={isInWatchlist}
-      scale={scale}
-      color={color}
-      contextMenu={contextMenu}
-    />
-  ) : (
-    <ProductCard
-      product={product}
-      toggleWatchlistButton={toggleWatchlistButton}
-      handleContextMenu={handleContextMenu}
-      handleContextMenuClose={handleContextMenuClose}
-      onMouseOver={onMouseOver}
-      onMouseOut={onMouseOut}
-      isInWatchlist={isInWatchlist}
-      scale={scale}
-      color={color}
-      contextMenu={contextMenu}
-    />
+  return (
+    <div onContextMenu={handleContextMenu}>
+      {cardStyle === 'row' ? (
+        <ProductRow
+          product={product}
+          toggleWatchlistButton={toggleWatchlistButton}
+          onMouseOver={onMouseOver}
+          onMouseOut={onMouseOut}
+          isInWatchlist={isInWatchlist}
+          isSelected={isSelected}
+        />
+      ) : (
+        <ProductCard
+          product={product}
+          toggleWatchlistButton={toggleWatchlistButton}
+          onMouseOver={onMouseOver}
+          onMouseOut={onMouseOut}
+          isInWatchlist={isInWatchlist}
+          isSelected={isSelected}
+        />
+      )}
+
+      {userDetails && (
+        <Menu
+          open={contextMenu !== null}
+          onClose={handleContextMenuClose}
+          anchorReference='anchorPosition'
+          anchorPosition={
+            contextMenu !== null
+              ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+              : undefined
+          }
+        >
+          {!isInWatchlist ? (
+            <MenuItem onClick={handleContextMenuClose}>
+              Add to watchlist
+            </MenuItem>
+          ) : (
+            <MenuItem onClick={handleContextMenuClose}>
+              Remove from watchlist
+            </MenuItem>
+          )}
+        </Menu>
+      )}
+    </div>
   )
 }  
