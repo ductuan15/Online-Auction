@@ -9,6 +9,9 @@ import moment from 'moment'
 import RoleLabel from '../../../components/user/profile/RoleLabel'
 import { Link as RouterLink } from 'react-router-dom'
 import useTitle from '../../../hooks/use-title'
+import sellerService from '../../../services/seller.service'
+import UserService from '../../../services/user.service'
+import ProductShortList from '../../../components/common/product-list/ProductShortList'
 
 const Profile = (): JSX.Element => {
   useTitle('3bay | My profile')
@@ -42,7 +45,7 @@ const Profile = (): JSX.Element => {
           <Typography
             component='h2'
             variant='h3'
-            fontWeight='500'
+            fontWeight={600}
             color='text.primary'
             mr={1}
           >
@@ -98,6 +101,54 @@ const Profile = (): JSX.Element => {
             </Typography>
           </Grid>
         </Grid>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Divider sx={{ mt: 2 }} />
+      </Grid>
+
+      {user?.role === 'SELLER' && (
+        <Grid
+          item
+          container
+          xs={12}
+          mt={2}
+          flexDirection={'row'}
+          columnSpacing={2}
+        >
+          <ProductShortList
+            title='Posted product list'
+            productService={sellerService.getAllPostedProduct}
+            detailPage='/seller/posted-product-list'
+          />
+
+          <ProductShortList
+            title='Auctions have winner'
+            productService={sellerService.getAllAuctionHasWinner}
+            detailPage='/seller/auctions-have-winner'
+          />
+        </Grid>
+      )}
+
+      <Grid
+        item
+        container
+        xs={12}
+        mt={2}
+        flexDirection={'row'}
+        columnSpacing={2}
+      >
+        <ProductShortList
+          title='Auction list'
+          productService={UserService.getUserAuctionList}
+          detailPage='/user/auction-list'
+        />
+
+        <ProductShortList
+          title='Won auction list'
+          productService={UserService.getUserWonAuctionList}
+          detailPage='/user/won-auction-list'
+        />
       </Grid>
     </Grid>
   )

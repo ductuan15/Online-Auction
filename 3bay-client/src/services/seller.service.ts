@@ -18,12 +18,18 @@ async function addNewProduct(
   )
 }
 
-async function getAllPostedProduct(): Promise<AxiosResponse<Product[]>> {
-  return await axiosApiInstance.get(`api/product/postedProducts`)
+async function getAllPostedProduct(): Promise<Product[]> {
+  const response = await axiosApiInstance.get<Product[]>(
+    `api/product/postedProducts`,
+  )
+  return response.data
 }
 
-async function getAllAuctionHasWinner(): Promise<AxiosResponse<Product[]>> {
-  return await axiosApiInstance.get(`api/auction/has-winner`)
+async function getAllAuctionHasWinner(): Promise<Product[]> {
+  const response = await axiosApiInstance.get<Product[]>(
+    `api/auction/has-winner`,
+  )
+  return response.data
 }
 
 async function getBidRequests(auctionId: number): Promise<BidRequest[]> {
@@ -73,7 +79,7 @@ const SellerService = {
   getBidRequests,
   acceptBid,
   rejectBid,
-  getAllAuctionHasWinner
+  getAllAuctionHasWinner,
 }
 
 export default SellerService
