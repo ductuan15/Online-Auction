@@ -19,8 +19,10 @@ import BorderIconButton from '../button/BorderIconButton'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import BidButton from '../bid/BidButton'
 import formatNumberToVND from '../../../utils/currency-format'
+import { nameMasking } from '../../../utils/name-mask'
 
 type UserWithRatingProps = {
+  isNeedNameMasking: boolean
   name: string
   rating?: number
   label: string
@@ -28,6 +30,7 @@ type UserWithRatingProps = {
 }
 
 const UserWithRating = ({
+  isNeedNameMasking,
   name,
   label,
   minHeight,
@@ -67,7 +70,7 @@ const UserWithRating = ({
       />
 
       <Typography variant='body1' color='text.primary' sx={{ mr: 1 }}>
-        {name}
+        {isNeedNameMasking ? nameMasking(name) : name}
       </Typography>
 
       <Typography variant={'subtitle2'} color='text.primary'>
@@ -215,6 +218,7 @@ const ProductInfo = (): JSX.Element | null => {
 
       <Grid item xs={12}>
         <UserWithRating
+          isNeedNameMasking={false}
           name={product.seller.name}
           label={'Sold by'}
           rating={sellerPoint}
@@ -224,6 +228,7 @@ const ProductInfo = (): JSX.Element | null => {
       <Grid item xs={12}>
         {latestAuction?.winningBid?.bidder?.name ? (
           <UserWithRating
+            isNeedNameMasking={true}
             name={latestAuction?.winningBid?.bidder?.name || 'Tuan Cuong'}
             label={'Bid by \u00a0\u00a0'}
             rating={winningBidderPoint}
