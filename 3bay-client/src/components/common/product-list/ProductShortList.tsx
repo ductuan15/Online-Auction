@@ -12,6 +12,8 @@ type ShortProductListProps = {
   maxItems?: number
 }
 
+const DEFAULT_N_ITEMS = 3
+
 const ProductShortList = ({
   title,
   productService,
@@ -57,38 +59,41 @@ const ProductShortList = ({
         }}
         alignItems='center'
         justifyContent='center'
+        flexDirection='column'
       >
         {products.length === 0 ? (
           <Typography color='text.secondary'>📦 No item</Typography>
         ) : (
           <>
-            {products.slice(0, maxItems ?? 3).map((product) => {
+            {products.slice(0, maxItems ?? DEFAULT_N_ITEMS).map((product) => {
               return (
-                <Grid item container xs={12} key={product?.id}>
-                  <ListItemButton divider>
+                <Grid item xs={12} key={product?.id}>
+                  <ListItemButton divider sx={{ width: 1 }}>
                     <ProductShortRow product={product} />
                   </ListItemButton>
                 </Grid>
               )
             })}
 
-            <ListItemButton onClick={navigateToDetails}>
-              <Grid
-                item
-                container
-                xs={12}
-                flexDirection='row'
-                justifyContent='space-between'
-                alignItems='center'
-                py={1}
-              >
-                <Typography color='text.primary' fontWeight={600} noWrap>
-                  View more
-                </Typography>
+            {
+              products.length > (maxItems ?? DEFAULT_N_ITEMS) && (
+                <ListItemButton onClick={navigateToDetails} sx={{width: 1}}>
+                  <Grid
+                    container
+                    flexDirection='row'
+                    justifyContent='space-between'
+                    alignItems='center'
+                    py={1}
+                  >
+                    <Typography color='text.primary' fontWeight={600} noWrap>
+                      View more
+                    </Typography>
 
-                <NavigateNextIcon sx={{ color: 'text.primary' }} />
-              </Grid>
-            </ListItemButton>
+                    <NavigateNextIcon sx={{ color: 'text.primary' }} />
+                  </Grid>
+                </ListItemButton>
+              )
+            }
           </>
         )}
       </Grid>
