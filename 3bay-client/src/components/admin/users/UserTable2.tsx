@@ -8,7 +8,7 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridCellEditCommitParams,
-  GridColumns,
+  GridColumns, GridFilterModel,
   GridRowParams,
 } from '@mui/x-data-grid'
 import CloseIcon from '@mui/icons-material/Close'
@@ -16,6 +16,7 @@ import AdminService from '../../../services/admin.service'
 import { AdminUserDetail } from '../../../models/admin-user'
 import { Alert, AlertProps, Snackbar } from '@mui/material'
 import _ from 'lodash'
+import {useDebounce} from '../../../hooks'
 
 type UserTableProps = {
   onLoadingData?: () => void
@@ -32,6 +33,9 @@ const UserTable = ({
   tab,
   isLoading,
 }: UserTableProps): JSX.Element => {
+  const [filterValue, setFilterValue] = React.useState<string | undefined>()
+  const debounceFilterValue = useDebounce<string | undefined>(filterValue, 500)
+
   const { state: userState, dispatch } = useAdminUsersContext()
 
   const { user: authData } = useAuth()
@@ -53,6 +57,7 @@ const UserTable = ({
       const userResponse = await AdminService.getUserList(
         userState.usersTable.page,
         userState.usersTable.limit,
+        debounceFilterValue,
       )
       dispatch({ type: 'ADD_ALL', payload: userResponse })
       onDataLoaded && onDataLoaded()
@@ -68,6 +73,7 @@ const UserTable = ({
     userState.currentTab,
     userState.usersTable.limit,
     userState.usersTable.page,
+    debounceFilterValue,
   ])
 
   const rows = useMemo(
@@ -78,6 +84,10 @@ const UserTable = ({
       })),
     [userState.users],
   )
+
+  const onFilterChange = React.useCallback((filterModel: GridFilterModel) => {
+    setFilterValue(filterModel.items[0].value)
+  }, [])
 
   const handleCellEditCommit = useCallback(
     async (params: GridCellEditCommitParams) => {
@@ -144,6 +154,7 @@ const UserTable = ({
         field: 'id',
         type: 'string',
         headerName: 'ID',
+        filterable: false,
         valueGetter: (params) => {
           return params.row.uuid
         },
@@ -159,6 +170,7 @@ const UserTable = ({
         field: 'thumbnail',
         headerName: 'Avatar',
         type: 'string',
+        filterable: false,
         valueGetter: (params) => {
           if (params.row.name) {
             return params.row.name
@@ -173,24 +185,28 @@ const UserTable = ({
         headerName: 'Email',
         field: 'email',
         type: 'string',
+        filterable: false,
         minWidth: 250,
       },
       {
         headerName: 'DOB',
         field: 'dob',
         type: 'date',
+        filterable: false,
         valueGetter: ({ row }) => row.dob && new Date(row.dob),
       },
       {
         field: 'address',
         type: 'string',
         headerName: 'address',
+        filterable: false,
         minWidth: 200,
       },
       {
         headerName: 'Role',
         field: 'role',
         type: 'singleSelect',
+        filterable: false,
         valueOptions: ['BIDDER', 'SELLER', 'ADMINISTRATOR'],
         editable: true,
         minWidth: 145,
@@ -199,12 +215,14 @@ const UserTable = ({
         headerName: 'verified',
         field: 'verified',
         type: 'boolean',
+        filterable: false,
         editable: true,
       },
       {
         headerName: 'disabled',
         field: 'isDisabled',
         type: 'boolean',
+        filterable: false,
         editable: true,
       },
       {
@@ -246,6 +264,8 @@ const UserTable = ({
         isCellEditable={(params) =>
           !!(authData && params.row.uuid !== authData.user)
         }
+        filterMode='server'
+        onFilterModelChange={onFilterChange}
         onCellEditCommit={handleCellEditCommit}
         autoHeight
       />

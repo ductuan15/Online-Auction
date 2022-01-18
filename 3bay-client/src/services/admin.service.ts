@@ -6,11 +6,13 @@ import Product, { AdminProductListResponse } from '../models/product'
 async function getUserList(
   page: number,
   limit: number,
+  key?: string,
 ): Promise<AdminUserListResponse> {
   const userResponse = await axiosApiInstance.get(`/api/admin/users/`, {
     params: {
       page,
       limit,
+      key,
     },
   })
   return userResponse.data as AdminUserListResponse
@@ -58,11 +60,13 @@ async function deleteUser(user: AdminUserDetail): Promise<AdminUserDetail> {
 async function getProductList(
   page: number,
   limit: number,
+  key?: string,
 ): Promise<AdminProductListResponse> {
   const productResponse = await axiosApiInstance.get(`/api/admin/products/`, {
     params: {
       page,
       limit,
+      key,
     },
   })
   return productResponse.data as AdminProductListResponse
