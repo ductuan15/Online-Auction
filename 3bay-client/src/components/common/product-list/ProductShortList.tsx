@@ -67,7 +67,7 @@ const ProductShortList = ({
           <>
             {products.slice(0, maxItems ?? DEFAULT_N_ITEMS).map((product) => {
               return (
-                <Grid item xs={12} key={product?.id}>
+                <Grid item xs={12} key={product?.id} sx={{ width: 1 }}>
                   <ListItemButton divider sx={{ width: 1 }}>
                     <ProductShortRow product={product} />
                   </ListItemButton>

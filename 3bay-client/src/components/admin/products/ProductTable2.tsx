@@ -7,14 +7,17 @@ import { useAdminProductsContext } from '../../../contexts/admin/ProductsContext
 import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import {
   DataGrid,
+  getGridStringOperators,
   GridActionsCellItem,
   GridColumns,
+  GridFilterModel,
   GridRowParams,
 } from '@mui/x-data-grid'
 import CloseIcon from '@mui/icons-material/Close'
 import LaunchOutlinedIcon from '@mui/icons-material/LaunchOutlined'
 import { Avatar } from '@mui/material'
 import Product from '../../../models/product'
+import { useDebounce } from '../../../hooks'
 
 type ProductsTableProps = {
   onLoadingData?: () => void
@@ -29,6 +32,9 @@ const ProductTable = ({
   onError,
   isLoading,
 }: ProductsTableProps): JSX.Element => {
+  const [filterValue, setFilterValue] = React.useState<string | undefined>()
+  const debounceFilterValue = useDebounce<string | undefined>(filterValue, 500)
+
   const { state, dispatch } = useAdminProductsContext()
 
   const { user: authData } = useAuth()
@@ -39,6 +45,7 @@ const ProductTable = ({
       const productResponse = await AdminService.getProductList(
         state.productsTable.page,
         state.productsTable.limit,
+        debounceFilterValue,
       )
       dispatch({ type: 'ADD_ALL', payload: productResponse })
       // console.log(productResponse)
@@ -53,6 +60,7 @@ const ProductTable = ({
     onLoadingData,
     state.productsTable.limit,
     state.productsTable.page,
+    debounceFilterValue,
   ])
 
   useEffect(() => {
@@ -78,6 +86,10 @@ const ProductTable = ({
     [loadData, onDataLoaded, onError, onLoadingData],
   )
 
+  const onFilterChange = React.useCallback((filterModel: GridFilterModel) => {
+    setFilterValue(filterModel.items[0].value)
+  }, [])
+
   const columns: GridColumns = useMemo(
     () => [
       {
@@ -85,12 +97,14 @@ const ProductTable = ({
         field: 'id',
         type: 'number',
         headerName: 'ID',
+        filterable: false,
       },
       {
         field: 'thumbnail',
         type: 'string',
         width: 50,
         headerName: ' ',
+        filterable: false,
         valueGetter: (params) => {
           if (params.row.thumbnails && params.row.thumbnails['sm']) {
             return params.row.thumbnails['sm']
@@ -108,11 +122,15 @@ const ProductTable = ({
         type: 'string',
         flex: 1,
         headerName: 'Name',
+        filterOperators: getGridStringOperators().filter(
+          (operator) => operator.value === 'contains',
+        ),
       },
       {
         field: 'seller2',
         headerName: 'Avatar',
         type: 'string',
+        filterable: false,
         valueGetter: (params) => {
           if (params.row.seller) {
             return params.row.seller.name
@@ -129,6 +147,7 @@ const ProductTable = ({
         type: 'string',
         // flex: 0.5,
         minWidth: 250,
+        filterable: false,
         valueGetter: (params) => {
           if (params.row.seller) {
             return params.row.seller.name
@@ -141,11 +160,13 @@ const ProductTable = ({
         type: 'dateTime',
         headerName: 'Created At',
         minWidth: 200,
+        filterable: false,
         valueGetter: ({ row }) => row.createdAt && new Date(row.createdAt),
       },
       {
         field: 'actions',
         type: 'actions',
+        filterable: false,
         getActions: (params) => [
           <GridActionsCellItem
             key={params.id}
@@ -184,6 +205,8 @@ const ProductTable = ({
       onPageSizeChange={(pageSize) =>
         dispatch({ type: 'SET_PAGE_SIZE', payload: pageSize })
       }
+      filterMode='server'
+      onFilterModelChange={onFilterChange}
       autoHeight
     />
   )

@@ -30,6 +30,7 @@ export async function getUsers(
   try {
     const page = +(req.query?.page || '/') || 1
     const limit = +(req.query?.limit || '/') || config.USER_PAGE_LIMIT
+    const key = req.query.key
 
     const [total, users] = await prisma.$transaction([
       prisma.user.count(),
@@ -37,6 +38,9 @@ export async function getUsers(
         select: userDefaultSelection,
         skip: (page - 1) * limit,
         take: limit,
+        where: {
+          name: !key ? undefined : { search: `${key}` }
+        }
       }),
     ])
     return res.json({ total, page, limit, users })
@@ -137,10 +141,13 @@ export async function getProducts(
     const page = +(req.query?.page || '/') || 1
     const limit = +(req.query?.limit || '/') || config.PAGE_LIMIT
     const includeDeleted = req.query?.includeDeleted === 'true'
+    const key = req.query.key
 
-    let where = {}
+    let where: Prisma.Prisma.ProductWhereInput = {
+      name: !key ? undefined : { search: `${key}` },
+    }
     if (!includeDeleted) {
-      where = { deletedAt: null }
+      where = { ...where, deletedAt: null }
     }
 
     const [total, products] = await prisma.$transaction([
