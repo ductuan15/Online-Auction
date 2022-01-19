@@ -22,11 +22,11 @@ const ProductShortRow = ({ product }: { product: Product }) => {
     <Box
       display='flex'
       flexDirection='row'
-      alignContent='center'
       py={1}
       component={RouterLink}
       to={`/product/${product.id}`}
       style={{ textDecoration: 'inherit' }}
+      sx={{ width: 1 }}
     >
       <Box sx={{ width: 64, height: 64 }}>
         <CardMedia

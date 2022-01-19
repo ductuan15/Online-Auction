@@ -6,12 +6,18 @@ import Product, { AdminProductListResponse } from '../models/product'
 async function getUserList(
   page: number,
   limit: number,
+  query?: { field: string; value: string | boolean } | undefined,
 ): Promise<AdminUserListResponse> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const params: any = {
+    page,
+    limit,
+  }
+  if (query) {
+    params[query.field] = query.value
+  }
   const userResponse = await axiosApiInstance.get(`/api/admin/users/`, {
-    params: {
-      page,
-      limit,
-    },
+    params,
   })
   return userResponse.data as AdminUserListResponse
 }
@@ -58,11 +64,13 @@ async function deleteUser(user: AdminUserDetail): Promise<AdminUserDetail> {
 async function getProductList(
   page: number,
   limit: number,
+  key?: string,
 ): Promise<AdminProductListResponse> {
   const productResponse = await axiosApiInstance.get(`/api/admin/products/`, {
     params: {
       page,
       limit,
+      key,
     },
   })
   return productResponse.data as AdminProductListResponse

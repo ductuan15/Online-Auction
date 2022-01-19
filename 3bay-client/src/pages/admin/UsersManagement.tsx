@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useCallback, useState } from 'react'
-import { Alert, Grid, LinearProgress, Tab } from '@mui/material'
+import { Alert, Grid, Tab } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
@@ -89,7 +89,7 @@ const UsersManagement = (): JSX.Element => {
         container
         marginTop={1}
         marginBottom={1}
-        spacing={4}
+        spacing={1}
         justifyContent='between'
       >
         <Grid display='flex' xs={12} item alignItems='center'>
@@ -133,7 +133,7 @@ const UsersManagement = (): JSX.Element => {
               {errorText}
             </Alert>
           )}
-          {isLoading && <LinearProgress variant='indeterminate' />}
+          {/*{isLoading && <LinearProgress variant='indeterminate' />}*/}
 
           <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={tabValue}>

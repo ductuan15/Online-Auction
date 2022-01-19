@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useCallback, useState } from 'react'
-import { Alert, Grid, LinearProgress } from '@mui/material'
+import { Alert, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import useTitle from '../../hooks/use-title'
@@ -9,7 +9,7 @@ import { setErrorTextMsg } from '../../utils/error'
 import { useIsMounted } from '../../hooks'
 import ProductTable2 from '../../components/admin/products/ProductTable2'
 
-const UsersManagement = (): JSX.Element => {
+const ProductsManagement = (): JSX.Element => {
   useTitle('3bay | Manage products')
   const [isLoading, setLoading] = useState(false)
   const [errorText, setErrorText] = useState<string | null>(null)
@@ -41,7 +41,7 @@ const UsersManagement = (): JSX.Element => {
       container
       marginTop={1}
       marginBottom={2}
-      spacing={4}
+      spacing={1}
       justifyContent='between'
     >
       <Grid display='flex' xs={12} item alignItems='center'>
@@ -73,7 +73,7 @@ const UsersManagement = (): JSX.Element => {
             {errorText}
           </Alert>
         )}
-        {isLoading && <LinearProgress variant='indeterminate' />}
+        {/*{isLoading && <LinearProgress variant='indeterminate' />}*/}
 
         {/*<ProductTable*/}
         {/*  onLoadingData={onLoadingData}*/}
@@ -91,4 +91,4 @@ const UsersManagement = (): JSX.Element => {
   )
 }
 
-export default UsersManagement
+export default ProductsManagement
