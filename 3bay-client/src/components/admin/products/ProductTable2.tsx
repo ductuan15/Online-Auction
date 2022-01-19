@@ -17,7 +17,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import LaunchOutlinedIcon from '@mui/icons-material/LaunchOutlined'
 import { Avatar } from '@mui/material'
 import Product from '../../../models/product'
-import {useDebounce, useEffectOnce} from '../../../hooks'
+import { useDebounce, useEffectOnce } from '../../../hooks'
 
 type ProductsTableProps = {
   onLoadingData?: () => void
@@ -70,12 +70,23 @@ const ProductTable = ({
   })
 
   useEffect(() => {
-    if (shouldReload || debounceFilterValue) {
+    if (
+      shouldReload ||
+      debounceFilterValue ||
+      state.productsTable.limit ||
+      state.productsTable.page
+    ) {
       ;(async () => {
         await loadData()
       })()
     }
-  }, [loadData, shouldReload, debounceFilterValue])
+  }, [
+    loadData,
+    shouldReload,
+    debounceFilterValue,
+    state.productsTable.limit,
+    state.productsTable.page,
+  ])
 
   const onRowDelete = useCallback(
     async (params: GridRowParams<Product>) => {

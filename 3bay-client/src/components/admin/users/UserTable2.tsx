@@ -20,7 +20,7 @@ import AdminService from '../../../services/admin.service'
 import { AdminUserDetail } from '../../../models/admin-user'
 import { Alert, AlertProps, Snackbar } from '@mui/material'
 import _ from 'lodash'
-import {useDebounce, useEffectOnce} from '../../../hooks'
+import { useDebounce, useEffectOnce } from '../../../hooks'
 
 type UserTableProps = {
   onLoadingData?: () => void
@@ -168,12 +168,23 @@ const UserTable = ({
   })
 
   useEffect(() => {
-    if (shouldReload || debounceFilterValue) {
+    if (
+      shouldReload ||
+      debounceFilterValue ||
+      userState.usersTable.limit ||
+      userState.usersTable.page
+    ) {
       ;(async () => {
         await loadData()
       })()
     }
-  }, [loadData, shouldReload, debounceFilterValue])
+  }, [
+    loadData,
+    shouldReload,
+    debounceFilterValue,
+    userState.usersTable.limit,
+    userState.usersTable.page,
+  ])
 
   const columns: GridColumns = useMemo(
     () => [
