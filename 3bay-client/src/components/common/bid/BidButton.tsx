@@ -61,7 +61,7 @@ function BidButton(): JSX.Element | null {
     if (latestAuction?.id) {
       try {
         const bidStatus = await auctionService.removeAutoBid(latestAuction?.id)
-        console.log(bidStatus)
+        // console.log(bidStatus)
         dispatch({ type: 'UPDATE_BID_STATUS', payload: bidStatus })
       } catch (e) {
         //

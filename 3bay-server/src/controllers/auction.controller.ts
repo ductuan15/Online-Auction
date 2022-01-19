@@ -302,9 +302,11 @@ export const getUserBidStatus = async (
       auctionId: number
       status?: string
       hasAutoBid: boolean
+      maximumAutoBidPrice?: number
     } = {
       auctionId: req.auction?.id || NaN,
-      hasAutoBid: !!hasAutoBid
+      hasAutoBid: !!hasAutoBid,
+      maximumAutoBidPrice: hasAutoBid?.maximumPrice.toNumber()
     }
     switch (userBidStatus?.status) {
       case undefined:
