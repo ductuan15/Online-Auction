@@ -17,7 +17,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import LaunchOutlinedIcon from '@mui/icons-material/LaunchOutlined'
 import { Avatar } from '@mui/material'
 import Product from '../../../models/product'
-import { useDebounce } from '../../../hooks'
+import {useDebounce, useEffectOnce} from '../../../hooks'
 
 type ProductsTableProps = {
   onLoadingData?: () => void
@@ -65,9 +65,9 @@ const ProductTable = ({
     debounceFilterValue,
   ])
 
-  useEffect(() => {
+  useEffectOnce(() => {
     ;(async () => await loadData())()
-  }, [loadData])
+  })
 
   useEffect(() => {
     if (shouldReload || debounceFilterValue) {

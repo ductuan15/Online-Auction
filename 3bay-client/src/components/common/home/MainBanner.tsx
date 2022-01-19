@@ -73,8 +73,8 @@ const MainBanner = (props: BannerProps): JSX.Element => {
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <BorderButton
-                unSelectedColour='inherit'
-                unSelectedBorderColour='inherit'
+                unSelectedColour='white'
+                unSelectedBorderColour='white'
                 color='inherit'
               >
                 {props.linkText}
