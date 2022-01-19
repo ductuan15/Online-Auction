@@ -70,12 +70,12 @@ const ProductTable = ({
   }, [loadData])
 
   useEffect(() => {
-    if (shouldReload) {
+    if (shouldReload || debounceFilterValue) {
       ;(async () => {
         await loadData()
       })()
     }
-  }, [loadData, shouldReload])
+  }, [loadData, shouldReload, debounceFilterValue])
 
   const onRowDelete = useCallback(
     async (params: GridRowParams<Product>) => {

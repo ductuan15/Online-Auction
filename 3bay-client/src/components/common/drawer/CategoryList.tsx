@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { SyntheticEvent, useState } from 'react'
 import Category from '../../../models/category'
-import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import { useCategoryContext } from '../../../contexts/layout/CategoryContext'
 import {
   Collapse,
   Divider,

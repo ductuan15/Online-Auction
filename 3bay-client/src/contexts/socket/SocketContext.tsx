@@ -19,6 +19,7 @@ export enum SocketEvent {
   AUCTION_UPDATE = 'auction_update',
   AUCTION_NOTIFY = 'auction_notify',
   USER_LOGOUT = 'user_logout',
+  CATEGORY_UPDATE = 'category_update',
 }
 
 const useSocketContext = (): SocketContextType => {

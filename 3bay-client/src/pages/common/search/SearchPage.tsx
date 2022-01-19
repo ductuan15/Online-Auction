@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import { useCategoryContext } from '../../../contexts/layout/CategoryContext'
 import Product from '../../../models/product'
 import {
   searchProduct,

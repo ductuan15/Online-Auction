@@ -168,12 +168,12 @@ const UserTable = ({
   })
 
   useEffect(() => {
-    if (shouldReload) {
+    if (shouldReload || debounceFilterValue) {
       ;(async () => {
         await loadData()
       })()
     }
-  }, [loadData, shouldReload])
+  }, [loadData, shouldReload, debounceFilterValue])
 
   const columns: GridColumns = useMemo(
     () => [

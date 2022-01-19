@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { FormHelperText } from '@mui/material'
-import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import { useCategoryContext } from '../../../contexts/layout/CategoryContext'
 
 // export type ParentCategoryChooserProps = {}
 

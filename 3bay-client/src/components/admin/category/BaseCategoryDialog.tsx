@@ -15,7 +15,7 @@ import DialogActions from '@mui/material/DialogActions'
 import Category from '../../../models/category'
 import { AxiosPromise } from 'axios'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
-import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import { useCategoryContext } from '../../../contexts/layout/CategoryContext'
 import axiosApiInstance from '../../../services/api'
 import { setErrorTextMsg } from '../../../utils/error'
 import LocalService from '../../../services/local.service'
@@ -40,7 +40,7 @@ type BaseCategoryDialogProps = {
 export function BaseCategoryDialog(
   props: BaseCategoryDialogProps,
 ): JSX.Element {
-  const { state, dispatch, removeCategory } = useCategoryContext()
+  const { state, dispatch } = useCategoryContext()
   const { currentCategory: category } = state
 
   const { open, dialogName, title, extraComponent, submitData } = props
@@ -105,7 +105,6 @@ export function BaseCategoryDialog(
     if (!category) throw Error('Update category but the id is unknown')
     try {
       await axiosApiInstance.delete(`/api/category/${category.id}`)
-      removeCategory(category)
       onClose()
     } catch (e: unknown) {
       onError(e)

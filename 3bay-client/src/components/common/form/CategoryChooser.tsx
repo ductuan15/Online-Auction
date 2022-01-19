@@ -11,7 +11,7 @@ import {
   SelectProps,
 } from '@mui/material'
 import { SxProps } from '@mui/system'
-import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import { useCategoryContext } from '../../../contexts/layout/CategoryContext'
 import Category from '../../../models/category'
 import { ProductFormInput } from '../../../models/product'
 
