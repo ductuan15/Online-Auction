@@ -26,6 +26,7 @@ import DateTimeInputField from '../../common/form/DateTimeInputField'
 import moment from 'moment'
 import CategoryChooser from '../../common/form/CategoryChooser'
 import CloseIcon from '@mui/icons-material/Close'
+import BorderButton from '../../common/button/BorderButton'
 
 const Input = styled('input')({
   display: 'none',
@@ -707,15 +708,15 @@ export default function CreateProductForm({
         </Grid>
 
         <Grid container item xs={12} justifyContent='flex-end'>
-          <Button
-            variant='contained'
+          <BorderButton
             type='submit'
             size='large'
+            isSelected={isValid ? undefined : true}
             color={isValid ? 'primary' : 'error'}
-            startIcon={<SaveOutlinedIcon />}
           >
+            <SaveOutlinedIcon color='inherit' />
             Save changes
-          </Button>
+          </BorderButton>
         </Grid>
       </Grid>
     </Grid>

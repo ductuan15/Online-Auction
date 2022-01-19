@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, Typography } from '@mui/material'
+import { Box, Divider, Grid, Typography } from '@mui/material'
 import BackgroundLetterAvatars from '../../../components/user/profile/BackgroundLettersAvatar'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
@@ -12,12 +12,44 @@ import useTitle from '../../../hooks/use-title'
 import sellerService from '../../../services/seller.service'
 import UserService from '../../../services/user.service'
 import ProductShortList from '../../../components/common/product-list/ProductShortList'
+import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { StarOutlineOutlined } from '@mui/icons-material'
+import BorderButton from '../../../components/common/button/BorderButton'
+
+type ProfileInfoRowProps = {
+  icon: JSX.Element
+  text: string
+}
+
+const ProfileInfoRow = ({ icon, text }: ProfileInfoRowProps): JSX.Element => {
+  return (
+    <Grid item container direction='row' spacing={2}>
+      <Grid item>{icon}</Grid>
+      <Grid item>
+        <Typography color='text.primary'>{text}</Typography>
+      </Grid>
+    </Grid>
+  )
+}
 
 const Profile = (): JSX.Element => {
   useTitle('3bay | My profile')
   const {
     state: { userDetails: user },
   } = useUserContext()
+
+  const [userPoint, setUserPoint] = useState<number | undefined>(undefined)
+
+  useEffect(() => {
+    ;(async () => {
+      if (user?.uuid) {
+        const point = await UserService.getPoint(user?.uuid)
+        setUserPoint((point || 0) * 100) // percent
+      }
+      setUserPoint(undefined)
+    })()
+  }, [user?.uuid])
 
   return (
     <Grid container mt={2} mb={2}>
@@ -56,51 +88,43 @@ const Profile = (): JSX.Element => {
 
           <Box flexGrow={1} />
 
-          <Button
-            startIcon={<EditOutlinedIcon />}
-            variant='contained'
-            component={RouterLink}
+          <RouterLink
             to={'/user/account'}
-            sx={{ mb: 1 }}
+            style={{
+              textDecoration: 'none',
+            }}
           >
-            Edit profile
-          </Button>
+            <BorderButton sx={{ mb: 1 }}>
+              <EditOutlinedIcon sx={{ mr: 1 }} />
+              Edit profile
+            </BorderButton>
+          </RouterLink>
         </Grid>
 
         <Grid item my={2}>
           <Divider />
         </Grid>
 
-        <Grid item container direction='row' spacing={2}>
-          <Grid item>
-            <EmailOutlinedIcon color='action' />
-          </Grid>
-          <Grid item>
-            <Typography color='text.secondary'>{user?.email || ''}</Typography>
-          </Grid>
-        </Grid>
+        <ProfileInfoRow
+          icon={<EmailOutlinedIcon sx={{ color: 'text.primary' }} />}
+          text={user?.email || ''}
+        />
+        <ProfileInfoRow
+          icon={<CakeOutlinedIcon sx={{ color: 'text.primary' }} />}
+          text={user?.dob ? moment(new Date(user?.dob)).utc().format('L') : ''}
+        />
 
-        <Grid item container direction='row' spacing={2}>
-          <Grid item>
-            <CakeOutlinedIcon color='action' />
-          </Grid>
-          <Grid item>
-            <Typography color='text.secondary'>
-              {user?.dob ? moment(new Date(user?.dob)).utc().format('L') : ''}
-            </Typography>
-          </Grid>
-        </Grid>
+        <ProfileInfoRow
+          icon={<HomeOutlinedIcon sx={{ color: 'text.primary' }} />}
+          text={user?.address || ''}
+        />
 
-        <Grid item container direction='row' spacing={2}>
-          <Grid item>
-            <HomeOutlinedIcon color='action' />
-          </Grid>
-          <Grid item>
-            <Typography color='text.secondary'>
-              {user?.address || ''}
-            </Typography>
-          </Grid>
-        </Grid>
+        <ProfileInfoRow
+          icon={<StarOutlineOutlined sx={{ color: 'text.primary' }} />}
+          text={
+            userPoint !== undefined ? `(${userPoint}% approval)` : `(No rating)`
+          }
+        />
       </Grid>
 
       <Grid item xs={12}>

@@ -1,8 +1,8 @@
-import { Button, Grid, Typography } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import EmailTextField from '../../../components/common/form/EmailTextField'
 import * as React from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import DateInputField from '../../../components/common/form/DateInputField'
 import { UserDetails } from '../../../models/user'
@@ -18,6 +18,7 @@ import RoleLabel from '../../../components/user/profile/RoleLabel'
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
+import BorderButton from '../../../components/common/button/BorderButton'
 
 const Account = (): JSX.Element => {
   useTitle('3bay | Account settings')
@@ -38,7 +39,7 @@ const Account = (): JSX.Element => {
           uuid: '',
           name: '',
           email: '',
-          role: ''
+          role: '',
         }
       }
       return user
@@ -70,21 +71,24 @@ const Account = (): JSX.Element => {
     sm: 9,
   }
 
-  const onSubmit: SubmitHandler<UserDetails> = async (data) => {
-    try {
-      await UserService.updateUserInfo(data, dispatch, authContext)
-      setErrorText(null)
-      setSave(true)
-    } catch (e) {
-      setErrorTextMsg(e, (msg) => {
-        if (isMounted()) {
-          setErrorText(msg)
-        }
-      })
-    }
-  }
+  const onSubmit: SubmitHandler<UserDetails> = useCallback(
+    async (data) => {
+      try {
+        await UserService.updateUserInfo(data, dispatch, authContext)
+        setErrorText(null)
+        setSave(true)
+      } catch (e) {
+        setErrorTextMsg(e, (msg) => {
+          if (isMounted()) {
+            setErrorText(msg)
+          }
+        })
+      }
+    },
+    [authContext, dispatch, isMounted],
+  )
 
-  const requestToBidder = async () => {
+  const requestToBidder = useCallback(async () => {
     try {
       setSave(false)
       setErrorText(null)
@@ -99,7 +103,7 @@ const Account = (): JSX.Element => {
         setErrorText('Cannot upgrade to seller')
       }
     }
-  }
+  }, [dispatch, isMounted])
 
   return (
     <Grid
@@ -123,14 +127,13 @@ const Account = (): JSX.Element => {
           Account Settings
         </Typography>
 
-        <Button
-          variant='contained'
+        <BorderButton
           size='large'
           type='submit'
           startIcon={<SaveOutlinedIcon />}
         >
           Save changes
-        </Button>
+        </BorderButton>
       </Grid>
 
       {user?.upgradeToSellerRequest && (
@@ -166,21 +169,20 @@ const Account = (): JSX.Element => {
           </Typography>
         </Grid>
 
-        <Grid item {...inputGridProps} xs={5} sm={6}>
+        <Grid item {...inputGridProps} xs={5} sm={'auto'}>
           <RoleLabel sx={{ mb: 1 }} />
         </Grid>
 
         {user?.role === 'BIDDER' && (
-          <Grid item container xs={5} sm={3} justifyContent='flex-end'>
-            <Button
+          <Grid item container xs={5} sm={4} justifyContent='flex-end'>
+            <BorderButton
               fullWidth
-              variant='outlined'
               disabled={!!user?.upgradeToSellerRequest}
               onClick={requestToBidder}
               startIcon={<StorefrontOutlinedIcon />}
             >
               Become a Seller
-            </Button>
+            </BorderButton>
           </Grid>
         )}
       </Grid>
@@ -203,17 +205,17 @@ const Account = (): JSX.Element => {
           />
         </Grid>
 
-        <Grid item container xs={3} sm={3} justifyContent='flex-end'>
-          <Button
-            fullWidth
-            variant='outlined'
-            color='error'
-            startIcon={<EmailOutlinedIcon />}
-            component={RouterLink}
-            to={'/change-email'}
-          >
-            Change email
-          </Button>
+        <Grid item container xs={6} sm={3} justifyContent='flex-end'>
+          <RouterLink to={'/change-email'} style={{ textDecoration: 'none' }}>
+            <BorderButton
+              fullWidth
+              variant='outlined'
+              color='error'
+              startIcon={<EmailOutlinedIcon />}
+            >
+              Change email
+            </BorderButton>
+          </RouterLink>
         </Grid>
       </Grid>
 
