@@ -239,8 +239,8 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
             sx={{ width: 1 }}
             onClick={() => onSignOutButtonClicked()}
             padding={`4px 4px`}
+            startIcon={<Logout fontSize='small' color='inherit' />}
           >
-            <Logout fontSize='small' color='inherit' />
             Sign out
           </BorderButton>
         </Box>
