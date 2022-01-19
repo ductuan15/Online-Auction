@@ -85,7 +85,7 @@ const ProductInfo = (): JSX.Element | null => {
   const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
   const timer = useRef<NodeJS.Timeout>()
   const {
-    state: { watchlist },
+    state: { watchlist, userDetails },
   } = useUserContext()
 
   const {
@@ -283,23 +283,25 @@ const ProductInfo = (): JSX.Element | null => {
 
           <Box flexGrow={1} />
 
-          {latestAuction && moment(latestAuction?.closeTime).isAfter() && (
-            <BorderIconButton
-              size='large'
-              onClick={onWatchlistButtonClicked}
-              isSelected={isInWatchlist}
-              color='error'
-              sx={{ mt: 1 }}
-            >
-              <Tooltip title='Add to watchlist'>
-                {isInWatchlist ? (
-                  <FavoriteOutlinedIcon color='error' />
-                ) : (
-                  <FavoriteBorderOutlinedIcon color='error' />
-                )}
-              </Tooltip>
-            </BorderIconButton>
-          )}
+          {userDetails &&
+            latestAuction &&
+            moment(latestAuction?.closeTime).isAfter() && (
+              <BorderIconButton
+                size='large'
+                onClick={onWatchlistButtonClicked}
+                isSelected={isInWatchlist}
+                color='error'
+                sx={{ mt: 1 }}
+              >
+                <Tooltip title='Add to watchlist'>
+                  {isInWatchlist ? (
+                    <FavoriteOutlinedIcon color='error' />
+                  ) : (
+                    <FavoriteBorderOutlinedIcon color='error' />
+                  )}
+                </Tooltip>
+              </BorderIconButton>
+            )}
         </Grid>
       )}
     </Grid>

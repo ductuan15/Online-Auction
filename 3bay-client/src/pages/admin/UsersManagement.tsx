@@ -1,22 +1,23 @@
 import * as React from 'react'
-import { useCallback, useState } from 'react'
-import { Alert, Grid, Tab } from '@mui/material'
+import {useCallback, useState} from 'react'
+import {Alert, Stack, Tab} from '@mui/material'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import Box from '@mui/material/Box'
 import GroupIcon from '@mui/icons-material/Group'
-import { useEffectOnce, useIsMounted } from '../../hooks'
-import { setErrorTextMsg } from '../../utils/error'
-import { useAdminUsersContext } from '../../contexts/admin/UsersContext'
+import {useDebounce, useEffectOnce, useIsMounted} from '../../hooks'
+import {setErrorTextMsg} from '../../utils/error'
+import {useAdminUsersContext} from '../../contexts/admin/UsersContext'
 import AdminService from '../../services/admin.service'
-import { SubmitHandler } from 'react-hook-form'
-import { AddUserFormInputs } from '../../models/sign-up'
+import {SubmitHandler} from 'react-hook-form'
+import {AddUserFormInputs} from '../../models/sign-up'
 import useTitle from '../../hooks/use-title'
-import { TabContext, TabList, TabPanel } from '@mui/lab'
+import {TabContext, TabList, TabPanel} from '@mui/lab'
 import AddUserDialog from '../../components/admin/users/AddUserDialog'
 import UserTable2 from '../../components/admin/users/UserTable2'
 import UpgradeToSellerRequestTable2 from '../../components/admin/users/UpgradeToSellerRequestTable2'
+import BorderButton from '../../components/common/button/BorderButton'
+import RefreshIcon from '@mui/icons-material/Refresh'
 
 const UsersManagement = (): JSX.Element => {
   useTitle('3bay | Manage users')
@@ -24,14 +25,16 @@ const UsersManagement = (): JSX.Element => {
   const [errorText, setErrorText] = useState<string | null>(null)
   const [dialogErrorText, setDialogErrorText] = useState<string | null>(null)
   const [tabValue, setTabValue] = useState('1')
+  const [shouldLoading, setShouldLoading] = useState(false)
+  const shouldLoadingDebounce = useDebounce(shouldLoading, 500)
   const isMounted = useIsMounted()
-  const { state: usersState, dispatch } = useAdminUsersContext()
+  const {state: usersState, dispatch} = useAdminUsersContext()
 
   const onDialogSubmit: SubmitHandler<AddUserFormInputs> = async (data) => {
     try {
       await AdminService.addUser(data)
-      dispatch({ type: 'NEW_USER_ADDED' })
-      dispatch({ type: 'CLOSE_ADD_USER_DIALOG' })
+      dispatch({type: 'NEW_USER_ADDED'})
+      dispatch({type: 'CLOSE_ADD_USER_DIALOG'})
     } catch (e) {
       setErrorTextMsg(e, (msg) => {
         if (isMounted()) {
@@ -43,6 +46,7 @@ const UsersManagement = (): JSX.Element => {
   const onLoadingData = useCallback(() => {
     if (isMounted()) {
       setLoading(true)
+      setShouldLoading(false)
     }
   }, [isMounted])
 
@@ -58,6 +62,7 @@ const UsersManagement = (): JSX.Element => {
       if (isMounted()) {
         setErrorTextMsg(e, setErrorText)
         setLoading(false)
+        setShouldLoading(false)
       }
     },
     [isMounted],
@@ -71,7 +76,7 @@ const UsersManagement = (): JSX.Element => {
           usersState.requestSellerTable.page,
           usersState.requestSellerTable.limit,
         )
-        dispatch({ type: 'ADD_ALL_REQUEST_ADMIN_USERS', payload: userResponse })
+        dispatch({type: 'ADD_ALL_REQUEST_ADMIN_USERS', payload: userResponse})
         // onDataLoaded && onDataLoaded()
       } catch (e) {
         onTableError(e)
@@ -79,20 +84,23 @@ const UsersManagement = (): JSX.Element => {
     })()
   })
 
-  const onTabChanged = (event: React.SyntheticEvent, newValue: string) => {
-    setTabValue(newValue)
-  }
+  const onTabChanged = useCallback(
+    (event: React.SyntheticEvent, newValue: string) => {
+      setTabValue(newValue)
+    },
+    [],
+  )
+
+  const onRefreshButtonClicked = useCallback(() => {
+    setShouldLoading(true)
+  }, [])
 
   return (
     <>
-      <Grid
-        container
-        marginTop={1}
-        marginBottom={1}
-        spacing={1}
-        justifyContent='between'
-      >
-        <Grid display='flex' xs={12} item alignItems='center'>
+      <Stack direction='column' marginTop={1} marginBottom={1} spacing={1}>
+        <Stack direction='row' alignItems='center' spacing={1}>
+          <GroupIcon fontSize='large'/>
+
           <Typography
             color='text.primary'
             sx={(theme) => ({
@@ -102,86 +110,69 @@ const UsersManagement = (): JSX.Element => {
               typography: 'h3',
             })}
           >
-            <GroupIcon fontSize='large' sx={{ mr: 2 }} />
             Manage Users
           </Typography>
 
-          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{flexGrow: 1}}/>
 
-          <Grid justifyContent='flex-end' alignItems='center'>
-            <Button
-              onClick={() => {
-                dispatch({ type: 'OPEN_ADD_USER_DIALOG' })
-              }}
-              startIcon={<AddRoundedIcon />}
-              variant='contained'
-            >
-              Register
-            </Button>
-          </Grid>
-        </Grid>
+          <BorderButton color='info' onClick={onRefreshButtonClicked}>
+            <RefreshIcon color='inherit'/>
+            Refresh
+          </BorderButton>
 
-        <Grid
-          item
-          container
-          xs={12}
-          justifyContent='center'
-          flexDirection='column'
-        >
-          {errorText && (
-            <Alert severity='error' sx={{ my: 2 }}>
-              {errorText}
-            </Alert>
-          )}
-          {/*{isLoading && <LinearProgress variant='indeterminate' />}*/}
+          <BorderButton
+            onClick={useCallback(() => {
+              dispatch({type: 'OPEN_ADD_USER_DIALOG'})
+            }, [dispatch])}
+          >
+            <AddRoundedIcon/>
+            Register
+          </BorderButton>
+        </Stack>
 
-          <Box sx={{ width: '100%', typography: 'body1' }}>
-            <TabContext value={tabValue}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <TabList
-                  onChange={onTabChanged}
-                  aria-label='users management tabs'
-                >
-                  <Tab label='Manage users' value='1' />
-                  <Tab label='Upgrade to seller requests' value='2' />
-                </TabList>
-              </Box>
-              <TabPanel value='1'>
-                {/*<UserTable*/}
-                {/*  tab='1'*/}
-                {/*  onLoadingData={onLoadingData}*/}
-                {/*  onDataLoaded={onDataLoaded}*/}
-                {/*  onError={onTableError}*/}
-                {/*/>*/}
-                <UserTable2
-                  tab='1'
-                  onLoadingData={onLoadingData}
-                  onDataLoaded={onDataLoaded}
-                  onError={onTableError}
-                  isLoading={isLoading}
-                />
-              </TabPanel>
-              <TabPanel value='2'>
-                {/*<UpgradeToSellerRequestTable*/}
-                {/*  tab='2'*/}
-                {/*  onLoadingData={onLoadingData}*/}
-                {/*  onDataLoaded={onDataLoaded}*/}
-                {/*  onError={onTableError}*/}
-                {/*/>*/}
-                <UpgradeToSellerRequestTable2
-                  tab='2'
-                  onLoadingData={onLoadingData}
-                  onDataLoaded={onDataLoaded}
-                  onError={onTableError}
-                  isLoading={isLoading}
-                />
-              </TabPanel>
-            </TabContext>
-          </Box>
-        </Grid>
-      </Grid>
+        {errorText && (
+          <Alert severity='error' sx={{my: 2}}>
+            {errorText}
+          </Alert>
+        )}
+        {/*{isLoading && <LinearProgress variant='indeterminate' />}*/}
 
-      <AddUserDialog onSubmit={onDialogSubmit} errorText={dialogErrorText} />
+        <Box sx={{width: '100%', typography: 'body1'}}>
+          <TabContext value={tabValue}>
+            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+              <TabList
+                onChange={onTabChanged}
+                aria-label='users management tabs'
+              >
+                <Tab label='Manage users' value='1'/>
+                <Tab label='Upgrade to seller requests' value='2'/>
+              </TabList>
+            </Box>
+            <TabPanel value='1'>
+              <UserTable2
+                tab='1'
+                onLoadingData={onLoadingData}
+                onDataLoaded={onDataLoaded}
+                onError={onTableError}
+                isLoading={isLoading}
+                shouldReload={shouldLoadingDebounce}
+              />
+            </TabPanel>
+            <TabPanel value='2'>
+              <UpgradeToSellerRequestTable2
+                tab='2'
+                onLoadingData={onLoadingData}
+                onDataLoaded={onDataLoaded}
+                onError={onTableError}
+                isLoading={isLoading}
+                shouldReload={shouldLoadingDebounce}
+              />
+            </TabPanel>
+          </TabContext>
+        </Box>
+      </Stack>
+
+      <AddUserDialog onSubmit={onDialogSubmit} errorText={dialogErrorText}/>
     </>
   )
 }

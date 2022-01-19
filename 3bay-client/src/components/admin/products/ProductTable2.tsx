@@ -24,6 +24,7 @@ type ProductsTableProps = {
   onDataLoaded?: () => void
   onError?: (e: unknown) => void
   isLoading: boolean
+  shouldReload?: boolean
 }
 
 const ProductTable = ({
@@ -31,6 +32,7 @@ const ProductTable = ({
   onDataLoaded,
   onError,
   isLoading,
+  shouldReload,
 }: ProductsTableProps): JSX.Element => {
   const [filterValue, setFilterValue] = React.useState<string | undefined>()
   const debounceFilterValue = useDebounce<string | undefined>(filterValue, 500)
@@ -66,6 +68,14 @@ const ProductTable = ({
   useEffect(() => {
     ;(async () => await loadData())()
   }, [loadData])
+
+  useEffect(() => {
+    if (shouldReload) {
+      ;(async () => {
+        await loadData()
+      })()
+    }
+  }, [loadData, shouldReload])
 
   const onRowDelete = useCallback(
     async (params: GridRowParams<Product>) => {

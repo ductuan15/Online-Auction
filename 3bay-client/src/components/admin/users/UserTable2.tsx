@@ -20,7 +20,7 @@ import AdminService from '../../../services/admin.service'
 import { AdminUserDetail } from '../../../models/admin-user'
 import { Alert, AlertProps, Snackbar } from '@mui/material'
 import _ from 'lodash'
-import { useDebounce } from '../../../hooks'
+import {useDebounce, useEffectOnce} from '../../../hooks'
 
 type UserTableProps = {
   onLoadingData?: () => void
@@ -28,12 +28,14 @@ type UserTableProps = {
   onError?: (e: unknown) => void
   tab?: string
   isLoading: boolean
+  shouldReload?: boolean
 }
 
-type FilterData = | {
-  field: string
-  value: string | boolean
-}
+type FilterData =
+  | {
+      field: string
+      value: string | boolean
+    }
   | undefined
 
 const UserTable = ({
@@ -42,11 +44,10 @@ const UserTable = ({
   onError,
   tab,
   isLoading,
+  shouldReload,
 }: UserTableProps): JSX.Element => {
   const [filterValue, setFilterValue] = React.useState<FilterData>()
-  const debounceFilterValue = useDebounce<
-    FilterData
-  >(filterValue, 500)
+  const debounceFilterValue = useDebounce<FilterData>(filterValue, 500)
 
   const { state: userState, dispatch } = useAdminUsersContext()
 
@@ -97,12 +98,16 @@ const UserTable = ({
     [userState.users],
   )
 
-  const onFilterChange = React.useCallback((filterModel: GridFilterModel) => {
-    setFilterValue({
-      field: filterModel.items[0].columnField,
-      value: filterModel.items[0].value,
-    })
-  }, [])
+  const onFilterChange = React.useCallback(
+    (filterModel: GridFilterModel) => {
+      setFilterValue({
+        field: filterModel.items[0].columnField,
+        value: filterModel.items[0].value,
+      })
+      dispatch({ type: 'SET_PAGE', payload: 1 })
+    },
+    [dispatch],
+  )
 
   const handleCellEditCommit = useCallback(
     async (params: GridCellEditCommitParams) => {
@@ -158,9 +163,17 @@ const UserTable = ({
     [loadData, onDataLoaded, onError, onLoadingData],
   )
 
-  useEffect(() => {
+  useEffectOnce(() => {
     ;(async () => await loadData())()
-  }, [loadData])
+  })
+
+  useEffect(() => {
+    if (shouldReload) {
+      ;(async () => {
+        await loadData()
+      })()
+    }
+  }, [loadData, shouldReload])
 
   const columns: GridColumns = useMemo(
     () => [

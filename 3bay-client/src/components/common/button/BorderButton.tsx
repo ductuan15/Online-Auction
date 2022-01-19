@@ -30,7 +30,7 @@ const BorderButton = styled(
   const letterSpacing = +(theme.typography.button.letterSpacing || 0)
   return {
     border: `1.75px solid ${borderColor}`,
-    color: isSelected ? selectedColor : undefined,
+    color: isSelected ? selectedColor : theme.palette.text.primary,
     borderRadius: 8,
     padding: padding
       ? padding

@@ -16,9 +16,9 @@ import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
 import { Box, Typography } from '@mui/material'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import BorderButton from '../button/BorderButton'
-import LocalAtmOutlinedIcon from '@mui/icons-material/LocalAtmOutlined';
-import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import LocalAtmOutlinedIcon from '@mui/icons-material/LocalAtmOutlined'
+import SellOutlinedIcon from '@mui/icons-material/SellOutlined'
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined'
 
 const profileMenu = {
   elevation: 0,
@@ -126,7 +126,7 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
       {isAuth && (
         <MenuItem onClick={() => onSignOutButtonClicked()}>
           <ListItemIcon>
-            <Logout fontSize='small' />
+            <Logout fontSize='small' color='inherit' />
           </ListItemIcon>
           Sign out
         </MenuItem>
@@ -240,9 +240,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
             onClick={() => onSignOutButtonClicked()}
             padding={`4px 4px`}
           >
-            <ListItemIcon sx={{ minWidth: 0, mr: 1 }}>
-              <Logout fontSize='small' />
-            </ListItemIcon>
+            <Logout fontSize='small' color='inherit' />
             Sign out
           </BorderButton>
         </Box>
