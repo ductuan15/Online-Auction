@@ -435,22 +435,23 @@ export const search = async (
     // })
     const products: ProductRes[] = await prisma.product.findMany({
       where: {
-        name: key?.length == 0 ? undefined : { search: `${key}` },
         deletedAt: null,
         // get by category and parent category
-        OR: categoryId == 0 ? undefined : [
-          {
-            categoryId: categoryId,
-          },
-          {
-            category: {
-              categories: {
-                id: categoryId,
-              },
-            },
-          },
-        ],
-
+        OR:
+          categoryId == 0
+            ? undefined
+            : [
+                {
+                  categoryId: categoryId,
+                },
+                {
+                  category: {
+                    categories: {
+                      id: categoryId,
+                    },
+                  },
+                },
+              ],
       },
       include: includeProductDetailInfo,
       orderBy: {

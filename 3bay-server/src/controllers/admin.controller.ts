@@ -32,25 +32,22 @@ export async function getUsers(
     const limit = +(req.query?.limit || '/') || config.USER_PAGE_LIMIT
     const { name, isDisabled, verified, role } = req.query
 
+    const where: Prisma.Prisma.UserWhereInput = {
+      name: !name ? undefined : { search: `${name}` },
+      isDisabled:
+        !isDisabled || isDisabled === 'any' ? undefined : isDisabled === 'true',
+      verified:
+        !verified || verified === 'any' ? undefined : verified === 'true',
+      role: !role || !(role as Prisma.Role) ? undefined : (role as Prisma.Role),
+    }
+
     const [total, users] = await prisma.$transaction([
-      prisma.user.count(),
+      prisma.user.count({ where }),
       prisma.user.findMany({
         select: userDefaultSelection,
         skip: (page - 1) * limit,
         take: limit,
-        where: {
-          name: !name ? undefined : { search: `${name}` },
-          isDisabled:
-            !isDisabled || isDisabled === 'any'
-              ? undefined
-              : isDisabled === 'true',
-          verified:
-            !verified || verified === 'any'
-              ? undefined
-              : verified === 'true',
-          role:
-            !role || !(role as Prisma.Role) ? undefined : (role as Prisma.Role),
-        },
+        where,
       }),
     ])
     return res.json({ total, page, limit, users })
