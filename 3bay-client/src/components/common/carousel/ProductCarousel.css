@@ -1,6 +1,8 @@
 .container-with-dots {
   margin-top: 20px;
-  padding-bottom: 30px;
+  padding-bottom: 20px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .carousel-item-padding-x-10-px {
@@ -11,11 +13,11 @@
 }
 
 .react-multiple-carousel__arrow--right {
-  right: calc(2%);
+  right: calc(1.25%);
 }
 
 .react-multiple-carousel__arrow--left {
-  left: calc(2%);
+  left: calc(1.25%);
 }
 
 .custom-dot {

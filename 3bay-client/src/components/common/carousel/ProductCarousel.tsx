@@ -103,7 +103,7 @@ const ProductCarousel = ({
   })
 
   return (
-    <Container sx={{ pb: 2 }} maxWidth={'xl'}>
+    <Container sx={{ pb: 2, pl: 0, pr: 0 }} disableGutters>
       <Divider />
       <Typography
         pt={2}

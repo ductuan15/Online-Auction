@@ -111,7 +111,7 @@ export default function CreateProductForm({
         imgFiles.push(URL.createObjectURL(detailFiles[i]))
       }
       setDetailImages(imgFiles)
-      if (imgFiles && imgFiles.length < MIN_DETAILS_FILE) {
+      if (imgFiles?.length && imgFiles.length < MIN_DETAILS_FILE) {
         setError('detail', {
           message: `You must choose at least ${MIN_DETAILS_FILE} photos`,
         })

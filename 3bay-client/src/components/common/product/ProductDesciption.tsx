@@ -22,6 +22,9 @@ const StyledDiv = styled('div')(({ theme }) => ({
     backgroundColor: 'inherit !important',
     color: 'inherit !important',
   },
+  // p: {
+  //   margin: '4px 0px',
+  // }
 }))
 
 const ProductDescription = (): JSX.Element | null => {
@@ -90,7 +93,7 @@ const ProductDescription = (): JSX.Element | null => {
                 <Grid item xs={12}>
                   <StyledDiv
                     style={{
-                      wordWrap: 'break-word'
+                      wordWrap: 'break-word',
                     }}
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(des.description),

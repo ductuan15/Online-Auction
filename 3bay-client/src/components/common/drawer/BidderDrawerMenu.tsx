@@ -2,6 +2,7 @@ import { Divider, List } from '@mui/material'
 import * as React from 'react'
 import StyledMenuItem from '../../common/menu/StyledMenuItem'
 import StyledListSubheader from '../../common/drawer/StyledListSubheader'
+import { useUserContext } from '../../../contexts/user/UserContext'
 
 export const BIDDER_MENU_ITEMS = [
   {
@@ -15,7 +16,11 @@ export const BIDDER_MENU_ITEMS = [
 ]
 
 const BidderDrawerMenu = (): JSX.Element | null => {
-  return (
+  const {
+    state: { userDetails },
+  } = useUserContext()
+
+  return userDetails ? (
     <List
       aria-labelledby='bidder-list-subheader'
       subheader={
@@ -36,7 +41,7 @@ const BidderDrawerMenu = (): JSX.Element | null => {
         )
       })}
     </List>
-  )
+  ) : null
 }
 
 export default BidderDrawerMenu
