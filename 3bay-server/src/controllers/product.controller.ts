@@ -438,18 +438,21 @@ export const search = async (
         name: key?.length == 0 ? undefined : { search: `${(key+'').split(' ').join(' ')}` },
         deletedAt: null,
         // get by category and parent category
-        OR: categoryId == 0 ? undefined : [
-          {
-            categoryId: categoryId,
-          },
-          {
-            category: {
-              categories: {
-                id: categoryId,
-              },
-            },
-          },
-        ],
+        OR:
+          categoryId == 0
+            ? undefined
+            : [
+                {
+                  categoryId: categoryId,
+                },
+                {
+                  category: {
+                    categories: {
+                      id: categoryId,
+                    },
+                  },
+                },
+              ],
       },
       include: includeProductDetailInfo,
       orderBy: {

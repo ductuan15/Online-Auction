@@ -9,7 +9,7 @@ import { animated, useSpring } from 'react-spring'
 import Collapse from '@mui/material/Collapse'
 import { SvgIconProps } from '@mui/material'
 import Category from '../../../models/category'
-import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import { useCategoryContext } from '../../../contexts/layout/CategoryContext'
 
 declare module 'react' {
   // noinspection JSUnusedGlobalSymbols

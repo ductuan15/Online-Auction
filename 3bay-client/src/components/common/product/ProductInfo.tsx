@@ -81,11 +81,11 @@ const UserWithRating = ({
 }
 
 const ProductInfo = (): JSX.Element | null => {
-  const { dispatch } = useUserContext()
   const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
   const timer = useRef<NodeJS.Timeout>()
   const {
-    state: { watchlist },
+    state: { watchlist, userDetails },
+    dispatch,
   } = useUserContext()
 
   const {
@@ -94,6 +94,7 @@ const ProductInfo = (): JSX.Element | null => {
       latestAuction,
       sellerPoint,
       winningBidderPoint,
+      bidStatus,
     },
   } = useProductContext()
 
@@ -269,6 +270,19 @@ const ProductInfo = (): JSX.Element | null => {
         )}
       </Grid>
 
+      {bidStatus?.maximumAutoBidPrice && (
+        <Grid item xs={12} mt={1}>
+          <Typography
+            variant='subtitle1'
+            color='text.primary'
+            // fontStyle='italic'
+          >
+            ⌛ Executing automatic bidding with maximum price of&nbsp;
+            <b>{formatNumberToVND(bidStatus?.maximumAutoBidPrice)}</b>
+          </Typography>
+        </Grid>
+      )}
+
       {product && (
         <Grid
           item
@@ -283,23 +297,25 @@ const ProductInfo = (): JSX.Element | null => {
 
           <Box flexGrow={1} />
 
-          {latestAuction && moment(latestAuction?.closeTime).isAfter() && (
-            <BorderIconButton
-              size='large'
-              onClick={onWatchlistButtonClicked}
-              isSelected={isInWatchlist}
-              color='error'
-              sx={{ mt: 1 }}
-            >
-              <Tooltip title='Add to watchlist'>
-                {isInWatchlist ? (
-                  <FavoriteOutlinedIcon color='error' />
-                ) : (
-                  <FavoriteBorderOutlinedIcon color='error' />
-                )}
-              </Tooltip>
-            </BorderIconButton>
-          )}
+          {userDetails &&
+            latestAuction &&
+            moment(latestAuction?.closeTime).isAfter() && (
+              <BorderIconButton
+                size='large'
+                onClick={onWatchlistButtonClicked}
+                isSelected={isInWatchlist}
+                color='error'
+                sx={{ mt: 1 }}
+              >
+                <Tooltip title='Add to watchlist'>
+                  {isInWatchlist ? (
+                    <FavoriteOutlinedIcon color='error' />
+                  ) : (
+                    <FavoriteBorderOutlinedIcon color='error' />
+                  )}
+                </Tooltip>
+              </BorderIconButton>
+            )}
         </Grid>
       )}
     </Grid>

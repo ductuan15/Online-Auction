@@ -5,17 +5,21 @@ import ProductCarousel from '../../components/common/carousel/ProductCarousel'
 import AdminMenu from '../../components/admin/home/AdminMenu'
 import { getTop } from '../../services/product.service'
 import { useTitle } from '../../hooks'
+import bannerDark from '../../assets/banner-dark.jpg'
+import bannerLight from '../../assets/banner-light.jpg'
+import {useTheme} from '@mui/material/styles'
 
 const Home = (): JSX.Element => {
+  const theme = useTheme()
   useTitle('3bay')
+
   const banner = {
-    title: "Hello world! I'm a banner",
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut ' +
-      'labore et dolore magna aliqua.',
-    image: 'https://source.unsplash.com/random',
+    title: "Smartphones & Accessories",
+    description:  'あなたが翻訳すれば、あなたは同性愛者です！',
+    image: theme.palette.mode === 'light' ? bannerLight : bannerDark,
     imageText: '',
-    linkText: 'Go to this',
+    linkText: 'Shop now →',
+    url: '/products/search/'
   }
 
   return (

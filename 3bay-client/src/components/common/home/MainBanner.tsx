@@ -2,8 +2,9 @@ import * as React from 'react'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
+import { Link } from 'react-router-dom'
 import Box from '@mui/material/Box'
+import BorderButton from '../button/BorderButton'
 
 interface BannerProps {
   description: string
@@ -11,6 +12,7 @@ interface BannerProps {
   imageText: string
   linkText: string
   title: string
+  url: string
 }
 
 const MainBanner = (props: BannerProps): JSX.Element => {
@@ -42,7 +44,7 @@ const MainBanner = (props: BannerProps): JSX.Element => {
           bottom: 0,
           right: 0,
           left: 0,
-          backgroundColor: 'rgba(0,0,0,.3)',
+          backgroundColor: 'rgba(0,0,0,.4)',
         }}
       />
       <Grid container>
@@ -65,8 +67,18 @@ const MainBanner = (props: BannerProps): JSX.Element => {
             <Typography variant='h5' color='inherit' paragraph>
               {props.description}
             </Typography>
-            <Link variant='subtitle1' href='#'>
-              {props.linkText}
+
+            <Link
+              to={props.url}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <BorderButton
+                unSelectedColour='white'
+                unSelectedBorderColour='white'
+                color='inherit'
+              >
+                {props.linkText}
+              </BorderButton>
             </Link>
           </Box>
         </Grid>

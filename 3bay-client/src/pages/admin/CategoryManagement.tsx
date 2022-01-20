@@ -1,15 +1,14 @@
 import * as React from 'react'
-import { Grid } from '@mui/material'
+import { Grid, Stack } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded'
-import Button from '@mui/material/Button'
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
-import Box from '@mui/material/Box'
 import CategoryTree from '../../components/admin/category/CategoryTree'
 import { CreateCategoryDialog } from '../../components/admin/category/CreateCategoryDialog'
 import { EditCategoryDialog } from '../../components/admin/category/EditCategoryDialog'
-import { useCategoryContext } from '../../contexts/admin/CategoryContext'
+import { useCategoryContext } from '../../contexts/layout/CategoryContext'
 import useTitle from '../../hooks/use-title'
+import BorderButton from '../../components/common/button/BorderButton'
 
 const CategoryManagement = (): JSX.Element => {
   useTitle('3bay | Manage categories')
@@ -28,7 +27,14 @@ const CategoryManagement = (): JSX.Element => {
         spacing={4}
         justifyContent='between'
       >
-        <Grid display='flex' xs={12} item alignItems='center'>
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+          item
+          component={Grid}
+          xs={12}
+        >
           <Typography
             color='text.primary'
             sx={(theme) => ({
@@ -42,18 +48,11 @@ const CategoryManagement = (): JSX.Element => {
             Manage Categories
           </Typography>
 
-          <Box sx={{ flexGrow: 1 }} />
-
-          <Grid justifyContent='flex-end' alignItems='center'>
-            <Button
-              onClick={openDialog}
-              startIcon={<AddRoundedIcon />}
-              variant='contained'
-            >
-              Create
-            </Button>
-          </Grid>
-        </Grid>
+          <BorderButton onClick={openDialog}>
+            <AddRoundedIcon color='inherit' />
+            Create
+          </BorderButton>
+        </Stack>
 
         <Grid display='flex' item xs={12} justifyContent='center'>
           <CategoryTree />

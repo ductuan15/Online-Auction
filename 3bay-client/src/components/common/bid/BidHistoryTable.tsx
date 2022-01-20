@@ -159,6 +159,7 @@ export default function BidHistoryTable() {
       {
         field: 'actions',
         type: 'actions',
+        width: !user?.user ? 0 : undefined,
         getActions: (params) => [
           <GridActionsCellItem
             key={params.id}

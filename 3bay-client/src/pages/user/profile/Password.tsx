@@ -1,13 +1,14 @@
-import { Alert, Button, Grid, Typography } from '@mui/material'
+import { Alert, Grid, Typography } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as React from 'react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import PasswordInputField from '../../../components/common/form/PasswordInputField'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import UserService from '../../../services/user.service'
 import { setErrorTextMsg } from '../../../utils/error'
 import useTitle from '../../../hooks/use-title'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
+import BorderButton from '../../../components/common/button/BorderButton'
 
 export type PasswordFormType = {
   pwd: string
@@ -41,21 +42,24 @@ const Password = (): JSX.Element => {
     xs: 9,
   }
 
-  const onSubmit: SubmitHandler<PasswordFormType> = async (data) => {
-    try {
-      if (user) {
-        await UserService.changePassword(user, data)
-        setErrorText(null)
-        setSave(true)
-        reset({
-          pwd: '',
-          newPwd: '',
-        })
+  const onSubmit: SubmitHandler<PasswordFormType> = useCallback(
+    async (data) => {
+      try {
+        if (user) {
+          await UserService.changePassword(user, data)
+          setErrorText(null)
+          setSave(true)
+          reset({
+            pwd: '',
+            newPwd: '',
+          })
+        }
+      } catch (e) {
+        setErrorTextMsg(e, setErrorText)
       }
-    } catch (e) {
-      setErrorTextMsg(e, setErrorText)
-    }
-  }
+    },
+    [reset, user],
+  )
 
   return (
     <Grid
@@ -79,14 +83,13 @@ const Password = (): JSX.Element => {
           Password Settings
         </Typography>
 
-        <Button
-          variant='contained'
-          type='submit'
+        <BorderButton
           size='large'
+          type='submit'
           startIcon={<SaveOutlinedIcon />}
         >
           Save changes
-        </Button>
+        </BorderButton>
       </Grid>
 
       {errorText && (

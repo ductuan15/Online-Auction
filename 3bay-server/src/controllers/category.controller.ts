@@ -8,6 +8,7 @@ import {
 } from './images.controller.js'
 import { CategoryErrorException } from '../error/error-exception.js'
 import { CategoryErrorCode } from '../error/error-code.js'
+import emitCategory from '../socket/category.io.js'
 
 const Prisma = pkg.Prisma
 
@@ -67,7 +68,7 @@ interface CategoryRes {
   otherCategories: Array<Partial<pkg.Category>>
 }
 
-const categoryDefaultSelect = {
+export const categoryDefaultSelect: pkg.Prisma.CategorySelect = {
   id: true,
   title: true,
   parentId: true,
@@ -81,7 +82,7 @@ const categoryDefaultSelect = {
   },
 }
 
-const categoryWithThumbnailLinks = (category: Partial<CategoryRes>) => {
+export const categoryWithThumbnailLinks = (category: Partial<CategoryRes>) => {
   const link = `${config.HOST_NAME}/api/images/category/${category.id}`
 
   if (category.otherCategories) {
@@ -153,7 +154,9 @@ const add = async (req: Request, res: Response, next: NextFunction) => {
         if (req.file) {
           await saveCategoryThumbnail(req.file, category.id)
         }
-        return res.status(201).json(categoryWithThumbnailLinks(category))
+        res.status(201).json(categoryWithThumbnailLinks(category))
+        await emitCategory()
+        return
       } catch (err: any) {
         return handlePrismaCategoryError(err, req, res, next)
       }
@@ -191,7 +194,9 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
         removeCategoryThumbnailCache(req.category.id)
         await saveCategoryThumbnail(req.file, req.category.id)
       }
-      return res.json(categoryWithThumbnailLinks(result))
+      res.json(categoryWithThumbnailLinks(result))
+      await emitCategory()
+      return
     } catch (err: any) {
       return handlePrismaCategoryError(err, req, res, next)
     }
@@ -244,7 +249,9 @@ const deleteCategory = async (
       }
 
       // console.log(deleteCategory)
-      return res.json(categoryWithThumbnailLinks(deletedCategory))
+      res.json(categoryWithThumbnailLinks(deletedCategory))
+      await emitCategory()
+      return
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&

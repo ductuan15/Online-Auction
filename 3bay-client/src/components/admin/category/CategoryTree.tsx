@@ -5,7 +5,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import Category from '../../../models/category'
 import EditIcon from '@mui/icons-material/Edit'
 import { CategoryTreeItem, StyledTreeItemRoot } from './CategoryTreeItem'
-import { useCategoryContext } from '../../../contexts/admin/CategoryContext'
+import { useCategoryContext } from '../../../contexts/layout/CategoryContext'
 
 // type CategoryTreeProps = {}
 

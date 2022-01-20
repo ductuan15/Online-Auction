@@ -6,7 +6,7 @@ import StyledDiv from '../StyledDiv'
 import { LayoutCtxProvider } from '../../../contexts/layout/LayoutContext'
 import { AppDrawer } from '../drawer'
 import { Outlet } from 'react-router-dom'
-import { CategoryProvider } from '../../../contexts/admin/CategoryContext'
+import { CategoryProvider } from '../../../contexts/layout/CategoryContext'
 import { AppBar, StyledToolbar } from '../appbar'
 
 interface Props {

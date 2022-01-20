@@ -2,21 +2,27 @@ import * as React from 'react'
 import { useCallback, useState } from 'react'
 import { Alert, Grid } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
 import useTitle from '../../hooks/use-title'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import { setErrorTextMsg } from '../../utils/error'
-import { useIsMounted } from '../../hooks'
+import { useDebounce, useIsMounted } from '../../hooks'
 import ProductTable2 from '../../components/admin/products/ProductTable2'
+import BorderButton from '../../components/common/button/BorderButton'
+import RefreshIcon from '@mui/icons-material/Refresh'
 
 const ProductsManagement = (): JSX.Element => {
   useTitle('3bay | Manage products')
   const [isLoading, setLoading] = useState(false)
   const [errorText, setErrorText] = useState<string | null>(null)
+  const [shouldLoading, setShouldLoading] = useState(false)
+  const shouldLoadingDebounce = useDebounce(shouldLoading, 500)
   const isMounted = useIsMounted()
 
   const onLoadingData = useCallback(() => {
-    if (isMounted()) setLoading(true)
+    if (isMounted()) {
+      setLoading(true)
+      setShouldLoading(false)
+    }
   }, [isMounted])
 
   const onDataLoaded = useCallback(() => {
@@ -31,20 +37,31 @@ const ProductsManagement = (): JSX.Element => {
       if (isMounted()) {
         setErrorTextMsg(e, setErrorText)
         setLoading(false)
+        setShouldLoading(false)
       }
     },
     [isMounted],
   )
 
+  const onRefreshButtonClicked = useCallback(() => {
+    setShouldLoading(true)
+  }, [])
+
   return (
     <Grid
       container
-      marginTop={1}
       marginBottom={2}
-      spacing={1}
-      justifyContent='between'
+      spacing={2}
+      justifyContent='center'
     >
-      <Grid display='flex' xs={12} item alignItems='center'>
+      <Grid
+        xs={12}
+        item
+        container
+        flexDirection='row'
+        alignItems='center'
+        justifyContent='space-between'
+      >
         <Typography
           color='text.primary'
           sx={(theme) => ({
@@ -58,7 +75,10 @@ const ProductsManagement = (): JSX.Element => {
           Manage Products
         </Typography>
 
-        <Box sx={{ flexGrow: 1 }} />
+        <BorderButton color='info' onClick={onRefreshButtonClicked}>
+          <RefreshIcon color='inherit' />
+          Refresh
+        </BorderButton>
       </Grid>
 
       <Grid
@@ -85,6 +105,7 @@ const ProductsManagement = (): JSX.Element => {
           onDataLoaded={onDataLoaded}
           onError={onTableError}
           isLoading={isLoading}
+          shouldReload={shouldLoadingDebounce}
         />
       </Grid>
     </Grid>

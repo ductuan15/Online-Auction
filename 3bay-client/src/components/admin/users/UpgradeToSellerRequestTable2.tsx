@@ -14,6 +14,7 @@ import {
 } from '@mui/x-data-grid'
 import AdminService from '../../../services/admin.service'
 import CheckIcon from '@mui/icons-material/Check'
+import { useEffectOnce } from '../../../hooks'
 
 type UpgradeToSellerRequestTableProps = {
   onLoadingData?: () => void
@@ -21,6 +22,7 @@ type UpgradeToSellerRequestTableProps = {
   onError?: (e: unknown) => void
   tab: string
   isLoading: boolean
+  shouldReload: boolean
 }
 
 const UpgradeToSellerRequestTable = ({
@@ -29,6 +31,7 @@ const UpgradeToSellerRequestTable = ({
   onError,
   tab,
   isLoading,
+  shouldReload,
 }: UpgradeToSellerRequestTableProps): JSX.Element => {
   const { state: userState, dispatch } = useAdminUsersContext()
   // const [refresh, setRefresh] = useState(false)
@@ -76,18 +79,24 @@ const UpgradeToSellerRequestTable = ({
     userState.requestSellerTable.page,
   ])
 
-  useEffect(() => {
+  useEffectOnce(() => {
     ;(async () => await loadData())()
-  }, [loadData])
+  })
 
-  // useEffect(() => {
-  //   ;(async () => {
-  //     if (refresh) {
-  //       setRefresh(false)
-  //       await loadData()
-  //     }
-  //   })()
-  // }, [loadData, refresh])
+  useEffect(() => {
+    if (
+      shouldReload ||
+      userState.requestSellerTable.limit ||
+      userState.requestSellerTable.page
+    ) {
+      ;(async () => await loadData())()
+    }
+  }, [
+    loadData,
+    shouldReload,
+    userState.requestSellerTable.limit,
+    userState.requestSellerTable.page,
+  ])
 
   const onRowDelete = useCallback(
     async (params: GridRowParams<AdminUserDetail>, accept = true) => {

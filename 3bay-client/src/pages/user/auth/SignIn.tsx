@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -21,8 +21,14 @@ const SignIn: () => JSX.Element = () => {
   const location = useLocation()
   const from = location.state?.from?.pathname || '/'
 
-  const { signIn } = useAuth()
+  const { signIn, user } = useAuth()
   const [errorText, setErrorText] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (user) {
+      navigate('/')
+    }
+  }, [navigate, user])
 
   const handleSubmit = async (data: { email: string; pwd: string }) => {
     const { email, pwd } = data

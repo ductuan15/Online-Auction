@@ -9,3 +9,7 @@
 [admin_products](https://unsplash.com/photos/0mNBmaWHu0k)
 
 [admin_users](https://unsplash.com/photos/OzAeZPNsLXk)
+
+[banner-light](https://unsplash.com/photos/T0d3UdwPkr0)
+
+[banner-dark](https://unsplash.com/photos/Im7lZjxeLhg)
