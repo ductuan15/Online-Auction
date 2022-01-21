@@ -8,6 +8,8 @@ export enum MailType {
   AUCTION_CLOSED_TO_SELLER,
   AUCTION_NEW_BID_TO_BIDDER,
   AUCTION_NEW_BID_TO_SELLER,
+  AUCTION_BID_REQUEST_ACCEPTED,
+  AUCTION_BID_REQUEST_REJECTED,
 }
 
 export const mailFileNames: ReadonlyMap<MailType, string> = new Map([
@@ -23,6 +25,8 @@ export const mailFileNames: ReadonlyMap<MailType, string> = new Map([
   [MailType.AUCTION_CLOSED_TO_SELLER, 'auction-closed-to-seller.mjml'],
   [MailType.AUCTION_NEW_BID_TO_BIDDER, 'auction-new-bid-to-bidder.mjml'],
   [MailType.AUCTION_NEW_BID_TO_SELLER, 'auction-new-bid-to-seller.mjml'],
+  [MailType.AUCTION_BID_REQUEST_ACCEPTED, 'auction-bid-request-accepted.mjml'],
+  [MailType.AUCTION_BID_REQUEST_REJECTED, 'auction-bid-request-rejected.mjml'],
 ])
 
 export const mailTitles: ReadonlyMap<
@@ -76,6 +80,24 @@ export const mailTitles: ReadonlyMap<
         return `Your auction「${values[0]}」has been updated`
       }
       return `Product update`
+    },
+  ],
+  [
+    MailType.AUCTION_BID_REQUEST_ACCEPTED,
+    (values) => {
+      if (values.length !== 0) {
+        return `Your bid request for「${values[0]}」has been accepted`
+      }
+      return `Your bid request has been accepted`
+    },
+  ],
+  [
+    MailType.AUCTION_BID_REQUEST_REJECTED,
+    (values) => {
+      if (values.length !== 0) {
+        return `Your bid request for「${values[0]}」has been rejected`
+      }
+      return `Your bid request has been rejected`
     },
   ],
 ])
