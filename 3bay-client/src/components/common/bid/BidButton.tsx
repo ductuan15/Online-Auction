@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Link, Stack } from '@mui/material'
 import moment from 'moment'
 import auctionService from '../../../services/auction.service'
+import BidderService from '../../../services/bidder.service'
 
 const RejectButton = (
   <BorderButton color='error' isSelected={true} disableRipple sx={{ mt: 1 }}>
@@ -69,23 +70,45 @@ function BidButton(): JSX.Element | null {
     }
   }, [dispatch, latestAuction?.id])
 
+  const requestBidPermission = useCallback(async () => {
+    if (latestAuction?.id && userDetails?.uuid) {
+      const response = await BidderService.requestBidPermission(
+        latestAuction?.id,
+      )
+      dispatch({ type: 'UPDATE_BID_STATUS', payload: response })
+    }
+  }, [dispatch, latestAuction?.id, userDetails?.uuid])
+
   return useMemo(() => {
     let button: JSX.Element | null
     if (!userPoint || (userPoint && userPoint >= MINIMUM_POINT)) {
       switch (bidStatus?.status) {
-        case 'NOT_BID':
-          button = (
-            <BorderButton
-              color='success'
-              sx={{ mt: 1 }}
-              onClick={() => {
-                dispatch({ type: 'OPEN_BID_DIALOG' })
-              }}
-            >
-              💰 Bid this product
-            </BorderButton>
-          )
+        case 'NOT_BID': {
+          if (userPoint) {
+            button = (
+              <BorderButton
+                color='success'
+                sx={{ mt: 1 }}
+                onClick={() => {
+                  dispatch({ type: 'OPEN_BID_DIALOG' })
+                }}
+              >
+                💰 Bid this product
+              </BorderButton>
+            )
+          } else {
+            button = (
+              <BorderButton
+                color='info'
+                sx={{ mt: 1 }}
+                onClick={requestBidPermission}
+              >
+                🙏 Request bid permission
+              </BorderButton>
+            )
+          }
           break
+        }
         case 'PENDING':
           button = (
             <BorderButton
@@ -187,6 +210,7 @@ function BidButton(): JSX.Element | null {
     onCancelAutoBidButtonClicked,
     onCancelTransactionButtonClicked,
     product?.sellerId,
+    requestBidPermission,
     userDetails,
     userPoint,
   ])

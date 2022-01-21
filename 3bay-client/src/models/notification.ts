@@ -4,6 +4,8 @@ export type NotifyData = {
     | 'AUCTION_BID_REJECTED'
     | 'AUCTION_CLOSED_NO_WINNER'
     | 'AUCTION_CLOSED_HAD_WINNER'
+    | 'BID_REQUEST_ACCEPTED'
+    | 'BID_REQUEST_REJECTED'
   data: {
     id: number
     name: string
@@ -34,6 +36,10 @@ export function getNotificationDescription(
     }
     case 'AUCTION_NEW_BID':
       return `The price of「${notifyData.data.name}」has been updated`
+    case 'BID_REQUEST_ACCEPTED':
+      return `Your bid request for the product「${notifyData.data.name}」has been accepted`
+    case 'BID_REQUEST_REJECTED':
+      return `Your bid request for the product「${notifyData.data.name}」has been rejected`
   }
   return ''
 }

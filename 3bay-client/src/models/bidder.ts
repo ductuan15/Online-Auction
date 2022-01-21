@@ -6,8 +6,8 @@ export type BidStatus = {
 
 export type BidRequest = {
   name: string
-  id: string
-  bidId: number
+  id: string // user uuid
+  bidId?: number
 }
 
 export type BidRequestResponseType = {

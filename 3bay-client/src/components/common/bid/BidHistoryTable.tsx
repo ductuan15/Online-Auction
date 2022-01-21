@@ -68,10 +68,20 @@ export default function BidHistoryTable() {
 
   const rejectBidder = useCallback(
     async (params: GridRowParams<Bid>) => {
+      if (
+        !confirm(
+          `Are you sure you want to ban ${nameMasking(
+            params.row.bidder.name,
+          )} from bidding this product? \n Your decision cannot be reversed!`,
+        )
+      ) {
+        return
+      }
       try {
         const response = await SellerService.rejectBid(
           latestAuction?.id,
           params.row.id,
+          params.row.bidderId,
         )
         if (response) {
           setRows((prevRows) => prevRows.filter((row) => row.id !== params.id))

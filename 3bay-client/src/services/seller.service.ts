@@ -43,33 +43,43 @@ async function getBidRequests(auctionId: number): Promise<BidRequest[]> {
   return response.data.map((item) => ({
     id: item.user.uuid,
     name: item.user.name,
-    bidId: item.user.bids[0].id,
+    bidId: item.user.bids.length > 0 ? item.user.bids[0].id : undefined,
   }))
 }
 
 async function acceptBid(
   auctionId: number | undefined,
   bidId: number | undefined,
+  userId: string | undefined,
 ): Promise<Auction | undefined> {
-  if (!auctionId || !bidId || isNaN(auctionId) || isNaN(bidId)) {
+  if (!auctionId || isNaN(auctionId) || !userId) {
     return undefined
   }
-  const response = await axiosApiInstance.patch<Auction>(
-    `api/bid/setAccepted/${auctionId}/${bidId}`,
-  )
+
+  let url = `api/auction/userStatus/setAccepted/${auctionId}/${userId}`
+  if (bidId) {
+    url = `api/bid/setAccepted/${auctionId}/${bidId}`
+  }
+
+  const response = await axiosApiInstance.patch<Auction>(url)
   return response.data
 }
 
 async function rejectBid(
   auctionId: number | undefined,
   bidId: number | undefined,
+  userId: string | undefined,
 ): Promise<Auction | undefined> {
-  if (!auctionId || !bidId || isNaN(auctionId) || isNaN(bidId)) {
+  if (!auctionId || isNaN(auctionId) || !userId) {
     return undefined
   }
-  const response = await axiosApiInstance.patch<Auction>(
-    `api/bid/setRejected/${auctionId}/${bidId}`,
-  )
+
+  let url = `api/auction/userStatus/setRejected/${auctionId}/${userId}`
+  if (bidId) {
+    url = `api/bid/setRejected/${auctionId}/${bidId}`
+  }
+
+  const response = await axiosApiInstance.patch<Auction>(url)
   return response.data
 }
 

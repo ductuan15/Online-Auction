@@ -13,7 +13,7 @@ import { useProductContext } from '../../../contexts/product/ProductDetailsConte
 import { BidRequest } from '../../../models/bidder'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import SellerService from '../../../services/seller.service'
-import _ from 'lodash'
+import { nameMasking } from '../../../utils/name-mask'
 
 // type BidRequestTableProps = {
 //   sx?: SxProps
@@ -27,9 +27,7 @@ export default function BidRequestTable() {
   const init = useCallback(async () => {
     if (state.latestAuction?.id) {
       try {
-        const data = await SellerService.getBidRequests(
-          state.latestAuction?.id,
-        )
+        const data = await SellerService.getBidRequests(state.latestAuction?.id)
         setRows(data)
       } catch (e) {
         setRows([])
@@ -43,19 +41,19 @@ export default function BidRequestTable() {
     })()
   }, [init])
 
-  const rejectBidder = useCallback(
-    async (params: GridRowParams) => {
+  const processBidRequest = useCallback(
+    async (params: GridRowParams<BidRequest>, acceptRequest: boolean) => {
       try {
-        const idx = _.findIndex(rows, (row) => {
-          return row.id === params.id
-        })
-        if (idx === -1) {
-          return
-        }
-        const response = await SellerService.rejectBid(
+        const requestFunction = acceptRequest
+          ? SellerService.acceptBid
+          : SellerService.rejectBid
+
+        const response = await requestFunction(
           state.latestAuction?.id,
-          rows[idx].bidId,
+          params.row.bidId,
+          params.row.id,
         )
+
         if (response) {
           setRows((prevRows) => prevRows.filter((row) => row.id !== params.id))
         }
@@ -63,30 +61,29 @@ export default function BidRequestTable() {
         //
       }
     },
-    [rows, state.latestAuction?.id],
+    [state.latestAuction?.id],
+  )
+
+  const rejectBidder = useCallback(
+    async (params: GridRowParams<BidRequest>) => {
+      if (
+        confirm(
+          `Are you sure you want to ban ${nameMasking(
+            params.row.name,
+          )} from bidding your product?\n` +
+            `Your decision cannot be reversed!`,
+        )
+      ) {
+        await processBidRequest(params, false)
+      }
+    },
+    [processBidRequest],
   )
 
   const acceptBidder = useCallback(
-    async (params: GridRowParams) => {
-      try {
-        const idx = _.findIndex(rows, (row) => {
-          return row.id === params.id
-        })
-        if (idx === -1) {
-          return
-        }
-        const response = await SellerService.acceptBid(
-          state.latestAuction?.id,
-          rows[idx].bidId,
-        )
-        if (response) {
-          setRows((prevRows) => prevRows.filter((row) => row.id !== params.id))
-        }
-      } catch (e) {
-        //
-      }
-    },
-    [rows, state.latestAuction?.id],
+    async (params: GridRowParams<BidRequest>) =>
+      processBidRequest(params, true),
+    [processBidRequest],
   )
 
   const columns: GridColumns = useMemo(
@@ -104,7 +101,7 @@ export default function BidRequestTable() {
             alignItems='center'
             width={1}
           >
-            <Typography>{params.value}</Typography>
+            <Typography>{nameMasking(params.value)}</Typography>
 
             <BackgroundLetterAvatars name={params.value} sx={{ mx: 2 }} />
           </Box>
@@ -119,7 +116,7 @@ export default function BidRequestTable() {
             icon={<CloseIcon />}
             label='Deny'
             onClick={async () => {
-              await rejectBidder(params)
+              await rejectBidder(params as GridRowParams<BidRequest>)
             }}
           />,
           <GridActionsCellItem
@@ -127,7 +124,7 @@ export default function BidRequestTable() {
             icon={<CheckIcon />}
             label='Accept'
             onClick={async () => {
-              await acceptBidder(params)
+              await acceptBidder(params as GridRowParams<BidRequest>)
             }}
           />,
         ],
@@ -138,9 +135,13 @@ export default function BidRequestTable() {
 
   return (
     <>
-      <Grid container item xs={12} flexDirection='column' display={
-        rows.length === 0 ? 'none' : undefined
-      }>
+      <Grid
+        container
+        item
+        xs={12}
+        flexDirection='column'
+        display={rows.length === 0 ? 'none' : undefined}
+      >
         <Typography
           gutterBottom
           variant='h4'
