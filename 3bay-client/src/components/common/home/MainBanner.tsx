@@ -64,7 +64,12 @@ const MainBanner = (props: BannerProps): JSX.Element => {
             >
               {props.title}
             </Typography>
-            <Typography variant='h5' color='inherit' paragraph>
+            <Typography
+              variant='h5'
+              color='inherit'
+              paragraph
+              sx={{ whiteSpace: 'pre-line' }}
+            >
               {props.description}
             </Typography>
 

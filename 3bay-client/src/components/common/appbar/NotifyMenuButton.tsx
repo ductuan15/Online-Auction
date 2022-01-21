@@ -8,13 +8,16 @@ import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded'
 import { Badge } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import { useUserContext } from '../../../contexts/user/UserContext'
+import { SxProps } from '@mui/system'
 
 type NotifyMenuButtonProps = {
   notifyMenuId: string
+  sx?: SxProps
 }
 
 const NotifyMenuButton = ({
   notifyMenuId,
+  sx,
 }: NotifyMenuButtonProps): JSX.Element => {
   const { state, dispatch } = useLayoutContext()
   const {
@@ -23,11 +26,12 @@ const NotifyMenuButton = ({
 
   return (
     <Box
-      sx={{
-        display: { xs: 'none', md: 'flex' },
-        alignItems: 'center',
-        textAlign: 'center',
-      }}
+      sx={
+        sx ?? {
+          alignItems: 'center',
+          textAlign: 'center',
+        }
+      }
     >
       <Tooltip title='Notifications'>
         <IconButton

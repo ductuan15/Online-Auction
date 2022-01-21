@@ -251,18 +251,27 @@ export default function SearchAppBar(): JSX.Element {
 
             <Stack
               direction='row'
-              sx={{ display: { xs: 'none', md: 'flex' }, mx: 2 }}
+              sx={{ mx: 2 }}
               alignItems='center'
               spacing={2}
             >
               {/*Notifications*/}
-              <NotifyMenuButton notifyMenuId={notifyMenuId} />
+              <NotifyMenuButton
+                notifyMenuId={notifyMenuId}
+                sx={{ display: { xs: 'none', sm: 'block' } }}
+              />
 
               {/*Theme button*/}
-              <ThemeChangeButton />
+              <ThemeChangeButton
+                sx={{ display: { xs: 'none', md: 'block' } }}
+              />
 
               {/*WatchList Button*/}
-              {isAuth ? <WatchListButton /> : null}
+              {isAuth ? (
+                <WatchListButton
+                  sx={{ display: { xs: 'none', md: 'block' } }}
+                />
+              ) : null}
 
               {/*JoiningAuction Button*/}
               {/*{isAuth ? <JoiningAuction /> : null}*/}

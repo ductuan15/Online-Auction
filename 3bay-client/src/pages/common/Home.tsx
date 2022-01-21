@@ -15,7 +15,7 @@ const Home = (): JSX.Element => {
 
   const banner = {
     title: "Smartphones & Accessories",
-    description:  'あなたが翻訳すれば、あなたは同性愛者です！',
+    description:  'あなたが翻訳すれば、あなたは同性愛者です！\n👁️👄👁️',
     image: theme.palette.mode === 'light' ? bannerLight : bannerDark,
     imageText: '',
     linkText: 'Shop now →',
@@ -29,23 +29,6 @@ const Home = (): JSX.Element => {
       <AdminMenu />
 
       <Grid container display='flex' alignItems='center' flexDirection='column'>
-        <Typography
-          component='h2'
-          variant='h4'
-          gutterBottom
-          color='primary.main'
-        >
-          💎 Best selling items
-        </Typography>
-
-        <Typography
-          component='h2'
-          variant='h4'
-          gutterBottom
-          color='primary.main'
-        >
-          👁️👄👁️
-        </Typography>
 
         <ProductCarousel
           name={'⌛ Close time'}
@@ -60,7 +43,7 @@ const Home = (): JSX.Element => {
         />
 
         <ProductCarousel
-          name={'💰 Highest price'}
+          name={'💎 Highest price'}
           fetchFunction={getTop.getTopPrice}
           showLoading={true}
         />

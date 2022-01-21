@@ -6,14 +6,15 @@ import { useNavigate } from 'react-router-dom'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { Badge } from '@mui/material'
 import { useUserContext } from '../../../contexts/user/UserContext'
+import {SxProps} from '@mui/system'
 
-const WatchListButton = (): JSX.Element => {
+const WatchListButton = ({ sx }: { sx?: SxProps }): JSX.Element => {
   const navigate = useNavigate()
   const {
     state: { watchlist },
   } = useUserContext()
   return (
-    <Box>
+    <Box sx={sx}>
       <Tooltip title='Watch list'>
         <IconButton
           onClick={() => navigate('/user/watchlist')}
