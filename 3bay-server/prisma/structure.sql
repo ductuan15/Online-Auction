@@ -50,8 +50,8 @@ CREATE TABLE `auctions`
 /*!50003 SET @saved_cs_client = @@character_set_client */;
 /*!50003 SET @saved_cs_results = @@character_set_results */;
 /*!50003 SET @saved_col_connection = @@collation_connection */;
-/*!50003 SET character_set_client = utf8mb3 */;
-/*!50003 SET character_set_results = utf8mb3 */;
+/*!50003 SET character_set_client = utf8 */;
+/*!50003 SET character_set_results = utf8 */;
 /*!50003 SET collation_connection = utf8mb4_general_ci */;
 /*!50003 SET @saved_sql_mode = @@sql_mode */;
 /*!50003 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO' */;
@@ -180,11 +180,11 @@ DROP TABLE IF EXISTS `notifications`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notifications`
 (
-    `id`        int(11)                                                                                                                           NOT NULL AUTO_INCREMENT,
-    `uuid`      varchar(255) COLLATE utf8mb4_unicode_ci                                                                                           NOT NULL,
-    `type`      enum ('AUCTION_NEW_BID','AUCTION_BID_REJECTED','AUCTION_CLOSED_NO_WINNER','AUCTION_CLOSED_HAD_WINNER') COLLATE utf8mb4_unicode_ci NOT NULL,
-    `productId` int(11)                                                                                                                           NOT NULL,
-    `date`      datetime                                                                                                                          NOT NULL DEFAULT current_timestamp(),
+    `id`        int(11)                                                                                                                                                                         NOT NULL AUTO_INCREMENT,
+    `uuid`      varchar(255) COLLATE utf8mb4_unicode_ci                                                                                                                                         NOT NULL,
+    `type`      enum ('AUCTION_NEW_BID','AUCTION_BID_REJECTED','AUCTION_CLOSED_NO_WINNER','AUCTION_CLOSED_HAD_WINNER','BID_REQUEST_ACCEPTED','BID_REQUEST_REJECTED') COLLATE utf8mb4_unicode_ci NOT NULL,
+    `productId` int(11)                                                                                                                                                                         NOT NULL,
+    `date`      datetime                                                                                                                                                                        NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
     KEY `notifications_products_id_fk` (`productId`),
     KEY `notifications_users_uuid_fk` (`uuid`),
@@ -382,4 +382,4 @@ CREATE TABLE `users`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-21 11:58:39
+-- Dump completed on 2022-01-21 18:10:17
