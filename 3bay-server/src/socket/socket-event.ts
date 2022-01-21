@@ -3,8 +3,6 @@ import { ProductRes } from '../types/ProductRes.js'
 export enum SocketEvent {
   AUCTION_UPDATE = 'auction_update',
   AUCTION_NOTIFY = 'auction_notify',
-  BID_REQUEST_ACCEPTED = 'bid_request_accepted',
-  BID_REQUEST_REJECTED = 'bid_request_rejected',
   USER_LOGOUT = 'user_logout',
   CATEGORY_UPDATE = 'category_update',
 }

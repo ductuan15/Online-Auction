@@ -2,8 +2,16 @@ import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
 import { AuctionRes } from '../types/AuctionRes.js'
 import Prisma from '@prisma/client'
-import { AuctionErrorCode } from '../error/error-code.js'
-import { AuctionError } from '../error/error-exception.js'
+import {
+  AuctionErrorCode,
+  AuthErrorCode,
+  ErrorCode,
+} from '../error/error-code.js'
+import {
+  AuctionError,
+  AuthError,
+  ErrorException,
+} from '../error/error-exception.js'
 import {
   includeProductDetailInfo,
   sellerInfoSelection,
@@ -306,7 +314,7 @@ export const getUserBidStatus = async (
     } = {
       auctionId: req.auction?.id || NaN,
       hasAutoBid: !!hasAutoBid,
-      maximumAutoBidPrice: hasAutoBid?.maximumPrice.toNumber()
+      maximumAutoBidPrice: hasAutoBid?.maximumPrice.toNumber(),
     }
     switch (userBidStatus?.status) {
       case undefined:
@@ -459,6 +467,29 @@ export const isProductOwner = async (
     })
     if (product?.sellerId !== req.user.uuid) {
       return next(new AuctionError({ code: AuctionErrorCode.NotProductOwner }))
+    } else {
+      next()
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+export const isNotProductOwner = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const product = await prisma.product.findUnique({
+      where: {
+        id: req.auction?.productId,
+      },
+    })
+    if (product?.sellerId === req.user.uuid) {
+      return next(new AuctionError({ code: AuctionErrorCode.IsProductOwner }))
     } else {
       next()
     }
@@ -693,5 +724,49 @@ export const extendAuctionTime = async (auctionId: number) => {
     })
     await emitAuctionDetails(auctionId)
     console.log(c.blue(`Extend auction time - id ${auction.id}`))
+  }
+}
+
+export async function requestBidPermission(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  if (!req.auction) {
+    return next(new ErrorException({ code: ErrorCode.NotFound }))
+  }
+  if (!req.user) {
+    return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
+  }
+
+  try {
+    if (
+      (await prisma.userBidStatus.findUnique({
+        where: {
+          auctionId_userId: {
+            auctionId: req.auction.id,
+            userId: req.user.uuid,
+          },
+        },
+      })) !== null
+    ) {
+      return next(
+        new AuctionError({ code: AuctionErrorCode.AlreadyHasBidRequest }),
+      )
+    }
+
+    await prisma.userBidStatus.create({
+      data: {
+        auctionId: req.auction.id,
+        userId: req.user.uuid,
+        status: Prisma.BidStatus.PENDING,
+      },
+    })
+
+    await emitAuctionDetails(req.auction.id)
+
+    return next()
+  } catch (e) {
+    next(e)
   }
 }

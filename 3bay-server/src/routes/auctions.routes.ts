@@ -2,6 +2,8 @@ import { Router } from 'express'
 import * as auctionController from '../controllers/auction.controller.js'
 import * as productController from '../controllers/product.controller.js'
 import * as authMdw from '../middlewares/auth.mdw.js'
+import * as auctionMdw from '../middlewares/auction.mdw.js'
+
 import passport from 'passport'
 
 const router = Router()
@@ -20,10 +22,34 @@ router
   .route('/byProduct/latestAuction/:productId')
   .get(auctionController.getLatestAuction)
 
+router.route('/userStatus/setAccepted/:auctionId/:userId').patch(
+  passport.authenticate('jwt', { session: false }),
+  authMdw.requireSellerRole,
+  auctionController.isAuctionClosed,
+  auctionController.isProductOwner,
+  auctionMdw.processBidRequest(true),
+  auctionMdw.notifyWhenBidRequestProceed(true),
+)
+
+router.route('/userStatus/setRejected/:auctionId/:userId').patch(
+  passport.authenticate('jwt', { session: false }),
+  authMdw.requireSellerRole,
+  auctionController.isAuctionClosed,
+  auctionController.isProductOwner,
+  auctionMdw.processBidRequest(false),
+  auctionMdw.notifyWhenBidRequestProceed(false),
+)
+
 router
   .route('/userStatus/:auctionId')
   .get(
     passport.authenticate('jwt', { session: false }),
+    auctionController.getUserBidStatus,
+  )
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    auctionController.isNotProductOwner,
+    auctionController.requestBidPermission,
     auctionController.getUserBidStatus,
   )
 

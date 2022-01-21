@@ -852,12 +852,12 @@ export const notifyWhenPriceChanged = async (
   }
 }
 
-export const notifyWhenBidAccepted = async (
+export const notifyWhenPriceChangedExcludingSeller = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  console.log(c.yellow('bidController.notifyWhenBidAccepted'))
+  console.log(c.yellow('bidController.notifyWhenPriceChangedExcludingSeller'))
   try {
     const product = await getProductByAuction(req.auction)
 

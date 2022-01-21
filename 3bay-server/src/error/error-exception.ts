@@ -238,6 +238,14 @@ export class AuctionError extends ErrorException {
         this.message = 'Instant buy not available for this auction'
         this.status = 400
         break
+      case AuctionErrorCode.AlreadyHasBidRequest:
+        this.message = 'Bid request has been already sent'
+        this.status = 400
+        break
+      case AuctionErrorCode.IsProductOwner:
+        this.message = 'Product owner cannot bid their own product'
+        this.status = 400
+        break
       default:
         this.status = 500
         break

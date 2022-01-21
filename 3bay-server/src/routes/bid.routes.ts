@@ -16,7 +16,7 @@ router.route('/setAccepted/:auctionId/:bidId').patch(
   bidController.executeAutoBid,
   bidController.getWinningBid,
   auctionController.update,
-  bidController.notifyWhenBidAccepted,
+  bidController.notifyWhenPriceChangedExcludingSeller,
 )
 
 router.route('/setRejected/:auctionId/:bidId').patch(
@@ -30,7 +30,7 @@ router.route('/setRejected/:auctionId/:bidId').patch(
   bidController.executeAutoBid,
   bidController.getWinningBid,
   auctionController.update,
-  bidController.notifyWhenBidAccepted,
+  bidController.notifyWhenPriceChangedExcludingSeller,
 )
 
 router
