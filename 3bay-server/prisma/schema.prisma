@@ -32,9 +32,9 @@ model Auction {
   winningBidId                                Int?
   autoExtendAuctionTiming                     Boolean
   currentPrice                                Decimal         @default(0.0000) @db.Decimal(19, 4)
-  sellerComment                               String?         @db.VarChar(255)
+  sellerComment                               String?         @db.Text
   sellerReview                                Boolean?
-  bidderComment                               String?         @db.VarChar(255)
+  bidderComment                               String?         @db.Text
   bidderReview                                Boolean?
   product                                     Product         @relation("auctionsToproducts", fields: [productId], references: [id], onUpdate: Restrict, map: "auctions_fk0")
   winningBid                                  Bid?            @relation("auctions_winningBidIdTobids", fields: [winningBidId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "auctions_fk1")
@@ -174,11 +174,11 @@ model UserBidStatus {
 
 model autoBid {
   auctionId    Int
-  userId       String  @db.VarChar(255)
-  maximumPrice Decimal @db.Decimal(19, 4)
-  auctions     Auction @relation("auctionsToauto_bid", fields: [auctionId], references: [id], onUpdate: Restrict, map: "auto_bid_fk0")
-  user         User    @relation("auto_bidTousers", fields: [userId], references: [uuid], onUpdate: Restrict, map: "auto_bid_fk1")
-  createdTime  DateTime? @default(now()) @db.DateTime(0)
+  userId       String   @db.VarChar(255)
+  maximumPrice Decimal  @db.Decimal(19, 4)
+  createdTime  DateTime @default(now()) @db.DateTime(0)
+  auctions     Auction  @relation("auctionsToauto_bid", fields: [auctionId], references: [id], onUpdate: Restrict, map: "auto_bid_fk0")
+  user         User     @relation("auto_bidTousers", fields: [userId], references: [uuid], onUpdate: Restrict, map: "auto_bid_fk1")
 
   @@id([auctionId, userId])
   @@index([userId], map: "auto_bid_fk1")

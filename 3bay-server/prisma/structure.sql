@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: 3bay
 -- ------------------------------------------------------
--- Server version	10.6.5-MariaDB
+-- Server version	10.3.32-MariaDB-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */;
@@ -25,19 +25,19 @@ DROP TABLE IF EXISTS `auctions`;
 CREATE TABLE `auctions`
 (
     `id`                      int(11)        NOT NULL AUTO_INCREMENT,
-    `startTime`               datetime       NOT NULL                 DEFAULT current_timestamp(),
-    `closeTime`               datetime       NOT NULL                 DEFAULT current_timestamp(),
+    `startTime`               datetime       NOT NULL         DEFAULT current_timestamp(),
+    `closeTime`               datetime       NOT NULL         DEFAULT current_timestamp(),
     `openPrice`               decimal(19, 4) NOT NULL,
     `incrementPrice`          decimal(19, 4) NOT NULL,
-    `buyoutPrice`             decimal(19, 4)                          DEFAULT NULL,
+    `buyoutPrice`             decimal(19, 4)                  DEFAULT NULL,
     `productId`               int(11)        NOT NULL,
-    `winningBidId`            int(11)                                 DEFAULT NULL,
+    `winningBidId`            int(11)                         DEFAULT NULL,
     `autoExtendAuctionTiming` tinyint(1)     NOT NULL,
-    `currentPrice`            decimal(19, 4) NOT NULL                 DEFAULT 0.0000,
-    `sellerComment`           varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-    `sellerReview`            tinyint(1)                              DEFAULT NULL,
-    `bidderComment`           varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-    `bidderReview`            tinyint(1)                              DEFAULT NULL,
+    `currentPrice`            decimal(19, 4) NOT NULL         DEFAULT 0.0000,
+    `sellerComment`           text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `sellerReview`            tinyint(1)                      DEFAULT NULL,
+    `bidderComment`           text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `bidderReview`            tinyint(1)                      DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `auctions_fk0` (`productId`),
     KEY `auctions_fk1` (`winningBidId`),
@@ -114,7 +114,7 @@ CREATE TABLE `auto_bid`
     `auctionId`    int(11)                                 NOT NULL,
     `userId`       varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `maximumPrice` decimal(19, 4)                          NOT NULL,
-    `createdTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `createdTime`  datetime                                NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
     PRIMARY KEY (`auctionId`, `userId`),
     KEY `auto_bid_fk1` (`userId`),
     CONSTRAINT `auto_bid_fk0` FOREIGN KEY (`auctionId`) REFERENCES `auctions` (`id`),
@@ -187,6 +187,7 @@ CREATE TABLE `notifications`
     `date`      datetime                                                                                                                          NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
     KEY `notifications_products_id_fk` (`productId`),
+    KEY `notifications_users_uuid_fk` (`uuid`),
     CONSTRAINT `notifications_products_id_fk` FOREIGN KEY (`productId`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `notifications_users_uuid_fk` FOREIGN KEY (`uuid`) REFERENCES `users` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB
@@ -208,7 +209,8 @@ CREATE TABLE `otp`
     `otp`        varchar(255) COLLATE utf8mb4_unicode_ci                                NOT NULL,
     `expiryTime` datetime                                                               NOT NULL,
     `data`       varchar(255) COLLATE utf8mb4_unicode_ci                                         DEFAULT NULL,
-    PRIMARY KEY (`id`, `type`)
+    PRIMARY KEY (`id`, `type`),
+    CONSTRAINT `otp_users_uuid_fk` FOREIGN KEY (`id`) REFERENCES `users` (`uuid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -380,4 +382,4 @@ CREATE TABLE `users`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-17 11:29:01
+-- Dump completed on 2022-01-21 11:58:39

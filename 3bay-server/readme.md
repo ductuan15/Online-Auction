@@ -30,11 +30,15 @@ Nhớ giữ file này ở local, không commit lên git.
 npx prisma generate 
 ```
 
-2.3. Đẩy model từ prisma vào database:
-```bash
-npx prisma db push 
-```
-Sau đó, database sẽ cập nhật lại cấu trúc schema cho khớp với model trong prisma. 
+[comment]: <> (2.3. Đẩy model từ prisma vào database:)
+
+[comment]: <> (```bash)
+
+[comment]: <> (npx prisma db push )
+
+[comment]: <> (```)
+
+[comment]: <> (Sau đó, database sẽ cập nhật lại cấu trúc schema cho khớp với model trong prisma. )
 
 Thêm data mẫu: xem tại folder `prisma/sample_data`
 
