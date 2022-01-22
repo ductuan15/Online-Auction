@@ -48,6 +48,14 @@ function BidButton(): JSX.Element | null {
     )
   }, [latestAuction?.sellerComment, latestAuction?.sellerReview])
 
+  const hasSellerComment = useMemo(() => {
+    return (
+      latestAuction &&
+      (latestAuction.sellerComment !== null ||
+        latestAuction.sellerReview !== null)
+    )
+  }, [latestAuction])
+
   const onCancelTransactionButtonClicked = useCallback(async () => {
     if (product?.id && !hasRejectComment) {
       const payload = {
@@ -180,7 +188,7 @@ function BidButton(): JSX.Element | null {
       product?.sellerId === userDetails?.uuid &&
       latestAuction?.closeTime &&
       latestAuction?.winningBid &&
-      !hasRejectComment &&
+      !hasSellerComment &&
       closeTime?.isBefore()
     ) {
       //closeTime < now => end auction && winningBid
@@ -202,7 +210,7 @@ function BidButton(): JSX.Element | null {
     canBidThis,
     closeTime,
     dispatch,
-    hasRejectComment,
+    hasSellerComment,
     latestAuction?.closeTime,
     latestAuction?.winningBid,
     location,

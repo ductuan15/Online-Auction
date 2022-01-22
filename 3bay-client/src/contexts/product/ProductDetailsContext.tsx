@@ -56,13 +56,44 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
     ;(async () => {
       if (user && state.latestAuction?.id) {
         try {
+          const point = await UserService.getPoint(user.user)
+          dispatch({ type: 'UPDATE_USER_POINT', payload: point })
+
+          return
+        } catch (e) {
+          // console.log('Cannot update bid status')
+        }
+
+        dispatch({ type: 'UPDATE_USER_POINT' })
+      }
+    })()
+  }, [state.latestAuction, user])
+
+  useEffect(() => {
+    ;(async () => {
+      if (state.currentProduct) {
+        try {
+          const sellerPoint = await UserService.getPoint(
+            state.currentProduct?.sellerId,
+          )
+          dispatch({ type: 'UPDATE_SELLER_POINT', payload: sellerPoint })
+          return
+        } catch (e) {
+          //
+        }
+        dispatch({ type: 'UPDATE_SELLER_POINT' })
+      }
+    })()
+  }, [state.currentProduct])
+
+  useEffect(() => {
+    ;(async () => {
+      if (state.latestAuction) {
+        try {
           const response = await BidderService.getAuctionStatus(
             state.latestAuction?.id,
           )
           dispatch({ type: 'UPDATE_BID_STATUS', payload: response })
-
-          const point = await UserService.getPoint(user.user)
-          dispatch({ type: 'UPDATE_USER_POINT', payload: point })
 
           if (state.latestAuction?.winningBid) {
             const winningBidderPoint = await UserService.getPoint(
@@ -73,35 +104,16 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
               payload: winningBidderPoint,
             })
           }
-          return
-        } catch (e) {
-          // console.log('Cannot update bid status')
-        }
 
-        dispatch({ type: 'UPDATE_BID_STATUS' })
-        dispatch({ type: 'UPDATE_USER_POINT' })
-        dispatch({ type: 'UPDATE_WINNING_BIDDER_POINT' })
-      }
-    })()
-  }, [state.latestAuction, user])
-
-  useEffect(() => {
-    ;(async () => {
-      if (state.currentProduct?.sellerId) {
-        try {
-          const sellerPoint = await UserService.getPoint(
-            state.currentProduct?.sellerId,
-          )
-
-          dispatch({ type: 'UPDATE_SELLER_POINT', payload: sellerPoint })
           return
         } catch (e) {
           //
         }
-        dispatch({ type: 'UPDATE_SELLER_POINT' })
+        dispatch({ type: 'UPDATE_BID_STATUS' })
+        dispatch({ type: 'UPDATE_WINNING_BIDDER_POINT' })
       }
     })()
-  }, [state.currentProduct?.sellerId])
+  }, [state.latestAuction])
 
   const contextValue = useMemo(
     () => ({

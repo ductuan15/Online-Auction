@@ -35,8 +35,8 @@ type ReviewFormProps = {
 type CommentRowProps = {
   name: string
   role: 'BIDDER' | 'SELLER'
-  review: boolean | undefined
-  comment: string
+  review?: boolean | null
+  comment?: string | null
 }
 
 const ReviewForm = ({

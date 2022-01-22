@@ -19,6 +19,7 @@
 .image-gallery-thumbnail img {
   width: auto;
   height: 80px;
+  object-fit: cover;
 }
 
 .fullscreen .image-gallery-thumbnails-wrapper {

@@ -14,6 +14,7 @@ import { BidRequest } from '../../../models/bidder'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import SellerService from '../../../services/seller.service'
 import { nameMasking } from '../../../utils/name-mask'
+import moment from 'moment'
 
 // type BidRequestTableProps = {
 //   sx?: SxProps
@@ -27,8 +28,12 @@ export default function BidRequestTable() {
   const init = useCallback(async () => {
     if (state.latestAuction?.id) {
       try {
-        const data = await SellerService.getBidRequests(state.latestAuction?.id)
-        setRows(data)
+        if (moment(state.latestAuction?.closeTime).isAfter()) {
+          const data = await SellerService.getBidRequests(
+            state.latestAuction?.id,
+          )
+          setRows(data)
+        }
       } catch (e) {
         setRows([])
       }

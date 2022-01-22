@@ -11,8 +11,8 @@ export interface Auction {
   currentPrice: number
   bidderReview: boolean,
   bidderComment: string,
-  sellerReview: boolean,
-  sellerComment: string,
+  sellerReview: boolean | null,
+  sellerComment: string | null,
 
   _count: {
     bids: number
