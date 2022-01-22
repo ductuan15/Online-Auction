@@ -5,7 +5,7 @@ import passport from '../auth/passport.js'
 import Prisma from '@prisma/client'
 import c from 'ansi-colors'
 import { NotifyData, SocketEvent } from './socket-event.js'
-import { AuctionFromGetDetails } from './auction.io.js'
+import { AuctionFromGetDetails, auctionSocketMap } from './auction.io.js'
 
 let io: Server
 
@@ -29,11 +29,8 @@ export function getSocket() {
 // key: user's uuid, value: a set of socket ids
 const users = new Map<string, Set<string>>()
 
-const onConnect = (socket: Socket) => {
-  console.log(c.bgMagenta(`[Socket] New connection ${socket.id}`))
-  // console.log(socket.request.user)
-
-  socket.on('whoami', () => {
+function whoAmI(socket: Socket) {
+  return () => {
     // cb(socket.request.user ? socket.request.user.uuid : '')
     console.log(
       c.red(
@@ -52,9 +49,11 @@ const onConnect = (socket: Socket) => {
         c.blue(`[Socket] User map: update ${uuid}, add socket ID ${socket.id}`),
       )
     }
-  })
+  }
+}
 
-  socket.on('disconnect', () => {
+function disconnect(socket: Socket) {
+  return () => {
     console.log(
       c.magenta(
         `[Socket] ${socket.id} - ${socket.request.user.name} disconnected`,
@@ -67,7 +66,37 @@ const onConnect = (socket: Socket) => {
         console.log(c.blue(`[Socket] Remove ${socket.id} from users map`))
       }
     }
-  })
+    auctionSocketMap.removeSocketId(socket.id)
+  }
+}
+
+function subscribeAuction(
+  socket: Socket,
+) {
+  return (auctionId: number | undefined) => {
+    if (auctionId) {
+      console.log(
+        c.blue(`[Socket] Subscribe auction ${auctionId} by ${socket.id}`),
+      )
+      auctionSocketMap.add(auctionId, socket.id)
+    } else {
+      console.log(
+        c.blue(`[Socket] Remove auction subscription of ${socket.id}`),
+      )
+      auctionSocketMap.removeSocketId(socket.id)
+    }
+  }
+}
+
+const onConnect = (socket: Socket) => {
+  console.log(c.bgMagenta(`[Socket] New connection ${socket.id}`))
+  // console.log(socket.request.user)
+
+  socket.on(SocketEvent.WHO_AM_I, whoAmI(socket))
+
+  socket.on(SocketEvent.DISCONNECT, disconnect(socket))
+
+  socket.on(SocketEvent.SUBSCRIBE_AUCTION, subscribeAuction(socket))
 }
 
 const initSocketIo = (server: HTTPServer): Server => {
@@ -79,7 +108,7 @@ const initSocketIo = (server: HTTPServer): Server => {
 
   io.use(wrap(passport.initialize()))
   io.use(wrap(passport.authenticate('jwt', { session: false })))
-  io.on('connection', onConnect)
+  io.on(SocketEvent.CONNECT, onConnect)
 
   return io
 }
@@ -117,6 +146,26 @@ export function emitEventToUsers(
         console.log(c.blue(`[Socket] Event ${event} -> ${socketId}`))
       }
     }
+  }
+}
+
+export function emitEventToSocketClients(
+  socketIds: Set<string> | undefined,
+  event: SocketEvent,
+  data?: SocketData,
+  cb?: (err: unknown, data: unknown) => void,
+) {
+  const io = getSocket()
+  if (!io) {
+    return
+  }
+  if (!socketIds) {
+    console.log(c.blue(`[Socket] Event ${event} -> no one`))
+    return
+  }
+  for (const socketId of socketIds) {
+    io.to(socketId).emit(event, data, cb)
+    console.log(c.blue(`[Socket] Event ${event} -> ${socketId}`))
   }
 }
 

@@ -50,6 +50,7 @@ declare global {
 const app = express()
 
 function initializeMiddlewares() {
+  app.set('trust proxy', true)
   app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
   // parse body params and attache them to req.body
   app.use(bodyParser.json())

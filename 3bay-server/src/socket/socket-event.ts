@@ -5,6 +5,10 @@ export enum SocketEvent {
   AUCTION_NOTIFY = 'auction_notify',
   USER_LOGOUT = 'user_logout',
   CATEGORY_UPDATE = 'category_update',
+  CONNECT = 'connection',
+  DISCONNECT = 'disconnect',
+  WHO_AM_I = 'whoami',
+  SUBSCRIBE_AUCTION = 'subscribe_auction',
 }
 
 export type NotifyData = {
