@@ -18,6 +18,7 @@ import Product from '../../models/product'
 import BidderService from '../../services/bidder.service'
 import { useAuth } from '../user/AuthContext'
 import UserService from '../../services/user.service'
+import useSocketContext, {SocketEvent} from '../socket/SocketContext'
 
 type ProductProviderProps = {
   children: ReactNode
@@ -44,6 +45,7 @@ export const useProductContext = (): ProductContextType => {
 const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
   const [state, dispatch] = useReducer(ProductReducer, initialProductState)
   const { user } = useAuth()
+  const {socket} = useSocketContext()
 
   const updateCurrentProduct = useCallback(
     (current: Product) => {
@@ -114,6 +116,16 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
       }
     })()
   }, [state.latestAuction])
+
+  useEffect(() => {
+    if (state.latestAuction?.id) {
+      // console.log(`subscribe to ${state.latestAuction.id}`)
+      socket?.emit(SocketEvent.SUBSCRIBE_AUCTION, state.latestAuction.id)
+    }
+    return () => {
+      socket?.emit(SocketEvent.SUBSCRIBE_AUCTION, undefined)
+    }
+  }, [socket, state.latestAuction?.id])
 
   const contextValue = useMemo(
     () => ({

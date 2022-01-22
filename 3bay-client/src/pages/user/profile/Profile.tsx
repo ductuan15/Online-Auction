@@ -46,8 +46,9 @@ const Profile = (): JSX.Element => {
       if (user?.uuid) {
         const point = await UserService.getPoint(user?.uuid)
         setUserPoint((point || 0) * 100) // percent
+      } else {
+        setUserPoint(undefined)
       }
-      setUserPoint(undefined)
     })()
   }, [user?.uuid])
 

@@ -20,6 +20,10 @@ export enum SocketEvent {
   AUCTION_NOTIFY = 'auction_notify',
   USER_LOGOUT = 'user_logout',
   CATEGORY_UPDATE = 'category_update',
+  CONNECT = 'connection',
+  DISCONNECT = 'disconnect',
+  WHO_AM_I = 'whoami',
+  SUBSCRIBE_AUCTION = 'subscribe_auction',
 }
 
 const useSocketContext = (): SocketContextType => {
@@ -34,7 +38,7 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
   const socket = useMemo(() => {
     if (user?.token) {
       try {
-        console.log('connect')
+        // console.log('connect')
         const socket = connect(config.API_HOST_NAME, {
           extraHeaders: {
             Authorization: `Bearer ${user.token}`,
@@ -49,7 +53,7 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
 
         return socket
       } catch (e) {
-        console.log(e)
+        // console.log(e)
         return null
       }
     } else {
@@ -59,11 +63,11 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
 
   useEffect(() => {
     if (socket) {
-      socket.emit('whoami')
+      socket.emit(SocketEvent.WHO_AM_I)
     }
     return () => {
       if (socket) {
-        console.log('disconnect')
+        // console.log('disconnect')
         socket?.disconnect()
       }
     }
