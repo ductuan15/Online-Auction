@@ -84,13 +84,18 @@ function ProductCardContent({
           </Typography>
         </Grid>
 
-        <Grid item xs={rowMode ? 'auto' : 12}>
+        <Grid
+          item
+          xs={rowMode ? 'auto' : 12}
+          minHeight={
+            !rowMode ? `${theme.typography.caption.lineHeight}em` : undefined
+          }
+        >
           {/* Buy out price */}
           <Typography
             variant='caption'
             color='text.secondary'
             fontStyle='italic'
-            minHeight={`${theme.typography.caption.lineHeight}em`}
           >
             {product.latestAuction?.buyoutPrice && (
               <>

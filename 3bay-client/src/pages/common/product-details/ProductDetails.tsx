@@ -20,11 +20,16 @@ import { useAuth } from '../../../contexts/user/AuthContext'
 import BidHistoryTable from '../../../components/common/bid/BidHistoryTable'
 import ProductComment from '../../../components/common/product-card/ProductComment'
 import Error404 from '../error/Error404'
+import useSocketContext, {
+  SocketEvent,
+} from '../../../contexts/socket/SocketContext'
+import Product from '../../../models/product'
 
 const ProductDetails = (): JSX.Element | null => {
   const { state, dispatch } = useProductContext()
   const { user } = useAuth()
   const { id } = useParams()
+  const { socket } = useSocketContext()
   const [isLoading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
@@ -58,6 +63,28 @@ const ProductDetails = (): JSX.Element | null => {
       setLoading(false)
     })()
   }, [dispatch, id])
+
+  useEffect(() => {
+    socket?.on(SocketEvent.PRODUCT_UPDATE, (data: Product | undefined) => {
+      if (data) {
+        dispatch({
+          type: 'UPDATE_CURRENT_PRODUCT',
+          payload: data,
+        })
+      } else {
+        setNotFound(true)
+      }
+    })
+
+    if (state.currentProduct?.id) {
+      socket?.emit(SocketEvent.SUBSCRIBE_PRODUCT, state.currentProduct?.id)
+    }
+
+    return () => {
+      socket?.emit(SocketEvent.SUBSCRIBE_PRODUCT, undefined)
+      socket?.off(SocketEvent.PRODUCT_UPDATE)
+    }
+  }, [dispatch, socket, state.currentProduct?.id])
 
   return notFound ? (
     <Error404 />
