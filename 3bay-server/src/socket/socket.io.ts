@@ -52,6 +52,12 @@ function whoAmI(socket: Socket) {
           ),
         )
       }
+    } else {
+      console.log(
+        c.red(
+          `[Socket] ${socket.id} greeted you <3`,
+        ),
+      )
     }
   }
 }
@@ -111,7 +117,14 @@ function initSocketIo(server: HTTPServer): Server {
   })
 
   io.use(wrap(passport.initialize()))
-  io.use(wrap(passport.authenticate('jwt', { session: false })))
+  io.use(
+    wrap(
+      passport.authenticate(
+        ['jwt', 'anonymous'],
+        { session: false }
+      ),
+    ),
+  )
   io.on(SocketEvent.CONNECT, onConnect)
 
   return io

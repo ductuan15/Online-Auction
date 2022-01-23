@@ -296,7 +296,6 @@ export const getUserBidStatus = async (
             userId: req.user?.uuid || '',
           },
         },
-        rejectOnNotFound: true,
       }),
       prisma.autoBid.findUnique({
         where: {
@@ -305,7 +304,6 @@ export const getUserBidStatus = async (
             userId: req.user?.uuid || '',
           },
         },
-        rejectOnNotFound: true,
       }),
     ])
     const response: {

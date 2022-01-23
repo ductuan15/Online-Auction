@@ -5,6 +5,9 @@ import {
   Strategy as JWTStrategy,
   StrategyOptions,
 } from 'passport-jwt'
+import {
+  Strategy as AnonymousStrategy
+} from 'passport-anonymous'
 import config from '../config/config.js'
 import prisma from '../db/prisma.js'
 import Prisma from '@prisma/client'
@@ -66,7 +69,6 @@ passport.use(
   ),
 )
 
-// 2 passport-jwtの設定
 const opts: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: config.JWT,
@@ -76,7 +78,9 @@ passport.use(
   new JWTStrategy(opts, async (jwtPayload: any, done: any) => {
     // console.log(jwtPayload)
     try {
-      if (!jwtPayload.user && !jwtPayload.role) return done(null, false)
+      if (!jwtPayload.user && !jwtPayload.role) {
+        return done(null, false)
+      }
       const user = await verifyUser(jwtPayload.user, jwtPayload.role)
       // console.log(user)
       if (user) {
@@ -88,5 +92,7 @@ passport.use(
     }
   }),
 )
+
+passport.use(new AnonymousStrategy())
 
 export default passport
