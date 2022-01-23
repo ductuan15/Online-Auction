@@ -246,6 +246,10 @@ export class AuctionError extends ErrorException {
         this.message = 'Product owner cannot bid their own product'
         this.status = 400
         break
+      case AuctionErrorCode.AuctionNotFound:
+        this.message = 'Auction not found'
+        this.status = 404
+        break
       default:
         this.status = 500
         break

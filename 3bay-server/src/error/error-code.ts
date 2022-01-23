@@ -59,4 +59,5 @@ export class AuctionErrorCode {
   public static readonly ClosedAuction = 'ClosedAuction'
   public static readonly BuyoutNotAvailable = 'BuyoutNotAvailable'
   public static readonly AlreadyHasBidRequest = 'AlreadyHasBidRequest'
+  public static readonly AuctionNotFound = 'AuctionNotFound'
 }
