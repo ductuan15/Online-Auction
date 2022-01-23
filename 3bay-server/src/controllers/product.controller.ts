@@ -15,6 +15,7 @@ import { ProductRes } from '../types/ProductRes.js'
 import { PaginationRes } from '../types/PaginationRes.js'
 import Prisma from '@prisma/client'
 import { AuctionRes } from '../types/AuctionRes.js'
+import { auctionDetailsSelection } from './auction.controller.js'
 
 export const sellerInfoSelection = {
   uuid: true,
@@ -104,44 +105,7 @@ export const productById = async (
       include: {
         ...remain,
         latestAuction: {
-          select: {
-            ...latestAuction.select,
-            autoExtendAuctionTiming: true,
-            // userBidStatus: {
-            //   select: {
-            //     user: {
-            //       select: {
-            //         ...sellerInfoSelection,
-            //       },
-            //     },
-            //   },
-            // },
-            bids: {
-              include: {
-                bidder: {
-                  select: {
-                    ...sellerInfoSelection,
-                  },
-                },
-              },
-              where: {
-                // return accepted bids only
-                NOT: {
-                  bidder: {
-                    userBidStatus: {
-                      none: {
-                        auctionId: latestAuctionId.latestAuctionId || undefined,
-                        status: Prisma.BidStatus.ACCEPTED,
-                      },
-                    },
-                  },
-                },
-              },
-              orderBy: {
-                bidTime: 'desc',
-              },
-            },
-          },
+          select: auctionDetailsSelection(latestAuctionId.latestAuctionId)
         },
         productDescriptionHistory: isWithDescription,
       },

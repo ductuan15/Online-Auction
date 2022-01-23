@@ -31,6 +31,67 @@ const bidderInfoSelection = {
   name: true,
 }
 
+export const auctionDetailsSelection = (auctionId: number | null | undefined) =>
+  Prisma.Prisma.validator<Prisma.Prisma.AuctionSelect>()({
+    ...includeProductDetailInfo.latestAuction.select,
+    autoExtendAuctionTiming: true,
+    product: {
+      select: {
+        sellerId: true,
+        name: true,
+      },
+    },
+    winningBid: {
+      include: {
+        bidder: {
+          select: bidderInfoSelection,
+        },
+      },
+    },
+    bids: {
+      include: {
+        bidder: {
+          select: {
+            ...sellerInfoSelection,
+            autoBids: {
+              select: {
+                maximumPrice: true,
+              },
+              where: {
+                auctionId: auctionId || undefined,
+              },
+            },
+          },
+        },
+      },
+      where: {
+        // return accepted bids only
+        NOT: {
+          bidder: {
+            userBidStatus: {
+              some: {
+                OR: [
+                  {
+                    auctionId: auctionId || undefined,
+                    status: Prisma.BidStatus.REJECTED,
+                  },
+                  {
+                    auctionId: auctionId || undefined,
+                    status: Prisma.BidStatus.PENDING,
+                  },
+
+                ]
+              }
+            },
+          },
+        },
+      },
+      orderBy: {
+        bidTime: 'desc',
+      },
+    },
+  })
+
 export const auctionById = async (
   req: Request,
   res: Response,
@@ -71,56 +132,7 @@ export const auctionById = async (
 
 export async function getDetailsAuctionById(auctionId: number | undefined) {
   return await prisma.auction.findUnique({
-    select: {
-      ...includeProductDetailInfo.latestAuction.select,
-      autoExtendAuctionTiming: true,
-      product: {
-        select: {
-          sellerId: true,
-          name: true,
-        },
-      },
-      winningBid: {
-        include: {
-          bidder: {
-            select: bidderInfoSelection,
-          },
-        },
-      },
-      bids: {
-        include: {
-          bidder: {
-            select: {
-              ...sellerInfoSelection,
-              autoBids: {
-                select: {
-                  maximumPrice: true,
-                },
-                where: {
-                  auctionId: auctionId,
-                },
-              },
-            },
-          },
-        },
-        where: {
-          // return accepted bids only
-          NOT: {
-            bidder: {
-              userBidStatus: {
-                none: {
-                  auctionId: auctionId || undefined,
-                  status: Prisma.BidStatus.ACCEPTED,
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          bidTime: 'desc',
-        },
-      },
-    },
+    select: auctionDetailsSelection(auctionId),
     where: {
       id: auctionId || undefined,
     },

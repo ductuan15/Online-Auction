@@ -55,7 +55,7 @@ export const getWonAuction = async (userId: string) => {
           },
         },
         // user is the seller of a product
-        // and they have been reviewed by ther bidder
+        // and they have been reviewed by their bidder
         {
           product: {
             sellerId: userId,
@@ -274,7 +274,7 @@ export const resetWinningAuction = async (
 ) => {
   try {
     const auction = await prisma.auction.findUnique({
-      where: { id: req.bid?.auctionId }
+      where: { id: req.bid?.auctionId },
     })
 
     req.auction = await prisma.auction.update({
@@ -542,39 +542,38 @@ export const addAutoBid = async (
   if (!req.user) {
     return next(new AuthError({ code: AuthErrorCode.InvalidRequest }))
   }
+  if (!req.userStatusInAuction) {
+    return next(new BidError({ code: BidErrorCode.NotAcceptedYet }))
+  }
   try {
-    if (!req.userStatusInAuction) {
-      return next(new BidError({ code: BidErrorCode.NotAcceptedYet }))
-    } else {
-      if (req.auction) {
-        await prisma.autoBid.upsert({
-          update: {
-            maximumPrice: req.body.bidPrice,
-          },
-          create: {
-            maximumPrice: req.body.bidPrice,
-            auctionId: req.auction?.id,
+    if (req.auction) {
+      await prisma.autoBid.upsert({
+        update: {
+          maximumPrice: req.body.bidPrice,
+        },
+        create: {
+          maximumPrice: req.body.bidPrice,
+          auctionId: req.auction?.id,
+          userId: req.user.uuid,
+        },
+        where: {
+          auctionId_userId: {
+            auctionId: req.auction.id,
             userId: req.user.uuid,
           },
-          where: {
-            auctionId_userId: {
-              auctionId: req.auction.id,
-              userId: req.user.uuid,
-            },
+        },
+      })
+      if (
+        !req.auction?.winningBidId &&
+        req.userStatusInAuction === Prisma.BidStatus.ACCEPTED
+      ) {
+        await prisma.bid.create({
+          data: {
+            bidPrice: req.auction?.openPrice.add(req.auction?.incrementPrice),
+            auctionId: req.auction?.id,
+            bidderId: req.user.uuid,
           },
         })
-        if (
-          !req.auction?.winningBidId &&
-          req.userStatusInAuction === Prisma.BidStatus.ACCEPTED
-        ) {
-          const bid = await prisma.bid.create({
-            data: {
-              bidPrice: req.auction?.openPrice.add(req.auction?.incrementPrice),
-              auctionId: req.auction?.id,
-              bidderId: req.user.uuid,
-            },
-          })
-        }
       }
     }
     next()
@@ -670,9 +669,17 @@ export async function getWinningBidFromAuction(
     where: {
       bidder: {
         userBidStatus: {
-          some: {
-            auctionId: auction?.id || NaN,
-            status: Prisma.BidStatus.ACCEPTED,
+          none: {
+            OR: [
+              {
+                auctionId: auction?.id || NaN,
+                status: Prisma.BidStatus.REJECTED,
+              },
+              {
+                auctionId: auction?.id || NaN,
+                status: Prisma.BidStatus.PENDING,
+              },
+            ],
           },
         },
       },
