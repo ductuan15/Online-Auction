@@ -39,9 +39,12 @@ export async function emitProductDetails(
         SocketEvent.PRODUCT_UPDATE,
         product,
       )
+      if (!productExist) {
+        productSocketMap.removeEntity(productId)
+      }
     },
     productExist,
   )
 }
 
-export const productSocketMap = new SocketMap(true)
+export const productSocketMap = new SocketMap()

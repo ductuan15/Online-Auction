@@ -31,6 +31,9 @@ class AuctionScheduler {
           closeTime: {
             gt: new Date(),
           },
+          product: {
+            deletedAt: null,
+          },
         },
       })
 

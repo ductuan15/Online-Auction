@@ -17,6 +17,7 @@ import Prisma from '@prisma/client'
 import { AuctionRes } from '../types/AuctionRes.js'
 import { auctionDetailsSelection } from './auction.controller.js'
 import { emitProductDetails } from '../socket/product.io.js'
+import moment from 'moment'
 
 export const sellerInfoSelection = {
   uuid: true,
@@ -528,7 +529,7 @@ export const deleteProduct = async (
               id: req.product?.id,
             },
             data: {
-              closeTime: new Date(),
+              closeTime: moment().add(-1, 's').toDate(),
             },
           },
         },

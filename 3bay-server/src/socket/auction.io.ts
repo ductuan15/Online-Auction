@@ -42,4 +42,4 @@ export async function emitAuctionDetails(
   })
 }
 
-export const auctionSocketMap = new SocketMap(true)
+export const auctionSocketMap = new SocketMap()

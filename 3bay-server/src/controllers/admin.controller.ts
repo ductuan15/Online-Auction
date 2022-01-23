@@ -8,6 +8,7 @@ import { generateRefreshToken } from './auth.controller.js'
 import { getAllThumbnailLink } from './images-product.controller.js'
 import { ProductRes } from '../types/ProductRes.js'
 import { emitProductDetails } from '../socket/product.io.js'
+import moment from 'moment'
 
 const userDefaultSelection = {
   uuid: true,
@@ -208,7 +209,7 @@ export async function removeProduct(
               id: id,
             },
             data: {
-              closeTime: new Date(),
+              closeTime: moment().add(-1, 's').toDate(),
             },
           },
         },

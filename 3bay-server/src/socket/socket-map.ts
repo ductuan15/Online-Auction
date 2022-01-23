@@ -1,5 +1,7 @@
 class SocketMap {
+  // key: entity ID, value: set of socket ID
   private map = new Map<number, Set<string>>()
+  // key: socket ID, value: entity ID
   private reverseMap = new Map<string, number>()
   private readonly verbose: boolean
 
@@ -21,9 +23,13 @@ class SocketMap {
   }
 
   removeEntity(entityId: number) {
-    const auctions = this.map.get(entityId)
+    const socketIds = this.map.get(entityId)
     this.map.delete(entityId)
-    auctions?.forEach((id) => this.reverseMap.delete(id))
+    socketIds?.forEach((id) => this.reverseMap.delete(id))
+    if (this.verbose) {
+      console.log(this.map)
+      console.log(this.reverseMap)
+    }
   }
 
   removeSocketId(socketId: string) {
