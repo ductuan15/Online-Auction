@@ -16,6 +16,7 @@ import { PaginationRes } from '../types/PaginationRes.js'
 import Prisma from '@prisma/client'
 import { AuctionRes } from '../types/AuctionRes.js'
 import { auctionDetailsSelection } from './auction.controller.js'
+import { emitProductDetails } from '../socket/product.io.js'
 
 export const sellerInfoSelection = {
   uuid: true,
@@ -75,6 +76,40 @@ export async function getProductByAuction(
   }
 }
 
+export async function getProductDetails(id: number, includeDescription = true) {
+  const { latestAuction, ...remain } = includeProductDetailInfo
+  const latestAuctionId = await prisma.product.findFirst({
+    select: {
+      latestAuctionId: true,
+    },
+    where: {
+      id: id,
+      deletedAt: null,
+    },
+    rejectOnNotFound: true,
+  })
+
+  const product = (await prisma.product.findFirst({
+    where: {
+      id: id,
+      deletedAt: null,
+    },
+    include: {
+      ...remain,
+      latestAuction: {
+        select: auctionDetailsSelection(latestAuctionId.latestAuctionId),
+      },
+      productDescriptionHistory: includeDescription,
+    },
+    rejectOnNotFound: true,
+  })) as ProductRes
+
+  product.thumbnails = getAllThumbnailLink(id)
+  product.detail = await getAllDetailImageLinks(id)
+
+  return product
+}
+
 export const productById = async (
   req: Request,
   res: Response,
@@ -85,32 +120,7 @@ export const productById = async (
   try {
     const isWithDescription = !!req.query.isWithDescription
 
-    const { latestAuction, ...remain } = includeProductDetailInfo
-    const latestAuctionId = await prisma.product.findFirst({
-      select: {
-        latestAuctionId: true,
-      },
-      where: {
-        id: +value,
-        deletedAt: null,
-      },
-      rejectOnNotFound: true,
-    })
-
-    req.product = await prisma.product.findFirst({
-      where: {
-        id: +value,
-        deletedAt: null,
-      },
-      include: {
-        ...remain,
-        latestAuction: {
-          select: auctionDetailsSelection(latestAuctionId.latestAuctionId)
-        },
-        productDescriptionHistory: isWithDescription,
-      },
-      rejectOnNotFound: true,
-    })
+    req.product = await getProductDetails(+value, isWithDescription)
     next()
   } catch (error) {
     if (error instanceof Error) {
@@ -249,7 +259,9 @@ export const update = async (
         )
       }
     }
-    return res.json(count)
+    res.json(count)
+    await emitProductDetails(req.product?.id)
+    return
   } catch (error) {
     if (error instanceof Error) {
       next(error)
@@ -526,6 +538,7 @@ export const deleteProduct = async (
       },
     })
     res.json(product)
+    await emitProductDetails(product.id, false)
   } catch (error) {
     if (error instanceof Error) {
       next(error)

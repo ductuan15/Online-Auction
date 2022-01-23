@@ -6,6 +6,8 @@ import Prisma from '@prisma/client'
 import c from 'ansi-colors'
 import { NotifyData, SocketEvent } from './socket-event.js'
 import { AuctionFromGetDetails, auctionSocketMap } from './auction.io.js'
+import { ProductRes } from '../types/ProductRes.js'
+import { productSocketMap } from './product.io.js'
 
 let io: Server
 
@@ -20,7 +22,7 @@ declare module 'http' {
   }
 }
 
-type SocketData = AuctionFromGetDetails | NotifyData
+type SocketData = AuctionFromGetDetails | NotifyData | ProductRes
 
 export function getSocket(): Server {
   return io ?? null
@@ -53,11 +55,7 @@ function whoAmI(socket: Socket) {
         )
       }
     } else {
-      console.log(
-        c.red(
-          `[Socket] ${socket.id} greeted you <3`,
-        ),
-      )
+      console.log(c.red(`[Socket] ${socket.id} greeted you <3`))
     }
   }
 }
@@ -98,6 +96,22 @@ function subscribeAuction(socket: Socket) {
   }
 }
 
+function subscribeProduct(socket: Socket) {
+  return (productId: number | undefined) => {
+    if (productId) {
+      console.log(
+        c.blue(`[Socket] Subscribe product ${productId} by ${socket.id}`),
+      )
+      productSocketMap.add(productId, socket.id)
+    } else {
+      console.log(
+        c.blue(`[Socket] Remove product subscription of ${socket.id}`),
+      )
+      productSocketMap.removeSocketId(socket.id)
+    }
+  }
+}
+
 function onConnect(socket: Socket) {
   console.log(c.bgMagenta(`[Socket] New connection ${socket.id}`))
   // console.log(socket.request.user)
@@ -107,6 +121,8 @@ function onConnect(socket: Socket) {
   socket.on(SocketEvent.DISCONNECT, disconnect(socket))
 
   socket.on(SocketEvent.SUBSCRIBE_AUCTION, subscribeAuction(socket))
+
+  socket.on(SocketEvent.SUBSCRIBE_PRODUCT, subscribeProduct(socket))
 }
 
 function initSocketIo(server: HTTPServer): Server {
@@ -117,14 +133,7 @@ function initSocketIo(server: HTTPServer): Server {
   })
 
   io.use(wrap(passport.initialize()))
-  io.use(
-    wrap(
-      passport.authenticate(
-        ['jwt', 'anonymous'],
-        { session: false }
-      ),
-    ),
-  )
+  io.use(wrap(passport.authenticate(['jwt', 'anonymous'], { session: false })))
   io.on(SocketEvent.CONNECT, onConnect)
 
   return io

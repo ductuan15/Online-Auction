@@ -6,7 +6,9 @@ export enum SocketEvent {
   CATEGORY_UPDATE = 'category_update',
   CONNECT = 'connection',
   DISCONNECT = 'disconnect',
+  PRODUCT_UPDATE = 'product_update',
   SUBSCRIBE_AUCTION = 'subscribe_auction',
+  SUBSCRIBE_PRODUCT = 'subscribe_product',
   USER_LOGOUT = 'user_logout',
   WHO_AM_I = 'whoami',
 }

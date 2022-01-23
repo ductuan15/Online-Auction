@@ -7,6 +7,7 @@ import Prisma from '@prisma/client'
 import { generateRefreshToken } from './auth.controller.js'
 import { getAllThumbnailLink } from './images-product.controller.js'
 import { ProductRes } from '../types/ProductRes.js'
+import { emitProductDetails } from '../socket/product.io.js'
 
 const userDefaultSelection = {
   uuid: true,
@@ -199,9 +200,25 @@ export async function removeProduct(
     }
     const product = await prisma.product.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+        auctions: {
+          update: {
+            where: {
+              id: id,
+            },
+            data: {
+              closeTime: new Date(),
+            },
+          },
+        },
+      },
     })
-    return res.json(product)
+
+    res.json(product)
+    await emitProductDetails(product.id, false)
+
+    return
   } catch (e) {
     return next(new ErrorException({ code: ErrorCode.BadRequest }))
   }
