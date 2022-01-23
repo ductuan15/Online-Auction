@@ -293,17 +293,19 @@ export const getUserBidStatus = async (
         where: {
           auctionId_userId: {
             auctionId: req.auction?.id || NaN,
-            userId: req.user.uuid,
+            userId: req.user?.uuid || '',
           },
         },
+        rejectOnNotFound: true,
       }),
       prisma.autoBid.findUnique({
         where: {
           auctionId_userId: {
             auctionId: req.auction?.id || NaN,
-            userId: req.user.uuid,
+            userId: req.user?.uuid || '',
           },
         },
+        rejectOnNotFound: true,
       }),
     ])
     const response: {
@@ -420,7 +422,7 @@ export const isAuctionWinner = async (
         },
       })
     }
-    if (winningBid?.bidderId !== req.user.uuid) {
+    if (winningBid?.bidderId !== req.user?.uuid) {
       return next(new AuctionError({ code: AuctionErrorCode.NotWinner }))
     } else {
       next()
@@ -465,7 +467,7 @@ export const isProductOwner = async (
         id: req.auction?.productId,
       },
     })
-    if (product?.sellerId !== req.user.uuid) {
+    if (product?.sellerId !== req.user?.uuid) {
       return next(new AuctionError({ code: AuctionErrorCode.NotProductOwner }))
     } else {
       next()
@@ -488,7 +490,7 @@ export const isNotProductOwner = async (
         id: req.auction?.productId,
       },
     })
-    if (product?.sellerId === req.user.uuid) {
+    if (product?.sellerId === req.user?.uuid) {
       return next(new AuctionError({ code: AuctionErrorCode.IsProductOwner }))
     } else {
       next()
@@ -511,7 +513,7 @@ export const getJoinedAuction = async (
         latestAuction: {
           bids: {
             some: {
-              bidderId: req.user.uuid,
+              bidderId: req.user?.uuid,
             },
           },
           closeTime: {
@@ -649,7 +651,7 @@ export const getHasWinnerAuction = async (
   try {
     const products: ProductRes[] = await prisma.product.findMany({
       where: {
-        sellerId: req.user.uuid,
+        sellerId: req.user?.uuid,
         latestAuction: {
           closeTime: {
             lt: new Date(),
@@ -680,7 +682,7 @@ export const getOpeningAuction = async (
   try {
     const products = await prisma.product.findMany({
       where: {
-        sellerId: req.user.uuid,
+        sellerId: req.user?.uuid,
         latestAuction: {
           closeTime: {
             gt: new Date(),

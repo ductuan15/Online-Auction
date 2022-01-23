@@ -16,13 +16,13 @@ const wrap =
 
 declare module 'http' {
   interface IncomingMessage {
-    user: Prisma.User
+    user?: Prisma.User
   }
 }
 
 type SocketData = AuctionFromGetDetails | NotifyData
 
-export function getSocket() {
+export function getSocket(): Server {
   return io ?? null
 }
 
@@ -32,47 +32,51 @@ const users = new Map<string, Set<string>>()
 function whoAmI(socket: Socket) {
   return () => {
     // cb(socket.request.user ? socket.request.user.uuid : '')
-    console.log(
-      c.red(
-        `[Socket] ${socket.request.user.uuid} - ${socket.request.user.name} greeted you <3`,
-      ),
-    )
-    const uuid = socket.request.user.uuid
-    if (!users.has(uuid)) {
-      users.set(uuid, new Set([socket.id]))
+    if (socket.request.user) {
       console.log(
-        c.blue(`[Socket] User map: add ${uuid}, add socket ID ${socket.id}`),
+        c.red(
+          `[Socket] ${socket.request.user.uuid} - ${socket.request.user.name} greeted you <3`,
+        ),
       )
-    } else {
-      users.get(uuid)?.add(socket.id)
-      console.log(
-        c.blue(`[Socket] User map: update ${uuid}, add socket ID ${socket.id}`),
-      )
+      const uuid = socket.request.user.uuid
+      if (!users.has(uuid)) {
+        users.set(uuid, new Set([socket.id]))
+        console.log(
+          c.blue(`[Socket] User map: add ${uuid}, add socket ID ${socket.id}`),
+        )
+      } else {
+        users.get(uuid)?.add(socket.id)
+        console.log(
+          c.blue(
+            `[Socket] User map: update ${uuid}, add socket ID ${socket.id}`,
+          ),
+        )
+      }
     }
   }
 }
 
 function disconnect(socket: Socket) {
   return () => {
-    console.log(
-      c.magenta(
-        `[Socket] ${socket.id} - ${socket.request.user.name} disconnected`,
-      ),
-    )
-    const uuid = socket.request.user.uuid
-    if (users.has(uuid)) {
-      const result = users.get(uuid)?.delete(socket.id)
-      if (result) {
-        console.log(c.blue(`[Socket] Remove ${socket.id} from users map`))
+    if (socket.request.user) {
+      console.log(
+        c.magenta(
+          `[Socket] ${socket.id} - ${socket.request.user.name} disconnected`,
+        ),
+      )
+      const uuid = socket.request.user.uuid
+      if (users.has(uuid)) {
+        const result = users.get(uuid)?.delete(socket.id)
+        if (result) {
+          console.log(c.blue(`[Socket] Remove ${socket.id} from users map`))
+        }
       }
     }
     auctionSocketMap.removeSocketId(socket.id)
   }
 }
 
-function subscribeAuction(
-  socket: Socket,
-) {
+function subscribeAuction(socket: Socket) {
   return (auctionId: number | undefined) => {
     if (auctionId) {
       console.log(
@@ -88,7 +92,7 @@ function subscribeAuction(
   }
 }
 
-const onConnect = (socket: Socket) => {
+function onConnect(socket: Socket) {
   console.log(c.bgMagenta(`[Socket] New connection ${socket.id}`))
   // console.log(socket.request.user)
 
@@ -99,7 +103,7 @@ const onConnect = (socket: Socket) => {
   socket.on(SocketEvent.SUBSCRIBE_AUCTION, subscribeAuction(socket))
 }
 
-const initSocketIo = (server: HTTPServer): Server => {
+function initSocketIo(server: HTTPServer): Server {
   io = new Server(server, {
     cors: {
       origin: '*',

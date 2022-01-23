@@ -1,8 +1,8 @@
 import Prisma from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import prisma from '../db/prisma.js'
-import { AuctionErrorCode, BidErrorCode } from '../error/error-code.js'
-import { AuctionError, BidError } from '../error/error-exception.js'
+import { AuctionErrorCode, AuthErrorCode, BidErrorCode } from '../error/error-code.js'
+import { AuctionError, AuthError, BidError } from '../error/error-exception.js'
 import c from 'ansi-colors'
 import { emitAuctionDetails } from '../socket/auction.io.js'
 import { getProductByAuction } from './product.controller.js'
@@ -204,7 +204,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 export const isBidOwner = (req: Request, res: Response, next: NextFunction) => {
-  if (req.bid?.bidderId !== req.user.uuid) {
+  if (!req.user || req.bid?.bidderId !== req.user?.uuid) {
     throw new BidError({ code: BidErrorCode.NotBidOwner })
   }
   next()
@@ -221,9 +221,10 @@ export const deleteAutoBid = async (
         where: {
           auctionId_userId: {
             auctionId: req.auction?.id,
-            userId: req.user.uuid,
+            userId: req.user?.uuid || '',
           }
-        }
+        },
+        rejectOnNotFound: true,
       })
       
       if (autoBid) {
@@ -231,7 +232,7 @@ export const deleteAutoBid = async (
           where: {
             auctionId_userId: {
               auctionId: req.auction?.id,
-              userId: req.user.uuid,
+              userId: req.user?.uuid || '',
             },
           },
         })
@@ -528,9 +529,12 @@ export const addAutoBid = async (
   res: Response,
   next: NextFunction,
 ) => {
+  if (!req.user) {
+    return next(new AuthError({code: AuthErrorCode.InvalidRequest}))
+  }
   try {
     if (!req.userStatusInAuction) {
-      throw new BidError({ code: BidErrorCode.NotAcceptedYet })
+      return next(new BidError({ code: BidErrorCode.NotAcceptedYet }))
     } else {
       if (req.auction) {
         await prisma.autoBid.upsert({
@@ -769,6 +773,9 @@ export const notifyWhenPriceChanged = async (
   next: NextFunction,
 ) => {
   console.log(c.yellow('bidController.notifyWhenNewBidPlaced'))
+  if (!req.user) {
+    return next(new AuthError({code: AuthErrorCode.InvalidRequest}))
+  }
   try {
     const product = await getProductByAuction(req.auction)
     const involvedBidders = await getInvolvedBidders(req.auction?.id)

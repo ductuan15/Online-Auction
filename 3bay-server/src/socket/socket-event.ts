@@ -1,14 +1,14 @@
 import { ProductRes } from '../types/ProductRes.js'
 
 export enum SocketEvent {
-  AUCTION_UPDATE = 'auction_update',
   AUCTION_NOTIFY = 'auction_notify',
-  USER_LOGOUT = 'user_logout',
+  AUCTION_UPDATE = 'auction_update',
   CATEGORY_UPDATE = 'category_update',
   CONNECT = 'connection',
   DISCONNECT = 'disconnect',
-  WHO_AM_I = 'whoami',
   SUBSCRIBE_AUCTION = 'subscribe_auction',
+  USER_LOGOUT = 'user_logout',
+  WHO_AM_I = 'whoami',
 }
 
 export type NotifyData = {

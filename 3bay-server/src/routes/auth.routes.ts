@@ -18,6 +18,7 @@ import {
 } from '../controllers/auth.controller.js'
 import { hashPassword, verifyRecaptcha } from '../middlewares/auth.mdw.js'
 import passport from '../auth/passport.js'
+import { getAccountInfo } from '../controllers/user.controller.js'
 
 const router = express.Router()
 
@@ -69,7 +70,8 @@ router
       session: false,
     }),
     validate(changeEmailSchema),
-    verifyNewEmail
+    verifyNewEmail,
+    getAccountInfo,
   )
   .post(
     '/change-email/',
