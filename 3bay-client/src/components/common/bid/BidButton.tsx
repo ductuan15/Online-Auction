@@ -89,7 +89,7 @@ function BidButton(): JSX.Element | null {
 
   return useMemo(() => {
     let button: JSX.Element | null
-    if (!userPoint || (userPoint && userPoint >= MINIMUM_POINT)) {
+    if (userPoint === undefined || userPoint >= MINIMUM_POINT) {
       switch (bidStatus?.status) {
         case 'NOT_BID': {
           if (userPoint) {

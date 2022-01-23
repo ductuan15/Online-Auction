@@ -96,13 +96,12 @@ export const isValidScore = async (
   console.log(c.yellow('bidController.isValidScore'))
   try {
     const score = await getScore(req.user?.uuid || '')
-    if (score) {
-      if (score < VALID_SCORE) {
-        return next(new BidError({ code: BidErrorCode.InvalidScore }))
-      } else {
-        req.userStatusInAuction = Prisma.BidStatus.ACCEPTED
-      }
+    if (score !== undefined && score < VALID_SCORE) {
+      return next(new BidError({ code: BidErrorCode.InvalidScore }))
+    } else {
+      req.userStatusInAuction = Prisma.BidStatus.ACCEPTED
     }
+
     next()
   } catch (err) {
     if (err instanceof Error) {
