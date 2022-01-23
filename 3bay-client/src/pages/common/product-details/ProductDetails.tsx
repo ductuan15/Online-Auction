@@ -19,10 +19,6 @@ import BidRequestTable from '../../../components/seller/product/BidRequestTable'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import BidHistoryTable from '../../../components/common/bid/BidHistoryTable'
 import ProductComment from '../../../components/common/product-card/ProductComment'
-import useSocketContext, {
-  SocketEvent,
-} from '../../../contexts/socket/SocketContext'
-import { Auction } from '../../../models/auctions'
 import Error404 from '../error/Error404'
 
 const ProductDetails = (): JSX.Element | null => {
@@ -30,7 +26,6 @@ const ProductDetails = (): JSX.Element | null => {
   const { user } = useAuth()
   const { id } = useParams()
   const [isLoading, setLoading] = useState(true)
-  const { socket } = useSocketContext()
   const [notFound, setNotFound] = useState(false)
 
   useTitle(`3bay | ${state.currentProduct?.name || ''}`)
@@ -63,18 +58,6 @@ const ProductDetails = (): JSX.Element | null => {
       setLoading(false)
     })()
   }, [dispatch, id])
-
-  useEffect(() => {
-    socket?.on(SocketEvent.AUCTION_UPDATE, (data: Auction) => {
-      // console.log(data)
-      if (state.currentProduct?.latestAuctionId === data.id) {
-        dispatch({ type: 'UPDATE_AUCTION', payload: data })
-      }
-    })
-    return () => {
-      socket?.off(SocketEvent.AUCTION_UPDATE)
-    }
-  }, [dispatch, socket, state.currentProduct?.latestAuctionId])
 
   return notFound ? (
     <Error404 />

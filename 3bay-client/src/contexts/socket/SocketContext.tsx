@@ -36,13 +36,12 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
   const { user } = useAuth()
 
   const socket = useMemo(() => {
-    if (user?.token) {
       try {
-        // console.log('connect')
+        console.log('connect')
         const socket = connect(config.API_HOST_NAME, {
-          extraHeaders: {
+          extraHeaders: user?.token ? {
             Authorization: `Bearer ${user.token}`,
-          },
+          } : {},
           reconnection: false,
           reconnectionAttempts: 5,
         })
@@ -56,10 +55,8 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
         // console.log(e)
         return null
       }
-    } else {
-      return null
     }
-  }, [user?.token])
+  , [user?.token])
 
   useEffect(() => {
     if (socket) {
@@ -67,7 +64,7 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
     }
     return () => {
       if (socket) {
-        // console.log('disconnect')
+        console.log('disconnect')
         socket?.disconnect()
       }
     }

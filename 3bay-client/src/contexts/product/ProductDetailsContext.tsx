@@ -18,7 +18,8 @@ import Product from '../../models/product'
 import BidderService from '../../services/bidder.service'
 import { useAuth } from '../user/AuthContext'
 import UserService from '../../services/user.service'
-import useSocketContext, {SocketEvent} from '../socket/SocketContext'
+import useSocketContext, { SocketEvent } from '../socket/SocketContext'
+import { Auction } from '../../models/auctions'
 
 type ProductProviderProps = {
   children: ReactNode
@@ -45,7 +46,7 @@ export const useProductContext = (): ProductContextType => {
 const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
   const [state, dispatch] = useReducer(ProductReducer, initialProductState)
   const { user } = useAuth()
-  const {socket} = useSocketContext()
+  const { socket } = useSocketContext()
 
   const updateCurrentProduct = useCallback(
     (current: Product) => {
@@ -54,6 +55,7 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
     [dispatch],
   )
 
+  // get user's point
   useEffect(() => {
     ;(async () => {
       if (user && state.latestAuction?.id) {
@@ -61,16 +63,22 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
           const point = await UserService.getPoint(user.user)
           dispatch({ type: 'UPDATE_USER_POINT', payload: point })
 
+          const response = await BidderService.getAuctionStatus(
+            state.latestAuction?.id,
+          )
+          dispatch({ type: 'UPDATE_BID_STATUS', payload: response })
+
           return
         } catch (e) {
           // console.log('Cannot update bid status')
         }
-
+        dispatch({ type: 'UPDATE_BID_STATUS' })
         dispatch({ type: 'UPDATE_USER_POINT' })
       }
     })()
   }, [state.latestAuction, user])
 
+  // get seller's point
   useEffect(() => {
     ;(async () => {
       if (state.currentProduct) {
@@ -88,44 +96,50 @@ const ProductProvider = ({ children }: ProductProviderProps): JSX.Element => {
     })()
   }, [state.currentProduct])
 
+  // get user's bid status
   useEffect(() => {
     ;(async () => {
-      if (state.latestAuction) {
-        try {
-          const response = await BidderService.getAuctionStatus(
-            state.latestAuction?.id,
+      try {
+        if (state.latestAuction?.winningBid) {
+          const winningBidderPoint = await UserService.getPoint(
+            state.latestAuction?.winningBid?.bidderId || '0',
           )
-          dispatch({ type: 'UPDATE_BID_STATUS', payload: response })
-
-          if (state.latestAuction?.winningBid) {
-            const winningBidderPoint = await UserService.getPoint(
-              state.latestAuction?.winningBid?.bidderId || '0',
-            )
-            dispatch({
-              type: 'UPDATE_WINNING_BIDDER_POINT',
-              payload: winningBidderPoint,
-            })
-          }
-
-          return
-        } catch (e) {
-          //
+          dispatch({
+            type: 'UPDATE_WINNING_BIDDER_POINT',
+            payload: winningBidderPoint,
+          })
         }
-        dispatch({ type: 'UPDATE_BID_STATUS' })
-        dispatch({ type: 'UPDATE_WINNING_BIDDER_POINT' })
+
+        return
+      } catch (e) {
+        //
       }
+
+      dispatch({ type: 'UPDATE_WINNING_BIDDER_POINT' })
     })()
-  }, [state.latestAuction])
+  }, [state.latestAuction?.winningBid])
 
   useEffect(() => {
-    if (state.latestAuction?.id) {
+    socket?.on(SocketEvent.AUCTION_UPDATE, (data: Auction) => {
+      // console.log(data)
+      if (state.currentProduct?.latestAuctionId === data.id) {
+        dispatch({ type: 'UPDATE_AUCTION', payload: data })
+      }
+    })
+
+    if (state.currentProduct?.latestAuctionId) {
       // console.log(`subscribe to ${state.latestAuction.id}`)
-      socket?.emit(SocketEvent.SUBSCRIBE_AUCTION, state.latestAuction.id)
+      socket?.emit(
+        SocketEvent.SUBSCRIBE_AUCTION,
+        state.currentProduct?.latestAuctionId,
+      )
     }
+
     return () => {
       socket?.emit(SocketEvent.SUBSCRIBE_AUCTION, undefined)
+      socket?.off(SocketEvent.AUCTION_UPDATE)
     }
-  }, [socket, state.latestAuction?.id])
+  }, [socket, state.currentProduct?.latestAuctionId])
 
   const contextValue = useMemo(
     () => ({
