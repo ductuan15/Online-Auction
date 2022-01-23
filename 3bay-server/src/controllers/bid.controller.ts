@@ -567,13 +567,12 @@ export const addAutoBid = async (
         !req.auction?.winningBidId &&
         req.userStatusInAuction === Prisma.BidStatus.ACCEPTED
       ) {
-        await prisma.bid.create({
-          data: {
-            bidPrice: req.auction?.openPrice.add(req.auction?.incrementPrice),
-            auctionId: req.auction?.id,
-            bidderId: req.user.uuid,
-          },
-        })
+        await addABid(
+          req.auction,
+          req.user,
+          req.userStatusInAuction,
+          req.auction?.openPrice.add(req.auction?.incrementPrice),
+        )
       }
     }
     next()
@@ -596,9 +595,17 @@ export const executeAutoBid = async (
         auctionId: req.auction?.id || NaN,
         user: {
           userBidStatus: {
-            some: {
-              auctionId: req.auction?.id || NaN,
-              status: Prisma.BidStatus.ACCEPTED,
+            none: {
+              OR: [
+                {
+                  auctionId: req.auction?.id || NaN,
+                  status: Prisma.BidStatus.REJECTED,
+                },
+                {
+                  auctionId: req.auction?.id || NaN,
+                  status: Prisma.BidStatus.PENDING,
+                },
+              ],
             },
           },
         },
@@ -774,9 +781,17 @@ async function getInvolvedBidders(auctionId: number | undefined) {
       },
       NOT: {
         userBidStatus: {
-          none: {
-            auctionId: auctionId,
-            status: Prisma.BidStatus.ACCEPTED,
+          some: {
+            OR: [
+              {
+                auctionId: auctionId,
+                status: Prisma.BidStatus.REJECTED,
+              },
+              {
+                auctionId: auctionId,
+                status: Prisma.BidStatus.PENDING,
+              },
+            ],
           },
         },
       },
