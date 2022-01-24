@@ -194,7 +194,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     })
 
     const maxPossibleBidPrice = maximumPossibleBidPrice(
-      winnerOfAutoBid!,
+      winnerOfAutoBid,
       req.auction,
     )
     // let bid: Prisma.Prisma.PromiseReturnType<
@@ -207,6 +207,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     // Then new bid should belongs to the owner of auto-bid, since they chose
     // that price first.
     if (
+      maxPossibleBidPrice &&
       maxPossibleBidPrice.equals(new Prisma.Prisma.Decimal(req.body.bidPrice))
     ) {
       user = {
@@ -587,7 +588,12 @@ export const addAutoBid = async (
           },
         },
       })
-      if (req.userStatusInAuction === Prisma.BidStatus.ACCEPTED) {
+      // get winning bid
+      const winningBid = await getWinningBidFromAuction(req.auction)
+      if (
+        req.userStatusInAuction === Prisma.BidStatus.ACCEPTED &&
+        (!winningBid || winningBid?.bidderId !== req.user?.uuid)
+      ) {
         let bidPrice = !req.auction?.winningBidId
           ? req.auction.openPrice
           : req.auction?.currentPrice.add(req.auction?.incrementPrice)
@@ -604,17 +610,20 @@ export const addAutoBid = async (
 }
 
 function maximumPossibleBidPrice(
-  autoBid: Prisma.autoBid,
+  autoBid: Prisma.autoBid | undefined,
   auction: Prisma.Auction | null | undefined,
 ) {
   // maximumPrice - (maximumPrice - openPrice) mod incrementPrice
-  return auction
-    ? autoBid.maximumPrice.minus(
-        autoBid.maximumPrice
-          .minus(auction.openPrice)
-          .mod(auction.incrementPrice),
-      )
-    : autoBid.maximumPrice
+  if (autoBid) {
+    return auction
+      ? autoBid?.maximumPrice.minus(
+          autoBid.maximumPrice
+            .minus(auction.openPrice)
+            .mod(auction.incrementPrice),
+        )
+      : autoBid?.maximumPrice
+  }
+  return undefined
 }
 
 async function getAutoBids(auction: Prisma.Auction | null | undefined) {
@@ -636,6 +645,8 @@ async function getAutoBids(auction: Prisma.Auction | null | undefined) {
             ],
           },
         },
+        isDisabled: false,
+        verified: true,
       },
     },
     // include: {
@@ -654,26 +665,29 @@ function whoShouldWin(autoBids: Prisma.autoBid[], auction: Prisma.Auction) {
 
   // console.log(c.magenta(`[Auction] Winner ${winner!.userId}`))
 
-  const maxPossibleBidPrice = maximumPossibleBidPrice(winner!, auction)
+  const maxPossibleBidPrice = maximumPossibleBidPrice(winner, auction)
 
   let nSameMaxPossibleBidPrice = 0
   autoBids.forEach((bid) => {
     // console.log(`maximumPossibleBidPrice(bid, auction) = ${maximumPossibleBidPrice(bid, auction).toNumber()}`)
+
     if (
-      maximumPossibleBidPrice(bid, auction).equals(
-        maximumPossibleBidPrice(bid, auction),
-      )
+      maxPossibleBidPrice &&
+      maxPossibleBidPrice.equals(maximumPossibleBidPrice(bid, auction) || 0)
     ) {
       ++nSameMaxPossibleBidPrice
     }
   })
 
   const maxStepPossible = maxPossibleBidPrice
-    .minus(auction.currentPrice)
+    ?.minus(auction.currentPrice)
     .divToInt(auction.incrementPrice)
     .toNumber()
 
-  const totalStepPossible = maxStepPossible - (maxStepPossible % 2)
+  const totalStepPossible = maxStepPossible
+    ? maxStepPossible - (maxStepPossible % 2)
+    : 0
+
   return {
     winner,
     maxPossibleBidPrice,
@@ -728,7 +742,11 @@ export const executeAutoBid = async (
         let wasFoundNewWinner = false
 
         for (const autoBid of autoBids) {
-          if (nSameMaxPossibleBidPrice > 1 && nStep === totalStepPossible - 1) {
+          if (
+            maxPossibleBidPrice &&
+            nSameMaxPossibleBidPrice > 1 &&
+            nStep === totalStepPossible - 1
+          ) {
             // Case: 2 bidders (person A, person B) who triggered the auto bid execution,
             // those auto bids have the same maximum price.
             // Person B bid after person A.
@@ -745,14 +763,13 @@ export const executeAutoBid = async (
             break
           }
 
-          const possibleMaximumBidPrice = maximumPossibleBidPrice(
-            autoBid,
-            req.auction,
-          )
+          const maxPossiblePriceOfCurrentBid =
+            maximumPossibleBidPrice(autoBid, req.auction) ??
+            autoBid?.maximumPrice
 
           if (
             req.auction &&
-            possibleMaximumBidPrice.greaterThan(curWinningPrice) &&
+            maxPossiblePriceOfCurrentBid.greaterThan(curWinningPrice) &&
             autoBid.userId !== curWinningBidder
           ) {
             //create new bid
