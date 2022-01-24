@@ -13,6 +13,7 @@ export type LayoutState = {
   notifyMenuId: string
   openDrawer: boolean
   listLayout: 'row' | 'card'
+  shouldLoadingSearchResult: boolean
 }
 
 export type LayoutActionType =
@@ -26,8 +27,9 @@ export type LayoutActionType =
   | { type: 'CLOSE_MOBILE_MENU' }
   | { type: 'CLOSE_NOTIFY_MENU' }
   | { type: 'TOGGLE_DRAWER'; payload: boolean }
-  | { type: 'NOTIFY_BADGE_CONTENT'; payload: number }
   | { type: 'CHANGE_LIST_LAYOUT'; payload: 'card' | 'row' }
+  | { type: 'LOAD_SEARCH_RESULT' }
+  | { type: 'DONE_LOADING_SEARCH_RESULTS' }
 
 export const initialLayoutState: LayoutState = {
   anchorEl: null,
@@ -42,6 +44,7 @@ export const initialLayoutState: LayoutState = {
   notifyMenuId: '',
   openDrawer: false,
   listLayout: 'card',
+  shouldLoadingSearchResult: false,
 }
 
 const LayoutReducer = (
@@ -74,6 +77,13 @@ const LayoutReducer = (
 
     case 'CHANGE_LIST_LAYOUT':
       return { ...state, listLayout: action.payload }
+
+    case 'LOAD_SEARCH_RESULT':
+      return { ...state, shouldLoadingSearchResult: true }
+
+    case 'DONE_LOADING_SEARCH_RESULTS':
+      return { ...state, shouldLoadingSearchResult: false }
+
     default:
       return state
   }

@@ -22,6 +22,7 @@ import {
 } from '../../../services/product.service'
 import { renderCategorySelection } from '../../../components/common/form/CategoryChooser'
 import ProductListLayout from '../../../components/common/product-list/ProductListLayout'
+import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 
 const titleStyle: TypographyStyle = {
   overflow: 'hidden',
@@ -114,8 +115,10 @@ const SortByCategorySelect = ({
 
 const SearchPage = (): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams()
+  const { state: layoutState, dispatch: layoutDispatch } = useLayoutContext()
 
   const params = useMemo(() => {
+    layoutDispatch({ type: 'LOAD_SEARCH_RESULT' })
     return {
       key: searchParams.get('key') || '',
       page: +(searchParams.get('page') || 1),
@@ -129,7 +132,7 @@ const SearchPage = (): JSX.Element => {
           ? SORT_TYPE.asc
           : SORT_TYPE.desc,
     }
-  }, [searchParams])
+  }, [layoutDispatch, searchParams])
 
   const [hasNextPage, setHasNextPage] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
@@ -161,9 +164,12 @@ const SearchPage = (): JSX.Element => {
 
   useEffect(() => {
     ;(async () => {
-      await fetchData()
+      if (layoutState.shouldLoadingSearchResult) {
+        await fetchData()
+        layoutDispatch({ type: 'DONE_LOADING_SEARCH_RESULTS' })
+      }
     })()
-  }, [fetchData])
+  }, [fetchData, layoutDispatch, layoutState.shouldLoadingSearchResult])
 
   const handlePriceSortChange = useCallback(
     (event: SelectChangeEvent) => {

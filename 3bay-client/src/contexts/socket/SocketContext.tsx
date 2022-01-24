@@ -38,27 +38,28 @@ export function SocketProvider({ children }: SocketProviderProps): JSX.Element {
   const { user } = useAuth()
 
   const socket = useMemo(() => {
-      try {
-        console.log('connect')
-        const socket = connect(config.API_HOST_NAME, {
-          extraHeaders: user?.token ? {
-            Authorization: `Bearer ${user.token}`,
-          } : {},
-          reconnection: false,
-          reconnectionAttempts: 5,
-        })
+    try {
+      console.log('connect')
+      const socket = connect(config.API_HOST_NAME, {
+        extraHeaders: user?.token
+          ? {
+              Authorization: `Bearer ${user.token}`,
+            }
+          : {},
+        reconnection: false,
+        reconnectionAttempts: 5,
+      })
 
-        socket.io.on('reconnect_error', () => {
-          socket.disconnect()
-        })
+      socket.io.on('reconnect_error', () => {
+        socket.disconnect()
+      })
 
-        return socket
-      } catch (e) {
-        // console.log(e)
-        return null
-      }
+      return socket
+    } catch (e) {
+      // console.log(e)
+      return null
     }
-  , [user?.token])
+  }, [user?.token])
 
   useEffect(() => {
     if (socket) {

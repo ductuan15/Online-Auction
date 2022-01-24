@@ -165,12 +165,13 @@ export default function SearchAppBar(): JSX.Element {
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key == 'Enter') {
+        dispatch({type: 'LOAD_SEARCH_RESULT'})
         navigate(
           `/products/search/?key=${searchKey.trim()}&categoryId=&sortBy=closeTime&sortType=desc&page=1`,
         )
       }
     },
-    [navigate, searchKey],
+    [dispatch, navigate, searchKey],
   )
 
   const onSearchKeyChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
