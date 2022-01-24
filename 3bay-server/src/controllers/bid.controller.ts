@@ -144,7 +144,7 @@ export const isValidBidAmount = async (
 
 async function addABid(
   auction: AuctionRes | undefined | null,
-  user: Prisma.User | undefined | null,
+  user: Partial<{ uuid: string }> | undefined | null,
   status: Prisma.BidStatus,
   bidPrice: Decimal | number | string,
 ) {
@@ -188,12 +188,33 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
   console.log(c.yellow('bidController.add'))
   try {
     const status = req.userStatusInAuction || Prisma.BidStatus.PENDING
-    const [bid] = await addABid(
+    const autoBids = await getAutoBids(req.auction)
+    const winnerOfAutoBid = _.maxBy(autoBids, (bid) => {
+      return maximumPossibleBidPrice(bid, req.auction)
+    })
+
+    const maxPossibleBidPrice = maximumPossibleBidPrice(
+      winnerOfAutoBid!,
       req.auction,
-      req.user,
-      status,
-      req.body.bidPrice,
     )
+    // let bid: Prisma.Prisma.PromiseReturnType<
+    //   typeof addABid
+    //   >[0]
+    let user = { uuid: req.user?.uuid }
+
+    // When there is an auto-bid that its max price equals to the bid price of
+    // the pending bid.
+    // Then new bid should belongs to the owner of auto-bid, since they chose
+    // that price first.
+    if (
+      maxPossibleBidPrice.equals(new Prisma.Prisma.Decimal(req.body.bidPrice))
+    ) {
+      user = {
+        uuid: winnerOfAutoBid?.userId,
+      }
+    }
+    const [bid] = await addABid(req.auction, user, status, req.body.bidPrice)
+
     if (status === Prisma.BidStatus.ACCEPTED) {
       req.bid = bid
       next()
@@ -631,14 +652,18 @@ function whoShouldWin(autoBids: Prisma.autoBid[], auction: Prisma.Auction) {
     return maximumPossibleBidPrice(bid, auction)
   })
 
-  console.log(c.magenta(`[Auction] Winner ${winner!.userId}`))
+  // console.log(c.magenta(`[Auction] Winner ${winner!.userId}`))
 
   const maxPossibleBidPrice = maximumPossibleBidPrice(winner!, auction)
 
   let nSameMaxPossibleBidPrice = 0
   autoBids.forEach((bid) => {
-    console.log(`maximumPossibleBidPrice(bid, auction) = ${maximumPossibleBidPrice(bid, auction).toNumber()}`)
-    if (maximumPossibleBidPrice(bid, auction).equals(maximumPossibleBidPrice(bid, auction))) {
+    // console.log(`maximumPossibleBidPrice(bid, auction) = ${maximumPossibleBidPrice(bid, auction).toNumber()}`)
+    if (
+      maximumPossibleBidPrice(bid, auction).equals(
+        maximumPossibleBidPrice(bid, auction),
+      )
+    ) {
       ++nSameMaxPossibleBidPrice
     }
   })
@@ -703,7 +728,6 @@ export const executeAutoBid = async (
         let wasFoundNewWinner = false
 
         for (const autoBid of autoBids) {
-
           if (nSameMaxPossibleBidPrice > 1 && nStep === totalStepPossible - 1) {
             // Case: 2 bidders (person A, person B) who triggered the auto bid execution,
             // those auto bids have the same maximum price.
