@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect, useMemo } from 'react'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import { Grid, InputAdornment, TextField, Typography } from '@mui/material'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import {SubmitHandler, useForm, useWatch} from 'react-hook-form'
 import { ProductBidFormInput } from '../../../models/bids'
 import GenericTextField from '../form/GenericTextField'
 import AuctionService from '../../../services/auction.service'
@@ -26,7 +26,6 @@ function BidForm({
 }: BidFormProps): JSX.Element | null {
   const {
     control,
-    watch,
     setValue,
     handleSubmit,
     formState: { errors },
@@ -41,7 +40,7 @@ function BidForm({
     state: { currentProduct: product, latestAuction },
   } = useProductContext()
 
-  const step = watch('step')
+  const step = useWatch({control, name: 'step'})
 
   const price = useMemo(() => {
     if (isNaN(+step) || !latestAuction?.incrementPrice) {
@@ -151,11 +150,13 @@ function BidForm({
             defaultValue={1}
             rules={{
               required: 'This field is required',
-              min: {
-                value: 1,
-                message: 'Minimum increment step is 1',
-              },
               validate: {
+                minStep: (value) => {
+                  if (latestAuction && latestAuction?.currentPrice === latestAuction?.openPrice) {
+                    return +value >= 0 ? true : 'Minimum increment step is 0 (for the first bid)'
+                  }
+                  return +value >= 1 ? true : 'Minimum increment step is 1'
+                },
                 intOnly: (value) => {
                   return !!`${value}`.replace(/[^0-9.]/g, '')
                 },

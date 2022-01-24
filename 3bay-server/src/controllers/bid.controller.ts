@@ -26,7 +26,9 @@ const getMaximumBidPrice = (auction: Prisma.Auction) => {
 }
 
 const getMinimumBidPrice = (auction: Prisma.Auction) => {
-  let minimumPrice = auction.currentPrice.add(auction.incrementPrice)
+  let minimumPrice = !auction.winningBidId
+    ? auction.openPrice
+    : auction.currentPrice.add(auction.incrementPrice)
   if (minimumPrice.greaterThan(getMaximumBidPrice(auction))) {
     minimumPrice = getMaximumBidPrice(auction)
   }
