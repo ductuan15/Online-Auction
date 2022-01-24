@@ -697,15 +697,12 @@ function whoShouldWin(autoBids: Prisma.autoBid[], auction: Prisma.Auction) {
 }
 
 function newSingleAutoBid(
-  autoBid: any,
-  curWinningPrice: Prisma.Prisma.Decimal,
-  auction: Prisma.Auction,
+  autoBid: Prisma.autoBid,
+  price: Prisma.Prisma.Decimal,
 ) {
   return {
     auctionId: autoBid.auctionId,
-    bidPrice: curWinningPrice
-      .add(auction.incrementPrice)
-      .clamp(getMinimumBidPrice(auction), getMaximumBidPrice(auction)),
+    bidPrice: price,
     bidderId: autoBid.userId,
     bidTime: new Date(),
   }
@@ -730,7 +727,7 @@ export const executeAutoBid = async (
       let curWinningPrice = req.bid.bidPrice
 
       const {
-        // winner,
+        winner,
         maxPossibleBidPrice,
         nSameMaxPossibleBidPrice,
         totalStepPossible,
@@ -745,7 +742,7 @@ export const executeAutoBid = async (
           if (
             maxPossibleBidPrice &&
             nSameMaxPossibleBidPrice > 1 &&
-            nStep === totalStepPossible - 1
+            (nStep === totalStepPossible - 1 || totalStepPossible === 0)
           ) {
             // Case: 2 bidders (person A, person B) who triggered the auto bid execution,
             // those auto bids have the same maximum price.
@@ -756,8 +753,19 @@ export const executeAutoBid = async (
             // But the winner should be person A.
             // So we should stop the iteration
             // & set the bid price of the latest bid the maximum price
-            // (newBids[totalStepPossible - 2] is person A btw).
-            newBids[totalStepPossible - 2].bidPrice = maxPossibleBidPrice
+            if (totalStepPossible === 0 && winner) {
+              newBids.push(newSingleAutoBid(winner, maxPossibleBidPrice))
+              if (
+                req.bid?.bidderId !== winner.userId &&
+                req.bid?.bidPrice.equals(maxPossibleBidPrice)
+              ) {
+                await prisma.bid.delete({ where: { id: req.bid.id } })
+                req.bid = undefined
+              }
+            } else {
+              // (newBids[totalStepPossible - 2] is person A btw).
+              newBids[totalStepPossible - 2].bidPrice = maxPossibleBidPrice
+            }
             wasFoundNewWinner = true
             forceBreak = true
             break
@@ -775,8 +783,12 @@ export const executeAutoBid = async (
             //create new bid
             const newBid = newSingleAutoBid(
               autoBid,
-              curWinningPrice,
-              req.auction,
+              curWinningPrice
+                .add(req.auction.incrementPrice)
+                .clamp(
+                  getMinimumBidPrice(req.auction),
+                  getMaximumBidPrice(req.auction),
+                ),
             )
             newBids.push(newBid)
 
@@ -827,6 +839,8 @@ export async function getWinningBidFromAuction(
             ],
           },
         },
+        isDisabled: false,
+        verified: true,
       },
       auctionId: auction?.id || NaN,
     },
