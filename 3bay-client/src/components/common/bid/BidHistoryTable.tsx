@@ -234,7 +234,13 @@ export default function BidHistoryTable() {
             rows={rows}
             autoHeight
             sortModel={sortModel}
+            rowsPerPageOptions={[10, 25, 50, 100]}
             onSortModelChange={onSortModelChange}
+            initialState={{
+              pagination: {
+                pageSize: 25,
+              },
+            }}
           />
         </Grid>
       </Grid>

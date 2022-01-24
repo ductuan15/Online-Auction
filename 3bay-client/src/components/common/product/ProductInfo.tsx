@@ -270,18 +270,20 @@ const ProductInfo = (): JSX.Element | null => {
         )}
       </Grid>
 
-      {bidStatus?.maximumAutoBidPrice && (
-        <Grid item xs={12} mt={1}>
-          <Typography
-            variant='subtitle1'
-            color='text.primary'
-            // fontStyle='italic'
-          >
-            ⌛ Executing automatic bidding with maximum price of&nbsp;
-            <b>{formatNumberToVND(bidStatus?.maximumAutoBidPrice)}</b>
-          </Typography>
-        </Grid>
-      )}
+      {bidStatus?.maximumAutoBidPrice &&
+        latestAuction?.closeTime &&
+        moment(latestAuction?.closeTime)?.isAfter() && (
+          <Grid item xs={12} mt={1}>
+            <Typography
+              variant='subtitle1'
+              color='text.primary'
+              // fontStyle='italic'
+            >
+              ⌛ Executing automatic bidding with maximum price of&nbsp;
+              <b>{formatNumberToVND(bidStatus?.maximumAutoBidPrice)}</b>
+            </Typography>
+          </Grid>
+        )}
 
       {product && (
         <Grid

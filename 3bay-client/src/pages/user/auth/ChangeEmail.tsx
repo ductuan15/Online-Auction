@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import Box from '@mui/material/Box'
 import AppName from '../../../components/common/appname/AppName'
 import { Alert, Avatar } from '@mui/material'
@@ -16,6 +16,7 @@ import { useUserContext } from '../../../contexts/user/UserContext'
 import GenericTextField from '../../../components/common/form/GenericTextField'
 import { setErrorTextMsg } from '../../../utils/error'
 import useTitle from '../../../hooks/use-title'
+import UserService from '../../../services/user.service'
 
 export type ChangeEmailForm = {
   email: string
@@ -37,56 +38,69 @@ const ChangeEmail = (): JSX.Element => {
   const navigate = useNavigate()
   const location = useLocation()
   const isMounted = useIsMounted()
-  const { dispatch } = useUserContext()
+  const { dispatch, state } = useUserContext()
 
   const from = location.state?.from?.pathname || '/'
 
-  async function startVerifyingEmail(data: ChangeEmailForm) {
-    try {
-      await AuthService.startChangingEmail(data.email)
+  const handleError = useCallback((error: unknown) => {
+    setErrorTextMsg(error, setErrorText)
+  }, [])
+
+  const startVerifyingEmail = useCallback(
+    async (data: ChangeEmailForm) => {
+      try {
+        await AuthService.startChangingEmail(data.email)
+        if (isMounted()) {
+          setEmailOK(true)
+          setErrorText(null)
+        }
+      } catch (e) {
+        handleError(e)
+      }
+    },
+    [handleError, isMounted],
+  )
+
+  const verifyNewEmail = useCallback(
+    async (data: ChangeEmailForm) => {
       if (isMounted()) {
-        setEmailOK(true)
+        setVerifying(true)
         setErrorText(null)
       }
-    } catch (e) {
-      handleError(e)
-    }
-  }
-
-  async function verifyNewEmail(data: ChangeEmailForm) {
-    if (isMounted()) {
-      setVerifying(true)
-      setErrorText(null)
-    }
-    const responseData = await AuthService.verifyNewEmail(data)
-    dispatch({
-      type: 'GET_ACCOUNT_INFO',
-      payload: responseData,
-    })
-
-    navigate(from, { replace: true })
-  }
-
-  function handleError(error: unknown) {
-    setErrorTextMsg(error, setErrorText)
-  }
-
-  const onSubmit: SubmitHandler<ChangeEmailForm> = async (data) => {
-    try {
-      if (!emailOK) {
-        await startVerifyingEmail(data)
-      } else {
-        await verifyNewEmail(data)
+      await AuthService.verifyNewEmail(data)
+      if (state.userDetails?.uuid) {
+        const user = await UserService.getUserInfo({
+          user: state.userDetails?.uuid,
+        })
+        dispatch({
+          type: 'GET_ACCOUNT_INFO',
+          payload: user,
+        })
       }
-    } catch (e) {
-      handleError(e)
-      if (isMounted()) {
-        setVerifying(false)
-      }
-    }
-  }
+      navigate(from, { replace: true })
+    },
+    [dispatch, from, isMounted, navigate, state.userDetails?.uuid],
+  )
 
-  const handleResendOtp = async () => {
+  const onSubmit: SubmitHandler<ChangeEmailForm> = useCallback(
+    async (data) => {
+      try {
+        if (!emailOK) {
+          await startVerifyingEmail(data)
+        } else {
+          await verifyNewEmail(data)
+        }
+      } catch (e) {
+        handleError(e)
+        if (isMounted()) {
+          setVerifying(false)
+        }
+      }
+    },
+    [emailOK, handleError, isMounted, startVerifyingEmail, verifyNewEmail],
+  )
+
+  const handleResendOtp = useCallback(async () => {
     try {
       setErrorText(null)
       setResendButtonDisabled(true)
@@ -100,7 +114,7 @@ const ChangeEmail = (): JSX.Element => {
     } catch (e) {
       handleError(e)
     }
-  }
+  }, [handleError, isMounted])
 
   return (
     <Box

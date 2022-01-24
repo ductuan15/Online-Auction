@@ -366,7 +366,7 @@ export async function verifyNewEmail(
           email: req.body.email,
         },
       })
-      next()
+      return next()
     }
     return next(new AuthError({ code: AuthErrorCode.WrongOTP }))
   } catch (e) {

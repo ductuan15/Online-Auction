@@ -1,4 +1,3 @@
-import { AuthData } from './auth.service'
 import { UpgradeToSellerRequest, UserDetails } from '../models/user'
 import axiosApiInstance from './api'
 import { Dispatch } from 'react'
@@ -8,7 +7,7 @@ import { PasswordFormType } from '../pages/user/profile/Password'
 import { AxiosResponse } from 'axios'
 import Product from "../models/product";
 
-async function getUserInfo(authData?: AuthData): Promise<UserDetails> {
+async function getUserInfo(authData?: Partial<{user: string}>): Promise<UserDetails> {
   const response = await axiosApiInstance.get(
     `/api/user/account/${authData?.user || ''}`,
   )
