@@ -1,47 +1,67 @@
-## Thiết lập project lần đầu
+## 🛠️ Set up the project
 
-**1. Cài đặt npm dependency**
+**1. Install npm dependency**
 ```bash
 npm ci
 ```
 
-**2. Config prisma**
+**2. Load database schema, sample data**
+* Make sure MariaDB (or MySQL) is installed in the local machine.
+* It is recommend to use MariaDB since the database script is generated from MariaDB, and it might not work when using MySQL.
 
-2.1. Mở file `.env`
-Thay đổi giá trị `DATABASE_URL` tương ứng với thông tin database tại máy cục bộ.
+* Load the database structure from `prisma/structure.sql`.
+* Load the sample data from `prisma/sample_data/sample_data.sql`.
+
+**3. Configure `.env`, `prisma`**
+
+3.1. Configure `.env`
+Create an `.env` file from `.env.example`.
+
+3.1.1. Set value for `DATABASE_URL`:
+
 ```
- DATABASE_URL="mysql://username:password@localhost:port/3bay"
+ DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
 ```
 
-Ví dụ config kết nối đến database:
-* có username là `admin`.
-* mật khẩu `admin`.
-* port `3306`.
-* schema `3bay`.
+* USER: The name of your database user
+* PASSWORD: The password for your database user
+* PORT: The port where your database server is running (typically 3306 for MySQL)
+* DATABASE: The name of the database
 
-Giá trị của `DATABASE_URL` sẽ là:
-```
- DATABASE_URL="mysql://admin:admin@localhost:3306/3bay"
-```
-Nhớ giữ file này ở local, không commit lên git.
 
-2.2. Đọc file schema và generate prisma client library
+3.1.2. Set up mail service
+
+```
+# Enable the mail service, "false" to disable it
+MAIL_ENABLE_SERVICE="true" 	
+
+# Your email address, it is recommend to use gmail address 
+MAIL_USER=""			
+
+# Mail password
+MAIL_PWD=""
+```
+
+3.1.3. Set up recaptcha
+
+```
+# Enable recaptcha verification
+RECAPTCHA_ENABLE="true"
+
+# Your recaptcha secret key
+RECAPTCHA_SECRET_KEY=""
+
+```
+
+✏️ You can skip mail service or recaptcha setup if you don't want to use them.
+
+3.2. Configure prisma
+
+✏️ The project has contained the prisma model already, so you just need to load the model from `prisma/schema.prisma`.
+
 ```bash
 npx prisma generate 
 ```
 
-[comment]: <> (2.3. Đẩy model từ prisma vào database:)
-
-[comment]: <> (```bash)
-
-[comment]: <> (npx prisma db push )
-
-[comment]: <> (```)
-
-[comment]: <> (Sau đó, database sẽ cập nhật lại cấu trúc schema cho khớp với model trong prisma. )
-
-Thêm data mẫu: xem tại folder `prisma/sample_data`
-
-Xem thêm tại: 
-https://www.prisma.io/docs/guides/database/prototyping-schema-db-push
-https://www.prisma.io/docs/concepts/components/prisma-migrate
+See also: 
+* https://www.prisma.io/docs/guides
