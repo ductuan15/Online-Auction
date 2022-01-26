@@ -1,6 +1,6 @@
 import * as React from 'react'
 import MainBanner from '../../components/common/home/MainBanner'
-import { Grid, Typography } from '@mui/material'
+import { Grid } from '@mui/material'
 import ProductCarousel from '../../components/common/carousel/ProductCarousel'
 import AdminMenu from '../../components/admin/home/AdminMenu'
 import { getTop } from '../../services/product.service'
@@ -31,7 +31,7 @@ const Home = (): JSX.Element => {
       <Grid container display='flex' alignItems='center' flexDirection='column'>
 
         <ProductCarousel
-          name={'⌛ Close time'}
+          name={'⌛ Closing soon'}
           fetchFunction={getTop.getTopCloseTime}
           showLoading={true}
         />

@@ -63,15 +63,15 @@ const CustomDots = ({
         // marginLeft: index === 0 ? 0 : '4px',
         // marginRight: index === totalItems - 1 ? 0 : '4px',
         backgroundColor: active
-          ? `${theme.palette.primary.main}`
+          ? `${theme.palette.text.primary}`
           : `${GREY[500_48]}`,
         border: 'none',
         outline: 'none',
-        // borderRadius: '8px',
-        height: '6px',
+        // borderRadius: index === 0 || index === totalItems - 1 ? '8px' : undefined,
+        height: '4px',
         '&:hover': {
           backgroundColor: active
-            ? `${theme.palette.primary.main}`
+            ? `${theme.palette.text.primary}`
             : `${GREY[500_80]}`,
           // transform: 'scale(1, 2)',
         },
@@ -103,18 +103,23 @@ const ProductCarousel = ({
   })
 
   return (
-    <Container sx={{ pb: 2, pl: 0, pr: 0 }} disableGutters>
-      <Divider />
-      <Typography
-        pt={2}
-        gutterBottom
-        variant='h4'
-        component='h5'
-        color='text.primary'
-        align='center'
-      >
-        {name}
-      </Typography>
+    <Container sx={{ py: 2 }} disableGutters>
+      <Divider>
+        <Typography
+          pt={2}
+          gutterBottom
+          variant='h4'
+          component='h3'
+          color='text.primary'
+          align='center'
+          fontWeight={500}
+          sx={{
+            textTransform: 'uppercase',
+          }}
+        >
+          {name}
+        </Typography>
+      </Divider>
 
       <Carousel
         renderButtonGroupOutside
@@ -129,6 +134,7 @@ const ProductCarousel = ({
         containerClass='container-with-dots'
         itemClass='carousel-item-padding-x-10-px'
         removeArrowOnDeviceType={['xs', 'sm', 'md']}
+        dotListClass='custom-dot-container'
         customDot={<CustomDots theme={theme} nItems={products.length} />}
       >
         {isLoading && showLoading

@@ -194,7 +194,7 @@ export function BaseCategoryDialog(
                 <CardMedia
                   component='img'
                   sx={{ width: 128 }}
-                  image={category.thumbnails.sm}
+                  image={`${category.thumbnails.sm}?t=${new Date().getTime()}`}
                   alt='Category thumbnail'
                 />
               </Grid>

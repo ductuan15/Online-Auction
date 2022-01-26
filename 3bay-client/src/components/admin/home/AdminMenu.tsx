@@ -18,7 +18,6 @@ const AdminMenu = (): JSX.Element | null => {
     return (
       <Grid
         container
-        marginBottom={4}
         spacing={4}
         justifyContent='center'
         alignItems='center'
