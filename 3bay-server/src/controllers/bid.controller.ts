@@ -962,6 +962,10 @@ export const notifyWhenPriceChanged = async (
   }
   try {
     const product = await getProductByAuction(req.auction)
+    if (!product) {
+      return next()
+    }
+
     const involvedBidders = await getInvolvedBidders(req.auction?.id)
     const seller = await prisma.user.findUnique({
       select: {
@@ -1051,6 +1055,9 @@ export const notifyWhenPriceChangedExcludingSeller = async (
   console.log(c.yellow('bidController.notifyWhenPriceChangedExcludingSeller'))
   try {
     const product = await getProductByAuction(req.auction)
+    if (!product) {
+      return next()
+    }
 
     const involvedBidders = await getInvolvedBidders(req.auction?.id)
 
@@ -1113,6 +1120,9 @@ export const notifyWhenBidRejected = async (
     }
 
     const product = await getProductByAuction(req.auction)
+    if (!product) {
+      return next()
+    }
 
     const notifyData: NotifyData = {
       type: 'AUCTION_BID_REJECTED',

@@ -38,6 +38,9 @@ export function notifyWhenBidRequestProceed(isAccepted: boolean) {
 
     try {
       const product = await getProductByAuction(req.auction)
+      if (!product) {
+        return next()
+      }
       const user = await prisma.user.findUnique({
         where: {
           uuid: req.params.userId,

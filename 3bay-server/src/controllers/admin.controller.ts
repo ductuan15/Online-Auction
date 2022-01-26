@@ -203,16 +203,13 @@ export async function removeProduct(
       where: { id },
       data: {
         deletedAt: new Date(),
-        auctions: {
-          update: {
-            where: {
-              id: id,
-            },
-            data: {
-              closeTime: moment().add(-1, 's').toDate(),
-            },
-          },
-        },
+      },
+    })
+
+    await prisma.auction.update({
+      where: { id: product.latestAuctionId ?? undefined },
+      data: {
+        closeTime: moment().add(-1, 's').toDate(),
       },
     })
 

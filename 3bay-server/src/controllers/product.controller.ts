@@ -64,17 +64,18 @@ export const includeProductDetailInfo = {
 
 export async function getProductByAuction(
   auction: Partial<Prisma.Auction> | null | undefined,
-): Promise<ProductRes> {
+): Promise<ProductRes | null> {
   const product = await prisma.product.findFirst({
     where: {
       latestAuctionId: auction?.id,
+      deletedAt: null,
     },
-    rejectOnNotFound: true,
   })
-  return {
+
+  return product ? {
     ...product,
     thumbnails: getAllThumbnailLink(product.id),
-  }
+  } : null
 }
 
 export async function getProductDetails(id: number, includeDescription = true) {

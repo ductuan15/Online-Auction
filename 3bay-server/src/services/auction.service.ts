@@ -76,12 +76,12 @@ class AuctionScheduler {
   }
 
   add(auctionId: number, date: Date): boolean {
-    if (moment(date).isBefore()) {
-      return false
-    }
-
     if (this.jobs.has(auctionId)) {
       return this.update(auctionId, date)
+    }
+
+    if (moment(date).isBefore()) {
+      return false
     }
 
     const job = scheduleJob(date, onAuctionClosedCallback(auctionId))
@@ -116,15 +116,22 @@ export function onAuctionClosedCallback(auctionId: number) {
       })
 
       const product = await getProductByAuction(auction)
+      if (product) {
+        await emitAuctionDetails(auction)
 
-      await emitAuctionDetails(auction)
-
-      if (auction.winningBid) {
-        console.log(c.blue(`[AuctionScheduler] onAuctionClosedAndHadWinner`))
-        await onAuctionClosedAndHadWinner(auction, product, seller)
+        if (auction.winningBid) {
+          console.log(c.blue(`[AuctionScheduler] onAuctionClosedAndHadWinner`))
+          await onAuctionClosedAndHadWinner(auction, product, seller)
+        } else {
+          console.log(c.blue(`[AuctionScheduler] onAuctionClosedNoWinner`))
+          await onAuctionClosedNoWinner(auction, product, seller)
+        }
       } else {
-        console.log(c.blue(`[AuctionScheduler] onAuctionClosedNoWinner`))
-        await onAuctionClosedNoWinner(auction, product, seller)
+        console.log(
+          c.blue(
+            `[AuctionScheduler] Not found product for auction id - ${auction.id}, it might be deleted`,
+          ),
+        )
       }
     } catch (e) {
       console.error(c.red(`[AuctionScheduler] Error occurred`))
