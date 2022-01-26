@@ -208,7 +208,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
         Auctions list
       </MenuItem>
 
-      <MenuItem component={RouterLink} to='/user/auction-list'>
+      <MenuItem component={RouterLink} to='/user/won-auction-list'>
         <ListItemIcon>
           <LocalAtmOutlinedIcon fontSize='small' />
         </ListItemIcon>
