@@ -1,0 +1,16 @@
+
+.custom-dot {
+  border: none;
+  /*margin: 10px;*/
+  outline: none;
+}
+
+.custom-dot--active {
+  /*transform: scale(1.3);*/
+  outline: auto;
+}
+
+.custom-dot-container {
+  margin-left: 5px;
+  margin-right: 5px;
+}

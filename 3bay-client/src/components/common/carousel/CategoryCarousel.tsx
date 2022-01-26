@@ -1,137 +1,69 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  Grid,
-  Typography,
-} from '@mui/material'
+import { Container } from '@mui/material'
+import Carousel, { ResponsiveType } from 'react-multi-carousel'
+import { useMemo } from 'react'
+import { useCategoryContext } from '../../../contexts/layout/CategoryContext'
+import MainCategoryBannerCard from '../card/MainCategoryBannerCard'
+import ChildCategoryBannerCard from '../card/ChildCategoryBannerCard'
 
-type Item = {
-  Name: string,
-  Caption: string,
-  contentPosition: "left" | "right" | "middle",
-  Items: {Name: string, Image: string}[]
+const responsive: ResponsiveType = {
+  xl: {
+    breakpoint: { min: 1536, max: 4000 },
+    items: 3,
+  },
+  lg: {
+    breakpoint: { min: 1201, max: 1535 },
+    items: 3,
+  },
+  md: {
+    breakpoint: { min: 901, max: 1200 },
+    items: 3,
+  },
+  sm: {
+    breakpoint: { min: 600, max: 899 },
+    items: 2,
+  },
+  xs: {
+    breakpoint: { min: 0, max: 599 },
+    items: 1,
+  },
 }
 
-interface BannerProps
-{
-  item: Item,
-  contentPosition: "left" | "right" | "middle",
-  length?: number,
+const CategoryCarousel = () => {
+  const {
+    state: { allCategories },
+  } = useCategoryContext()
 
-}
-
-
-const Banner = (props: BannerProps) => {
-
-  const contentPosition = props.contentPosition ? props.contentPosition : "left"
-  const totalItems: number = props.length ? props.length : 3;
-  const mediaLength = totalItems - 1;
-
-  const items = [];
-  const content = (
-    <Grid item xs={4} key="content">
-      <CardContent className="Content">
-        <Typography className="Title">
-          {props.item.Name}
-        </Typography>
-
-        <Typography className="Caption">
-          {props.item.Caption}
-        </Typography>
-
-        <Button variant="outlined" className="ViewButton">
-          View Now
-        </Button>
-      </CardContent>
-    </Grid>
-  )
-
-
-  for (let i = 0; i < mediaLength; i++) {
-    const item = props.item.Items[i];
-
-    const media = (
-      <Grid item xs={4} key={item.Name}>
-        <CardMedia
-          className="Media"
-          image={item.Image}
-          title={item.Name}
-        >
-          <Typography className="MediaCaption">
-            {item.Name}
-          </Typography>
-        </CardMedia>
-
-      </Grid>
-    )
-
-    items.push(media);
-  }
-
-  if (contentPosition === "left") {
-    items.unshift(content);
-  } else if (contentPosition === "right") {
-    items.push(content);
-  } else if (contentPosition === "middle") {
-    items.splice(items.length / 2, 0, content);
-  }
+  const categoryItems = useMemo(() => {
+    const categories = []
+    for (const category of allCategories) {
+      categories.push(category)
+      if (category.otherCategories?.length) {
+        categories.push(...category.otherCategories)
+      }
+    }
+    return categories
+  }, [allCategories])
 
   return (
-    <Card raised className="Banner">
-      <Grid container spacing={0} className="BannerGrid">
-        {items}
-      </Grid>
-    </Card>
+    <Container sx={{ py: 2 }} disableGutters>
+      <Carousel
+        infinite
+        responsive={responsive}
+        autoPlay
+        autoPlaySpeed={5000}
+        customTransition='transform 300ms ease-in-out'
+        transitionDuration={300}
+      >
+        {categoryItems.map((category) => {
+          return category.otherCategories?.length ? (
+            <MainCategoryBannerCard category={category} key={category.id} />
+          ) : (
+            <ChildCategoryBannerCard category={category} key={category.id} />
+          )
+        })}
+      </Carousel>
+    </Container>
   )
 }
 
-const items: Item[] = [
-  {
-    Name: "Electronics",
-    Caption: "Electrify your friends!",
-    contentPosition: "left",
-    Items: [
-      {
-        Name: "Macbook Pro",
-        Image: "https://source.unsplash.com/featured/?macbook"
-      },
-      {
-        Name: "iPhone",
-        Image: "https://source.unsplash.com/featured/?iphone"
-      }
-    ]
-  },
-  {
-    Name: "Home Appliances",
-    Caption: "Say no to manual home labour!",
-    contentPosition: "middle",
-    Items: [
-      {
-        Name: "Washing Machine WX9102",
-        Image: "https://source.unsplash.com/featured/?washingmachine"
-      },
-      {
-        Name: "Learus Vacuum Cleaner",
-        Image: "https://source.unsplash.com/featured/?vacuum,cleaner"
-      }
-    ]
-  },
-  {
-    Name: "Decoratives",
-    Caption: "Give style and color to your living room!",
-    contentPosition: "right",
-    Items: [
-      {
-        Name: "Living Room Lamp",
-        Image: "https://source.unsplash.com/featured/?lamp"
-      },
-      {
-        Name: "Floral Vase",
-        Image: "https://source.unsplash.com/featured/?vase"
-      }
-    ]
-  }
-]
-
+export default CategoryCarousel

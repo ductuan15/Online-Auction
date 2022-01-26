@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import Carousel, { DotProps } from 'react-multi-carousel'
+import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import './ProductCarousel.css'
 import { Container, Divider, useMediaQuery } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Product from '../../../models/product'
 import { useEffectOnce } from '../../../hooks'
-import { styled, Theme, useTheme } from '@mui/material/styles'
-import { GREY } from '../../../theme/palette'
+import { useTheme } from '@mui/material/styles'
 import ProductItem from '../product-list/ProductItem'
 import ProductItemSkeleton from '../product-list/ProductItemSkeleton'
+import Dots from './Dots'
 
 type CarouselProps = {
   name: string
@@ -38,46 +38,6 @@ const responsive = {
     breakpoint: { min: 0, max: 599 },
     items: 1,
   },
-}
-
-const StyledButton = styled('button')({})
-
-const CustomDots = ({
-  // index,
-  active,
-  onClick,
-  // carouselState,
-  nItems,
-  theme,
-}: DotProps & { theme: Theme; nItems: number }) => {
-  const totalItems = nItems > 0 ? nItems : 1
-  const widthPercent = 100 / totalItems
-  return (
-    <StyledButton
-      onClick={(e) => {
-        onClick?.()
-        e.preventDefault()
-      }}
-      sx={{
-        width: `${widthPercent}%`,
-        // marginLeft: index === 0 ? 0 : '4px',
-        // marginRight: index === totalItems - 1 ? 0 : '4px',
-        backgroundColor: active
-          ? `${theme.palette.text.primary}`
-          : `${GREY[500_48]}`,
-        border: 'none',
-        outline: 'none',
-        // borderRadius: index === 0 || index === totalItems - 1 ? '8px' : undefined,
-        height: '4px',
-        '&:hover': {
-          backgroundColor: active
-            ? `${theme.palette.text.primary}`
-            : `${GREY[500_80]}`,
-          // transform: 'scale(1, 2)',
-        },
-      }}
-    />
-  )
 }
 
 const ProductCarousel = ({
@@ -135,7 +95,7 @@ const ProductCarousel = ({
         itemClass='carousel-item-padding-x-10-px'
         removeArrowOnDeviceType={['xs', 'sm', 'md']}
         dotListClass='custom-dot-container'
-        customDot={<CustomDots theme={theme} nItems={products.length} />}
+        customDot={<Dots theme={theme} nItems={products.length} />}
       >
         {isLoading && showLoading
           ? [1, 2, 3, 4, 5].map((key) => {

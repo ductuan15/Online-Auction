@@ -7,19 +7,20 @@ import { getTop } from '../../services/product.service'
 import { useTitle } from '../../hooks'
 import bannerDark from '../../assets/banner-dark.jpg'
 import bannerLight from '../../assets/banner-light.jpg'
-import {useTheme} from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
+import CategoryCarousel from '../../components/common/carousel/CategoryCarousel'
 
 const Home = (): JSX.Element => {
   const theme = useTheme()
   useTitle('3bay')
 
   const banner = {
-    title: "Smartphones & Accessories",
-    description:  'あなたが翻訳すれば、あなたは同性愛者です！\n👁️👄👁️',
+    title: 'Smartphones & Accessories',
+    description: 'あなたが翻訳すれば、あなたは同性愛者です！\n👁️👄👁️',
     image: theme.palette.mode === 'light' ? bannerLight : bannerDark,
     imageText: '',
     linkText: 'Shop now →',
-    url: '/products/search/'
+    url: '/products/search/',
   }
 
   return (
@@ -29,6 +30,7 @@ const Home = (): JSX.Element => {
       <AdminMenu />
 
       <Grid container display='flex' alignItems='center' flexDirection='column'>
+        <CategoryCarousel />
 
         <ProductCarousel
           name={'⌛ Closing soon'}
