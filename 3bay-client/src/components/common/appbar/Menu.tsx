@@ -5,6 +5,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined'
 import Logout from '@mui/icons-material/Logout'
 import * as React from 'react'
+import { useCallback } from 'react'
 import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined'
@@ -62,14 +63,20 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
   const navigate = useNavigate()
   const { isAuth, signOut } = useAuth()
 
-  function onSignOutButtonClicked() {
+  const onSignOutButtonClicked = useCallback(() => {
     signOut(() => {
-      dispatch({
-        type: 'CLOSE_PROFILE_MENU',
-      })
+      dispatch({ type: 'CLOSE_PROFILE_MENU' })
       navigate('/')
     })
-  }
+  }, [dispatch, navigate, signOut])
+
+  const onMenuClosed = useCallback(
+    () => dispatch({ type: 'CLOSE_MOBILE_MENU' }),
+    [dispatch],
+  )
+
+  const onMenuClicked = useCallback(() =>
+    dispatch({type: 'CLOSE_PROFILE_MENU',}), [dispatch])
 
   return (
     <Menu
@@ -77,16 +84,8 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
       id={mobileMenuId}
       keepMounted
       open={Boolean(mobileMoreAnchorEl)}
-      onClose={() =>
-        dispatch({
-          type: 'CLOSE_MOBILE_MENU',
-        })
-      }
-      onClick={() =>
-        dispatch({
-          type: 'CLOSE_PROFILE_MENU',
-        })
-      }
+      onClose={onMenuClosed}
+      onClick={onMenuClicked}
       PaperProps={profileMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -124,7 +123,7 @@ export const MobileMenu = ({ mobileMenuId }: MobileMenuProps): JSX.Element => {
       </MenuItem>
 
       {isAuth && (
-        <MenuItem onClick={() => onSignOutButtonClicked()}>
+        <MenuItem onClick={onSignOutButtonClicked}>
           <ListItemIcon>
             <Logout fontSize='small' color='inherit' />
           </ListItemIcon>
@@ -151,25 +150,25 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
     state: { userDetails },
   } = useUserContext()
 
-  function onSignOutButtonClicked() {
+  const onSignOutButtonClicked = useCallback(() => {
     signOut(() => {
       dispatch({
         type: 'CLOSE_PROFILE_MENU',
       })
       navigate('/')
     })
-  }
+  }, [dispatch, navigate, signOut])
+
+  const onMenuClosed = useCallback(() => {
+    dispatch({type: 'CLOSE_PROFILE_MENU',})
+  }, [dispatch])
 
   return (
     <Menu
       id={id}
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
-      onClose={() =>
-        dispatch({
-          type: 'CLOSE_PROFILE_MENU',
-        })
-      }
+      onClose={onMenuClosed}
       PaperProps={profileMenu}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -237,7 +236,7 @@ export const AppBarMenu = ({ id }: AppBarMenuProps): JSX.Element => {
         <Box mx={2} mt={1}>
           <BorderButton
             sx={{ width: 1 }}
-            onClick={() => onSignOutButtonClicked()}
+            onClick={onSignOutButtonClicked}
             padding={`4px 4px`}
             startIcon={<Logout fontSize='small' color='inherit' />}
           >

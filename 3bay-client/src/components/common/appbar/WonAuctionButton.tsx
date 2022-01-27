@@ -7,11 +7,6 @@ import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined'
 
 const WonAuctionButton = (): JSX.Element => {
   const navigate = useNavigate()
-  // const wonAuctionList = await UserService.getUserWonAuctionList()
-  // dispatch({
-  //   type: 'UPDATE_AUCTION_LIST',
-  //   payload: wonAuctionList,
-  // })
 
   return (
     <Box>

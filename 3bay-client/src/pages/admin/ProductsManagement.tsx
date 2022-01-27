@@ -6,7 +6,7 @@ import useTitle from '../../hooks/use-title'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import { setErrorTextMsg } from '../../utils/error'
 import { useDebounce, useIsMounted } from '../../hooks'
-import ProductTable2 from '../../components/admin/products/ProductTable2'
+import ProductTable2 from '../../components/admin/products/ProductTable'
 import BorderButton from '../../components/common/button/BorderButton'
 import RefreshIcon from '@mui/icons-material/Refresh'
 

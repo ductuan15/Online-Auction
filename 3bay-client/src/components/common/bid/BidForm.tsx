@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import { Grid, InputAdornment, TextField, Typography } from '@mui/material'
-import {SubmitHandler, useForm, useWatch} from 'react-hook-form'
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { ProductBidFormInput } from '../../../models/bids'
 import GenericTextField from '../form/GenericTextField'
 import AuctionService from '../../../services/auction.service'
@@ -40,7 +40,7 @@ function BidForm({
     state: { currentProduct: product, latestAuction },
   } = useProductContext()
 
-  const step = useWatch({control, name: 'step'})
+  const step = useWatch({ control, name: 'step' })
 
   const price = useMemo(() => {
     if (isNaN(+step) || !latestAuction?.incrementPrice) {
@@ -64,42 +64,45 @@ function BidForm({
     }
   }, [product, setValue])
 
-  const onSubmit: SubmitHandler<ProductBidFormInput> = async (data) => {
-    if (!product) {
-      setErrorTextMsg('Unknown product', setErrorText)
-      return
-    } else if (!latestAuction) {
-      setErrorTextMsg('Auction is not opened', setErrorText)
-      return
-    }
-    // console.log(data)
-    if (
-      confirm(
-        `Are you sure you want to bid this product with ${formatNumberToVND(
-          data.bidPrice,
-        )}?`,
-      )
-    ) {
+  const onSubmit: SubmitHandler<ProductBidFormInput> = useCallback(
+    async (data) => {
+      if (!product) {
+        setErrorTextMsg('Unknown product', setErrorText)
+        return
+      } else if (!latestAuction) {
+        setErrorTextMsg('Auction is not opened', setErrorText)
+        return
+      }
       // console.log(data)
-      setLoading(true)
-      try {
-        const response = await AuctionService.newBid(data)
-        if (response) {
-          onClose()
-        } else {
-          setErrorTextMsg('Invalid auction id', setErrorText)
-        }
-      } catch (e) {
-        if (isMounted()) {
-          setErrorTextMsg(e, setErrorText)
-        }
-      } finally {
-        if (isMounted()) {
-          setLoading(false)
+      if (
+        confirm(
+          `Are you sure you want to bid this product with ${formatNumberToVND(
+            data.bidPrice,
+          )}?`,
+        )
+      ) {
+        // console.log(data)
+        setLoading(true)
+        try {
+          const response = await AuctionService.newBid(data)
+          if (response) {
+            onClose()
+          } else {
+            setErrorTextMsg('Invalid auction id', setErrorText)
+          }
+        } catch (e) {
+          if (isMounted()) {
+            setErrorTextMsg(e, setErrorText)
+          }
+        } finally {
+          if (isMounted()) {
+            setLoading(false)
+          }
         }
       }
-    }
-  }
+    },
+    [isMounted, latestAuction, onClose, product, setErrorText, setLoading],
+  )
 
   return latestAuction ? (
     <Grid
@@ -152,8 +155,13 @@ function BidForm({
               required: 'This field is required',
               validate: {
                 minStep: (value) => {
-                  if (latestAuction && latestAuction?.currentPrice === latestAuction?.openPrice) {
-                    return +value >= 0 ? true : 'Minimum increment step is 0 (for the first bid)'
+                  if (
+                    latestAuction &&
+                    latestAuction?.currentPrice === latestAuction?.openPrice
+                  ) {
+                    return +value >= 0
+                      ? true
+                      : 'Minimum increment step is 0 (for the first bid)'
                   }
                   return +value >= 1 ? true : 'Minimum increment step is 1'
                 },

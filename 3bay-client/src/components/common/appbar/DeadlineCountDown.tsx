@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
@@ -38,12 +38,15 @@ const DeadlineCountDown = ({ date, sx }: Props): JSX.Element => {
   useEffect(() => {
     showRemaining()
     timer.current = setInterval(showRemaining, 1000)
+    return () => {
+      timer.current && clearInterval(timer.current)
+    }
   }, [showRemaining])
 
   return (
     <Box sx={sx}>
       <ListItemIcon color='inherit'>
-        <AccessTimeOutlinedIcon/>
+        <AccessTimeOutlinedIcon />
       </ListItemIcon>
       <Typography>Countdown: {countDownText} </Typography>
     </Box>

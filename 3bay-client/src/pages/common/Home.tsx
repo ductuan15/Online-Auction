@@ -33,7 +33,7 @@ const Home = (): JSX.Element => {
         <CategoryCarousel />
 
         <ProductCarousel
-          name={'⌛ Closing soon'}
+          name={'⌛ Ending soon'}
           fetchFunction={getTop.getTopCloseTime}
           showLoading={true}
         />

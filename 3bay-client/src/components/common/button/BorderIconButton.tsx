@@ -1,6 +1,7 @@
 import { IconButton, IconButtonProps } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { GREY } from '../../../theme/palette'
+import { useMemo } from 'react'
 
 type BorderIconButtonProps = {
   isSelected?: boolean
@@ -12,23 +13,29 @@ const BorderIconButton = styled(
     <IconButton size='large' {...props} />
   ),
 )(({ theme, isSelected, color }) => {
-  const letterSpacing = +(theme.typography.button.letterSpacing || 0)
-  let borderColor: string
+  const letterSpacing = useMemo(
+    () => +(theme.typography.button.letterSpacing || 0),
+    [theme.typography.button.letterSpacing],
+  )
 
-  const colorMode = color ?? 'primary'
-  let selectedColor
-  if (colorMode !== 'default' && colorMode !== 'inherit') {
-    selectedColor = theme.palette[colorMode].main ?? theme.palette.primary.main
-  } else {
-    selectedColor = colorMode
-  }
+  const selectedColor = useMemo(() => {
+    const colorMode = color ?? 'primary'
+    if (colorMode !== 'default' && colorMode !== 'inherit') {
+      return theme.palette[colorMode].main ?? theme.palette.primary.main
+    } else {
+      return colorMode
+    }
+  }, [color, theme.palette])
 
-  if (isSelected) {
-    borderColor = selectedColor
-  } else {
-    borderColor =
-      theme.palette.mode === 'light' ? `${GREY[500_48]}` : `${GREY[500_24]}`
-  }
+  const borderColor = useMemo(() => {
+    if (isSelected) {
+      return selectedColor
+    } else {
+      return theme.palette.mode === 'light'
+        ? `${GREY[500_48]}`
+        : `${GREY[500_24]}`
+    }
+  }, [isSelected, selectedColor, theme.palette.mode])
 
   return {
     border: `1.75px solid ${borderColor}`,

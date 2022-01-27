@@ -174,11 +174,11 @@ export default function SearchAppBar(): JSX.Element {
     [dispatch, navigate, searchKey],
   )
 
-  const onSearchKeyChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onSearchKeyChanges = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchKey(e.currentTarget.value)
-  }
+  }, [])
 
-  const onSnackbarClosed = (
+  const onSnackbarClosed = useCallback((
     event?: React.SyntheticEvent | Event,
     reason?: string,
   ) => {
@@ -187,7 +187,7 @@ export default function SearchAppBar(): JSX.Element {
     }
 
     userDispatch({ type: 'CLOSE_RECENT_NOTIFICATION' })
-  }
+  }, [userDispatch])
 
   return (
     <Box sx={{ flexGrow: 1 }}>

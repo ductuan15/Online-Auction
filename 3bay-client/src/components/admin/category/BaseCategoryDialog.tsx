@@ -1,7 +1,7 @@
 import { styled, useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import * as React from 'react'
-import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react'
+import {ChangeEvent, SyntheticEvent, useCallback, useRef, useState} from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -50,7 +50,21 @@ export function BaseCategoryDialog(
   const [image, setImage] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  const onClose = () => {
+  const onImageChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target && event.target.files && event.target.files[0]) {
+      setImage(URL.createObjectURL(event.target.files[0]))
+    }
+  }, [])
+
+  const onError = useCallback((error: unknown) => {
+    //console.log(error)
+    if (progressRef.current && progressRef.current.style) {
+      progressRef.current.style.display = 'none'
+    }
+    setErrorTextMsg(error, setErrorMsg)
+  }, [])
+
+  const onClose = useCallback( () => {
     if (progressRef.current && progressRef.current.style) {
       progressRef.current.style.display = 'none'
     }
@@ -59,10 +73,9 @@ export function BaseCategoryDialog(
 
     setImage(null)
     setErrorMsg(null)
-  }
+  }, [dispatch])
 
-  // TODO: refactor me -.- // の
-  const onSubmit = async (e: SyntheticEvent) => {
+  const onSubmit = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault()
 
     if (progressRef.current && progressRef.current.style) {
@@ -95,9 +108,9 @@ export function BaseCategoryDialog(
     } catch (e) {
       onError(e)
     }
-  }
+  }, [category, image, onClose, onError, submitData])
 
-  const onDeleteCategory = async () => {
+  const onDeleteCategory = useCallback(async () => {
     if (progressRef.current && progressRef.current.style) {
       progressRef.current.style.display = 'block'
     }
@@ -109,21 +122,8 @@ export function BaseCategoryDialog(
     } catch (e: unknown) {
       onError(e)
     }
-  }
+  }, [category, onClose, onError])
 
-  const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target && event.target.files && event.target.files[0]) {
-      setImage(URL.createObjectURL(event.target.files[0]))
-    }
-  }
-
-  const onError = (error: unknown) => {
-    //console.log(error)
-    if (progressRef.current && progressRef.current.style) {
-      progressRef.current.style.display = 'none'
-    }
-    setErrorTextMsg(error, setErrorMsg)
-  }
 
   return (
     <Dialog

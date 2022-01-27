@@ -4,9 +4,43 @@ import CardMedia from '@mui/material/CardMedia'
 import * as React from 'react'
 import { useMemo } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
+import { SxProps } from '@mui/system'
 
 type ChildCategoryBannerCardProps = {
   category: Category
+}
+
+const cardStyle: SxProps = {
+  position: 'relative',
+  borderRadius: 0,
+  height: 350,
+}
+
+const cardActionArea: SxProps = {
+  position: 'relative',
+  height: 1,
+  width: 1,
+}
+
+const cardMedia: SxProps = {
+  height: 1,
+  overflow: 'hidden',
+  position: 'relative',
+}
+
+const cardTypography: SxProps = {
+  textOverflow: 'ellipsis',
+  position: 'absolute',
+  bottom: 0,
+  p: 2,
+  opacity: 0.6,
+  width: 1,
+  transition: `300ms`,
+  cursor: 'pointer',
+  bgcolor: 'black',
+  [`&.hover`]: {
+    opacity: 0.8,
+  },
 }
 
 const ChildCategoryBannerCard = ({
@@ -17,7 +51,7 @@ const ChildCategoryBannerCard = ({
   }, [category.id])
 
   return (
-    <Card sx={{ position: 'relative', borderRadius: 0, height: 350 }}>
+    <Card sx={cardStyle}>
       <Link
         color='inherit'
         underline='none'
@@ -25,34 +59,13 @@ const ChildCategoryBannerCard = ({
         to={categoryLink}
         style={{ cursor: 'context-menu' }}
       >
-        <CardActionArea sx={{ position: 'relative', height: 1, width: 1 }}>
+        <CardActionArea sx={cardActionArea}>
           <CardMedia
             image={category.thumbnails.lg}
             title={category.title}
-            sx={{
-              height: 1,
-              overflow: 'hidden',
-              position: 'relative',
-            }}
+            sx={cardMedia}
           >
-            <Typography
-              sx={{
-                textOverflow: 'ellipsis',
-                position: 'absolute',
-                bottom: 0,
-                p: 2,
-                opacity: 0.6,
-                width: 1,
-                transition: `300ms`,
-                cursor: 'pointer',
-                bgcolor: 'black',
-                [`&.hover`]: {
-                  opacity: 0.8,
-                },
-              }}
-              color='white'
-              variant='h6'
-            >
+            <Typography sx={cardTypography} color='white' variant='h6'>
               {category.title}
             </Typography>
           </CardMedia>

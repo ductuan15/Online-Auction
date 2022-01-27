@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useCallback } from 'react'
 import { useLayoutContext } from '../../../contexts/layout/LayoutContext'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
@@ -24,6 +25,15 @@ const NotifyMenuButton = ({
     state: { unreadNotifications },
   } = useUserContext()
 
+  const onIconButtonClicked = useCallback(
+    (e: React.MouseEvent<HTMLElement>) =>
+      dispatch({
+        type: 'OPEN_NOTIFY_MENU',
+        payload: e,
+      }),
+    [dispatch],
+  )
+
   return (
     <Box
       sx={
@@ -35,12 +45,7 @@ const NotifyMenuButton = ({
     >
       <Tooltip title='Notifications'>
         <IconButton
-          onClick={(e) =>
-            dispatch({
-              type: 'OPEN_NOTIFY_MENU',
-              payload: e,
-            })
-          }
+          onClick={onIconButtonClicked}
           size='large'
           edge='end'
           aria-label='current notifications'

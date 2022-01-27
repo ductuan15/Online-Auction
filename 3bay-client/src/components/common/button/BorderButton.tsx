@@ -14,11 +14,11 @@ const BorderButton = styled(
   ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isSelected,
-     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     padding,
-     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     unSelectedColour,
-     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     unSelectedBorderColour,
     ...props
   }: BorderButtonProps) => (
@@ -57,7 +57,11 @@ const BorderButton = styled(
       }
     }, [isSelected, selectedColour, theme.palette.mode, unSelectedBorderColour])
 
-    const letterSpacing = +(theme.typography.button.letterSpacing || 0)
+    const letterSpacing = useMemo(
+      () => +(theme.typography.button.letterSpacing || 0),
+      [theme.typography.button.letterSpacing],
+    )
+
     return {
       border: `1.75px solid ${borderColor}`,
       color: isSelected

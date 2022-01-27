@@ -93,7 +93,7 @@ export default function BidHistoryTable() {
     [latestAuction?.id],
   )
 
-  const removeBid = async (params: GridRowParams<Bid>) => {
+  const removeBid = useCallback(async (params: GridRowParams<Bid>) => {
     if (
       confirm(
         `Do you really want to remove your bid?\n` +
@@ -110,7 +110,7 @@ export default function BidHistoryTable() {
         //
       }
     }
-  }
+  }, [])
 
   const columns: GridColumns = useMemo(
     () => [
@@ -208,6 +208,7 @@ export default function BidHistoryTable() {
       latestAuction?.winningBid?.bidPrice,
       latestAuction?.winningBid?.bidderId,
       rejectBidder,
+      removeBid,
       user?.user,
     ],
   )

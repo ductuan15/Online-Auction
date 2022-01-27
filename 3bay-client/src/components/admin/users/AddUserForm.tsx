@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Grid from '@mui/material/Grid'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import Button from '@mui/material/Button'
 import { AddUserFormInputs } from '../../../models/sign-up'
 import Box from '@mui/material/Box'
@@ -27,7 +27,6 @@ const AddUserForm = ({ onSubmit }: AddUserFormProps): JSX.Element => {
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
     reset,
   } = useForm<AddUserFormInputs>()
@@ -35,7 +34,7 @@ const AddUserForm = ({ onSubmit }: AddUserFormProps): JSX.Element => {
   const [disableAllElement, setDisableAllElement] = useState(false)
 
   const password = useRef<string | null>(null)
-  password.current = watch('pwd', '')
+  password.current = useWatch({ control, name: 'pwd', defaultValue: '' })
 
   useEffect(() => {
     if (!isAddUserDialogOpened) {
@@ -52,19 +51,20 @@ const AddUserForm = ({ onSubmit }: AddUserFormProps): JSX.Element => {
     }
   }, [isAddUserDialogOpened, reset])
 
-  const onSubmitCb: SubmitHandler<AddUserFormInputs> = async (data, event) => {
-    event?.preventDefault()
+  const onSubmitCb: SubmitHandler<AddUserFormInputs> = useCallback(
+    async (data, event) => {
+      event?.preventDefault()
 
-    setDisableAllElement(true)
+      setDisableAllElement(true)
 
-    try {
-      await onSubmit({ ...data }, event)
-    } finally {
-      setDisableAllElement(false)
-    }
-  }
-
-  // console.log(watch())
+      try {
+        await onSubmit({ ...data }, event)
+      } finally {
+        setDisableAllElement(false)
+      }
+    },
+    [onSubmit],
+  )
 
   return (
     <Box

@@ -1,14 +1,11 @@
 import * as React from 'react'
-import {useEffect, useState} from 'react'
-import Button from '@mui/material/Button'
+import { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import AppName from '../../../components/common/appname/AppName'
 import '@fontsource/jetbrains-mono'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import { Alert, Avatar, Divider, SvgIcon } from '@mui/material'
-import { ReactComponent as GoogleIcon } from '../../../assets/Google__G__Logo.svg'
-import { ReactComponent as FBIcon } from '../../../assets/Facebook_f_logo.svg'
+import { Alert, Avatar, Divider } from '@mui/material'
 import SignInForm from '../../../components/user/auth/SignInForm'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../contexts/user/AuthContext'
@@ -105,34 +102,34 @@ const SignIn: () => JSX.Element = () => {
         <Typography color='text.primary'>or</Typography>
       </Divider>
 
-      <Box
-        sx={{
-          mt: 1,
-          mb: 2,
-          display: 'flex',
-          flexDirection: 'row',
-        }}
-      >
-        <Button
-          type='button'
-          variant='outlined'
-          color='secondary'
-          sx={{ mx: 0.5, flexBasis: '100%' }}
-          startIcon={<SvgIcon component={GoogleIcon} />}
-        >
-          Google
-        </Button>
+      {/*<Box*/}
+      {/*  sx={{*/}
+      {/*    mt: 1,*/}
+      {/*    mb: 2,*/}
+      {/*    display: 'flex',*/}
+      {/*    flexDirection: 'row',*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <Button*/}
+      {/*    type='button'*/}
+      {/*    variant='outlined'*/}
+      {/*    color='secondary'*/}
+      {/*    sx={{ mx: 0.5, flexBasis: '100%' }}*/}
+      {/*    startIcon={<SvgIcon component={GoogleIcon} />}*/}
+      {/*  >*/}
+      {/*    Google*/}
+      {/*  </Button>*/}
 
-        <Button
-          type='button'
-          fullWidth
-          variant='outlined'
-          sx={{ mx: 0.5, flexBasis: '100%' }}
-          startIcon={<SvgIcon component={FBIcon} />}
-        >
-          Facebook
-        </Button>
-      </Box>
+      {/*  <Button*/}
+      {/*    type='button'*/}
+      {/*    fullWidth*/}
+      {/*    variant='outlined'*/}
+      {/*    sx={{ mx: 0.5, flexBasis: '100%' }}*/}
+      {/*    startIcon={<SvgIcon component={FBIcon} />}*/}
+      {/*  >*/}
+      {/*    Facebook*/}
+      {/*  </Button>*/}
+      {/*</Box>*/}
     </>
   )
 }

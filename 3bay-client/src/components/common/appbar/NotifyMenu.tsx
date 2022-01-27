@@ -5,6 +5,7 @@ import { Box, Divider, PaperProps, Popover } from '@mui/material'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import { GREY } from '../../../theme/palette'
 import NotifyMenuItem from './NotifyMenuItem'
+import {useCallback} from 'react'
 
 const width = 360
 const height = width * 1.61803398875
@@ -47,10 +48,10 @@ export const NotifyMenu = (): JSX.Element => {
     dispatch: userDispatch,
   } = useUserContext()
 
-  const handleNotifyMenuClose = () => {
+  const handleNotifyMenuClose = useCallback(() => {
     userDispatch({ type: 'READ_NOTIFICATIONS' })
     dispatch({ type: 'CLOSE_NOTIFY_MENU' })
-  }
+  },[dispatch, userDispatch])
 
   return (
     <Popover

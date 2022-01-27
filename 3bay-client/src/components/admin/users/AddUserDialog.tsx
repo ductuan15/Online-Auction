@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import * as React from 'react'
-import { useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -30,12 +30,8 @@ export default function AddUserDialog({
   } = useAdminUsersContext()
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
-  const progressRef = useRef<HTMLDivElement>(null)
 
   const onClose = useCallback(() => {
-    if (progressRef.current && progressRef.current.style) {
-      progressRef.current.style.display = 'none'
-    }
     dispatch({ type: 'CLOSE_ADD_USER_DIALOG' })
   }, [dispatch])
 

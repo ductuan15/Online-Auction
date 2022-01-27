@@ -41,9 +41,9 @@ function BidDialog(): JSX.Element {
     dispatch({ type: 'CLOSE_BID_DIALOG' })
   }, [dispatch, setErrorText])
 
-  const onButtonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onButtonChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setAutomaticBidding(e.target.checked)
-  }
+  }, [])
 
   const onBuyoutButtonClicked = useCallback(async () => {
     if (!latestAuction || !latestAuction.id || !latestAuction?.buyoutPrice)

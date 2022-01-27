@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { FormEventHandler, useMemo, useState } from 'react'
+import {FormEventHandler, useCallback, useMemo, useState} from 'react'
 import { useProductContext } from '../../../contexts/product/ProductDetailsContext'
 import { Grid, Slider, TextField, Typography } from '@mui/material'
 import NumberFormat from 'react-number-format'
@@ -67,15 +67,16 @@ function AutoBidForm({
     initialPrice,
   )
 
-  const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    setValue(+newValue)
-  }
+  const handleSliderChange = useCallback( (event: Event, newValue: number | number[]) => {
+      setValue(+newValue)
+    }
+  , [])
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value === '' ? '' : Number(event.target.value))
-  }
+  }, [])
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     if (latestAuction?.currentPrice && latestAuction?.buyoutPrice) {
       if (value < initialPrice) {
         setValue(initialPrice)
@@ -83,9 +84,9 @@ function AutoBidForm({
         setValue(latestAuction.buyoutPrice)
       }
     }
-  }
+  }, [initialPrice, latestAuction?.buyoutPrice, latestAuction?.currentPrice, value])
 
-  const handleSubmit: FormEventHandler = async (event) => {
+  const handleSubmit: FormEventHandler = useCallback(async (event) => {
     event.preventDefault()
 
     if (isNaN(+value)) return
@@ -116,7 +117,7 @@ function AutoBidForm({
         }
       }
     }
-  }
+  }, [isMounted, latestAuction, onClose, setErrorText, setLoading, value])
 
   return latestAuction ? (
     <Grid
