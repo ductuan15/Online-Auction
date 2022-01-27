@@ -727,7 +727,7 @@ export const extendAuctionTime = async (auctionId: number) => {
     // auction.closeTime.getTime() - new Date().getTime() <=
     //   MINUTES_TO_EXTEND_AUCTION * 1000 * 60 // to ms
   ) {
-    const extendTime = moment().add(AUCTION_EXTEND_MINUTES, 'm')
+    const extendTime = moment(auction.closeTime).add(AUCTION_EXTEND_MINUTES, 'm')
     await prisma.auction.update({
       where: { id: auction.id },
       data: {
