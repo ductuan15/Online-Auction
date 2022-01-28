@@ -8,6 +8,7 @@ import {
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 import formatNumberToVND from '../../../utils/currency-format'
+import { SxProps } from '@mui/system'
 
 const titleStyle: TypographyStyle = {
   overflow: 'hidden',
@@ -15,6 +16,12 @@ const titleStyle: TypographyStyle = {
   display: '-webkit-box',
   WebkitLineClamp: 2,
   WebkitBoxOrient: 'vertical',
+}
+
+const cardMedia: SxProps = {
+  width: 'inherit',
+  height: 'inherit',
+  borderRadius: `4px`,
 }
 
 const ProductShortRow = ({ product }: { product: Product }) => {
@@ -32,11 +39,7 @@ const ProductShortRow = ({ product }: { product: Product }) => {
         <CardMedia
           component='img'
           image={product.thumbnails.md || ''}
-          sx={{
-            width: 'inherit',
-            height: 'inherit',
-            borderRadius: `4px`,
-          }}
+          sx={cardMedia}
         />
       </Box>
 

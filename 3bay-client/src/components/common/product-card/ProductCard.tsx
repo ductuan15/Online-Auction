@@ -65,10 +65,18 @@ const cardSx: SxProps<Theme> = (theme) => ({
   borderWidth: `2px`,
 })
 
-const cardAreaSx = {
+const cardAreaSx: SxProps = {
   '.MuiCardActionArea-focusHighlight': {
     bgcolor: 'transparent',
   },
+}
+
+const cardActionSx: SxProps = {
+  pt: 0,
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 }
 
 const ProductCard = ({
@@ -133,16 +141,7 @@ const ProductCard = ({
 
             <ProductCardContent product={product} sx={{ pt: 1 }} />
             {userDetails && (
-              <CardActions
-                disableSpacing
-                sx={{
-                  pt: 0,
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
+              <CardActions disableSpacing sx={cardActionSx}>
                 <IconButton
                   aria-label='add to watchlist'
                   color='inherit'

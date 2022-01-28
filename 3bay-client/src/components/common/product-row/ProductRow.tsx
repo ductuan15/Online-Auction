@@ -30,6 +30,27 @@ export const imageSx: SxProps<Theme> = (theme) => ({
   height: 250,
 })
 
+const cardStyle: SxProps<Theme> = (theme) => ({
+  '&:hover': {
+    borderColor: theme.palette.primary.dark,
+    boxShadow: 3,
+  },
+  borderWidth: `2px`,
+})
+
+const cardActionArea: SxProps = {
+  '.MuiCardActionArea-focusHighlight': {
+    bgcolor: 'transparent',
+  },
+  display: 'flex',
+}
+
+const cardBoxContainer: SxProps = {
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+}
+
 const ProductRow = ({
   product,
   toggleWatchlistButton,
@@ -50,13 +71,7 @@ const ProductRow = ({
       variant='outlined'
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
-      sx={(theme) => ({
-        '&:hover': {
-          borderColor: theme.palette.primary.dark,
-          boxShadow: 3,
-        },
-        borderWidth: `2px`,
-      })}
+      sx={cardStyle}
     >
       <Link
         color='inherit'
@@ -65,28 +80,14 @@ const ProductRow = ({
         to={`/product/${product.id}`}
         style={{ cursor: 'context-menu' }}
       >
-        <CardActionArea
-          sx={{
-            '.MuiCardActionArea-focusHighlight': {
-              bgcolor: 'transparent',
-            },
-            display: 'flex',
-          }}
-          component='div'
-        >
+        <CardActionArea sx={cardActionArea} component='div'>
           <ProductCardThumbnail
             isSelected={isSelected}
             boxSx={imageSx as SxProps}
             product={product}
           />
 
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              flexGrow: 1,
-            }}
-          >
+          <Box sx={cardBoxContainer}>
             <ProductHeaderRow
               name={product.name}
               color={isSelected ? 'primary.dark' : 'auto'}

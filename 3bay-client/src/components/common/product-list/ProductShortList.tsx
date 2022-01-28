@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Grid, ListItemButton, Typography } from '@mui/material'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 import ProductShortRow from '../product-row/ProductShortRow'
+import { SxProps } from '@mui/system'
 
 type ShortProductListProps = {
   title: string
@@ -13,6 +14,12 @@ type ShortProductListProps = {
 }
 
 const DEFAULT_N_ITEMS = 3
+
+const gridContainerStyle: SxProps = {
+  border: `2px solid rgba(145, 158, 171, 0.24)`,
+  borderRadius: `8px`,
+  minHeight: 150,
+}
 
 const ProductShortList = ({
   title,
@@ -52,11 +59,7 @@ const ProductShortList = ({
         item
         xs={12}
         container
-        sx={{
-          border: `2px solid rgba(145, 158, 171, 0.24)`,
-          borderRadius: `8px`,
-          minHeight: 150,
-        }}
+        sx={gridContainerStyle}
         alignItems='center'
         justifyContent='center'
         flexDirection='column'
@@ -75,25 +78,23 @@ const ProductShortList = ({
               )
             })}
 
-            {
-              products.length > (maxItems ?? DEFAULT_N_ITEMS) && (
-                <ListItemButton onClick={navigateToDetails} sx={{width: 1}}>
-                  <Grid
-                    container
-                    flexDirection='row'
-                    justifyContent='space-between'
-                    alignItems='center'
-                    py={1}
-                  >
-                    <Typography color='text.primary' fontWeight={600} noWrap>
-                      View more
-                    </Typography>
+            {products.length > (maxItems ?? DEFAULT_N_ITEMS) && (
+              <ListItemButton onClick={navigateToDetails} sx={{ width: 1 }}>
+                <Grid
+                  container
+                  flexDirection='row'
+                  justifyContent='space-between'
+                  alignItems='center'
+                  py={1}
+                >
+                  <Typography color='text.primary' fontWeight={600} noWrap>
+                    View more
+                  </Typography>
 
-                    <NavigateNextIcon sx={{ color: 'text.primary' }} />
-                  </Grid>
-                </ListItemButton>
-              )
-            }
+                  <NavigateNextIcon sx={{ color: 'text.primary' }} />
+                </Grid>
+              </ListItemButton>
+            )}
           </>
         )}
       </Grid>

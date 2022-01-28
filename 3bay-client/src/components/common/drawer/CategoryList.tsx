@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SyntheticEvent, useState } from 'react'
+import {SyntheticEvent, useCallback, useMemo, useState} from 'react'
 import Category from '../../../models/category'
 import { useCategoryContext } from '../../../contexts/layout/CategoryContext'
 import {
@@ -24,23 +24,26 @@ type CategoryItemProps = {
 
 const CategoryItem = ({ navigate, category }: CategoryItemProps) => {
   const [open, setOpen] = useState(true)
-  const categoryLink = `/products/search/?key=&categoryId=${category.id}&sortBy=closeTime&sortType=desc&page=1`
+  const categoryLink = useMemo(() => {
+    return `/products/search/?key=&categoryId=${category.id}&sortBy=closeTime&sortType=desc&page=1`
+  }, [category.id])
 
   const [searchParams] = useSearchParams()
   const categoryIdParam = searchParams.get('categoryId')
 
-  const onCategoryClicked = () => {
+  const onCategoryClicked = useCallback(() => {
     // e.stopPropagation()
     navigate(categoryLink)
-  }
+  }, [categoryLink, navigate])
 
-  const handleExpand = (e: SyntheticEvent) => {
+  const handleExpand = useCallback((e: SyntheticEvent) => {
     e.stopPropagation()
     setOpen(!open)
-  }
+  }, [open])
 
-  const hasSubCategories =
-    category.otherCategories && category.otherCategories.length != 0
+  const hasSubCategories = useMemo(() => {
+    return category.otherCategories && category.otherCategories.length != 0
+  }, [category.otherCategories])
 
   return (
     <React.Fragment key={category.id}>

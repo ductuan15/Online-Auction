@@ -37,11 +37,7 @@ const ProductImage = (): JSX.Element | null => {
     return productsImage
   }, [product])
 
-  if (!product) {
-    return null
-  }
-
-  return (
+  return product ? (
     <ImageGallery
       infinite
       showNav
@@ -52,7 +48,7 @@ const ProductImage = (): JSX.Element | null => {
       items={images}
       thumbnailPosition={xsScreen ? undefined : 'left'}
     />
-  )
+  ) : null
 }
 
 export default ProductImage

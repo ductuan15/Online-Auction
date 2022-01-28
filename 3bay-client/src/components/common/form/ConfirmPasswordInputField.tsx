@@ -2,8 +2,8 @@ import { UseControllerProps } from 'react-hook-form/dist/types/controller'
 import { Controller, FieldError, Path } from 'react-hook-form'
 import TextField from '@mui/material/TextField'
 import * as React from 'react'
-import { SyntheticEvent, useState } from 'react'
-import {InputAdornment, TextFieldProps} from '@mui/material'
+import { SyntheticEvent, useCallback, useState } from 'react'
+import { InputAdornment, TextFieldProps } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { FieldPathValue, UnpackNestedValue } from 'react-hook-form/dist/types'
@@ -13,7 +13,7 @@ type ConfirmPasswordInputFieldProps<T> = UseControllerProps<T> & {
   id?: string
   error: FieldError | undefined
   defaultValue: UnpackNestedValue<FieldPathValue<T, Path<T>>>
-  currentPassword: string,
+  currentPassword: string
   textFieldProps?: TextFieldProps
 }
 
@@ -27,13 +27,13 @@ const ConfirmPasswordInputField = <T,>({
 }: ConfirmPasswordInputFieldProps<T>): JSX.Element => {
   const [showPassword2, setShowPassword2] = useState(false)
 
-  const handleClickShowPassword2 = () => {
+  const handleClickShowPassword2 = useCallback(() => {
     setShowPassword2(!showPassword2)
-  }
+  }, [showPassword2])
 
-  const handleMouseDownPassword = (event: SyntheticEvent) => {
+  const handleMouseDownPassword = useCallback((event: SyntheticEvent) => {
     event.preventDefault()
-  }
+  }, [])
 
   return (
     <Controller

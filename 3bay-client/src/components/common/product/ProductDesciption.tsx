@@ -38,8 +38,7 @@ const ProductDescription = (): JSX.Element | null => {
 
   const isAuctionClosed = useIsAuctionClosed(latestAuction)
 
-  if (!product) return null
-  return (
+  return product ? (
     <Paper
       elevation={0}
       component={Grid}
@@ -74,37 +73,29 @@ const ProductDescription = (): JSX.Element | null => {
         <Divider />
       </Grid>
 
-      {product
-        ? product.productDescriptionHistory.map(function (des) {
-            return (
-              <Grid
-                item
-                container
-                xs={12}
-                key={des.id}
-                mt={2}
-              >
-                <Grid item xs={12}>
-                  <Typography variant='body1' color='text.primary'>
-                    ✏️ {moment(des.createdAt).format('L')}
-                  </Typography>
-                </Grid>
+      {product.productDescriptionHistory.map(function (des) {
+        return (
+          <Grid item container xs={12} key={des.id} mt={2}>
+            <Grid item xs={12}>
+              <Typography variant='body1' color='text.primary'>
+                ✏️ {moment(des.createdAt).format('L')}
+              </Typography>
+            </Grid>
 
-                <Grid item xs={12}>
-                  <StyledDiv
-                    style={{
-                      wordWrap: 'break-word',
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(des.description),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            )
-          })
-        : null}
+            <Grid item xs={12}>
+              <StyledDiv
+                style={{
+                  wordWrap: 'break-word',
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(des.description),
+                }}
+              />
+            </Grid>
+          </Grid>
+        )
+      })}
     </Paper>
-  )
+  ) : null
 }
 export default ProductDescription

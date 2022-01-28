@@ -3,8 +3,8 @@ import { Grid, Skeleton } from '@mui/material'
 import Box from '@mui/material/Box'
 import { useTheme } from '@mui/material/styles'
 
+const minSize = '40px'
 const UserWithRatingSkeleton = (): JSX.Element => {
-  const minSize = '40px'
 
   const theme = useTheme()
 

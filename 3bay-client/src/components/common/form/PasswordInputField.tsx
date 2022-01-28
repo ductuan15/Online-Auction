@@ -1,20 +1,19 @@
 import { UseControllerProps } from 'react-hook-form/dist/types/controller'
-import {Controller, FieldError, Path} from 'react-hook-form'
+import { Controller, FieldError, Path } from 'react-hook-form'
 import TextField from '@mui/material/TextField'
 import * as React from 'react'
-import { SyntheticEvent, useState } from 'react'
-import {InputAdornment, TextFieldProps} from '@mui/material'
+import { SyntheticEvent, useCallback, useState } from 'react'
+import { InputAdornment, TextFieldProps } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
-import {FieldPathValue, UnpackNestedValue} from 'react-hook-form/dist/types'
+import { FieldPathValue, UnpackNestedValue } from 'react-hook-form/dist/types'
 
-type PasswordInputFieldProps<T> =
-  UseControllerProps<T> & {
-    label?: string
-    id?: string
-    error?: FieldError | undefined
-    defaultValue: UnpackNestedValue<FieldPathValue<T, Path<T>>>
-    textFieldProps?: TextFieldProps
+type PasswordInputFieldProps<T> = UseControllerProps<T> & {
+  label?: string
+  id?: string
+  error?: FieldError | undefined
+  defaultValue: UnpackNestedValue<FieldPathValue<T, Path<T>>>
+  textFieldProps?: TextFieldProps
 }
 
 const PasswordInputField = <T extends { pwd: string }>({
@@ -25,12 +24,13 @@ const PasswordInputField = <T extends { pwd: string }>({
   ...controllerProps
 }: PasswordInputFieldProps<T>): JSX.Element => {
   const [showPassword, setShowPassword] = useState(false)
-  const handleClickShowPassword = () => {
+  const handleClickShowPassword = useCallback(() => {
     setShowPassword(!showPassword)
-  }
-  const handleMouseDownPassword = (event: SyntheticEvent) => {
+  }, [showPassword])
+
+  const handleMouseDownPassword = useCallback((event: SyntheticEvent) => {
     event.preventDefault()
-  }
+  }, [])
 
   return (
     <Controller

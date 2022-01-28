@@ -36,7 +36,7 @@ const UserWithRating = ({
   minHeight,
   rating,
 }: UserWithRatingProps): JSX.Element => {
-  const minSize = minHeight ?? '40px'
+  const minSize = useMemo(() => minHeight ?? '40px', [minHeight])
 
   const theme = useTheme()
 
@@ -106,18 +106,28 @@ const ProductInfo = (): JSX.Element | null => {
     )
   }, [product?.id, watchlist])
 
-  const closeTimeStr = latestAuction?.closeTime || null
-  const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
-  const closeTimeFormattedStr = closeTime
-    ? `${closeTime.format('L')} ${closeTime.format('LT')}`
-    : null
+  const closeTime = useMemo(() => {
+    const closeTimeStr = latestAuction?.closeTime || null
+    return closeTimeStr ? moment(new Date(closeTimeStr)) : null
+  }, [latestAuction?.closeTime])
 
-  const dateCreated = product?.createdAt
-    ? moment(new Date(product?.createdAt))
-    : null
-  const dateCreatedText = dateCreated
-    ? `${dateCreated.fromNow()} (${dateCreated.format('L')})`
-    : null
+  const closeTimeFormattedStr = useMemo(() => {
+    return closeTime
+      ? `${closeTime.format('L')} ${closeTime.format('LT')}`
+      : null
+  }, [closeTime])
+
+  const dateCreated = useMemo(() => {
+    return product?.createdAt
+      ? moment(new Date(product?.createdAt))
+      : null
+  }, [product?.createdAt])
+
+  const dateCreatedText = useMemo(() => {
+    return dateCreated
+      ? `${dateCreated.fromNow()} (${dateCreated.format('L')})`
+      : null
+  }, [dateCreated])
 
   const showRemaining = useCallback(() => {
     if (!closeTime) return
@@ -138,7 +148,7 @@ const ProductInfo = (): JSX.Element | null => {
     )
   }, [closeTime, closeTimeFormattedStr])
 
-  const onWatchlistButtonClicked = async () => {
+  const onWatchlistButtonClicked = useCallback(async () => {
     if (!product) return
 
     const prodIndex = _.findIndex(watchlist, function (p) {
@@ -158,7 +168,7 @@ const ProductInfo = (): JSX.Element | null => {
         payload: product,
       })
     }
-  }
+  }, [dispatch, product, watchlist])
 
   useEffect(() => {
     showRemaining()

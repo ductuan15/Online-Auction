@@ -8,6 +8,7 @@ import { useTheme } from '@mui/material/styles'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import './WYSIWYGEditor.css'
 import { GREY } from '../../../theme/palette'
+import {useCallback, useMemo} from 'react'
 
 type WYSIWYGEditorProps = {
   // value?: string
@@ -63,16 +64,17 @@ export default function WYSIWYGEditor({
   // })
 
   const theme = useTheme()
-  const toolbarClasses =
-    theme.palette.mode === 'light'
+  const toolbarClasses = useMemo(() => {
+    return  theme.palette.mode === 'light'
       ? 'rdw-editor-toolbar-light'
       : 'rdw-editor-toolbar-dark'
+  }, [theme.palette.mode])
 
-  const onEditorStateChange = (editorState: EditorState) => {
+  const onEditorStateChange = useCallback((editorState: EditorState) => {
     // console.log('Hei')
     // setEditorState(editorState)
     return onChange(draftToHtml(convertToRaw(editorState.getCurrentContent())))
-  }
+  }, [onChange])
 
   return (
     <div className='editor'>

@@ -26,29 +26,27 @@ const imageSx: SxProps<Theme> = (theme) => ({
   overflow: 'hidden',
 })
 
+const cardStyle: SxProps<Theme> = (theme) => ({
+  '&:hover': {
+    borderColor: theme.palette.primary.dark,
+  },
+  borderWidth: `2px`,
+})
+
+const cardActionArea: SxProps = {
+  '.MuiCardActionArea-focusHighlight': {
+    bgcolor: 'transparent',
+  },
+}
+
 const ProductCardSkeleton = (): JSX.Element => {
   const {
     state: { userDetails },
   } = useUserContext()
 
   return (
-    <Card
-      variant='outlined'
-      sx={(theme) => ({
-        '&:hover': {
-          borderColor: theme.palette.primary.dark,
-        },
-        borderWidth: `2px`,
-      })}
-    >
-      <CardActionArea
-        sx={{
-          '.MuiCardActionArea-focusHighlight': {
-            bgcolor: 'transparent',
-          },
-        }}
-        component='div'
-      >
+    <Card variant='outlined' sx={cardStyle}>
+      <CardActionArea sx={cardActionArea} component='div'>
         <Box sx={imageSx}>
           <Skeleton
             variant='rectangular'

@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton'
 import RedditIcon from '@mui/icons-material/Reddit'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import AppName from '../appname/AppName'
+import { SxProps } from '@mui/system'
 
 const footerLinks = [
   {
@@ -16,26 +17,60 @@ const footerLinks = [
   { title: 'Help & Contact', links: ['Contact us'] },
 ]
 
-function renderLinks() {
+const footerStyle: SxProps = {
+  bgcolor: 'background.paper',
+}
+
+const footerBoxContainer: SxProps = {
+  py: 8,
+  display: 'grid',
+  gridAutoColumns: '1fr',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 4,
+  gridTemplateColumns: {
+    xs: '1fr',
+    sm: '1fr',
+    md: '1fr 1.75fr',
+    lg: '1fr 1fr',
+  },
+  gridTemplateRows: 'auto',
+  '& a:not(.MuiIconButton-root)': {
+    mt: 1,
+    color: 'text.secondary',
+    typography: 'body2',
+    '&:hover': {
+      color: 'text.primary',
+    },
+  },
+}
+
+const bottomFooterContainer: SxProps = {
+  py: 4,
+  display: { xs: 'block', sm: 'flex' },
+  alignItems: { sm: 'center' },
+  justifyContent: { sm: 'space-between' },
+}
+
+const footerLinkContainer: SxProps = {
+  display: 'grid',
+  gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
+  gridAutoColumns: '1fr',
+  gap: 4,
+}
+
+const footerLinkInnerContainer: SxProps = {
+  display: 'flex',
+  flexDirection: 'column',
+  color: 'text.primary',
+}
+
+function FooterLinks(): JSX.Element {
   return (
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
-        gridAutoColumns: '1fr',
-        gap: 4,
-      }}
-    >
+    <Box sx={footerLinkContainer}>
       {footerLinks.map((column) => {
         return (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              color: 'text.primary',
-            }}
-            key={column.title}
-          >
+          <Box sx={footerLinkInnerContainer} key={column.title}>
             <Typography fontWeight='bold' variant='body2'>
               {column.title}
             </Typography>
@@ -65,33 +100,9 @@ function renderLinks() {
 
 export default function AppFooter(): JSX.Element {
   return (
-    <Container component='footer' sx={{ bgcolor: 'background.paper' }}>
+    <Container component='footer' sx={footerStyle}>
       <Divider />
-      <Box
-        sx={(theme) => ({
-          py: 8,
-          display: 'grid',
-          gridAutoColumns: '1fr',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 4,
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: '1fr',
-            md: '1fr 1.75fr',
-            lg: '1fr 1fr',
-          },
-          gridTemplateRows: 'auto',
-          '& a:not(.MuiIconButton-root)': {
-            mt: 1,
-            color: theme.palette.text.secondary,
-            typography: 'body2',
-            '&:hover': {
-              color: theme.palette.text.primary,
-            },
-          },
-        })}
-      >
+      <Box sx={footerBoxContainer}>
         <div>
           <AppName bigSize />
           <Typography
@@ -108,19 +119,12 @@ export default function AppFooter(): JSX.Element {
           <EmailSubscriber />
         </div>
 
-        {renderLinks()}
+        <FooterLinks />
       </Box>
 
       <Divider />
 
-      <Box
-        sx={{
-          py: 4,
-          display: { xs: 'block', sm: 'flex' },
-          alignItems: { sm: 'center' },
-          justifyContent: { sm: 'space-between' },
-        }}
-      >
+      <Box sx={bottomFooterContainer}>
         <Typography color='text.secondary' variant='body2'>
           Copyright © {new Date().getFullYear()} HCMUS.
         </Typography>

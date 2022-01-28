@@ -1,7 +1,7 @@
 import Product from '../../../models/product'
 import { SxProps } from '@mui/system'
 import { useTheme } from '@mui/material/styles'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import moment from 'moment'
 import CardContent from '@mui/material/CardContent'
 import { Box, Grid } from '@mui/material'
@@ -25,21 +25,33 @@ function ProductCardContent({
   const isMounted = useIsMounted()
   const [endTimeCountDownText, setEndTimeCountDownText] = useState('ENDED')
 
-  const totalBidder = product.latestAuction?._count.bids || 0
+  const totalBidders = useMemo(
+    () => product.latestAuction?._count.bids || 0,
+    [product.latestAuction?._count.bids],
+  )
 
-  const dateCreated = product.createdAt
-    ? moment(new Date(product.createdAt))
-    : null
+  const dateCreated = useMemo(() => {
+    return product.createdAt
+      ? moment(new Date(product.createdAt))
+      : null
+  }, [product.createdAt])
 
-  const dateCreatedText = dateCreated
-    ? `${dateCreated.fromNow()} (${dateCreated.format('L')})`
-    : null
+  const dateCreatedText = useMemo(() => {
+    return dateCreated
+      ? `${dateCreated.fromNow()} (${dateCreated.format('L')})`
+      : null
+  }, [dateCreated])
 
-  const closeTimeStr = product.latestAuction?.closeTime || null
-  const closeTime = closeTimeStr ? moment(new Date(closeTimeStr)) : null
-  const closeTimeFormattedStr = closeTime
-    ? `${closeTime.format('L')} ${closeTime.format('LT')}`
-    : null
+  const closeTime = useMemo(() => {
+    const closeTimeStr = product.latestAuction?.closeTime || null
+    return closeTimeStr ? moment(new Date(closeTimeStr)) : null
+  }, [product.latestAuction?.closeTime])
+
+  const closeTimeFormattedStr = useMemo(() => {
+    return closeTime
+      ? `${closeTime.format('L')} ${closeTime.format('LT')}`
+      : null
+  }, [closeTime])
 
   const timer = useRef<NodeJS.Timeout>()
 
@@ -138,7 +150,7 @@ function ProductCardContent({
             )}
 
             {/*Display total number of bids currently bidding */}
-            {totalBidder >= 0 && (
+            {totalBidders >= 0 && (
               <Typography variant='body2' color='text.secondary'>
                 Total <b>{product.latestAuction?._count.bids || 0}</b> bids
               </Typography>

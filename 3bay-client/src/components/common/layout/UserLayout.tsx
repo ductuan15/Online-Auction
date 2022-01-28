@@ -3,6 +3,7 @@ import BackgroundLetterAvatars from '../../user/profile/BackgroundLettersAvatar'
 import { Link as RouterLink, Outlet } from 'react-router-dom'
 import { useUserContext } from '../../../contexts/user/UserContext'
 import StyledMenuItem from '../menu/StyledMenuItem'
+import { SxProps } from '@mui/system'
 
 // type UserLayoutProps = {
 //   children?: ReactNode
@@ -27,6 +28,19 @@ const MENU_ITEMS: MenuItemLink[] = [
   },
 ]
 
+const innerGrid: SxProps = {
+  display: { xs: 'none', md: 'flex' },
+  border: `2px solid rgba(145, 158, 171, 0.24)`,
+  borderRadius: `8px`,
+  padding: `24px`,
+  flexDirection: 'column',
+}
+
+const avatarStyle: SxProps = {
+  width: `40px`,
+  height: `40px`,
+}
+
 const UserLayout = (): JSX.Element => {
   const {
     state: { userDetails: user },
@@ -44,17 +58,7 @@ const UserLayout = (): JSX.Element => {
         <Outlet />
       </Grid>
 
-      <Grid
-        item
-        md={3.5}
-        sx={{
-          display: { xs: 'none', md: 'flex' },
-          border: `2px solid rgba(145, 158, 171, 0.24)`,
-          borderRadius: `8px`,
-          padding: `24px`,
-          flexDirection: 'column',
-        }}
-      >
+      <Grid item md={3.5} sx={innerGrid}>
         {/*Profile preview*/}
         <Grid
           container
@@ -65,13 +69,7 @@ const UserLayout = (): JSX.Element => {
           maxWidth='100%'
         >
           <Grid item>
-            <BackgroundLetterAvatars
-              name={user?.name || ''}
-              sx={{
-                width: `40px`,
-                height: `40px`,
-              }}
-            />
+            <BackgroundLetterAvatars name={user?.name || ''} sx={avatarStyle} />
           </Grid>
 
           <Grid
