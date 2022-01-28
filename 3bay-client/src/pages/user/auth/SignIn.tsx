@@ -1,25 +1,37 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import AppName from '../../../components/common/appname/AppName'
 import '@fontsource/jetbrains-mono'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import { Alert, Avatar, Divider } from '@mui/material'
+import { Alert, Avatar } from '@mui/material'
 import SignInForm from '../../../components/user/auth/SignInForm'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import axios, { AxiosError } from 'axios'
 import useTitle from '../../../hooks/use-title'
+import { SxProps } from '@mui/system'
+
+const containerStyle: SxProps = {
+  marginTop: 8,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+}
 
 const SignIn: () => JSX.Element = () => {
   useTitle('3bay | Sign in')
   const navigate = useNavigate()
   const location = useLocation()
-  const from = location.state?.from?.pathname || '/'
+  const from = useMemo(
+    () => location.state?.from?.pathname || '/',
+    [location.state?.from?.pathname],
+  )
 
   const { signIn, user } = useAuth()
   const [errorText, setErrorText] = useState<string | null>(null)
+  const [isLoading, setLoading] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -27,54 +39,47 @@ const SignIn: () => JSX.Element = () => {
     }
   }, [navigate, user])
 
-  const handleSubmit = async (data: { email: string; pwd: string }) => {
-    const { email, pwd } = data
-    setErrorText(null)
-    //console.log(data)
-    try {
-      await signIn(email, pwd, () => {
-        // Send them back to the page they tried to visit when they were
-        // redirected to the login page. Use { replace: true } so we don't create
-        // another entry in the history stack for the login page.  This means that
-        // when they get to the protected page and click the back button, they
-        // won't end up back on the login page, which is also really nice for the
-        // user experience.
-        navigate(from, { replace: true })
-      })
-    } catch (e) {
-      if (axios.isAxiosError(e) && (e as AxiosError)) {
-        switch (e.response?.data.name) {
-          case 'AuthEmailNotConfirmed':
-            {
-              try {
-                const uuid = e.response?.data.metaData.uuid || ''
-                navigate(`/verify/${uuid}`, { replace: true })
-                return
-              } catch (parseError) {
-                // console.log(parseError)
+  const handleSubmit = useCallback(
+    async (data: { email: string; pwd: string }) => {
+      const { email, pwd } = data
+      setErrorText(null)
+      //console.log(data)
+      try {
+        setLoading(true)
+        await signIn(email, pwd, () => {
+          navigate(from, { replace: true })
+        })
+      } catch (e) {
+        if (axios.isAxiosError(e) && (e as AxiosError)) {
+          switch (e.response?.data.name) {
+            case 'AuthEmailNotConfirmed':
+              {
+                try {
+                  const uuid = e.response?.data.metaData.uuid || ''
+                  navigate(`/verify/${uuid}`, { replace: true })
+                  return
+                } catch (parseError) {
+                  // console.log(parseError)
+                }
               }
+              break
+            case 'AuthAccountDisabled': {
+              setErrorText(e.response?.data.message)
+              return
             }
-            break
-          case 'AuthAccountDisabled': {
-            setErrorText(e.response?.data.message)
-            return
           }
         }
+        setErrorText('Wrong email or password')
+      } finally {
+        setLoading(false)
       }
-      setErrorText('Wrong email or password')
-    }
-  }
+    },
+    [from, navigate, signIn],
+  )
 
   return (
     <>
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <Box sx={containerStyle}>
         <AppName bigSize />
 
         <Box
@@ -92,15 +97,16 @@ const SignIn: () => JSX.Element = () => {
             Sign in
           </Typography>
         </Box>
+        {/*{isLoading && <LinearProgress sx={{ width: 1 }} />}*/}
 
         {errorText && <Alert severity='error'>{errorText}</Alert>}
 
-        <SignInForm handleSubmit={handleSubmit} />
+        <SignInForm handleSubmit={handleSubmit} isLoading={isLoading} />
       </Box>
 
-      <Divider sx={{ mt: 2, mb: 2 }}>
-        <Typography color='text.primary'>or</Typography>
-      </Divider>
+      {/*<Divider sx={{ mt: 2, mb: 2 }}>*/}
+      {/*  <Typography color='text.primary'>or</Typography>*/}
+      {/*</Divider>*/}
 
       {/*<Box*/}
       {/*  sx={{*/}

@@ -6,7 +6,7 @@ import useTitle from '../../hooks/use-title'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import { setErrorTextMsg } from '../../utils/error'
 import { useDebounce, useIsMounted } from '../../hooks'
-import ProductTable2 from '../../components/admin/products/ProductTable'
+import ProductTable from '../../components/admin/products/ProductTable'
 import BorderButton from '../../components/common/button/BorderButton'
 import RefreshIcon from '@mui/icons-material/Refresh'
 
@@ -100,7 +100,7 @@ const ProductsManagement = (): JSX.Element => {
         {/*  onDataLoaded={onDataLoaded}*/}
         {/*  onError={onTableError}*/}
         {/*/>*/}
-        <ProductTable2
+        <ProductTable
           onLoadingData={onLoadingData}
           onDataLoaded={onDataLoaded}
           onError={onTableError}

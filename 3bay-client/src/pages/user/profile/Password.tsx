@@ -9,10 +9,25 @@ import { setErrorTextMsg } from '../../../utils/error'
 import useTitle from '../../../hooks/use-title'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 import BorderButton from '../../../components/common/button/BorderButton'
+import {SxProps} from '@mui/system'
 
 export type PasswordFormType = {
   pwd: string
   newPwd: string
+}
+
+const gridRowProps: SxProps = {
+  rowSpacing: 2,
+  columnSpacing: 3,
+  mt: 1,
+  alignItems: 'center',
+}
+const labelGridProps: SxProps = {
+  xs: 3,
+}
+
+const inputGridProps: SxProps = {
+  xs: 9,
 }
 
 const Password = (): JSX.Element => {
@@ -27,20 +42,6 @@ const Password = (): JSX.Element => {
   const [save, setSave] = useState(false)
 
   const { errors } = formState
-
-  const gridRowProps = {
-    rowSpacing: 2,
-    columnSpacing: 3,
-    mt: 1,
-    alignItems: 'center',
-  }
-  const labelGridProps = {
-    xs: 3,
-  }
-
-  const inputGridProps = {
-    xs: 9,
-  }
 
   const onSubmit: SubmitHandler<PasswordFormType> = useCallback(
     async (data) => {

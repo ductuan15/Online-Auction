@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useCallback } from 'react'
 import { Grid, Stack } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded'
@@ -9,14 +10,23 @@ import { EditCategoryDialog } from '../../components/admin/category/EditCategory
 import { useCategoryContext } from '../../contexts/layout/CategoryContext'
 import useTitle from '../../hooks/use-title'
 import BorderButton from '../../components/common/button/BorderButton'
+import { SxProps } from '@mui/system'
+import { Theme } from '@mui/material/styles'
+
+const titleStyle: SxProps<Theme> = (theme) => ({
+  [theme.breakpoints.down('sm')]: {
+    typography: 'h5',
+  },
+  typography: 'h3',
+})
 
 const CategoryManagement = (): JSX.Element => {
   useTitle('3bay | Manage categories')
   const { dispatch } = useCategoryContext()
 
-  const openDialog = () => {
+  const openDialog = useCallback(() => {
     dispatch({ type: 'OPEN_CREATE_DIALOG', payload: true })
-  }
+  }, [dispatch])
 
   return (
     <>
@@ -35,15 +45,7 @@ const CategoryManagement = (): JSX.Element => {
           component={Grid}
           xs={12}
         >
-          <Typography
-            color='text.primary'
-            sx={(theme) => ({
-              [theme.breakpoints.down('sm')]: {
-                typography: 'h5',
-              },
-              typography: 'h3',
-            })}
-          >
+          <Typography color='text.primary' sx={titleStyle}>
             <CategoryRoundedIcon fontSize='large' sx={{ mr: 2 }} />
             Manage Categories
           </Typography>

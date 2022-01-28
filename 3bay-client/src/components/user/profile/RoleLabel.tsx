@@ -1,36 +1,42 @@
 import { useAuth } from '../../../contexts/user/AuthContext'
 import { Chip, ChipProps, Typography } from '@mui/material'
+import { useMemo } from 'react'
+
+type RoleColor =
+  | 'error'
+  | 'primary'
+  | 'success'
+  | 'default'
+  | 'secondary'
+  | 'info'
+  | 'warning'
+  | undefined
 
 const RoleLabel = (props?: ChipProps): JSX.Element => {
   const { user } = useAuth()
-  let color:
-    | 'error'
-    | 'primary'
-    | 'success'
-    | 'default'
-    | 'secondary'
-    | 'info'
-    | 'warning'
-    | undefined
+  const color: RoleColor = useMemo(() => {
+    switch (user?.role) {
+      case 'ADMINISTRATOR':
+        return 'error'
+      case 'BIDDER':
+        return 'primary'
+      case 'SELLER':
+        return 'success'
+    }
+    return undefined
+  }, [user?.role])
 
-  switch (user?.role) {
-    case 'ADMINISTRATOR':
-      color = 'error'
-      break
-    case 'BIDDER':
-      color = 'primary'
-      break
-    case 'SELLER':
-      color = 'success'
-      break
-  }
   return (
     <>
       {user && (
         <Chip
           {...props}
           color={color}
-          label={<Typography fontWeight={550} variant='body1'>{user?.role}</Typography>}
+          label={
+            <Typography fontWeight={550} variant='body1'>
+              {user?.role}
+            </Typography>
+          }
         />
       )}
     </>

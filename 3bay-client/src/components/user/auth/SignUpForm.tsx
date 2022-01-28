@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Grid from '@mui/material/Grid'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
 import { SignUpFormInputs } from '../../../models/sign-up'
 import Box from '@mui/material/Box'
 import EmailTextField from '../../common/form/EmailTextField'
@@ -16,14 +15,14 @@ import ConfirmPasswordInputField from '../../common/form/ConfirmPasswordInputFie
 import ReCAPTCHA from 'react-google-recaptcha'
 import config from '../../../config'
 import LinearProgress from '@mui/material/LinearProgress'
+import BorderButton from '../../common/button/BorderButton'
 
 type SignUpFormProps = {
   onSubmit: SubmitHandler<SignUpFormInputs>
 }
 
 const SignUpForm = ({ onSubmit }: SignUpFormProps): JSX.Element => {
-  const { control, handleSubmit, watch, formState } =
-    useForm<SignUpFormInputs>()
+  const { control, handleSubmit, formState } = useForm<SignUpFormInputs>()
   const { errors } = formState
 
   const [disableSubmit, setDisableSubmit] = useState(true)
@@ -36,25 +35,33 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps): JSX.Element => {
   }, [])
 
   const password = useRef<string | null>(null)
-  password.current = watch('pwd', '')
+  password.current = useWatch({ control, name: 'pwd', defaultValue: '' })
   const recaptchaRef = useRef<ReCAPTCHA | null>(null)
 
-  const onSubmitCb: SubmitHandler<SignUpFormInputs> = async (data, event) => {
-    event?.preventDefault()
+  const termAndConditionAccepted = useWatch({
+    control,
+    name: 'termAndConditionAccepted',
+  })
 
-    setDisableAllElement(true)
+  const onSubmitCb: SubmitHandler<SignUpFormInputs> = useCallback(
+    async (data, event) => {
+      event?.preventDefault()
 
-    let recaptchaValue = ''
-    if (recaptchaRef.current !== null) {
-      recaptchaValue = recaptchaRef.current.getValue() || ''
-    }
+      setDisableAllElement(true)
 
-    try {
-      await onSubmit({ ...data, captchaToken: recaptchaValue }, event)
-    } finally {
-      setDisableAllElement(false)
-    }
-  }
+      let recaptchaValue = ''
+      if (recaptchaRef.current !== null) {
+        recaptchaValue = recaptchaRef.current.getValue() || ''
+      }
+
+      try {
+        await onSubmit({ ...data, captchaToken: recaptchaValue }, event)
+      } finally {
+        setDisableAllElement(false)
+      }
+    },
+    [onSubmit],
+  )
 
   // console.log(watch())
 
@@ -209,19 +216,17 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps): JSX.Element => {
         />
       )}
 
-      <Button
+      <BorderButton
         type='submit'
         fullWidth
-        variant='contained'
+        // variant='contained'
         sx={{ mt: 3, mb: 2 }}
         disabled={
-          !watch('termAndConditionAccepted') ||
-          disableSubmit ||
-          disableAllElement
+          !termAndConditionAccepted || disableSubmit || disableAllElement
         }
       >
         Sign Up
-      </Button>
+      </BorderButton>
     </Box>
   )
 }

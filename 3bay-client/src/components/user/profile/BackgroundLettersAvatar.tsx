@@ -76,6 +76,7 @@ export default function BackgroundLetterAvatars({
 }: Props): JSX.Element {
   const { isDarkMode } = useDarkMode()
   const nameProps = stringAvatar(name, isDarkMode)
+
   if (avatarProps?.sx) {
     avatarProps.sx = {
       ...avatarProps.sx,

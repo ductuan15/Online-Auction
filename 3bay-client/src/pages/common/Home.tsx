@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useMemo } from 'react'
 import MainBanner from '../../components/common/home/MainBanner'
 import { Grid } from '@mui/material'
 import ProductCarousel from '../../components/common/carousel/ProductCarousel'
@@ -14,14 +15,16 @@ const Home = (): JSX.Element => {
   const theme = useTheme()
   useTitle('3bay')
 
-  const banner = {
-    title: 'Smartphones & Accessories',
-    description: 'あなたが翻訳すれば、あなたは同性愛者です！\n👁️👄👁️',
-    image: theme.palette.mode === 'light' ? bannerLight : bannerDark,
-    imageText: '',
-    linkText: 'Shop now →',
-    url: '/products/search/',
-  }
+  const banner = useMemo(() => {
+    return {
+      title: 'Smartphones & Accessories',
+      description: 'あなたが翻訳すれば、あなたは同性愛者です！\n👁️👄👁️',
+      image: theme.palette.mode === 'light' ? bannerLight : bannerDark,
+      imageText: '',
+      linkText: 'Shop now →',
+      url: '/products/search/',
+    }
+  }, [theme])
 
   return (
     <>

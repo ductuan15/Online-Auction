@@ -3,45 +3,53 @@ import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
 import { Link as RouterLink } from 'react-router-dom'
 import * as React from 'react'
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useCallback, useState } from 'react'
 import { SubmitHandler } from 'react-hook-form'
 import { InputAdornment } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
+import BorderButton from '../../common/button/BorderButton'
 
 type SignInFormProps = {
   handleSubmit: SubmitHandler<{ email: string; pwd: string }>
+  isLoading?: boolean
 }
 
-const SignInForm = ({ handleSubmit }: SignInFormProps): JSX.Element => {
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    // event.currentTarget.reset()
+const SignInForm = ({
+  handleSubmit,
+  isLoading,
+}: SignInFormProps): JSX.Element => {
+  const onSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+      const data = new FormData(event.currentTarget)
+      // event.currentTarget.reset()
 
-    // console.log({
-    //   email: data.get('email'),
-    //   pwd: data.get('password'),
-    // })
+      // console.log({
+      //   email: data.get('email'),
+      //   pwd: data.get('password'),
+      // })
 
-    handleSubmit({
-      email: (data.get('email') as string) || '',
-      pwd: (data.get('password') as string) || '',
-    })
-  }
+      handleSubmit({
+        email: (data.get('email') as string) || '',
+        pwd: (data.get('password') as string) || '',
+      })
+    },
+    [handleSubmit],
+  )
 
   const [showPassword, setShowPassword] = useState(false)
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword)
-  }
-  const handleMouseDownPassword = (event: SyntheticEvent) => {
+  const handleClickShowPassword = useCallback(() => {
+    setShowPassword((prevState) => !prevState)
+  }, [])
+
+  const handleMouseDownPassword = useCallback((event: SyntheticEvent) => {
     event.preventDefault()
-  }
+  }, [])
 
   return (
     <Box component='form' onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
@@ -55,6 +63,7 @@ const SignInForm = ({ handleSubmit }: SignInFormProps): JSX.Element => {
         autoComplete='email'
         autoFocus
         inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
+        InputProps={{ disabled: isLoading }}
       />
       <TextField
         margin='normal'
@@ -67,6 +76,7 @@ const SignInForm = ({ handleSubmit }: SignInFormProps): JSX.Element => {
         inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
         type={showPassword ? 'text' : 'password'}
         InputProps={{
+          disabled: isLoading,
           endAdornment: (
             <InputAdornment position='end'>
               <IconButton
@@ -90,9 +100,17 @@ const SignInForm = ({ handleSubmit }: SignInFormProps): JSX.Element => {
           </Typography>
         }
       />
-      <Button type='submit' fullWidth variant='contained' sx={{ mt: 2, mb: 2 }}>
+
+      <BorderButton
+        type='submit'
+        fullWidth
+        // variant='contained'
+        sx={{ mt: 2, mb: 2 }}
+        disabled={isLoading}
+      >
         Sign In
-      </Button>
+      </BorderButton>
+
       <Grid container>
         <Grid item xs>
           <Link component={RouterLink} variant='body2' to='/forgot'>

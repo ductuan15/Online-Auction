@@ -14,7 +14,6 @@ type CreateProductFormProps = {
   onError: (e: unknown) => void
 }
 
-// TODO refactor this mess
 export default function CreateProductForm({
   onSubmit,
   onError,

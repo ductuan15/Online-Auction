@@ -14,8 +14,8 @@ import { AddUserFormInputs } from '../../models/sign-up'
 import useTitle from '../../hooks/use-title'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import AddUserDialog from '../../components/admin/users/AddUserDialog'
-import UserTable2 from '../../components/admin/users/UserTable'
-import UpgradeToSellerRequestTable2 from '../../components/admin/users/UpgradeToSellerRequestTable'
+import UserTable from '../../components/admin/users/UserTable'
+import UpgradeToSellerRequestTable from '../../components/admin/users/UpgradeToSellerRequestTable'
 import BorderButton from '../../components/common/button/BorderButton'
 import RefreshIcon from '@mui/icons-material/Refresh'
 
@@ -30,7 +30,7 @@ const UsersManagement = (): JSX.Element => {
   const isMounted = useIsMounted()
   const { state: usersState, dispatch } = useAdminUsersContext()
 
-  const onDialogSubmit: SubmitHandler<AddUserFormInputs> = async (data) => {
+  const onDialogSubmit: SubmitHandler<AddUserFormInputs> = useCallback(async (data) => {
     try {
       await AdminService.addUser(data)
       dispatch({ type: 'NEW_USER_ADDED' })
@@ -42,7 +42,8 @@ const UsersManagement = (): JSX.Element => {
         }
       })
     }
-  }
+  }, [dispatch, isMounted])
+
   const onLoadingData = useCallback(() => {
     if (isMounted()) {
       setLoading(true)
@@ -149,7 +150,7 @@ const UsersManagement = (): JSX.Element => {
               </TabList>
             </Box>
             <TabPanel value='1'>
-              <UserTable2
+              <UserTable
                 tab='1'
                 onLoadingData={onLoadingData}
                 onDataLoaded={onDataLoaded}
@@ -159,7 +160,7 @@ const UsersManagement = (): JSX.Element => {
               />
             </TabPanel>
             <TabPanel value='2'>
-              <UpgradeToSellerRequestTable2
+              <UpgradeToSellerRequestTable
                 tab='2'
                 onLoadingData={onLoadingData}
                 onDataLoaded={onDataLoaded}

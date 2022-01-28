@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import {useCallback, useState} from 'react'
 import Avatar from '@mui/material/Avatar'
 import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
@@ -21,7 +21,7 @@ const SignUp: () => JSX.Element = () => {
   const [errorText, setErrorText] = useState<string | null>(null)
   const navigate = useNavigate()
 
-  const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
+  const onSubmit: SubmitHandler<SignUpFormInputs> = useCallback(async (data) => {
     setErrorText(null)
     // console.log(data)
 
@@ -31,7 +31,7 @@ const SignUp: () => JSX.Element = () => {
     } catch (e) {
       setErrorTextMsg(e, setErrorText)
     }
-  }
+  }, [navigate])
 
   return (
     <Box

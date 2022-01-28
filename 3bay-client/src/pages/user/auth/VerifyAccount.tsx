@@ -6,13 +6,13 @@ import Typography from '@mui/material/Typography'
 import { Alert } from '@mui/material'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
 import { useAuth } from '../../../contexts/user/AuthContext'
 import AuthService from '../../../services/auth.service'
 import { setErrorTextMsg } from '../../../utils/error'
 import useTitle from '../../../hooks/use-title'
+import BorderButton from '../../../components/common/button/BorderButton'
 
 const VerifyAccount = (): JSX.Element => {
   useTitle('3bay | Verify account')
@@ -24,11 +24,14 @@ const VerifyAccount = (): JSX.Element => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const from = location.state?.from?.pathname || '/'
+  const from = useMemo(
+    () => location.state?.from?.pathname || '/',
+    [location.state?.from?.pathname],
+  )
   const urlParams = useParams()
   const { verify } = useAuth()
 
-  const id = urlParams.id || ''
+  const id = useMemo(() => urlParams.id || '', [urlParams.id])
   useEffect(() => {
     ;(async () => {
       if (id === undefined) {
@@ -45,28 +48,31 @@ const VerifyAccount = (): JSX.Element => {
     })()
   }, [id, navigate])
 
-  function handleError(error: unknown) {
+  const handleError = useCallback((error: unknown) => {
     setErrorTextMsg(error, setErrorText)
-  }
+  }, [])
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setVerifying(true)
-    const data = new FormData(event.currentTarget)
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+      setVerifying(true)
+      const data = new FormData(event.currentTarget)
 
-    const otp = (data.get('otp') as string) || ''
+      const otp = (data.get('otp') as string) || ''
 
-    try {
-      await verify(id, otp, () => {
-        navigate(from, { replace: true })
-      })
-    } catch (e) {
-      handleError(e)
-      setVerifying(false)
-    }
-  }
+      try {
+        await verify(id, otp, () => {
+          navigate(from, { replace: true })
+        })
+      } catch (e) {
+        handleError(e)
+        setVerifying(false)
+      }
+    },
+    [from, handleError, id, navigate, verify],
+  )
 
-  const handleResendOtp = async () => {
+  const handleResendOtp = useCallback(async () => {
     try {
       await AuthService.resendVerifyOTP(id)
       setResendButtonDisabled(true)
@@ -76,7 +82,7 @@ const VerifyAccount = (): JSX.Element => {
     } catch (e) {
       handleError(e)
     }
-  }
+  }, [handleError, id])
 
   return (
     <Box
@@ -153,7 +159,7 @@ const VerifyAccount = (): JSX.Element => {
               inputProps={{ style: { fontFamily: 'Jetbrains Mono' } }}
             />
 
-            <Button
+            <BorderButton
               type='submit'
               disabled={verifying}
               fullWidth
@@ -161,9 +167,9 @@ const VerifyAccount = (): JSX.Element => {
               sx={{ mt: 2, mb: 1 }}
             >
               Continue
-            </Button>
+            </BorderButton>
 
-            <Button
+            <BorderButton
               disabled={resendButtonDisabled}
               fullWidth
               variant='outlined'
@@ -171,7 +177,7 @@ const VerifyAccount = (): JSX.Element => {
               sx={{ mt: 1, mb: 2 }}
             >
               Resend
-            </Button>
+            </BorderButton>
           </Box>
         </>
       )}

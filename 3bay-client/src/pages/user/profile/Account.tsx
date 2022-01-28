@@ -19,6 +19,23 @@ import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 import BorderButton from '../../../components/common/button/BorderButton'
+import { SxProps } from '@mui/system'
+
+const gridRowProps: SxProps = {
+  rowSpacing: 2,
+  columnSpacing: 2,
+  mt: 1,
+  alignItems: 'center',
+}
+const labelGridProps: SxProps = {
+  xs: 2,
+  sm: 3,
+}
+
+const inputGridProps: SxProps = {
+  xs: 10,
+  sm: 9,
+}
 
 const Account = (): JSX.Element => {
   useTitle('3bay | Account settings')
@@ -54,22 +71,6 @@ const Account = (): JSX.Element => {
   }, [reset, user])
 
   const { errors } = formState
-
-  const gridRowProps = {
-    rowSpacing: 2,
-    columnSpacing: 2,
-    mt: 1,
-    alignItems: 'center',
-  }
-  const labelGridProps = {
-    xs: 2,
-    sm: 3,
-  }
-
-  const inputGridProps = {
-    xs: 10,
-    sm: 9,
-  }
 
   const onSubmit: SubmitHandler<UserDetails> = useCallback(
     async (data) => {

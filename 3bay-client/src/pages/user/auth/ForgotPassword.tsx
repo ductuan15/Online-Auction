@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SyntheticEvent, useState } from 'react'
+import {SyntheticEvent, useCallback, useState} from 'react'
 import Box from '@mui/material/Box'
 import AppName from '../../../components/common/appname/AppName'
 import { Alert, Avatar, InputAdornment } from '@mui/material'
@@ -33,28 +33,28 @@ const ForgotPassword = (): JSX.Element => {
   const from = location.state?.from?.pathname || '/'
   const { resetPassword } = useAuth()
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword)
-  }
+  const handleClickShowPassword = useCallback(() => {
+    setShowPassword((prevState => !prevState))
+  }, [])
 
-  const handleClickShowPassword2 = () => {
-    setShowPassword2(!showPassword2)
-  }
+  const handleClickShowPassword2 = useCallback(() => {
+    setShowPassword2(prevState => !prevState)
+  }, [])
 
-  const handleMouseDownPassword = (event: SyntheticEvent) => {
+  const handleMouseDownPassword = useCallback((event: SyntheticEvent) => {
     event.preventDefault()
-  }
+  }, [])
 
-  async function verifyEmail(event: React.FormEvent<HTMLFormElement>) {
+  const verifyEmail = useCallback( async  (event: React.FormEvent<HTMLFormElement>) => {
     const data = new FormData(event.currentTarget)
     setEmail(data.get('email') as string)
 
     await AuthService.checkEmailBeforeResetPassword(data.get('email') as string)
     setEmailOK(true)
     setErrorText(null)
-  }
+  }, [])
 
-  async function changePassword(event: React.FormEvent<HTMLFormElement>) {
+  const changePassword = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
     const data = new FormData(event.currentTarget)
     const pwd = data.get('pwd') as string
     const pwd2 = data.get('pwd2') as string
@@ -70,13 +70,14 @@ const ForgotPassword = (): JSX.Element => {
     })
 
     setErrorText(null)
-  }
 
-  function handleError(error: unknown) {
+  }, [email, from, navigate, resetPassword])
+
+  const handleError = useCallback((error: unknown) =>{
     setErrorTextMsg(error, setErrorText)
-  }
+  }, [])
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     try {
       if (!emailOK) {
@@ -88,20 +89,21 @@ const ForgotPassword = (): JSX.Element => {
       handleError(e)
       setVerifying(false)
     }
-  }
+  }, [changePassword, emailOK, handleError, verifyEmail])
 
-  const handleResendOtp = async () => {
-    try {
-      await AuthService.resendResetPasswordOTP(email)
-      setErrorText(null)
-      setResendButtonDisabled(true)
-      setTimeout(() => {
-        setResendButtonDisabled(false)
-      }, 1000 * 60 * 3)
-    } catch (e) {
-      handleError(e)
+  const handleResendOtp = useCallback(async () => {
+      try {
+        await AuthService.resendResetPasswordOTP(email)
+        setErrorText(null)
+        setResendButtonDisabled(true)
+        setTimeout(() => {
+          setResendButtonDisabled(false)
+        }, 1000 * 60 * 3)
+      } catch (e) {
+        handleError(e)
+      }
     }
-  }
+  , [email, handleError])
 
   return (
     <Box
