@@ -1,9 +1,9 @@
 import * as React from 'react'
 
 export type LayoutState = {
-  anchorEl: null | HTMLElement
-  mobileMoreAnchorEl: null | HTMLElement
-  notifyAnchorEl: null | HTMLElement
+  anchorEl: undefined | HTMLElement
+  mobileMoreAnchorEl: undefined | HTMLElement
+  notifyAnchorEl: undefined | HTMLElement
   // isMenuOpened: boolean
   // isMobileMenuOpened: boolean
   // isNotifyMenuOpened: boolean
@@ -32,9 +32,9 @@ export type LayoutActionType =
   | { type: 'DONE_LOADING_SEARCH_RESULTS' }
 
 export const initialLayoutState: LayoutState = {
-  anchorEl: null,
-  mobileMoreAnchorEl: null,
-  notifyAnchorEl: null,
+  anchorEl: undefined,
+  mobileMoreAnchorEl: undefined,
+  notifyAnchorEl: undefined,
   // isMenuOpened: false,
   // isMobileMenuOpened: false,
   // isNotifyMenuOpened: false,
@@ -64,13 +64,13 @@ const LayoutReducer = (
         notifyAnchorEl: action.payload.currentTarget,
       }
     case 'CLOSE_MOBILE_MENU':
-      return { ...state, mobileMoreAnchorEl: null }
+      return { ...state, mobileMoreAnchorEl: undefined }
 
     case 'CLOSE_PROFILE_MENU':
-      return { ...state, anchorEl: null, mobileMoreAnchorEl: null }
+      return { ...state, anchorEl: undefined, mobileMoreAnchorEl: undefined }
 
     case 'CLOSE_NOTIFY_MENU':
-      return { ...state, notifyAnchorEl: null }
+      return { ...state, notifyAnchorEl: undefined }
 
     case 'TOGGLE_DRAWER':
       return { ...state, openDrawer: action.payload }

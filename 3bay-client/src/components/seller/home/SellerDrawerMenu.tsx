@@ -13,6 +13,10 @@ export const SELLER_MENU_ITEMS = [
     title: '👑 Auctions have winner',
     link: '/seller/auctions-have-winner',
   },
+  {
+    title: '📦 New product',
+    link: '/product/create',
+  },
 ]
 
 const SellerDrawerMenu = (): JSX.Element | null => {
